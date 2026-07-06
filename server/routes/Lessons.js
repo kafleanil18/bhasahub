@@ -86,6 +86,25 @@ router.post('/:id/vocabulary', requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
+// PUT /api/lessons/vocabulary/:vocabId — admin: edit a word
+router.put('/vocabulary/:vocabId', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const { word, pronunciation, meaning } = req.body;
+    if (!word || !pronunciation || !meaning) {
+      return res.status(400).json({ error: 'Word, pronunciation and meaning are required' });
+    }
+    const item = await Vocabulary.findByIdAndUpdate(
+      req.params.vocabId,
+      { word, pronunciation, meaning },
+      { new: true }
+    );
+    if (!item) return res.status(404).json({ error: 'Word not found' });
+    res.json(item);
+  } catch {
+    res.status(500).json({ error: 'Could not update word' });
+  }
+});
+
 // DELETE /api/lessons/vocabulary/:vocabId — admin: remove a word
 router.delete('/vocabulary/:vocabId', requireAuth, requireAdmin, async (req, res) => {
   try {
@@ -94,6 +113,21 @@ router.delete('/vocabulary/:vocabId', requireAuth, requireAdmin, async (req, res
     res.json({ message: 'Word deleted' });
   } catch {
     res.status(500).json({ error: 'Could not delete word' });
+  }
+});
+
+// PUT /api/lessons/vocabulary/:vocabId/audio — admin: attach audio to a word
+router.put('/vocabulary/:vocabId/audio', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const item = await Vocabulary.findByIdAndUpdate(
+      req.params.vocabId,
+      { audioUrl: req.body.audioUrl },
+      { new: true }
+    );
+    if (!item) return res.status(404).json({ error: 'Word not found' });
+    res.json(item);
+  } catch {
+    res.status(500).json({ error: 'Could not save audio' });
   }
 });
 
