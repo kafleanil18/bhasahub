@@ -14,6 +14,10 @@ import FeedbackInbox from './FeedbackInbox';
 import TestManager from './TestManager';
 import TestList from './TestList';
 import TestTaker from './TestTaker';
+import BlogManager from './BlogManager';
+import BlogPage from './BlogPage';
+import TestimonialModal from './TestimonialModal';
+import TestimonialManager from './TestimonialManager';
 
 function App() {
   const wotdList = [
@@ -54,6 +58,12 @@ function App() {
   const [showTests, setShowTests] = useState(false);
   const [showTestManager, setShowTestManager] = useState(false);
   const [activeTestId, setActiveTestId] = useState(null);
+  const [showBlog, setShowBlog] = useState(false);
+  const [showBlogManager, setShowBlogManager] = useState(false);
+  const [footerBlogs, setFooterBlogs] = useState([]);
+  const [showTestimonial, setShowTestimonial] = useState(false);
+  const [showTestimonialManager, setShowTestimonialManager] = useState(false);
+  const [testimonials, setTestimonials] = useState([]);
 
   const loadCourses = () => {
     fetch('http://localhost:5001/api/courses')
@@ -77,6 +87,20 @@ function App() {
       .catch(() => {});
   };
 
+  const loadFooterBlogs = () => {
+    fetch('http://localhost:5001/api/blogs')
+      .then(res => res.json())
+      .then(data => setFooterBlogs(Array.isArray(data) ? data.slice(0, 3) : []))
+      .catch(() => setFooterBlogs([]));
+  };
+
+  const loadTestimonials = () => {
+    fetch('http://localhost:5001/api/testimonials')
+      .then(res => res.json())
+      .then(data => setTestimonials(Array.isArray(data) ? data : []))
+      .catch(() => setTestimonials([]));
+  };
+
   useEffect(() => {
     fetch('http://localhost:5001/api/health')
       .then(res => res.json())
@@ -84,6 +108,8 @@ function App() {
       .catch(() => setServerOk(false));
     loadCourses();
     loadAccess();
+    loadFooterBlogs();
+    loadTestimonials();
     const savedUser = localStorage.getItem('user');
     if (savedUser) setUser(JSON.parse(savedUser));
   }, []);
@@ -99,6 +125,9 @@ function App() {
     setShowTests(false);
     setShowTestManager(false);
     setActiveTestId(null);
+    setShowBlog(false);
+    setShowBlogManager(false);
+    setShowTestimonialManager(false);
     setAccess({});
   };
 
@@ -112,8 +141,13 @@ function App() {
     setShowTests(false);
     setShowTestManager(false);
     setActiveTestId(null);
+    setShowBlog(false);
+    setShowBlogManager(false);
+    setShowTestimonialManager(false);
     loadCourses();
     loadAccess();
+    loadFooterBlogs();
+    loadTestimonials();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -161,11 +195,12 @@ function App() {
       {showPinyin && <PinyinModal onClose={() => setShowPinyin(false)} />}
       {showChangePassword && <ChangePassword onClose={() => setShowChangePassword(false)} />}
       {showFeedback && <FeedbackModal user={user} onClose={() => setShowFeedback(false)} />}
+      {showTestimonial && <TestimonialModal user={user} onClose={() => { setShowTestimonial(false); loadTestimonials(); }} />}
 
       <header>
         <div className="container header-row">
           <button className="logo" onClick={() => { setMobileMenuOpen(false); goHome(); }}>
-            Learn Chinese with <span>Anil</span>
+            Bhasha<span>Hub</span>
           </button>
 
           <button className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Menu">
@@ -178,6 +213,8 @@ function App() {
             <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowPinyin(true); }}>Pinyin</button>
 
             <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowTests(true); }}>Mock Tests</button>
+
+            <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowBlog(true); }}>Blog</button>
 
             <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowFeedback(true); }}>Message us</button>
 
@@ -198,6 +235,18 @@ function App() {
             {user && user.role === 'admin' && (
               <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowTestManager(true); }}>
                 Manage tests
+              </button>
+            )}
+
+            {user && user.role === 'admin' && (
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowBlogManager(true); }}>
+                Manage blog
+              </button>
+            )}
+
+            {user && user.role === 'admin' && (
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowTestimonialManager(true); }}>
+                Testimonials
               </button>
             )}
 
@@ -230,7 +279,13 @@ function App() {
         </div>
       </header>
 
-      {user && user.role === 'admin' && showTestManager ? (
+      {user && user.role === 'admin' && showTestimonialManager ? (
+        <TestimonialManager onBack={goHome} />
+      ) : user && user.role === 'admin' && showBlogManager ? (
+        <BlogManager user={user} onBack={goHome} />
+      ) : showBlog ? (
+        <BlogPage onBack={goHome} />
+      ) : user && user.role === 'admin' && showTestManager ? (
         <TestManager onBack={goHome} />
       ) : activeTestId ? (
         <TestTaker testId={activeTestId} onBack={() => { setActiveTestId(null); setShowTests(true); }} />
@@ -281,15 +336,16 @@ function App() {
           <section className="hero">
             <div className="container hero-grid">
               <div className="hero-text">
-                <p className="eyebrow">Be able to speak Chinese in three months!</p>
+                <p className="eyebrow">Chinese · Nepali</p>
                 <h1>
                   {user
                     ? `Welcome back, ${user.name}`
-                    : 'Learn a language, Learn a skill'}
+                    : 'Learn a language the way a teacher would show you'}
                 </h1>
                 <p className="hero-lead">
-                  Structured lessons from the very basics of Chinese. Includes PinYin, Tones,
-                  Pronunciation, and Vocabulary.
+                  Structured lessons built by a real language teacher — script,
+                  pronunciation, and vocabulary that build on each other, one
+                  small step at a time.
                 </p>
                 <div className="hero-actions">
                   {!user && (
@@ -297,7 +353,7 @@ function App() {
                       Start learning free
                     </button>
                   )}
-                  <a className="btn-ghost" href="#courses">Browse courses</a>
+                  <a className="btn-primary" href="#courses">Browse courses</a>
                 </div>
               </div>
 
@@ -356,23 +412,23 @@ function App() {
                 <span className="feature-glyph zh">字</span>
                 <h3>Read the script</h3>
                 <p>
-                  Start from zero with Pinyin. Every Chinese Character
-                  introduced with pronunciation.
+                  Start from zero with Pinyin and Devanagari — every character
+                  introduced with pronunciation you can actually say.
                 </p>
               </div>
               <div className="feature">
                 <span className="feature-glyph ne">听</span>
                 <h3>Hear it spoken</h3>
                 <p>
-                  Native audio on every word and phrase, recorded clearly
-                  listen, repeat, and compare the sound with yours.
+                  Native audio on every word and phrase, recorded clearly —
+                  listen, repeat, and compare until it sticks.
                 </p>
               </div>
               <div className="feature">
                 <span className="feature-glyph zh">步</span>
                 <h3>Progress step by step</h3>
                 <p>
-                  Lessons build on real courses! Track what
+                  Lessons build on each other like a real course — track what
                   you've mastered and what comes next.
                 </p>
               </div>
@@ -392,37 +448,34 @@ function App() {
 
           <section className="worlds">
             <div className="container">
-              <h2 className="section-title">Two worlds to explore</h2>
-              <div className="worlds-grid">
-                <figure className="world-photo">
-                  <img src="/images/china1.jpg" alt="The Great Wall of China" />
-                  <figcaption>
-                    <span className="cap-word zh">长城</span>
-                    <span className="cap-detail">cháng chéng · The Great Wall</span>
-                  </figcaption>
-                </figure>
-                <figure className="world-photo">
-                  <img src="/images/nepal1.jpg" alt="Boudhanath Stupa in Kathmandu" />
-                  <figcaption>
-                    <span className="cap-word ne">बौद्धनाथ</span>
-                    <span className="cap-detail">bau·ddha·nāth · Boudhanath Stupa</span>
-                  </figcaption>
-                </figure>
-                <figure className="world-photo">
-                  <img src="/images/china2.jpg" alt="Chinese tea being poured" />
-                  <figcaption>
-                    <span className="cap-word zh">茶</span>
-                    <span className="cap-detail">chá · tea</span>
-                  </figcaption>
-                </figure>
-                <figure className="world-photo">
-                  <img src="/images/nepal2.jpg" alt="A plate of Nepali momos" />
-                  <figcaption>
-                    <span className="cap-word ne">मम</span>
-                    <span className="cap-detail">ma·ma · momo dumplings</span>
-                  </figcaption>
-                </figure>
-              </div>
+              <h2 className="section-title">Real results from real learners</h2>
+              {testimonials.length === 0 ? (
+                <p className="courses-empty">Be the first to share your experience!</p>
+              ) : (
+                <div className="testimonials-grid">
+                  {testimonials.map((t) => (
+                    <div className="testimonial-card" key={t._id}>
+                      <span className="testimonial-stars">{'★'.repeat(t.rating)}</span>
+                      <p className="testimonial-text">"{t.text}"</p>
+                      <div className="testimonial-person">
+                        {t.photo ? (
+                          <img className="testimonial-photo" src={`http://localhost:5001${t.photo}`} alt={t.name} />
+                        ) : (
+                          <span className="testimonial-photo-placeholder">{t.name.charAt(0)}</span>
+                        )}
+                        <span className="testimonial-name">{t.name}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {user && (
+                <div className="testimonials-cta">
+                  <button className="btn-primary" onClick={() => setShowTestimonial(true)}>
+                    Share your experience
+                  </button>
+                </div>
+              )}
             </div>
           </section>
 
@@ -488,7 +541,26 @@ function App() {
               <button className="logo" onClick={goHome}>
                 Bhasha<span>Hub</span>
               </button>
-              <p className="footer-tag">语言 · भाषा — two languages, one journey</p>
+              <p className="footer-tag">语言 · भाষा — two languages, one journey</p>
+
+              {footerBlogs.length > 0 && (
+                <div className="footer-blog">
+                  <h3>From the blog</h3>
+                  <div className="footer-blog-list">
+                    {footerBlogs.map((b) => (
+                      <button
+                        className="footer-blog-item"
+                        key={b._id}
+                        onClick={() => { goHome(); setShowBlog(true); }}
+                      >
+                        <span className="footer-blog-title">{b.title}</span>
+                        <span className="footer-blog-date">{new Date(b.createdAt).toLocaleDateString()}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <p className="status">
                 {serverOk === null && <span>Checking server...</span>}
                 {serverOk === true && (
