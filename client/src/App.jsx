@@ -165,7 +165,7 @@ function App() {
       <header>
         <div className="container header-row">
           <button className="logo" onClick={() => { setMobileMenuOpen(false); goHome(); }}>
-            Bhasha<span>Hub</span>
+            Learn Chinese with <span>Anil</span>
           </button>
 
           <button className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Menu">
@@ -281,16 +281,15 @@ function App() {
           <section className="hero">
             <div className="container hero-grid">
               <div className="hero-text">
-                <p className="eyebrow">Chinese · Nepali</p>
+                <p className="eyebrow">Be able to speak Chinese in three months!</p>
                 <h1>
                   {user
                     ? `Welcome back, ${user.name}`
-                    : 'Learn a language the way a teacher would show you'}
+                    : 'Learn a language, Learn a skill'}
                 </h1>
                 <p className="hero-lead">
-                  Structured lessons built by a real language teacher — script,
-                  pronunciation, and vocabulary that build on each other, one
-                  small step at a time.
+                  Structured lessons from the very basics of Chinese. Includes PinYin, Tones,
+                  Pronunciation, and Vocabulary.
                 </p>
                 <div className="hero-actions">
                   {!user && (
@@ -357,23 +356,23 @@ function App() {
                 <span className="feature-glyph zh">字</span>
                 <h3>Read the script</h3>
                 <p>
-                  Start from zero with Pinyin and Devanagari — every character
-                  introduced with pronunciation you can actually say.
+                  Start from zero with Pinyin. Every Chinese Character
+                  introduced with pronunciation.
                 </p>
               </div>
               <div className="feature">
                 <span className="feature-glyph ne">听</span>
                 <h3>Hear it spoken</h3>
                 <p>
-                  Native audio on every word and phrase, recorded clearly —
-                  listen, repeat, and compare until it sticks.
+                  Native audio on every word and phrase, recorded clearly
+                  listen, repeat, and compare the sound with yours.
                 </p>
               </div>
               <div className="feature">
                 <span className="feature-glyph zh">步</span>
                 <h3>Progress step by step</h3>
                 <p>
-                  Lessons build on each other like a real course — track what
+                  Lessons build on real courses! Track what
                   you've mastered and what comes next.
                 </p>
               </div>
@@ -454,7 +453,11 @@ function App() {
                       <div
                         className={`course-card ${locked ? 'card-locked' : ''}`}
                         key={c._id}
-                        onClick={() => { if (!locked) setActiveCourse(c); }}
+                        onClick={() => {
+                          if (locked) return;
+                          if (!user) { setAuthView('login'); setShowLogin(true); return; }
+                          setActiveCourse(c);
+                        }}
                       >
                         {c.image ? (
                           <img className="course-card-img" src={`http://localhost:5001${c.image}`} alt={c.title} />

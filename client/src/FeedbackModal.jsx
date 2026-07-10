@@ -33,8 +33,6 @@ function FeedbackModal({ user, onClose }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="login-card" onClick={(e) => e.stopPropagation()} style={{ position: 'relative' }}>
-        <button className="modal-close" onClick={onClose} aria-label="Close">✕</button>
-
         {sent ? (
           <>
             <h1>Thank you! 🙏</h1>

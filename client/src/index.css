@@ -2140,3 +2140,152 @@ header .container {
   font-family: 'Fraunces', serif;
   margin: 8px 0;
 }
+
+/* ---------- Nav bar polish ---------- */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(250, 246, 236, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: box-shadow 0.3s ease;
+}
+
+header:hover {
+  box-shadow: 0 2px 16px rgba(42, 35, 32, 0.06);
+}
+
+.logo {
+  transition: transform 0.2s ease;
+}
+
+.logo:hover {
+  transform: scale(1.04);
+}
+
+/* Animated underline on nav links */
+.main-nav .nav-link {
+  position: relative;
+  padding: 6px 2px;
+  transition: color 0.2s ease;
+}
+
+.main-nav .nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--seal);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.28s ease;
+}
+
+.main-nav .nav-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Sign-in button gets a fill animation */
+.nav-btn {
+  position: relative;
+  overflow: hidden;
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.nav-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--seal);
+  transform: translateY(100%);
+  transition: transform 0.25s ease;
+  z-index: -1;
+}
+
+.nav-btn:hover {
+  color: #e6b4b4;
+  border-color: var(--seal);
+}
+
+.nav-btn:hover::before {
+  transform: translateY(0);
+}
+
+/* User menu trigger polish */
+.user-menu-trigger {
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.user-menu-trigger:hover {
+  background: var(--rice);
+}
+
+.user-menu-trigger .caret {
+  transition: transform 0.2s ease;
+}
+
+/* Dropdown slide-in */
+.user-menu-dropdown {
+  animation: dropdownIn 0.18s ease;
+}
+
+@keyframes dropdownIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Dialogue line image (admin) ---------- */
+.line-image-preview {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+}
+
+/* ---------- Dialogue line block (student) ---------- */
+.dialogue-line-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 14px 0;
+  border-bottom: 1px dashed var(--line);
+}
+
+.dialogue-line-block:last-child {
+  border-bottom: none;
+}
+
+.dialogue-line-image {
+  max-width: 100%;
+  width: 320px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+}
+
+.dialogue-line-audio {
+  width: 320px;
+  max-width: 100%;
+  height: 36px;
+}
+
+.dialogue-line-caption {
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.dialogue-main-image {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  margin-bottom: 16px;
+  display: block;
+}

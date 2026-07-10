@@ -15,6 +15,7 @@ function LessonManager({ course, onBack }) {
   const [lessonTitle, setLessonTitle] = useState('');
   const [editingLessonId, setEditingLessonId] = useState(null);
   const [lessonDialogue, setLessonDialogue] = useState('');
+  const [dialogueImage, setDialogueImage] = useState('');
   const [dialogueLines, setDialogueLines] = useState([]);
 
   // word form (create or edit)
@@ -47,6 +48,7 @@ function LessonManager({ course, onBack }) {
     setEditingLessonId(null);
     setLessonTitle('');
     setLessonDialogue('');
+    setDialogueImage('');
     setDialogueLines([]);
   };
 
@@ -62,8 +64,8 @@ function LessonManager({ course, onBack }) {
         headers: jsonHeaders,
         body: JSON.stringify(
           isEditing
-            ? { title: lessonTitle, dialogue: lessonDialogue, dialogueLines }
-            : { course: course._id, title: lessonTitle, dialogue: lessonDialogue, dialogueLines, order: lessons.length + 1, published: true }
+            ? { title: lessonTitle, dialogue: lessonDialogue, dialogueImage, dialogueLines }
+            : { course: course._id, title: lessonTitle, dialogue: lessonDialogue, dialogueImage, dialogueLines, order: lessons.length + 1, published: true }
         ),
       }
     );
@@ -80,10 +82,26 @@ function LessonManager({ course, onBack }) {
     setEditingLessonId(lesson._id);
     setLessonTitle(lesson.title);
     setLessonDialogue(lesson.dialogue || '');
+    setDialogueImage(lesson.dialogueImage || '');
     setDialogueLines(lesson.dialogueLines || []);
   };
 
-  // ---------- dialogue lines ----------
+  // ---------- dialogue ----------
+  const uploadDialogueImage = async (file) => {
+    if (!file) return;
+    setError('');
+    const fd = new FormData();
+    fd.append('file', file);
+    try {
+      const res = await fetch(`${API}/upload`, { method: 'POST', headers: authHeaders, body: fd });
+      const data = await res.json();
+      if (!res.ok) return setError(data.error || 'Upload failed');
+      setDialogueImage(data.url);
+    } catch {
+      setError('Could not reach the server');
+    }
+  };
+
   const addDialogueLine = () => {
     setDialogueLines((prev) => [...prev, { text: '', audioUrl: '' }]);
   };
@@ -102,11 +120,7 @@ function LessonManager({ course, onBack }) {
     const fd = new FormData();
     fd.append('file', file);
     try {
-      const res = await fetch(`${API}/upload`, {
-        method: 'POST',
-        headers: authHeaders,
-        body: fd,
-      });
+      const res = await fetch(`${API}/upload`, { method: 'POST', headers: authHeaders, body: fd });
       const data = await res.json();
       if (!res.ok) return setError(data.error || 'Upload failed');
       setDialogueLines((prev) =>
@@ -369,6 +383,27 @@ function LessonManager({ course, onBack }) {
 
         <div className="dialogue-lines-editor">
           <div className="dialogue-lines-head">
+            <strong>Conversation image (one for the whole dialogue)</strong>
+          </div>
+          {dialogueImage ? (
+            <div className="dialogue-image-preview-wrap">
+              <img src={`${SERVER}${dialogueImage}`} alt="dialogue" className="dialogue-image-admin" />
+              <label className="pill pill-draft upload-label">
+                Change image
+                <input type="file" accept="image/*" hidden
+                  onChange={(e) => e.target.files[0] && uploadDialogueImage(e.target.files[0])} />
+              </label>
+              <button className="row-delete" type="button" onClick={() => setDialogueImage('')}>Remove image</button>
+            </div>
+          ) : (
+            <label className="pill pill-live upload-label">
+              + Add dialogue image
+              <input type="file" accept="image/*" hidden
+                onChange={(e) => e.target.files[0] && uploadDialogueImage(e.target.files[0])} />
+            </label>
+          )}
+
+          <div className="dialogue-lines-head" style={{ marginTop: 20 }}>
             <strong>Conversation lines (with audio)</strong>
             <button className="nav-btn" onClick={addDialogueLine} type="button">+ Add line</button>
           </div>
@@ -384,7 +419,7 @@ function LessonManager({ course, onBack }) {
                 <>
                   <audio controls src={`${SERVER}${line.audioUrl}`} className="row-audio" />
                   <label className="pill pill-draft upload-label">
-                    Replace
+                    Replace audio
                     <input type="file" accept="audio/*" hidden
                       onChange={(e) => e.target.files[0] && uploadLineAudio(i, e.target.files[0])} />
                   </label>

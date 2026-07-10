@@ -133,30 +133,28 @@ function CoursePage({ course, onBack, user }) {
         </button>
         <p className="eyebrow">Lesson {activeLesson.order}</p>
         <h1 className="section-title">{activeLesson.title}</h1>
-       {activeLesson.dialogueLines && activeLesson.dialogueLines.length > 0 ? (
+
+        {(activeLesson.dialogueImage || (activeLesson.dialogueLines && activeLesson.dialogueLines.length > 0)) && (
           <div className="lesson-dialogue">
             <h3 className="dialogue-heading">💬 Conversation</h3>
-            {activeLesson.dialogueLines.map((line, i) => (
-              <div className="dialogue-line" key={i}>
+            {activeLesson.dialogueImage && (
+              <img
+                src={`${SERVER}${activeLesson.dialogueImage}`}
+                alt=""
+                className="dialogue-main-image"
+              />
+            )}
+            {activeLesson.dialogueLines && activeLesson.dialogueLines.map((line, i) => (
+              <div className="dialogue-line-block" key={i}>
                 {line.audioUrl && (
-                  <button
-                    className="play-btn dialogue-play"
-                    onClick={() => new Audio(`${SERVER}${line.audioUrl}`).play()}
-                    title="Play this line"
-                  >
-                    ▶
-                  </button>
+                  <audio controls src={`${SERVER}${line.audioUrl}`} className="dialogue-line-audio" />
                 )}
-                <span className="dialogue-line-text">{line.text}</span>
+                {line.text && <p className="dialogue-line-caption">{line.text}</p>}
               </div>
             ))}
           </div>
-        ) : activeLesson.dialogue ? (
-          <div className="lesson-dialogue">
-            <h3 className="dialogue-heading">💬 Conversation</h3>
-            <pre className="dialogue-text">{activeLesson.dialogue}</pre>
-          </div>
-        ) : null}
+        )}
+
         <p className="lesson-count">{words.length} words</p>
 
         {user && (

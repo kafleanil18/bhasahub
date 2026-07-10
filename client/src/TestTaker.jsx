@@ -6,7 +6,7 @@ const SERVER = 'http://localhost:5001';
 function TestTaker({ testId, onBack }) {
   const [test, setTest] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [answers, setAnswers] = useState({}); // { questionIndex: selectedOptionIndex }
+  const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
@@ -41,7 +41,7 @@ function TestTaker({ testId, onBack }) {
   if (loading) {
     return (
       <section className="course-page container">
-        <button className="back-btn" onClick={onBack}>← Back to tests</button>
+        <button className="back-btn" onClick={onBack}>Back to tests</button>
         <p className="courses-empty">Loading test...</p>
       </section>
     );
@@ -50,4 +50,92 @@ function TestTaker({ testId, onBack }) {
   if (!test || !test._id) {
     return (
       <section className="course-page container">
-        <button className="back-btn" onClick={onBack}>←
+        <button className="back-btn" onClick={onBack}>Back to tests</button>
+        <p className="courses-empty">Test not found.</p>
+      </section>
+    );
+  }
+
+  const total = test.questions.length;
+  const percent = total ? Math.round((score / total) * 100) : 0;
+
+  return (
+    <section className="course-page container">
+      <button className="back-btn" onClick={onBack}>Back to tests</button>
+      <p className="eyebrow">{test.level}</p>
+      <h1 className="section-title">{test.title}</h1>
+      {test.description && <p className="course-desc">{test.description}</p>}
+
+      {submitted && (
+        <div className="test-result">
+          <span className="quiz-result-emoji">{percent >= 60 ? '🎉' : '📚'}</span>
+          <h2>You scored {score} / {total}</h2>
+          <p className="quiz-result-percent">{percent}%</p>
+          <button className="nav-btn" onClick={retake}>Retake test</button>
+        </div>
+      )}
+
+      {test.audioUrl && (
+        <div className="test-media">
+          <h3 className="dialogue-heading">🎧 Listening</h3>
+          <audio controls src={`${SERVER}${test.audioUrl}`} style={{ width: '100%' }} />
+        </div>
+      )}
+
+      {test.pdfUrl && (
+        <div className="test-media">
+          <h3 className="dialogue-heading">📄 Question paper</h3>
+          <iframe
+            src={`${SERVER}${test.pdfUrl}`}
+            title="Question paper"
+            className="test-pdf"
+          ></iframe>
+        </div>
+      )}
+
+      <div className="test-questions">
+        <h3 className="dialogue-heading">✏️ Answers</h3>
+        {test.questions.map((q, qi) => {
+          const chosen = answers[qi];
+          return (
+            <div className="test-question" key={qi}>
+              <p className="test-question-text">
+                <strong>Q{qi + 1}.</strong> {q.questionText}
+              </p>
+              <div className="test-options">
+                {q.options.map((opt, oi) => {
+                  let cls = 'test-option';
+                  if (submitted) {
+                    if (oi === q.correctIndex) cls += ' correct';
+                    else if (chosen === oi) cls += ' wrong';
+                  } else if (chosen === oi) {
+                    cls += ' selected';
+                  }
+                  return (
+                    <button
+                      key={oi}
+                      className={cls}
+                      onClick={() => selectAnswer(qi, oi)}
+                      disabled={submitted}
+                    >
+                      <span className="option-letter">{String.fromCharCode(65 + oi)}</span>
+                      {opt}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {!submitted && total > 0 && (
+        <button className="btn-primary" onClick={submit} style={{ marginTop: 24 }}>
+          Submit test
+        </button>
+      )}
+    </section>
+  );
+}
+
+export default TestTaker;
