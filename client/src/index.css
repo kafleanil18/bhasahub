@@ -2454,3 +2454,86 @@ a.btn-primary {
   text-align: center;
   margin-top: 32px;
 }
+.footer-social {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(250, 246, 236, 0.08);
+  color: rgba(250, 246, 236, 0.75);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.social-link:hover {
+  background: var(--seal);
+  color: #fff;
+  transform: translateY(-3px);
+}
+
+/* ---------- Team section ---------- */
+.team-section {
+  padding: 64px 0;
+  background: var(--paper);
+}
+
+.team-title {
+  text-align: center;
+}
+
+.team-intro {
+  text-align: center;
+  color: var(--mist);
+  font-size: 16px;
+  margin: -12px auto 40px;
+  max-width: 520px;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 28px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.team-card {
+  text-align: center;
+}
+
+.team-photo {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 28px rgba(42, 35, 32, 0.10);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.team-card:hover .team-photo {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 36px rgba(42, 35, 32, 0.16);
+}
+
+.team-name {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-top: 16px;
+}
+
+.team-role {
+  color: var(--mist);
+  font-size: 14px;
+  margin-top: 4px;
+}
