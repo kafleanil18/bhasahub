@@ -7,6 +7,7 @@ const courseSchema = new mongoose.Schema(
     level: { type: String, default: 'Beginner' },
     description: { type: String, default: '' },
     glyph: { type: String, default: '' },
+    image: { type: String, default: '' },
     published: { type: Boolean, default: false },
   },
   { timestamps: true }

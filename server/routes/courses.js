@@ -19,7 +19,8 @@ router.get('/all', requireAuth, requireAdmin, async (req, res) => {
   try {
     const courses = await Course.find().sort({ createdAt: 1 });
     res.json(courses);
-  } catch {
+ } catch (err) {
+    console.error('COURSES ERROR:', err);
     res.status(500).json({ error: 'Could not load courses' });
   }
 });

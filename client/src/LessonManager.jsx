@@ -14,12 +14,15 @@ function LessonManager({ course, onBack }) {
   // lesson form (create or edit)
   const [lessonTitle, setLessonTitle] = useState('');
   const [editingLessonId, setEditingLessonId] = useState(null);
+  const [lessonDialogue, setLessonDialogue] = useState('');
+  const [dialogueLines, setDialogueLines] = useState([]);
 
   // word form (create or edit)
   const [word, setWord] = useState('');
   const [pronunciation, setPronunciation] = useState('');
   const [meaning, setMeaning] = useState('');
   const [editingWordId, setEditingWordId] = useState(null);
+  const [dragIndex, setDragIndex] = useState(null);
 
   const authHeaders = { Authorization: `Bearer ${token}` };
   const jsonHeaders = { 'Content-Type': 'application/json', ...authHeaders };
@@ -43,6 +46,8 @@ function LessonManager({ course, onBack }) {
   const resetLessonForm = () => {
     setEditingLessonId(null);
     setLessonTitle('');
+    setLessonDialogue('');
+    setDialogueLines([]);
   };
 
   const saveLesson = async () => {
@@ -57,8 +62,8 @@ function LessonManager({ course, onBack }) {
         headers: jsonHeaders,
         body: JSON.stringify(
           isEditing
-            ? { title: lessonTitle }
-            : { course: course._id, title: lessonTitle, order: lessons.length + 1, published: true }
+            ? { title: lessonTitle, dialogue: lessonDialogue, dialogueLines }
+            : { course: course._id, title: lessonTitle, dialogue: lessonDialogue, dialogueLines, order: lessons.length + 1, published: true }
         ),
       }
     );
@@ -74,6 +79,42 @@ function LessonManager({ course, onBack }) {
   const startEditLesson = (lesson) => {
     setEditingLessonId(lesson._id);
     setLessonTitle(lesson.title);
+    setLessonDialogue(lesson.dialogue || '');
+    setDialogueLines(lesson.dialogueLines || []);
+  };
+
+  // ---------- dialogue lines ----------
+  const addDialogueLine = () => {
+    setDialogueLines((prev) => [...prev, { text: '', audioUrl: '' }]);
+  };
+
+  const updateLineText = (index, text) => {
+    setDialogueLines((prev) => prev.map((l, i) => (i === index ? { ...l, text } : l)));
+  };
+
+  const removeDialogueLine = (index) => {
+    setDialogueLines((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const uploadLineAudio = async (index, file) => {
+    if (!file) return;
+    setError('');
+    const fd = new FormData();
+    fd.append('file', file);
+    try {
+      const res = await fetch(`${API}/upload`, {
+        method: 'POST',
+        headers: authHeaders,
+        body: fd,
+      });
+      const data = await res.json();
+      if (!res.ok) return setError(data.error || 'Upload failed');
+      setDialogueLines((prev) =>
+        prev.map((l, i) => (i === index ? { ...l, audioUrl: data.url } : l))
+      );
+    } catch {
+      setError('Could not reach the server');
+    }
   };
 
   const deleteLesson = async (id) => {
@@ -151,6 +192,37 @@ function LessonManager({ course, onBack }) {
     openLesson(activeLesson);
   };
 
+  // ---------- drag to reorder ----------
+  const handleDragStart = (index) => {
+    setDragIndex(index);
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+    if (dragIndex === null || dragIndex === index) return;
+    setWords((prev) => {
+      const updated = [...prev];
+      const [moved] = updated.splice(dragIndex, 1);
+      updated.splice(index, 0, moved);
+      return updated;
+    });
+    setDragIndex(index);
+  };
+
+  const handleDrop = async () => {
+    setDragIndex(null);
+    const orderedIds = words.map((w) => w._id);
+    try {
+      await fetch(`${API}/lessons/${activeLesson._id}/vocabulary/reorder`, {
+        method: 'PUT',
+        headers: jsonHeaders,
+        body: JSON.stringify({ orderedIds }),
+      });
+    } catch {
+      setError('Could not save the new order');
+    }
+  };
+
   const uploadAudio = async (vocabItem, file) => {
     setError('');
     const formData = new FormData();
@@ -213,8 +285,17 @@ function LessonManager({ course, onBack }) {
 
         <div className="admin-list">
           <h2>Words ({words.length})</h2>
-          {words.map((w) => (
-            <div className="admin-row" key={w._id}>
+          <p className="reorder-hint">Tip: drag the ⠿ handle to reorder words.</p>
+          {words.map((w, index) => (
+            <div
+              className="admin-row draggable-row"
+              key={w._id}
+              draggable
+              onDragStart={() => handleDragStart(index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDrop={handleDrop}
+            >
+              <span className="drag-handle" title="Drag to reorder">⠿</span>
               <span className={`row-glyph ${course.language === 'chinese' ? 'zh' : 'ne'}`}>{w.word}</span>
               <div className="row-info">
                 <strong>{w.pronunciation}</strong>
@@ -245,7 +326,7 @@ function LessonManager({ course, onBack }) {
     );
   }
 
-  // ---------- LESSON VIEW (styled like CoursePage) ----------
+  // ---------- LESSON VIEW ----------
   return (
     <section className="course-page container">
       <button className="back-btn" onClick={onBack}>← Back to courses</button>
@@ -264,19 +345,61 @@ function LessonManager({ course, onBack }) {
       {error && <p className="login-error">{error}</p>}
 
       {/* add / edit lesson */}
-      <div className="lesson-add-bar">
-        <input
-          value={lessonTitle}
-          onChange={(e) => setLessonTitle(e.target.value)}
-          placeholder={editingLessonId ? 'Edit lesson title' : 'New lesson title'}
-          onKeyDown={(e) => e.key === 'Enter' && saveLesson()}
+      <div className="lesson-add-form">
+        <div className="lesson-add-bar">
+          <input
+            value={lessonTitle}
+            onChange={(e) => setLessonTitle(e.target.value)}
+            placeholder={editingLessonId ? 'Edit lesson title' : 'New lesson title'}
+          />
+          <button className="btn-primary" onClick={saveLesson}>
+            {editingLessonId ? 'Save' : 'Add lesson'}
+          </button>
+          {editingLessonId && (
+            <button className="nav-btn" onClick={resetLessonForm}>Cancel</button>
+          )}
+        </div>
+        <textarea
+          className="dialogue-input"
+          rows="4"
+          value={lessonDialogue}
+          onChange={(e) => setLessonDialogue(e.target.value)}
+          placeholder="Optional plain dialogue text (or use the per-line editor below for audio)."
         />
-        <button className="btn-primary" onClick={saveLesson}>
-          {editingLessonId ? 'Save' : 'Add lesson'}
-        </button>
-        {editingLessonId && (
-          <button className="nav-btn" onClick={resetLessonForm}>Cancel</button>
-        )}
+
+        <div className="dialogue-lines-editor">
+          <div className="dialogue-lines-head">
+            <strong>Conversation lines (with audio)</strong>
+            <button className="nav-btn" onClick={addDialogueLine} type="button">+ Add line</button>
+          </div>
+          {dialogueLines.map((line, i) => (
+            <div className="dialogue-line-row" key={i}>
+              <input
+                className="dialogue-line-input"
+                value={line.text}
+                onChange={(e) => updateLineText(i, e.target.value)}
+                placeholder="A: 你好！ (Nǐ hǎo!) — Hello!"
+              />
+              {line.audioUrl ? (
+                <>
+                  <audio controls src={`${SERVER}${line.audioUrl}`} className="row-audio" />
+                  <label className="pill pill-draft upload-label">
+                    Replace
+                    <input type="file" accept="audio/*" hidden
+                      onChange={(e) => e.target.files[0] && uploadLineAudio(i, e.target.files[0])} />
+                  </label>
+                </>
+              ) : (
+                <label className="pill pill-live upload-label">
+                  + Audio
+                  <input type="file" accept="audio/*" hidden
+                    onChange={(e) => e.target.files[0] && uploadLineAudio(i, e.target.files[0])} />
+                </label>
+              )}
+              <button className="row-delete" onClick={() => removeDialogueLine(i)} type="button">Remove</button>
+            </div>
+          ))}
+        </div>
       </div>
 
       <h2 className="lessons-heading">Lessons ({lessons.length})</h2>

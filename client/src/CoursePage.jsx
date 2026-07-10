@@ -84,7 +84,6 @@ function CoursePage({ course, onBack, user }) {
   };
 
   const recordAndCompare = async (button) => {
-    // ask for mic access
     let stream;
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -98,15 +97,14 @@ function CoursePage({ course, onBack, user }) {
     recorder.ondataavailable = (e) => chunks.push(e.data);
 
     recorder.onstop = () => {
-      stream.getTracks().forEach((t) => t.stop()); // release the mic
+      stream.getTracks().forEach((t) => t.stop());
       const blob = new Blob(chunks, { type: 'audio/webm' });
       const url = URL.createObjectURL(blob);
-      new Audio(url).play(); // play the student's recording back immediately
+      new Audio(url).play();
       button.textContent = '🎤 Record';
       button.disabled = false;
     };
 
-    // record for 2 seconds, then auto-stop and play back
     recorder.start();
     button.textContent = '● Recording...';
     button.disabled = true;
@@ -135,6 +133,30 @@ function CoursePage({ course, onBack, user }) {
         </button>
         <p className="eyebrow">Lesson {activeLesson.order}</p>
         <h1 className="section-title">{activeLesson.title}</h1>
+       {activeLesson.dialogueLines && activeLesson.dialogueLines.length > 0 ? (
+          <div className="lesson-dialogue">
+            <h3 className="dialogue-heading">💬 Conversation</h3>
+            {activeLesson.dialogueLines.map((line, i) => (
+              <div className="dialogue-line" key={i}>
+                {line.audioUrl && (
+                  <button
+                    className="play-btn dialogue-play"
+                    onClick={() => new Audio(`${SERVER}${line.audioUrl}`).play()}
+                    title="Play this line"
+                  >
+                    ▶
+                  </button>
+                )}
+                <span className="dialogue-line-text">{line.text}</span>
+              </div>
+            ))}
+          </div>
+        ) : activeLesson.dialogue ? (
+          <div className="lesson-dialogue">
+            <h3 className="dialogue-heading">💬 Conversation</h3>
+            <pre className="dialogue-text">{activeLesson.dialogue}</pre>
+          </div>
+        ) : null}
         <p className="lesson-count">{words.length} words</p>
 
         {user && (

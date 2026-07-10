@@ -18,18 +18,17 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    // unique name: timestamp + original extension (e.g. 1720099200000.mp3)
     const ext = path.extname(file.originalname).toLowerCase();
     cb(null, `${Date.now()}${ext}`);
   },
 });
 
-// Only allow audio and image files, max 10 MB
+// Allow audio, image, and PDF files, max 25 MB
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 },
+  limits: { fileSize: 25 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const allowed = ['.mp3', '.m4a', '.wav', '.ogg', '.jpg', '.jpeg', '.png', '.webp'];
+    const allowed = ['.mp3', '.m4a', '.wav', '.ogg', '.jpg', '.jpeg', '.png', '.webp', '.pdf'];
     const ext = path.extname(file.originalname).toLowerCase();
     if (allowed.includes(ext)) {
       cb(null, true);

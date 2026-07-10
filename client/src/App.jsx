@@ -7,6 +7,13 @@ import LessonManager from './LessonManager';
 import Dashboard from './Dashboard';
 import LanguageChoice from './LanguageChoice';
 import NepaliPage from './NepaliPage';
+import PinyinModal from './PinyinModal';
+import ChangePassword from './ChangePassword';
+import FeedbackModal from './FeedbackModal';
+import FeedbackInbox from './FeedbackInbox';
+import TestManager from './TestManager';
+import TestList from './TestList';
+import TestTaker from './TestTaker';
 
 function App() {
   const wotdList = [
@@ -26,7 +33,7 @@ function App() {
   );
   const wotd = wotdList[dayOfYear % wotdList.length];
 
-  const [language, setLanguage] = useState(null); // null = choice screen
+  const [language, setLanguage] = useState(null);
   const [serverOk, setServerOk] = useState(null);
   const [user, setUser] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
@@ -39,6 +46,14 @@ function App() {
   const [showDashboard, setShowDashboard] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [levelFilter, setLevelFilter] = useState('all');
+  const [showPinyin, setShowPinyin] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [showInbox, setShowInbox] = useState(false);
+  const [showTests, setShowTests] = useState(false);
+  const [showTestManager, setShowTestManager] = useState(false);
+  const [activeTestId, setActiveTestId] = useState(null);
 
   const loadCourses = () => {
     fetch('http://localhost:5001/api/courses')
@@ -80,6 +95,10 @@ function App() {
     setShowAdmin(false);
     setManageCourse(null);
     setShowDashboard(false);
+    setShowInbox(false);
+    setShowTests(false);
+    setShowTestManager(false);
+    setActiveTestId(null);
     setAccess({});
   };
 
@@ -89,10 +108,28 @@ function App() {
     setActiveCourse(null);
     setManageCourse(null);
     setShowDashboard(false);
+    setShowInbox(false);
+    setShowTests(false);
+    setShowTestManager(false);
+    setActiveTestId(null);
     loadCourses();
     loadAccess();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const getHskLevel = (course) => {
+    const lvl = (course.level || '').toLowerCase();
+    if (lvl.includes('1')) return 'HSK 1';
+    if (lvl.includes('2')) return 'HSK 2';
+    if (lvl.includes('3')) return 'HSK 3';
+    if (lvl.includes('4')) return 'HSK 4';
+    return 'Other';
+  };
+
+  const hskLevels = ['all', ...Array.from(new Set(courses.map(getHskLevel)))];
+  const filteredCourses = levelFilter === 'all'
+    ? courses
+    : courses.filter((c) => getHskLevel(c) === levelFilter);
 
   // ---------- Language choice screen ----------
   if (!language) {
@@ -118,9 +155,13 @@ function App() {
     );
   }
 
-  // ---------- Chinese app (the full site) ----------
+  // ---------- Chinese app ----------
   return (
     <>
+      {showPinyin && <PinyinModal onClose={() => setShowPinyin(false)} />}
+      {showChangePassword && <ChangePassword onClose={() => setShowChangePassword(false)} />}
+      {showFeedback && <FeedbackModal user={user} onClose={() => setShowFeedback(false)} />}
+
       <header>
         <div className="container header-row">
           <button className="logo" onClick={() => { setMobileMenuOpen(false); goHome(); }}>
@@ -133,6 +174,12 @@ function App() {
 
           <nav className={`main-nav ${mobileMenuOpen ? 'open' : ''}`}>
             <a className="nav-link" href="#courses" onClick={() => { setMobileMenuOpen(false); goHome(); }}>Courses</a>
+
+            <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowPinyin(true); }}>Pinyin</button>
+
+            <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowTests(true); }}>Mock Tests</button>
+
+            <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowFeedback(true); }}>Message us</button>
 
             <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setLanguage(null); }}>Switch language</button>
 
@@ -148,6 +195,18 @@ function App() {
               </button>
             )}
 
+            {user && user.role === 'admin' && (
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowTestManager(true); }}>
+                Manage tests
+              </button>
+            )}
+
+            {user && user.role === 'admin' && (
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); setShowInbox(true); }}>
+                Feedback
+              </button>
+            )}
+
             {user ? (
               <div className="user-menu">
                 <button className="user-menu-trigger" onClick={() => setShowUserMenu(!showUserMenu)}>
@@ -155,6 +214,9 @@ function App() {
                 </button>
                 {showUserMenu && (
                   <div className="user-menu-dropdown">
+                    <button onClick={() => { setShowUserMenu(false); setMobileMenuOpen(false); setShowChangePassword(true); }}>
+                      Change password
+                    </button>
                     <button onClick={() => { setShowUserMenu(false); setMobileMenuOpen(false); handleLogout(); }}>
                       Log out
                     </button>
@@ -168,8 +230,16 @@ function App() {
         </div>
       </header>
 
-      {user && user.role === 'admin' && manageCourse ? (
+      {user && user.role === 'admin' && showTestManager ? (
+        <TestManager onBack={goHome} />
+      ) : activeTestId ? (
+        <TestTaker testId={activeTestId} onBack={() => { setActiveTestId(null); setShowTests(true); }} />
+      ) : showTests ? (
+        <TestList onOpenTest={(id) => { setShowTests(false); setActiveTestId(id); }} onBack={goHome} />
+      ) : user && user.role === 'admin' && manageCourse ? (
         <LessonManager course={manageCourse} onBack={() => setManageCourse(null)} />
+      ) : user && user.role === 'admin' && showInbox ? (
+        <FeedbackInbox onBack={goHome} />
       ) : user && user.role === 'admin' && showAdmin ? (
         <AdminPanel onBack={goHome} onManageLessons={(c) => setManageCourse(c)} />
       ) : user && showDashboard ? (
@@ -218,7 +288,7 @@ function App() {
                     : 'Learn a language the way a teacher would show you'}
                 </h1>
                 <p className="hero-lead">
-                  Structured lessons built by a professional language teacher. Learn script,
+                  Structured lessons built by a real language teacher — script,
                   pronunciation, and vocabulary that build on each other, one
                   small step at a time.
                 </p>
@@ -360,31 +430,48 @@ function App() {
           <section className="courses-section" id="courses">
             <div className="container">
               <h2 className="section-title">Courses</h2>
-              {courses.length === 0 ? (
-                <p className="courses-empty">
-                  Courses are coming soon — check back shortly!
-                </p>
+
+              <div className="level-pills">
+                {hskLevels.map((lvl, i) => (
+                  <button
+                    key={lvl}
+                    className={`level-pill pill-color-${i % 4} ${levelFilter === lvl ? 'active' : ''}`}
+                    onClick={() => setLevelFilter(lvl)}
+                  >
+                    {lvl === 'all' ? 'All Courses' : lvl}
+                  </button>
+                ))}
+              </div>
+
+              {filteredCourses.length === 0 ? (
+                <p className="courses-empty">No courses in this level yet.</p>
               ) : (
-                <div className="courses">
-                  {courses.map((c) => {
+                <div className="course-cards">
+                  {filteredCourses.map((c) => {
                     const a = access[c._id];
                     const locked = user && a && !a.unlocked;
                     return (
                       <div
-                        className={`card ${locked ? 'card-locked' : ''}`}
+                        className={`course-card ${locked ? 'card-locked' : ''}`}
                         key={c._id}
                         onClick={() => { if (!locked) setActiveCourse(c); }}
                       >
-                        <span className={`glyph ${c.language === 'chinese' ? 'zh' : 'ne'}`}>
-                          {c.glyph}
-                        </span>
-                        <h2>{c.title}</h2>
-                        <p>{c.description}</p>
-                        {locked ? (
-                          <span className="tag tag-locked">🔒 Finish the previous course first</span>
+                        {c.image ? (
+                          <img className="course-card-img" src={`http://localhost:5001${c.image}`} alt={c.title} />
                         ) : (
-                          <span className="tag">{c.level}</span>
+                          <div className="course-card-glyph">
+                            <span className={c.language === 'chinese' ? 'zh' : 'ne'}>{c.glyph}</span>
+                          </div>
                         )}
+                        <div className="course-card-body">
+                          <h3 className="course-card-title">{c.title}</h3>
+                          <p className="course-card-desc">{c.description}</p>
+                          {locked ? (
+                            <span className="tag tag-locked">🔒 Finish previous course</span>
+                          ) : (
+                            <span className="tag">{c.level}</span>
+                          )}
+                        </div>
                       </div>
                     );
                   })}

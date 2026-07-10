@@ -5,12 +5,14 @@ const uploadRoutes = require('./routes/upload');
 const path = require('path');
 const enrollmentRoutes = require('./routes/enrollments');
 const progressRoutes = require('./routes/progress');
+const feedbackRoutes = require('./routes/feedback');
+const testRoutes = require('./routes/tests');
 
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const courseRoutes = require('./routes/courses');
-const lessonRoutes = require('./routes/lessons');   // ← NEW LINE 1: with the other requires
+const lessonRoutes = require('./routes/lessons');
 
 const app = express();
 app.use(cors());
@@ -19,18 +21,20 @@ app.use('/api/upload', uploadRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/enrollments', enrollmentRoutes);
 app.use('/api/progress', progressRoutes);
+app.use('/api/feedback', feedbackRoutes);
+app.use('/api/tests', testRoutes);
 
-mongoose.connect('mongodb://127.0.0.1:27017/language-lms')
+mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/language-lms')
   .then(() => console.log('✅ MongoDB connected'))
   .catch(err => console.error('❌ MongoDB error:', err));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
-app.use('/api/lessons', lessonRoutes);   // ← NEW LINE 2: with the other app.use routes
+app.use('/api/lessons', lessonRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ message: 'Language LMS API is running!' });
 });
 
-const PORT = 5001;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));

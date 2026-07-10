@@ -131,4 +131,21 @@ router.put('/vocabulary/:vocabId/audio', requireAuth, requireAdmin, async (req, 
   }
 });
 
+// PUT /api/lessons/:id/vocabulary/reorder — admin: save new word order
+router.put('/:id/vocabulary/reorder', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const { orderedIds } = req.body;
+    if (!Array.isArray(orderedIds)) {
+      return res.status(400).json({ error: 'orderedIds must be an array' });
+    }
+    await Promise.all(
+      orderedIds.map((id, index) =>
+        Vocabulary.findByIdAndUpdate(id, { order: index + 1 })
+      )
+    );
+    res.json({ message: 'Order saved' });
+  } catch {
+    res.status(500).json({ error: 'Could not save order' });
+  }
+});
 module.exports = router;

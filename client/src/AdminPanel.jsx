@@ -6,7 +6,7 @@ function AdminPanel({ onBack, onManageLessons }) {
   const [courses, setCourses] = useState([]);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
-  const [editingId, setEditingId] = useState(null); // null = creating, an id = editing
+  const [editingId, setEditingId] = useState(null);
 
   // form fields
   const [title, setTitle] = useState('');
@@ -14,6 +14,7 @@ function AdminPanel({ onBack, onManageLessons }) {
   const [level, setLevel] = useState('');
   const [description, setDescription] = useState('');
   const [glyph, setGlyph] = useState('');
+  const [image, setImage] = useState('');
   const [published, setPublished] = useState(false);
 
   const token = localStorage.getItem('token');
@@ -45,10 +46,10 @@ function AdminPanel({ onBack, onManageLessons }) {
     setLevel('');
     setDescription('');
     setGlyph('');
+    setImage('');
     setPublished(false);
   };
 
-  // fill the form with a course's details for editing
   const startEdit = (c) => {
     setEditingId(c._id);
     setTitle(c.title);
@@ -56,8 +57,31 @@ function AdminPanel({ onBack, onManageLessons }) {
     setLevel(c.level || '');
     setDescription(c.description || '');
     setGlyph(c.glyph || '');
+    setImage(c.image || '');
     setPublished(c.published);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const uploadImage = async (file) => {
+    if (!file) return;
+    setError('');
+    const fd = new FormData();
+    fd.append('file', file);
+    try {
+      const res = await fetch('http://localhost:5001/api/upload', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd,
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setImage(data.url);
+      } else {
+        setError(data.error || 'Image upload failed');
+      }
+    } catch {
+      setError('Could not reach the server');
+    }
   };
 
   const handleSave = async () => {
@@ -75,7 +99,7 @@ function AdminPanel({ onBack, onManageLessons }) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ title, language, level, description, glyph, published }),
+        body: JSON.stringify({ title, language, level, description, glyph, image, published }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -161,6 +185,22 @@ function AdminPanel({ onBack, onManageLessons }) {
             Card glyph
             <input value={glyph} onChange={(e) => setGlyph(e.target.value)} placeholder="你好 or नमस्ते" />
           </label>
+
+          <label>
+            Course image
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => uploadImage(e.target.files[0])}
+            />
+          </label>
+          {image && (
+            <img
+              src={`http://localhost:5001${image}`}
+              alt="Course preview"
+              style={{ width: '100%', borderRadius: 8, marginBottom: 12 }}
+            />
+          )}
 
           <label className="check-label">
             <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
