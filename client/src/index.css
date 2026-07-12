@@ -2331,12 +2331,10 @@ a.btn-primary {
   display: block;
 }
 
-.blog-body {
-  font-size: 16px;
-  line-height: 1.8;
-  color: var(--ink);
-  white-space: pre-wrap;
-  max-width: 680px;
+.blog-body,
+.blog-body * {
+  overflow-wrap: break-all;
+  word-break: normal;
 }
 
 /* Footer blog list */
@@ -2536,4 +2534,86 @@ a.btn-primary {
   color: var(--mist);
   font-size: 14px;
   margin-top: 4px;
+}
+/* ---------- Category tabs (course page) ---------- */
+.category-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.cat-tab {
+  padding: 8px 18px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cat-tab:hover {
+  border-color: var(--seal);
+}
+
+.cat-tab.active {
+  background: var(--seal);
+  color: #fff;
+  border-color: var(--seal);
+}
+
+/* Category select + tag (admin) */
+.category-select {
+  padding: 10px 12px;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  border: 1px solid #d8d2c4;
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.lesson-cat-tag {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mist);
+  background: var(--rice);
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-left: 8px;
+}
+.footer-link {
+  color: rgba(250, 246, 236, 0.75);
+  text-decoration: underline;
+  font-size: 14px;
+  margin: 8px 0;
+  display: inline-block;
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: #fff;
+}
+/* ---------- Blog body word wrap fix ---------- */
+.blog-body {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.blog-body * {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.blog-body pre {
+  white-space: pre-wrap;
+  word-break: break-word;
 }

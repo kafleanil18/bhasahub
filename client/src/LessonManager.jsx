@@ -17,6 +17,7 @@ function LessonManager({ course, onBack }) {
   const [lessonDialogue, setLessonDialogue] = useState('');
   const [dialogueImage, setDialogueImage] = useState('');
   const [dialogueLines, setDialogueLines] = useState([]);
+  const [lessonCategory, setLessonCategory] = useState('vocabulary');
 
   // word form (create or edit)
   const [word, setWord] = useState('');
@@ -50,6 +51,7 @@ function LessonManager({ course, onBack }) {
     setLessonDialogue('');
     setDialogueImage('');
     setDialogueLines([]);
+    setLessonCategory('vocabulary');
   };
 
   const saveLesson = async () => {
@@ -64,8 +66,8 @@ function LessonManager({ course, onBack }) {
         headers: jsonHeaders,
         body: JSON.stringify(
           isEditing
-            ? { title: lessonTitle, dialogue: lessonDialogue, dialogueImage, dialogueLines }
-            : { course: course._id, title: lessonTitle, dialogue: lessonDialogue, dialogueImage, dialogueLines, order: lessons.length + 1, published: true }
+            ? { title: lessonTitle, category: lessonCategory, dialogue: lessonDialogue, dialogueImage, dialogueLines }
+            : { course: course._id, title: lessonTitle, category: lessonCategory, dialogue: lessonDialogue, dialogueImage, dialogueLines, order: lessons.length + 1, published: true }
         ),
       }
     );
@@ -84,6 +86,7 @@ function LessonManager({ course, onBack }) {
     setLessonDialogue(lesson.dialogue || '');
     setDialogueImage(lesson.dialogueImage || '');
     setDialogueLines(lesson.dialogueLines || []);
+    setLessonCategory(lesson.category || 'vocabulary');
   };
 
   // ---------- dialogue ----------
@@ -366,6 +369,15 @@ function LessonManager({ course, onBack }) {
             onChange={(e) => setLessonTitle(e.target.value)}
             placeholder={editingLessonId ? 'Edit lesson title' : 'New lesson title'}
           />
+          <select
+            value={lessonCategory}
+            onChange={(e) => setLessonCategory(e.target.value)}
+            className="category-select"
+          >
+            <option value="vocabulary">Vocabulary</option>
+            <option value="conversation">Conversation</option>
+            <option value="grammar">Grammar</option>
+          </select>
           <button className="btn-primary" onClick={saveLesson}>
             {editingLessonId ? 'Save' : 'Add lesson'}
           </button>
@@ -445,6 +457,7 @@ function LessonManager({ course, onBack }) {
           <div className="lesson-row admin-lesson-row" key={l._id}>
             <span className="lesson-num">{l.order}</span>
             <span className="lesson-title">{l.title}</span>
+            <span className="lesson-cat-tag">{l.category || 'vocabulary'}</span>
             <button className="nav-btn" onClick={() => openLesson(l)}>Words</button>
             <button className="nav-btn" onClick={() => startEditLesson(l)}>Edit</button>
             <button

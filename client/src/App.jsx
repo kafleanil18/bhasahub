@@ -568,10 +568,13 @@ function App() {
 
          <footer className="site-footer">
             <div className="container footer-inner">
+        
               <button className="logo" onClick={goHome}>
                 Learn Chinese with <span>Anil</span>
               </button>
+              
               <p className="footer-tag">Speak Chinese ASAP!</p>
+       
 
               <div className="footer-social">
                 <a href="https://facebook.com/YOURPAGE" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="social-link">
@@ -587,6 +590,16 @@ function App() {
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zm1.78 13.02H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
                 </a>
               </div>
+              <div className="footer-links">
+  <a
+    href="https://www.hskcourse.com/tool/pinyin-chart.html"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="footer-link"
+  >
+    Pinyin Chart
+  </a>
+</div>
 
               {footerBlogs.length > 0 && (
                 <div className="footer-blog">

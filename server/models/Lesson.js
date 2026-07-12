@@ -4,6 +4,7 @@ const lessonSchema = new mongoose.Schema(
   {
     course: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
     title: { type: String, required: true },
+    category: { type: String, default: 'vocabulary' },
     dialogue: { type: String, default: '' },
     dialogueImage: { type: String, default: '' },
     dialogueLines: [

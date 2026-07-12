@@ -17,6 +17,7 @@ function CoursePage({ course, onBack, user }) {
   const [flashIndex, setFlashIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [quizMode, setQuizMode] = useState(false);
+  const [catFilter, setCatFilter] = useState('all');
 
   const loadProgress = () => {
     if (!token) return;
@@ -270,14 +271,15 @@ function CoursePage({ course, onBack, user }) {
   }
 
   // ---------- Course overview ----------
+  const visibleLessons = lessons.filter(
+    (l) => catFilter === 'all' || (l.category || 'vocabulary') === catFilter
+  );
+
   return (
     <section className="course-page container">
 
       <button className="back-btn" onClick={onBack}>← Back to courses</button>
       <div className="course-head">
-        <span className={`glyph ${course.language === 'chinese' ? 'zh' : 'ne'}`}>
-          {course.glyph}
-        </span>
         <div>
           <h1 className="section-title">{course.title}</h1>
           <p className="course-desc">{course.description}</p>
@@ -296,12 +298,20 @@ function CoursePage({ course, onBack, user }) {
       </div>
 
       <h2 className="lessons-heading">Lessons</h2>
+
+      <div className="category-tabs">
+        <button className={`cat-tab ${catFilter === 'all' ? 'active' : ''}`} onClick={() => setCatFilter('all')}>All</button>
+        <button className={`cat-tab ${catFilter === 'vocabulary' ? 'active' : ''}`} onClick={() => setCatFilter('vocabulary')}>📚 Vocabulary</button>
+        <button className={`cat-tab ${catFilter === 'conversation' ? 'active' : ''}`} onClick={() => setCatFilter('conversation')}>💬 Conversation</button>
+        <button className={`cat-tab ${catFilter === 'grammar' ? 'active' : ''}`} onClick={() => setCatFilter('grammar')}>✏️ Grammar</button>
+      </div>
+
       {loading && <p className="courses-empty">Loading lessons...</p>}
-      {!loading && lessons.length === 0 && (
-        <p className="courses-empty">Lessons coming soon!</p>
+      {!loading && visibleLessons.length === 0 && (
+        <p className="courses-empty">No lessons in this category yet.</p>
       )}
       <div className="lesson-list">
-        {lessons.map((l) => (
+        {visibleLessons.map((l) => (
           <button className="lesson-row" key={l._id} onClick={() => openLesson(l)}>
             <span className="lesson-num">{l.order}</span>
             <span className="lesson-title">{l.title}</span>
