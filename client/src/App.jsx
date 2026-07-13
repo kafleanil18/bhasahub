@@ -19,6 +19,7 @@ import BlogPage from './BlogPage';
 import TestimonialModal from './TestimonialModal';
 import TestimonialManager from './TestimonialManager';
 import SubscriptionManager from './SubscriptionManager';
+import UserManager from './UserManager';
 
 const teamMembers = [
   {
@@ -53,10 +54,6 @@ function App() {
     { zh: '吃', zhP: 'chī', ne: 'खानु', neP: 'khā·nu', meaning: 'to eat' },
     { zh: '好', zhP: 'hǎo', ne: 'राम्रो', neP: 'rām·ro', meaning: 'good' },
     { zh: '学习', zhP: 'xué xí', ne: 'सिक्नु', neP: 'sik·nu', meaning: 'to learn' },
-    {zh: '工作', zhP: 'gōng zuò', ne: 'काम', neP: 'kām', meaning: 'work'},
-    {zh: '学校', zhP: 'xué xiào', ne: 'विद्यालय', neP: 'vidyā·lay', meaning: 'school'},
-    {zh: '天气', zhP: 'tiān qì', ne: 'मौसम', neP: 'mausam', meaning: 'weather'},
-    {zh: '快乐', zhP: 'kuài lè', ne: 'खुसी', neP: 'khusi', meaning: 'happy'},
   ];
   const dayOfYear = Math.floor(
     (Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000
@@ -93,6 +90,11 @@ function App() {
   const [activeTeamMember, setActiveTeamMember] = useState(null);
   const [showSubscriptions, setShowSubscriptions] = useState(false);
   const [myAccessDays, setMyAccessDays] = useState(null);
+  const [showUserManager, setShowUserManager] = useState(false);
+
+  // role helpers
+  const isSuperAdmin = user && user.role === 'superadmin';
+  const isAdmin = user && (user.role === 'admin' || user.role === 'superadmin');
 
   const loadCourses = () => {
     fetch('http://localhost:5001/api/courses')
@@ -177,6 +179,7 @@ function App() {
     setShowBlogManager(false);
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
+    setShowUserManager(false);
     setMyAccessDays(null);
     setAccess({});
   };
@@ -195,6 +198,7 @@ function App() {
     setShowBlogManager(false);
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
+    setShowUserManager(false);
     loadCourses();
     loadAccess();
     loadFooterBlogs();
@@ -284,7 +288,7 @@ function App() {
 
             <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setLanguage(null); }}>Switch language</button>
 
-            {user && user.role !== 'admin' && myAccessDays !== null && (
+            {user && user.role === 'student' && myAccessDays !== null && (
               <span className="access-badge" title="Time left on your course access">
                 ⏳ {myAccessDays} {myAccessDays === 1 ? 'day' : 'days'} left
               </span>
@@ -296,46 +300,57 @@ function App() {
               </button>
             )}
 
-            {user && user.role === 'admin' && (
+            {/* Super-admin-only: full content management */}
+            {isSuperAdmin && (
               <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); setShowAdmin(true); }}>
                 Manage courses
               </button>
             )}
 
-            {user && user.role === 'admin' && (
+            {isSuperAdmin && (
               <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowTestManager(true); }}>
                 Manage tests
               </button>
             )}
 
-            {user && user.role === 'admin' && (
+            {isSuperAdmin && (
               <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowBlogManager(true); }}>
                 Manage blog
               </button>
             )}
 
-            {user && user.role === 'admin' && (
+            {isSuperAdmin && (
               <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowTestimonialManager(true); }}>
                 Testimonials
               </button>
             )}
 
-            {user && user.role === 'admin' && (
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowSubscriptions(true); }}>
-                Subscriptions
+            {isSuperAdmin && (
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); setShowInbox(true); }}>
+                Feedback
               </button>
             )}
 
-            {user && user.role === 'admin' && (
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); setShowInbox(true); }}>
-                Feedback
+            {isSuperAdmin && (
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowUserManager(true); }}>
+                Manage Admins
+              </button>
+            )}
+
+            {/* Both admin and super admin: subscriptions */}
+            {isAdmin && (
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowSubscriptions(true); }}>
+                Subscriptions
               </button>
             )}
 
             {user ? (
               <div className="user-menu">
                 <button className="user-menu-trigger" onClick={() => setShowUserMenu(!showUserMenu)}>
-                  {user.name} {user.role === 'admin' && <em>(admin)</em>} <span className="caret">▾</span>
+                  {user.name}
+                  {user.role === 'admin' && <em>(admin)</em>}
+                  {user.role === 'superadmin' && <em>(super admin)</em>}
+                  <span className="caret">▾</span>
                 </button>
                 {showUserMenu && (
                   <div className="user-menu-dropdown">
@@ -355,25 +370,27 @@ function App() {
         </div>
       </header>
 
-      {user && user.role === 'admin' && showSubscriptions ? (
+      {isSuperAdmin && showUserManager ? (
+        <UserManager onBack={goHome} />
+      ) : isAdmin && showSubscriptions ? (
         <SubscriptionManager onBack={goHome} />
-      ) : user && user.role === 'admin' && showTestimonialManager ? (
+      ) : isSuperAdmin && showTestimonialManager ? (
         <TestimonialManager onBack={goHome} />
-      ) : user && user.role === 'admin' && showBlogManager ? (
+      ) : isSuperAdmin && showBlogManager ? (
         <BlogManager user={user} onBack={goHome} />
       ) : showBlog ? (
         <BlogPage onBack={goHome} />
-      ) : user && user.role === 'admin' && showTestManager ? (
+      ) : isSuperAdmin && showTestManager ? (
         <TestManager onBack={goHome} />
       ) : activeTestId ? (
         <TestTaker testId={activeTestId} onBack={() => { setActiveTestId(null); setShowTests(true); }} />
       ) : showTests ? (
         <TestList onOpenTest={(id) => { setShowTests(false); setActiveTestId(id); }} onBack={goHome} />
-      ) : user && user.role === 'admin' && manageCourse ? (
+      ) : isSuperAdmin && manageCourse ? (
         <LessonManager course={manageCourse} onBack={() => setManageCourse(null)} />
-      ) : user && user.role === 'admin' && showInbox ? (
+      ) : isSuperAdmin && showInbox ? (
         <FeedbackInbox onBack={goHome} />
-      ) : user && user.role === 'admin' && showAdmin ? (
+      ) : isSuperAdmin && showAdmin ? (
         <AdminPanel onBack={goHome} onManageLessons={(c) => setManageCourse(c)} />
       ) : user && showDashboard ? (
         <Dashboard
