@@ -19,12 +19,20 @@ function requireAuth(req, res, next) {
   }
 }
 
-// Checks: is the logged-in user an admin?
+// Checks: is the logged-in user an admin OR super admin?
 function requireAdmin(req, res, next) {
-  if (req.user.role !== 'admin') {
+  if (!req.user || (req.user.role !== 'admin' && req.user.role !== 'superadmin')) {
     return res.status(403).json({ error: 'Admin access required' });
   }
   next();
 }
 
-module.exports = { requireAuth, requireAdmin };
+// Checks: is the logged-in user a super admin?
+function requireSuperAdmin(req, res, next) {
+  if (!req.user || req.user.role !== 'superadmin') {
+    return res.status(403).json({ error: 'Super admin access required' });
+  }
+  next();
+}
+
+module.exports = { requireAuth, requireAdmin, requireSuperAdmin };

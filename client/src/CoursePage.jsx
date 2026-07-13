@@ -19,6 +19,14 @@ function CoursePage({ course, onBack, user }) {
   const [quizMode, setQuizMode] = useState(false);
   const [catFilter, setCatFilter] = useState('all');
 
+  // subscription access
+  const [hasAccess, setHasAccess] = useState(false);
+  const [accessExpiry, setAccessExpiry] = useState(null);
+  const [accessChecked, setAccessChecked] = useState(false);
+  const [showAccessMsg, setShowAccessMsg] = useState(false);
+
+  const isAdmin = user && user.role === 'admin';
+
   const loadProgress = () => {
     if (!token) return;
     fetch(`${API}/progress/course/${course._id}`, {
@@ -31,6 +39,21 @@ function CoursePage({ course, onBack, user }) {
 
   useEffect(() => {
     loadProgress();
+  }, [course._id, token]);
+
+  // check subscription access for this course
+  useEffect(() => {
+    if (!token) { setAccessChecked(true); return; }
+    fetch(`${API}/subscriptions/check/${course._id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(res => res.json())
+      .then(data => {
+        setHasAccess(!!data.hasAccess);
+        setAccessExpiry(data.expiresAt || null);
+        setAccessChecked(true);
+      })
+      .catch(() => setAccessChecked(true));
   }, [course._id, token]);
 
   const toggleComplete = async (lessonId) => {
@@ -110,6 +133,18 @@ function CoursePage({ course, onBack, user }) {
     button.textContent = '● Recording...';
     button.disabled = true;
     setTimeout(() => recorder.stop(), 2000);
+  };
+
+  // gate: admins always allowed; students need active access
+  const canOpenLessons = isAdmin || hasAccess;
+
+  const handleLessonClick = (lesson) => {
+    if (canOpenLessons) {
+      openLesson(lesson);
+    } else {
+      setShowAccessMsg(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const openLesson = (lesson) => {
@@ -297,6 +332,37 @@ function CoursePage({ course, onBack, user }) {
         </div>
       </div>
 
+      {/* Access banner */}
+      {user && !isAdmin && accessChecked && (
+        hasAccess ? (
+          <div className="access-banner access-ok">
+            ✓ You have access to this course
+            {accessExpiry && ` until ${new Date(accessExpiry).toLocaleDateString()}`}.
+            <div className="access-banner access-ok">
+            ✓ You have access to this course
+            {accessExpiry && ` until ${new Date(accessExpiry).toLocaleDateString()}`}.
+          </div>
+          </div>
+
+          
+        ) : (
+          <div className="access-banner access-locked">
+            🔒 You don't have access to this course yet. Please contact the admin to get access.
+          </div>
+        )
+      )}
+
+      {/* Message shown when a locked lesson is clicked */}
+      {showAccessMsg && !canOpenLessons && (
+        <div className="access-msg">
+          <p>
+            🔒 This lesson is locked. You need active access to open the lessons in this course.
+            Please contact the admin (use the <strong>Message us</strong> link) to request access.
+          </p>
+          <button className="nav-btn" onClick={() => setShowAccessMsg(false)}>Got it</button>
+        </div>
+      )}
+
       <h2 className="lessons-heading">Lessons</h2>
 
       <div className="category-tabs">
@@ -312,11 +378,15 @@ function CoursePage({ course, onBack, user }) {
       )}
       <div className="lesson-list">
         {visibleLessons.map((l) => (
-          <button className="lesson-row" key={l._id} onClick={() => openLesson(l)}>
+          <button
+            className={`lesson-row ${!canOpenLessons ? 'lesson-locked' : ''}`}
+            key={l._id}
+            onClick={() => handleLessonClick(l)}
+          >
             <span className="lesson-num">{l.order}</span>
             <span className="lesson-title">{l.title}</span>
             {completedIds.includes(l._id) && <span className="lesson-done">✓</span>}
-            <span className="lesson-arrow">→</span>
+            <span className="lesson-arrow">{canOpenLessons ? '→' : '🔒'}</span>
           </button>
         ))}
       </div>

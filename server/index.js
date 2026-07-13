@@ -15,6 +15,8 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const courseRoutes = require('./routes/courses');
 const lessonRoutes = require('./routes/lessons');
+const subscriptionRoutes = require('./routes/subscriptions');
+const userRoutes = require('./routes/users');
 
 const app = express();
 app.use(cors());
@@ -27,6 +29,8 @@ app.use('/api/feedback', feedbackRoutes);
 app.use('/api/tests', testRoutes);
 app.use('/api/blogs', blogRoutes);
 app.use('/api/testimonials', testimonialRoutes);
+app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/users', userRoutes);
 
 mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/language-lms')
   .then(() => console.log('✅ MongoDB connected'))

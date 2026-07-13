@@ -18,6 +18,28 @@ import BlogManager from './BlogManager';
 import BlogPage from './BlogPage';
 import TestimonialModal from './TestimonialModal';
 import TestimonialManager from './TestimonialManager';
+import SubscriptionManager from './SubscriptionManager';
+
+const teamMembers = [
+  {
+    name: 'Anil Kafle',
+    role: 'Founder & Teacher',
+    photo: '/image.jpg',
+    bio: 'Anil is a language teacher specializing in Chinese and Nepali. He founded this platform to make structured, teacher-led language learning accessible to everyone.',
+  },
+  {
+    name: 'Name Here',
+    role: 'Developer',
+    photo: '/image.jpg',
+    bio: 'Our developer builds and maintains the platform, making sure every lesson, quiz, and feature works smoothly for learners.',
+  },
+  {
+    name: 'Name Here',
+    role: 'Project Manager',
+    photo: '/image.jpg',
+    bio: 'Our project manager keeps everything on track, coordinating content, design, and development so the learning experience stays seamless.',
+  },
+];
 
 function App() {
   const wotdList = [
@@ -31,6 +53,10 @@ function App() {
     { zh: '吃', zhP: 'chī', ne: 'खानु', neP: 'khā·nu', meaning: 'to eat' },
     { zh: '好', zhP: 'hǎo', ne: 'राम्रो', neP: 'rām·ro', meaning: 'good' },
     { zh: '学习', zhP: 'xué xí', ne: 'सिक्नु', neP: 'sik·nu', meaning: 'to learn' },
+    {zh: '工作', zhP: 'gōng zuò', ne: 'काम', neP: 'kām', meaning: 'work'},
+    {zh: '学校', zhP: 'xué xiào', ne: 'विद्यालय', neP: 'vidyā·lay', meaning: 'school'},
+    {zh: '天气', zhP: 'tiān qì', ne: 'मौसम', neP: 'mausam', meaning: 'weather'},
+    {zh: '快乐', zhP: 'kuài lè', ne: 'खुसी', neP: 'khusi', meaning: 'happy'},
   ];
   const dayOfYear = Math.floor(
     (Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000
@@ -64,6 +90,9 @@ function App() {
   const [showTestimonial, setShowTestimonial] = useState(false);
   const [showTestimonialManager, setShowTestimonialManager] = useState(false);
   const [testimonials, setTestimonials] = useState([]);
+  const [activeTeamMember, setActiveTeamMember] = useState(null);
+  const [showSubscriptions, setShowSubscriptions] = useState(false);
+  const [myAccessDays, setMyAccessDays] = useState(null);
 
   const loadCourses = () => {
     fetch('http://localhost:5001/api/courses')
@@ -101,6 +130,24 @@ function App() {
       .catch(() => setTestimonials([]));
   };
 
+  const loadMyAccess = () => {
+    const t = localStorage.getItem('token');
+    if (!t) { setMyAccessDays(null); return; }
+    fetch('http://localhost:5001/api/subscriptions/my', {
+      headers: { Authorization: `Bearer ${t}` },
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (!Array.isArray(data) || data.length === 0) { setMyAccessDays(null); return; }
+        const now = new Date();
+        const daysList = data
+          .map(s => Math.ceil((new Date(s.expiresAt) - now) / (1000 * 60 * 60 * 24)))
+          .filter(d => d > 0);
+        setMyAccessDays(daysList.length ? Math.min(...daysList) : null);
+      })
+      .catch(() => setMyAccessDays(null));
+  };
+
   useEffect(() => {
     fetch('http://localhost:5001/api/health')
       .then(res => res.json())
@@ -110,6 +157,7 @@ function App() {
     loadAccess();
     loadFooterBlogs();
     loadTestimonials();
+    loadMyAccess();
     const savedUser = localStorage.getItem('user');
     if (savedUser) setUser(JSON.parse(savedUser));
   }, []);
@@ -128,6 +176,8 @@ function App() {
     setShowBlog(false);
     setShowBlogManager(false);
     setShowTestimonialManager(false);
+    setShowSubscriptions(false);
+    setMyAccessDays(null);
     setAccess({});
   };
 
@@ -144,10 +194,12 @@ function App() {
     setShowBlog(false);
     setShowBlogManager(false);
     setShowTestimonialManager(false);
+    setShowSubscriptions(false);
     loadCourses();
     loadAccess();
     loadFooterBlogs();
     loadTestimonials();
+    loadMyAccess();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -197,6 +249,18 @@ function App() {
       {showFeedback && <FeedbackModal user={user} onClose={() => setShowFeedback(false)} />}
       {showTestimonial && <TestimonialModal user={user} onClose={() => { setShowTestimonial(false); loadTestimonials(); }} />}
 
+      {activeTeamMember && (
+        <div className="modal-overlay" onClick={() => setActiveTeamMember(null)}>
+          <div className="team-modal" onClick={(e) => e.stopPropagation()}>
+            <img src={activeTeamMember.photo} alt={activeTeamMember.name} className="team-modal-photo" />
+            <h3 className="team-modal-name">{activeTeamMember.name}</h3>
+            <p className="team-modal-role">{activeTeamMember.role}</p>
+            <p className="team-modal-bio">{activeTeamMember.bio}</p>
+            <button className="btn-primary" onClick={() => setActiveTeamMember(null)}>Close</button>
+          </div>
+        </div>
+      )}
+
       <header>
         <div className="container header-row">
           <button className="logo" onClick={() => { setMobileMenuOpen(false); goHome(); }}>
@@ -219,6 +283,12 @@ function App() {
             <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowFeedback(true); }}>Message us</button>
 
             <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setLanguage(null); }}>Switch language</button>
+
+            {user && user.role !== 'admin' && myAccessDays !== null && (
+              <span className="access-badge" title="Time left on your course access">
+                ⏳ {myAccessDays} {myAccessDays === 1 ? 'day' : 'days'} left
+              </span>
+            )}
 
             {user && (
               <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); setShowDashboard(true); }}>
@@ -251,6 +321,12 @@ function App() {
             )}
 
             {user && user.role === 'admin' && (
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowSubscriptions(true); }}>
+                Subscriptions
+              </button>
+            )}
+
+            {user && user.role === 'admin' && (
               <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); setShowInbox(true); }}>
                 Feedback
               </button>
@@ -279,7 +355,9 @@ function App() {
         </div>
       </header>
 
-      {user && user.role === 'admin' && showTestimonialManager ? (
+      {user && user.role === 'admin' && showSubscriptions ? (
+        <SubscriptionManager onBack={goHome} />
+      ) : user && user.role === 'admin' && showTestimonialManager ? (
         <TestimonialManager onBack={goHome} />
       ) : user && user.role === 'admin' && showBlogManager ? (
         <BlogManager user={user} onBack={goHome} />
@@ -310,7 +388,7 @@ function App() {
           {authView === 'login' ? (
             <>
               <Login
-                onLogin={(u) => { setUser(u); setShowLogin(false); loadAccess(); }}
+                onLogin={(u) => { setUser(u); setShowLogin(false); loadAccess(); loadMyAccess(); }}
                 onBack={() => setShowLogin(false)}
               />
               <p className="auth-switch">
@@ -478,36 +556,21 @@ function App() {
             </div>
           </section>
 
-
-
-<section className="team-section">
+          <section className="team-section">
             <div className="container">
               <h2 className="section-title team-title">Meet Our Team</h2>
-              <p className="team-intro">BhashaHub is brought to you by a team of passion and expertise.</p>
+              <p className="team-intro">This platform is brought to you by a team of passion and expertise.</p>
               <div className="team-grid">
-                <div className="team-card">
-                  <img src="/public/image.jpg" alt="Anil Kafle" className="team-photo" />
-                  <h3 className="team-name">Anil Kafle</h3>
-                  <p className="team-role">Founder & Teacher</p>
-                </div>
-                <div className="team-card">
-                  <img src="/public/image.jpg" alt="Team member" className="team-photo" />
-                  <h3 className="team-name">Name Here</h3>
-                  <p className="team-role">Developer</p>
-                </div>
-                <div className="team-card">
-                  <img src="/public/image.jpg" alt="Team member" className="team-photo" />
-                  <h3 className="team-name">Name Here</h3>
-                  <p className="team-role">Project Manager</p>
-                </div>
+                {teamMembers.map((member) => (
+                  <div className="team-card" key={member.name + member.role} onClick={() => setActiveTeamMember(member)}>
+                    <img src={member.photo} alt={member.name} className="team-photo" />
+                    <h3 className="team-name">{member.name}</h3>
+                    <p className="team-role">{member.role}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </section>
-
-
-
-
-
 
           <section className="courses-section" id="courses">
             <div className="container">
@@ -566,15 +629,14 @@ function App() {
             </div>
           </section>
 
-         <footer className="site-footer">
+          <footer className="site-footer">
             <div className="container footer-inner">
-        
+
               <button className="logo" onClick={goHome}>
                 Learn Chinese with <span>Anil</span>
               </button>
-              
+
               <p className="footer-tag">Speak Chinese ASAP!</p>
-       
 
               <div className="footer-social">
                 <a href="https://facebook.com/YOURPAGE" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="social-link">
@@ -590,16 +652,17 @@ function App() {
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zm1.78 13.02H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
                 </a>
               </div>
+
               <div className="footer-links">
-  <a
-    href="https://www.hskcourse.com/tool/pinyin-chart.html"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="footer-link"
-  >
-    Pinyin Chart
-  </a>
-</div>
+                <a
+                  href="https://www.hskcourse.com/tool/pinyin-chart.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="footer-link"
+                >
+                  Pinyin Chart
+                </a>
+              </div>
 
               {footerBlogs.length > 0 && (
                 <div className="footer-blog">

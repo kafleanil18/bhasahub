@@ -10,6 +10,7 @@ function NepaliPage({ onBack }) {
           travel, and connecting with people across Nepal.
         </p>
         <p className="nepali-soon">🚧 This course is coming soon — we're preparing the lessons!</p>
+        <p className="nepali-sub">In the meantime, you can explore our Chinese course or check out our other languages.</p>
       </div>
     </section>
   );
