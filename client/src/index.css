@@ -3155,3 +3155,65 @@ fadeUp .8s ease;
   font-size: 13px;
   font-style: italic;
 }
+
+.theme-toggle {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: var(--rice);
+}
+.dark {
+  --paper: #1a1815;
+  --ink: #f0ebe0;
+  /* ...overrides matching YOUR variable names... */
+}
+
+/* ---------- Dark mode ---------- */
+.dark {
+  --ink: #ece6da;      /* light text (was dark) */
+  --paper: #1a1714;    /* dark background (was cream) */
+  --rice: #241f1a;     /* slightly lighter dark */
+  --seal: #e05a4e;     /* brighter red so it pops on dark */
+  --gold: #d9ab52;     /* brighter gold */
+  --jade: #4a9b81;     /* brighter jade */
+  --mist: #a49a8a;     /* muted light-grey text */
+  --card: #221d18;     /* card background (dark) */
+  --line: #3a332b;     /* borders (dark) */
+}
+
+.dark body {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* Header frosted background in dark mode */
+.dark header {
+  background: rgba(26, 23, 20, 0.85);
+}
+
+/* Images/videos slightly dimmed so they're not harsh */
+.dark .world-photo img,
+.dark .course-card-img,
+.dark .team-photo {
+  filter: brightness(0.9);
+}
+.theme-toggle {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: var(--rice);
+}

@@ -91,6 +91,17 @@ function App() {
   const [showSubscriptions, setShowSubscriptions] = useState(false);
   const [myAccessDays, setMyAccessDays] = useState(null);
   const [showUserManager, setShowUserManager] = useState(false);
+  const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [darkMode]);
 
   // role helpers
   const isSuperAdmin = user && user.role === 'superadmin';
@@ -180,8 +191,11 @@ function App() {
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
     setShowUserManager(false);
+    setActiveCourse(null);
+    setShowLogin(false);
     setMyAccessDays(null);
     setAccess({});
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const goHome = () => {
@@ -204,6 +218,27 @@ function App() {
     loadFooterBlogs();
     loadTestimonials();
     loadMyAccess();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // open the sign-in screen from anywhere (clears other views first)
+  const openLogin = () => {
+    setMobileMenuOpen(false);
+    setShowAdmin(false);
+    setActiveCourse(null);
+    setManageCourse(null);
+    setShowDashboard(false);
+    setShowInbox(false);
+    setShowTests(false);
+    setShowTestManager(false);
+    setActiveTestId(null);
+    setShowBlog(false);
+    setShowBlogManager(false);
+    setShowTestimonialManager(false);
+    setShowSubscriptions(false);
+    setShowUserManager(false);
+    setAuthView('login');
+    setShowLogin(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -288,6 +323,15 @@ function App() {
 
             <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setLanguage(null); }}>Switch language</button>
 
+            <button
+              className="theme-toggle"
+              onClick={() => setDarkMode(!darkMode)}
+              aria-label="Toggle dark mode"
+              title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {darkMode ? '☀️' : '🌙'}
+            </button>
+
             {user && user.role === 'student' && myAccessDays !== null && (
               <span className="access-badge" title="Time left on your course access">
                 ⏳ {myAccessDays} {myAccessDays === 1 ? 'day' : 'days'} left
@@ -364,13 +408,39 @@ function App() {
                 )}
               </div>
             ) : (
-              <button className="nav-btn" onClick={() => { setMobileMenuOpen(false); setShowLogin(true); }}>Sign in</button>
+              <button className="nav-btn" onClick={openLogin}>Sign in</button>
             )}
           </nav>
         </div>
       </header>
 
-      {isSuperAdmin && showUserManager ? (
+      {!user && showLogin ? (
+        <div>
+          {authView === 'login' ? (
+            <>
+              <Login
+                onLogin={(u) => { setUser(u); setShowLogin(false); loadAccess(); loadMyAccess(); }}
+                onBack={goHome}
+              />
+              <p className="auth-switch">
+                New here?{' '}
+                <button onClick={() => setAuthView('register')}>Create an account</button>
+              </p>
+            </>
+          ) : (
+            <>
+              <Register
+                onRegistered={() => setAuthView('login')}
+                onBack={goHome}
+              />
+              <p className="auth-switch">
+                Already have an account?{' '}
+                <button onClick={() => setAuthView('login')}>Sign in</button>
+              </p>
+            </>
+          )}
+        </div>
+      ) : isSuperAdmin && showUserManager ? (
         <UserManager onBack={goHome} />
       ) : isAdmin && showSubscriptions ? (
         <SubscriptionManager onBack={goHome} />
@@ -400,32 +470,6 @@ function App() {
         />
       ) : activeCourse ? (
         <CoursePage course={activeCourse} onBack={() => setActiveCourse(null)} user={user} />
-      ) : !user && showLogin ? (
-        <div>
-          {authView === 'login' ? (
-            <>
-              <Login
-                onLogin={(u) => { setUser(u); setShowLogin(false); loadAccess(); loadMyAccess(); }}
-                onBack={() => setShowLogin(false)}
-              />
-              <p className="auth-switch">
-                New here?{' '}
-                <button onClick={() => setAuthView('register')}>Create an account</button>
-              </p>
-            </>
-          ) : (
-            <>
-              <Register
-                onRegistered={() => setAuthView('login')}
-                onBack={() => setShowLogin(false)}
-              />
-              <p className="auth-switch">
-                Already have an account?{' '}
-                <button onClick={() => setAuthView('login')}>Sign in</button>
-              </p>
-            </>
-          )}
-        </div>
       ) : (
         <main>
           <section className="hero">
@@ -618,7 +662,7 @@ function App() {
                         key={c._id}
                         onClick={() => {
                           if (locked) return;
-                          if (!user) { setAuthView('login'); setShowLogin(true); return; }
+                          if (!user) { openLogin(); return; }
                           setActiveCourse(c);
                         }}
                       >
