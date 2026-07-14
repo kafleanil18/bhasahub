@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23c2402a'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='%23faf7f0' font-family='serif'%3E语%3C/text%3E%3C/svg%3E" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="BhashaHub — learn Chinese and Nepali with structured lessons, native audio, and real progress tracking." />
+    <meta
+      name="description"
+      content="BhashaHub — learn Chinese and Nepali with structured lessons, native audio, and real progress tracking."
+    />
     <meta name="theme-color" content="#faf7f0" />
     <title>BhashaHub · Learn Chinese & Nepali</title>
 
@@ -15,33 +18,6 @@
       href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500&family=Noto+Serif+SC:wght@500&family=Noto+Serif+Devanagari:wght@500&display=swap"
       rel="stylesheet"
     />
-
-    <style>
-      /* Styles for the moment before React loads */
-      html {
-        background: #faf7f0;
-      }
-
-      #root:empty {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        font-family: Georgia, serif;
-        font-size: 44px;
-        color: #1c2431;
-      }
-
-      #root:empty::before {
-        content: '语 · भाषा';
-        animation: pulse 1.2s ease-in-out infinite;
-      }
-
-      @keyframes pulse {
-        0%, 100% { opacity: 0.35; }
-        50% { opacity: 1; }
-      }
-    </style>
   </head>
   <body>
     <div id="root"></div>

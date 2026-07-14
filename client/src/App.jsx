@@ -91,6 +91,7 @@ function App() {
   const [showSubscriptions, setShowSubscriptions] = useState(false);
   const [myAccessDays, setMyAccessDays] = useState(null);
   const [showUserManager, setShowUserManager] = useState(false);
+  const [adminSidebarOpen, setAdminSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
 
   useEffect(() => {
@@ -191,6 +192,7 @@ function App() {
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
     setShowUserManager(false);
+    setAdminSidebarOpen(false);
     setActiveCourse(null);
     setShowLogin(false);
     setMyAccessDays(null);
@@ -213,6 +215,7 @@ function App() {
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
     setShowUserManager(false);
+    setAdminSidebarOpen(false);
     loadCourses();
     loadAccess();
     loadFooterBlogs();
@@ -237,6 +240,7 @@ function App() {
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
     setShowUserManager(false);
+    setAdminSidebarOpen(false);
     setAuthView('login');
     setShowLogin(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -300,6 +304,40 @@ function App() {
         </div>
       )}
 
+      {isSuperAdmin && (
+        <>
+          <div
+            className={`admin-sidebar-backdrop ${adminSidebarOpen ? 'is-visible' : ''}`}
+            onClick={() => setAdminSidebarOpen(false)}
+            aria-hidden="true"
+          />
+          <aside
+            id="super-admin-navigation"
+            className={`admin-sidebar ${adminSidebarOpen ? 'is-open' : ''}`}
+            aria-label="Super admin navigation"
+            aria-hidden={!adminSidebarOpen}
+          >
+            <div className="admin-sidebar-head">
+              <div>
+                <p className="admin-sidebar-kicker">Control center</p>
+                <h2>Super Admin</h2>
+              </div>
+              <button className="admin-sidebar-close" onClick={() => setAdminSidebarOpen(false)} aria-label="Close admin navigation">×</button>
+            </div>
+            <nav className="admin-sidebar-nav">
+              <button onClick={() => { goHome(); setShowAdmin(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>Manage courses</button>
+              <button onClick={() => { goHome(); setShowTestManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>Manage tests</button>
+              <button onClick={() => { goHome(); setShowBlogManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>Manage blog</button>
+              <button onClick={() => { goHome(); setShowTestimonialManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>Testimonials</button>
+              <button onClick={() => { setShowInbox(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>Feedback inbox</button>
+              <button onClick={() => { goHome(); setShowUserManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>Manage admins</button>
+              <button onClick={() => { goHome(); setShowSubscriptions(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>Subscriptions</button>
+            </nav>
+            <button className="admin-sidebar-home" onClick={() => { goHome(); setAdminSidebarOpen(false); }}>← Back to site</button>
+          </aside>
+        </>
+      )}
+
       <header>
         <div className="container header-row">
           <button className="logo" onClick={() => { setMobileMenuOpen(false); goHome(); }}>
@@ -344,45 +382,18 @@ function App() {
               </button>
             )}
 
-            {/* Super-admin-only: full content management */}
             {isSuperAdmin && (
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); setShowAdmin(true); }}>
-                Manage courses
+              <button
+                className="admin-nav-toggle"
+                onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); setAdminSidebarOpen(true); }}
+                aria-expanded={adminSidebarOpen}
+                aria-controls="super-admin-navigation"
+              >
+                <span aria-hidden="true">☰</span> Admin
               </button>
             )}
 
-            {isSuperAdmin && (
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowTestManager(true); }}>
-                Manage tests
-              </button>
-            )}
-
-            {isSuperAdmin && (
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowBlogManager(true); }}>
-                Manage blog
-              </button>
-            )}
-
-            {isSuperAdmin && (
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowTestimonialManager(true); }}>
-                Testimonials
-              </button>
-            )}
-
-            {isSuperAdmin && (
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); setShowInbox(true); }}>
-                Feedback
-              </button>
-            )}
-
-            {isSuperAdmin && (
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowUserManager(true); }}>
-                Manage Admins
-              </button>
-            )}
-
-            {/* Both admin and super admin: subscriptions */}
-            {isAdmin && (
+            {isAdmin && !isSuperAdmin && (
               <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowSubscriptions(true); }}>
                 Subscriptions
               </button>
