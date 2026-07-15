@@ -12,6 +12,7 @@ function TestManager({ onBack }) {
   const [title, setTitle] = useState('');
   const [level, setLevel] = useState('');
   const [description, setDescription] = useState('');
+  const [testType, setTestType] = useState('listening');
   const [audioUrl, setAudioUrl] = useState('');
   const [pdfUrl, setPdfUrl] = useState('');
   const [questions, setQuestions] = useState([]);
@@ -42,6 +43,7 @@ function TestManager({ onBack }) {
     setTitle('');
     setLevel('');
     setDescription('');
+    setTestType('listening');
     setAudioUrl('');
     setPdfUrl('');
     setQuestions([]);
@@ -54,6 +56,7 @@ function TestManager({ onBack }) {
     setTitle(t.title);
     setLevel(t.level || '');
     setDescription(t.description || '');
+    setTestType(t.testType || 'listening');
     setAudioUrl(t.audioUrl || '');
     setPdfUrl(t.pdfUrl || '');
     
@@ -132,7 +135,7 @@ function TestManager({ onBack }) {
   const save = async () => {
     setError('');
     if (!title.trim()) return setError('Title is required');
-    const body = { title, level, description, audioUrl, pdfUrl, questions, published };
+    const body = { title, level, description, testType, audioUrl, pdfUrl, questions, published };
     try {
       const activeToken = localStorage.getItem('token');
       const headers = {
@@ -904,28 +907,48 @@ function TestManager({ onBack }) {
                 />
               </div>
 
+              <div className="tm-form-group">
+                <label className="tm-label">Test Type</label>
+                <select 
+                  className="tm-input" 
+                  value={testType} 
+                  onChange={(e) => setTestType(e.target.value)}
+                >
+                  <option value="listening">🎧 Listening Test</option>
+                  <option value="reading">📖 Reading Test</option>
+                </select>
+              </div>
+
               <div className="tm-form-row">
-                <div className="tm-form-group">
-                  <label className="tm-label">Listening Audio (MP3)</label>
-                  <div className="tm-upload-zone">
-                    <div className="tm-file-input-btn">
-                      Upload Audio
-                      <input 
-                        type="file" 
-                        accept="audio/*" 
-                        onChange={(e) => uploadFile(e.target.files[0], setAudioUrl, setUploadingAudio)} 
-                      />
+                {testType === 'listening' ? (
+                  <div className="tm-form-group">
+                    <label className="tm-label">Listening Audio (MP3)</label>
+                    <div className="tm-upload-zone">
+                      <div className="tm-file-input-btn">
+                        Upload Audio
+                        <input 
+                          type="file" 
+                          accept="audio/*" 
+                          onChange={(e) => uploadFile(e.target.files[0], setAudioUrl, setUploadingAudio)} 
+                        />
+                      </div>
+                      {uploadingAudio && <div className="tm-upload-status">Uploading MP3...</div>}
                     </div>
-                    {uploadingAudio && <div className="tm-upload-status">Uploading MP3...</div>}
+                    {audioUrl && (
+                      <div className="tm-asset-card">
+                        <div className="tm-asset-info">🎵 MP3 Audio Loaded</div>
+                        <button type="button" className="tm-btn-asset-remove" onClick={() => setAudioUrl('')}>Delete</button>
+                      </div>
+                    )}
+                    {audioUrl && <audio controls src={`${SERVER}${audioUrl}`} style={{ width: '100%', marginTop: 8 }} />}
                   </div>
-                  {audioUrl && (
-                    <div className="tm-asset-card">
-                      <div className="tm-asset-info">🎵 MP3 Audio Loaded</div>
-                      <button type="button" className="tm-btn-asset-remove" onClick={() => setAudioUrl('')}>Delete</button>
-                    </div>
-                  )}
-                  {audioUrl && <audio controls src={`${SERVER}${audioUrl}`} style={{ width: '100%', marginTop: 8 }} />}
-                </div>
+                ) : (
+                  <div className="tm-form-group" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(42,35,32,0.02)', border: '1px dashed var(--line)', borderRadius: '12px', padding: '1.25rem' }}>
+                    <span style={{ fontSize: '0.85rem', color: 'var(--mist)', fontStyle: 'italic', textAlign: 'center' }}>
+                      Audio upload disabled for Reading Test type
+                    </span>
+                  </div>
+                )}
 
                 <div className="tm-form-group">
                   <label className="tm-label">Question Paper (PDF)</label>
@@ -1056,7 +1079,7 @@ function TestManager({ onBack }) {
                 
                 <div className="tm-test-info">
                   <h3 className="tm-test-title" title={t.title}>{t.title}</h3>
-                  <span className="tm-test-meta">{t.level || 'General'} · {t.questions?.length || 0} questions</span>
+                  <span className="tm-test-meta">{t.level || 'General'} · {t.testType === 'reading' ? '📖 Reading' : '🎧 Listening'} · {t.questions?.length || 0} questions</span>
                 </div>
 
                 <button 

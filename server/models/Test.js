@@ -10,6 +10,7 @@ const testSchema = new mongoose.Schema(
     title: { type: String, required: true },
     level: { type: String, default: '' },
     description: { type: String, default: '' },
+    testType: { type: String, enum: ['listening', 'reading'], default: 'listening' },
     audioUrl: { type: String, default: '' },
     pdfUrl: { type: String, default: '' },
     questions: [

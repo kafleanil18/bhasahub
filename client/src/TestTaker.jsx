@@ -75,9 +75,9 @@ function TestTaker({ testId, onBack }) {
         </div>
       )}
 
-      {test.audioUrl && (
+      {test.testType === 'listening' && test.audioUrl && (
         <div className="test-media">
-          <h3 className="dialogue-heading">🎧 Listening</h3>
+          <h3 className="dialogue-heading">🎧 Listening Audio</h3>
           <audio controls src={`${SERVER}${test.audioUrl}`} style={{ width: '100%' }} />
         </div>
       )}
