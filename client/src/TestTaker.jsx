@@ -99,9 +99,14 @@ function TestTaker({ testId, onBack }) {
           const chosen = answers[qi];
           return (
             <div className="test-question" key={qi}>
-              <p className="test-question-text">
+              <p className="test-question-text" style={{ marginBottom: q.questionPinyin ? '6px' : '16px' }}>
                 <strong>Q{qi + 1}.</strong> {q.questionText}
               </p>
+              {q.questionPinyin && (
+                <p className="test-question-pinyin" style={{ color: 'var(--mist)', fontSize: '0.9rem', marginTop: '-4px', marginBottom: '16px', paddingLeft: '32px' }}>
+                  {q.questionPinyin}
+                </p>
+              )}
               <div className="test-options">
                 {q.options.map((opt, oi) => {
                   let cls = 'test-option';
@@ -111,15 +116,27 @@ function TestTaker({ testId, onBack }) {
                   } else if (chosen === oi) {
                     cls += ' selected';
                   }
+
+                  const optionText = opt && typeof opt === 'object' ? opt.text : opt;
+                  const optionPinyin = opt && typeof opt === 'object' ? opt.pinyin : '';
+
                   return (
                     <button
                       key={oi}
                       className={cls}
                       onClick={() => selectAnswer(qi, oi)}
                       disabled={submitted}
+                      style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: optionPinyin ? '10px 16px' : '14px 16px', gap: '2px' }}
                     >
-                      <span className="option-letter">{String.fromCharCode(65 + oi)}</span>
-                      {opt}
+                      <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: '8px' }}>
+                        <span className="option-letter" style={{ flexShrink: 0 }}>{String.fromCharCode(65 + oi)}</span>
+                        <span style={{ fontWeight: 600, textAlign: 'left' }}>{optionText}</span>
+                      </div>
+                      {optionPinyin && (
+                        <span className="option-pinyin" style={{ fontSize: '0.85rem', color: 'var(--mist)', marginLeft: '32px', textAlign: 'left' }}>
+                          {optionPinyin}
+                        </span>
+                      )}
                     </button>
                   );
                 })}

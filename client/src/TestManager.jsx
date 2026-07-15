@@ -58,7 +58,19 @@ function TestManager({ onBack }) {
     setDescription(t.description || '');
     setAudioUrl(t.audioUrl || '');
     setPdfUrl(t.pdfUrl || '');
-    setQuestions(t.questions || []);
+    
+    const parsedQuestions = (t.questions || []).map(q => ({
+      questionText: q.questionText || '',
+      questionPinyin: q.questionPinyin || '',
+      correctIndex: q.correctIndex || 0,
+      options: (q.options || []).map(opt => {
+        if (typeof opt === 'object' && opt !== null) {
+          return { text: opt.text || '', pinyin: opt.pinyin || '' };
+        }
+        return { text: opt || '', pinyin: '' };
+      })
+    }));
+    setQuestions(parsedQuestions);
     setPublished(t.published);
     setEditorTab('details');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -84,18 +96,26 @@ function TestManager({ onBack }) {
 
   // ----- questions -----
   const addQuestion = () => {
-    setQuestions((prev) => [...prev, { questionText: '', options: ['', ''], correctIndex: 0 }]);
+    setQuestions((prev) => [...prev, { questionText: '', questionPinyin: '', options: [{ text: '', pinyin: '' }, { text: '', pinyin: '' }], correctIndex: 0 }]);
   };
   const updateQuestionText = (qi, text) => {
     setQuestions((prev) => prev.map((q, i) => (i === qi ? { ...q, questionText: text } : q)));
   };
-  const updateOption = (qi, oi, text) => {
+  const updateQuestionPinyin = (qi, pinyin) => {
+    setQuestions((prev) => prev.map((q, i) => (i === qi ? { ...q, questionPinyin: pinyin } : q)));
+  };
+  const updateOptionText = (qi, oi, text) => {
     setQuestions((prev) => prev.map((q, i) =>
-      i === qi ? { ...q, options: q.options.map((o, j) => (j === oi ? text : o)) } : q
+      i === qi ? { ...q, options: q.options.map((o, j) => (j === oi ? { ...o, text } : o)) } : q
+    ));
+  };
+  const updateOptionPinyin = (qi, oi, pinyin) => {
+    setQuestions((prev) => prev.map((q, i) =>
+      i === qi ? { ...q, options: q.options.map((o, j) => (j === oi ? { ...o, pinyin } : o)) } : q
     ));
   };
   const addOption = (qi) => {
-    setQuestions((prev) => prev.map((q, i) => (i === qi ? { ...q, options: [...q.options, ''] } : q)));
+    setQuestions((prev) => prev.map((q, i) => (i === qi ? { ...q, options: [...q.options, { text: '', pinyin: '' }] } : q)));
   };
   const removeOption = (qi, oi) => {
     setQuestions((prev) => prev.map((q, i) =>
@@ -883,37 +903,67 @@ function TestManager({ onBack }) {
 
                 {questions.map((q, qi) => (
                   <div className="tm-question-card" key={qi}>
-                    <div className="tm-question-top">
-                      <span className="tm-question-num">Q{qi + 1}</span>
-                      <input
-                        className="tm-input"
-                        value={q.questionText}
-                        onChange={(e) => updateQuestionText(qi, e.target.value)}
-                        placeholder="Question text (or e.g. 'Question 1' to match the PDF)"
-                      />
-                      <button className="tm-btn-row-del" type="button" onClick={() => removeQuestion(qi)}>Remove</button>
+                    <div className="tm-question-top" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', width: '100%' }}>
+                        <span className="tm-question-num">Q{qi + 1}</span>
+                        <input
+                          className="tm-input"
+                          value={q.questionText}
+                          onChange={(e) => updateQuestionText(qi, e.target.value)}
+                          placeholder="Question text (Chinese characters e.g. 朋友)"
+                          style={{ flexGrow: 1 }}
+                        />
+                        <button className="tm-btn-row-del" type="button" onClick={() => removeQuestion(qi)} style={{ flexShrink: 0 }}>Remove</button>
+                      </div>
+                      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', paddingLeft: '44px' }}>
+                        <input
+                          className="tm-input"
+                          value={q.questionPinyin || ''}
+                          onChange={(e) => updateQuestionPinyin(qi, e.target.value)}
+                          placeholder="Pinyin guide (e.g. péng you)"
+                        />
+                      </div>
                     </div>
 
-                    {q.options.map((opt, oi) => (
-                      <div className={`tm-option-row ${q.correctIndex === oi ? 'correct' : ''}`} key={oi}>
-                        <input
-                          type="radio"
-                          name={`correct-${qi}`}
-                          checked={q.correctIndex === oi}
-                          onChange={() => setCorrect(qi, oi)}
-                          title="Mark as correct answer"
-                        />
-                        <input
-                          className="tm-option-input"
-                          value={opt}
-                          onChange={(e) => updateOption(qi, oi, e.target.value)}
-                          placeholder={`Option ${String.fromCharCode(65 + oi)}`}
-                        />
-                        {q.options.length > 2 && (
-                          <button className="tm-btn-row-del" type="button" onClick={() => removeOption(qi, oi)}>✕</button>
-                        )}
-                      </div>
-                    ))}
+                    {q.options.map((opt, oi) => {
+                      const optionText = opt && typeof opt === 'object' ? opt.text : opt;
+                      const optionPinyin = opt && typeof opt === 'object' ? opt.pinyin : '';
+
+                      return (
+                        <div className={`tm-option-row ${q.correctIndex === oi ? 'correct' : ''}`} key={oi} style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '0.5rem', padding: '0.85rem 1rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%' }}>
+                            <input
+                              type="radio"
+                              name={`correct-${qi}`}
+                              checked={q.correctIndex === oi}
+                              onChange={() => setCorrect(qi, oi)}
+                              title="Mark as correct answer"
+                              style={{ flexShrink: 0 }}
+                            />
+                            <span style={{ fontWeight: 'bold', minWidth: '24px', flexShrink: 0 }}>{String.fromCharCode(65 + oi)}</span>
+                            <input
+                              className="tm-option-input"
+                              value={optionText}
+                              onChange={(e) => updateOptionText(qi, oi, e.target.value)}
+                              placeholder="Chinese characters"
+                              style={{ flexGrow: 1 }}
+                            />
+                            {q.options.length > 2 && (
+                              <button className="tm-btn-row-del" type="button" onClick={() => removeOption(qi, oi)} style={{ flexShrink: 0 }}>✕</button>
+                            )}
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', paddingLeft: '44px' }}>
+                            <input
+                              className="tm-option-input"
+                              value={optionPinyin}
+                              onChange={(e) => updateOptionPinyin(qi, oi, e.target.value)}
+                              placeholder="Pinyin guide"
+                              style={{ flexGrow: 1, borderBottom: '1px dashed var(--line)', fontSize: '0.85rem' }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
                     <button className="tm-btn-action" type="button" onClick={() => addOption(qi)} style={{ marginTop: 8 }}>+ Add Option</button>
                   </div>
                 ))}

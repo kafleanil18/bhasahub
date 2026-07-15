@@ -1,5 +1,10 @@
 const mongoose = require('mongoose');
 
+const optionSchema = new mongoose.Schema({
+  text: { type: String, default: '' },
+  pinyin: { type: String, default: '' }
+}, { _id: false });
+
 const testSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
@@ -10,7 +15,8 @@ const testSchema = new mongoose.Schema(
     questions: [
       {
         questionText: { type: String, default: '' },
-        options: [{ type: String }],
+        questionPinyin: { type: String, default: '' },
+        options: [optionSchema],
         correctIndex: { type: Number, default: 0 },
       },
     ],

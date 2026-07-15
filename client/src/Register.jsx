@@ -7,14 +7,27 @@ const WIDGET_WORDS = {
     { word: '谢谢', phonetic: 'xiè xie', meaning: 'Thank you' },
     { word: '学习', phonetic: 'xué xí', meaning: 'To learn' },
     { word: '朋友', phonetic: 'péng you', meaning: 'Friend' },
-    { word: '家', phonetic: 'jiā', meaning: 'Home / Family' }
+    { word: '家', phonetic: 'jiā', meaning: 'Home / Family' },
+    {word: '再见', phonetic: 'zài jiàn', meaning: 'Goodbye' },
+    {word: '请', phonetic: 'qǐng', meaning: 'Please'},
+    {word: '对不起', phonetic: 'duì bù qǐ', meaning: 'Sorry'},
+    {word: '是', phonetic: 'shì', meaning: 'Yes / To be'},
+    {word: '不是', phonetic: 'bù shì', meaning: 'No / Not to be'},
+    {word: '我', phonetic: 'wǒ', meaning: 'I / Me'},
+    {word: '你', phonetic: 'nǐ', meaning: 'You'},
+    {word: '他', phonetic: 'tā', meaning: 'He / Him'},
+    {word: '她', phonetic: 'tā', meaning: 'She / Her'},
+    {word: '我们', phonetic: 'wǒ men', meaning: 'We / Us'},
+    {word: '他们', phonetic: 'tā men', meaning: 'They / Them'},
+    {word: '这', phonetic: 'zhè', meaning: 'This'},
+    {word: '那', phonetic: 'nà', meaning: 'That'},
+    {word: '哪里', phonetic: 'nǎ lǐ', meaning: 'Where'},
+    {word: '什么', phonetic: 'shén me', meaning: 'What'},
+
   ],
   ne: [
     { word: 'नमस्ते', phonetic: 'na·mas·te', meaning: 'Hello' },
-    { word: 'धन्यवाद', phonetic: 'dhan·ya·bād', meaning: 'Thank you' },
-    { word: 'सिक्नु', phonetic: 'sik·nu', meaning: 'To learn' },
-    { word: 'साथी', phonetic: 'sā·thi', meaning: 'Friend' },
-    { word: 'घर', phonetic: 'ghar', meaning: 'Home / House' }
+  
   ]
 };
 
@@ -128,9 +141,9 @@ function Register({ onRegistered, onBack, onSwitch }) {
         {/* Left Column: Welcome & Interactive vocabulary widget */}
         <div className="register-welcome-panel">
           <div className="welcome-header">
-            <h2>Create Your <span>Path</span></h2>
+            <h2>Learn <span>Chinese</span></h2>
             <p className="welcome-subtitle">
-              Embark on a structured, teacher-led journey to master Chinese and Nepali.
+              Learning Chinese can be fun and rewarding! Start your journey with our interactive lessons and exercises.
             </p>
           </div>
 
@@ -170,21 +183,21 @@ function Register({ onRegistered, onBack, onSwitch }) {
           {/* Benefits Bullet Points */}
           <div className="benefits-list">
             <div className="benefit-item">
-              <div className="benefit-icon">🎓</div>
+              <div className="benefit-icon">1</div>
               <div className="benefit-content">
                 <h4>Teacher-Guided Lessons</h4>
-                <p>Curriculums designed by seasoned native speakers.</p>
+                <p>Curriculums designed by native speakers.</p>
               </div>
             </div>
             <div className="benefit-item">
-              <div className="benefit-icon">⚡</div>
+              <div className="benefit-icon">2</div>
               <div className="benefit-content">
                 <h4>Interactive Exercises</h4>
                 <p>Retain words longer through active quizing & slides.</p>
               </div>
             </div>
             <div className="benefit-item">
-              <div className="benefit-icon">📈</div>
+              <div className="benefit-icon">3</div>
               <div className="benefit-content">
                 <h4>Progress Analytics</h4>
                 <p>Track your score, unlock courses, and test your skills.</p>
