@@ -586,89 +586,149 @@ function App() {
             Learn Chinese with <span>Anil</span>
           </button>
 
-          <button className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Menu">
-            {mobileMenuOpen ? '✕' : '☰'}
+          <button
+            className={`hamburger ${mobileMenuOpen ? 'is-open' : ''}`}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Menu"
+            aria-expanded={mobileMenuOpen}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
           </button>
 
           <nav className={`main-nav ${mobileMenuOpen ? 'open' : ''}`}>
-            <a className="nav-link" href="#courses" onClick={() => { setMobileMenuOpen(false); goHome(); }}>Courses</a>
+            <div className="nav-links">
+              <a className="nav-link" href="#courses" onClick={() => { setMobileMenuOpen(false); goHome(); }}>
+                <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"></path>
+                  <path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"></path>
+                </svg>
+                Courses
+              </a>
 
-            <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowPinyinPage(true); }}>Pinyin</button>
-
-            <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowTests(true); }}>Mock Tests</button>
-
-            <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowBlog(true); }}>Blog</button>
-
-            <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowFeedback(true); }}>Message us</button>
-
-            <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setLanguage(null); }}>Switch language</button>
-
-            <button
-              className="theme-toggle"
-              onClick={() => setDarkMode(!darkMode)}
-              aria-label="Toggle dark mode"
-              title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-            >
-              {darkMode ? '☀️' : '🌙'}
-            </button>
-
-            {user && user.role === 'student' && myAccessDays !== null && (
-              <span className="access-badge" title="Time left on your course access">
-                ⏳ {myAccessDays} {myAccessDays === 1 ? 'day' : 'days'} left
-              </span>
-            )}
-
-            {user && (
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); setShowDashboard(true); }}>
-                My Courses
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowPinyinPage(true); }}>
+                <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                  <line x1="9" y1="20" x2="15" y2="20"></line>
+                  <line x1="12" y1="4" x2="12" y2="20"></line>
+                </svg>
+                Pinyin
               </button>
-            )}
 
-            {isSuperAdmin && (
-              <button
-                className="admin-nav-toggle"
-                onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); setAdminSidebarOpen(true); }}
-                aria-expanded={adminSidebarOpen}
-                aria-controls="super-admin-navigation"
-                style={{ position: 'relative' }}
-              >
-                <span aria-hidden="true">☰</span> Admin
-                {(unreadFeedbackCount + pendingTestimonialsCount) > 0 && (
-                  <span className="admin-nav-badge">
-                    {unreadFeedbackCount + pendingTestimonialsCount}
-                  </span>
-                )}
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowTests(true); }}>
+                <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                  <path d="m9 12 2 2 4-4"></path>
+                </svg>
+                Mock Tests
               </button>
-            )}
 
-            {isAdmin && !isSuperAdmin && (
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowSubscriptions(true); }}>
-                Subscriptions
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowBlog(true); }}>
+                <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                </svg>
+                Blog
               </button>
-            )}
 
-            {user ? (
-              <div className="user-menu">
-                <button className="user-menu-trigger" onClick={() => setShowUserMenu(!showUserMenu)}>
-                  {user.name}
-                  {user.role === 'admin' && <em>(admin)</em>}
-                  {user.role === 'superadmin' && <em>(super admin)</em>}
-                  <span className="caret">▾</span>
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowFeedback(true); }}>
+                <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                </svg>
+                Message us
+              </button>
+
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setLanguage(null); }}>
+                <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+                Switch language
+              </button>
+            </div>
+
+            <div className="nav-divider" aria-hidden="true"></div>
+
+            <div className="nav-actions">
+              {user && user.role === 'student' && myAccessDays !== null && (
+                <span className="access-badge" title="Time left on your course access">
+                  ⏳ {myAccessDays} {myAccessDays === 1 ? 'day' : 'days'} left
+                </span>
+              )}
+
+              {user && (
+                <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); setShowDashboard(true); }}>
+                  <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                    <polyline points="2 17 12 22 22 17"></polyline>
+                    <polyline points="2 12 12 17 22 12"></polyline>
+                  </svg>
+                  My Courses
                 </button>
-                {showUserMenu && (
-                  <div className="user-menu-dropdown">
-                    <button onClick={() => { setShowUserMenu(false); setMobileMenuOpen(false); setShowChangePassword(true); }}>
-                      Change password
-                    </button>
-                    <button onClick={() => { setShowUserMenu(false); setMobileMenuOpen(false); handleLogout(); }}>
-                      Log out
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <button className="nav-btn" onClick={openLogin}>Sign in</button>
-            )}
+              )}
+
+              {isSuperAdmin && (
+                <button
+                  className="admin-nav-toggle"
+                  onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); setAdminSidebarOpen(true); }}
+                  aria-expanded={adminSidebarOpen}
+                  aria-controls="super-admin-navigation"
+                  style={{ position: 'relative' }}
+                >
+                  <span aria-hidden="true">☰</span> Admin
+                  {(unreadFeedbackCount + pendingTestimonialsCount) > 0 && (
+                    <span className="admin-nav-badge">
+                      {unreadFeedbackCount + pendingTestimonialsCount}
+                    </span>
+                  )}
+                </button>
+              )}
+
+              {isAdmin && !isSuperAdmin && (
+                <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowSubscriptions(true); }}>
+                  <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                  </svg>
+                  Subscriptions
+                </button>
+              )}
+
+              {user ? (
+                <div className="user-menu">
+                  <button className="user-menu-trigger" onClick={() => setShowUserMenu(!showUserMenu)}>
+                    <span className="user-menu-avatar" aria-hidden="true">{user.name.charAt(0).toUpperCase()}</span>
+                    {user.name}
+                    {user.role === 'admin' && <em>(admin)</em>}
+                    {user.role === 'superadmin' && <em>(super admin)</em>}
+                    <span className="caret">▾</span>
+                  </button>
+                  {showUserMenu && (
+                    <div className="user-menu-dropdown">
+                      <button onClick={() => { setShowUserMenu(false); setMobileMenuOpen(false); setShowChangePassword(true); }}>
+                        Change password
+                      </button>
+                      <button onClick={() => { setShowUserMenu(false); setMobileMenuOpen(false); handleLogout(); }}>
+                        Log out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button className="nav-btn" onClick={openLogin}>Sign in</button>
+              )}
+
+              <button
+                className="theme-toggle"
+                onClick={() => setDarkMode(!darkMode)}
+                aria-label="Toggle dark mode"
+                title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {darkMode ? '☀️' : '🌙'}
+              </button>
+            </div>
           </nav>
         </div>
       </header>
@@ -923,7 +983,11 @@ function App() {
                           <img className="course-card-img" src={`http://localhost:5001${c.image}`} alt={c.title} />
                         ) : (
                           <div className="course-card-glyph">
-                            <span className={c.language === 'chinese' ? 'zh' : 'ne'}>{c.glyph}</span>
+                            <span className={c.language === 'chinese' ? 'zh' : 'ne'}>
+                              {c.glyph && c.glyph.trim().length > 0 && c.glyph.trim().length <= 2 
+                                ? c.glyph 
+                                : (c.language === 'chinese' ? '中' : 'ने')}
+                            </span>
                           </div>
                         )}
                         <div className="course-card-body">

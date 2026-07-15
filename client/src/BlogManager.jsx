@@ -52,6 +52,7 @@ function BlogManager({ user, onBack }) {
   const [author, setAuthor] = useState(user ? user.name : '');
   const [size, setSize] = useState('medium');
   const [uploading, setUploading] = useState(false);
+  const [activeTab, setActiveTab] = useState('write'); // 'write' or 'preview'
 
   const quillRef = useRef(null);
 
@@ -74,6 +75,7 @@ function BlogManager({ user, onBack }) {
     setBody('');
     setImage('');
     setAuthor(user ? user.name : '');
+    setActiveTab('write');
   };
 
   const startEdit = (b) => {
@@ -82,6 +84,7 @@ function BlogManager({ user, onBack }) {
     setBody(b.body || '');
     setImage(b.image || '');
     setAuthor(b.author || '');
+    setActiveTab('write');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -168,228 +171,863 @@ function BlogManager({ user, onBack }) {
     load();
   };
 
+  // Helper calculations
+  const stripTags = (html) => (html || '').replace(/<[^>]+>/g, '');
+  
+  const wordCount = useMemo(() => {
+    const raw = stripTags(body);
+    return raw ? raw.trim().split(/\s+/).filter(Boolean).length : 0;
+  }, [body]);
+
+  const readTime = useMemo(() => {
+    return Math.max(1, Math.ceil(wordCount / 200));
+  }, [wordCount]);
+
+  const getCategory = (t, b) => {
+    const text = `${t} ${b}`.toLowerCase();
+    if (text.includes('pinyin') || text.includes('pronounce') || text.includes('tone')) return 'Pronunciation';
+    if (text.includes('character') || text.includes('stroke') || text.includes('write')) return 'Characters';
+    if (text.includes('nepali') || text.includes('nepal') || text.includes('devanagari')) return 'Nepali';
+    if (text.includes('hsk') || text.includes('exam') || text.includes('test')) return 'HSK Prep';
+    if (text.includes('grammar') || text.includes('sentence') || text.includes('structure')) return 'Grammar';
+    if (text.includes('culture') || text.includes('festival') || text.includes('food') || text.includes('history')) return 'Culture';
+    return 'Language Tips';
+  };
+
+  const currentCategory = useMemo(() => {
+    return getCategory(title, body);
+  }, [title, body]);
+
+  const initials = useMemo(() => {
+    if (!author) return 'E';
+    return author[0].toUpperCase();
+  }, [author]);
+
   return (
     <section className="bm-dashboard">
-      {/* Dynamic Styling injected directly to keep it self-contained */}
       <style>{`
         .bm-dashboard {
-          max-width: 1280px;
+          max-width: 1240px;
           margin: 0 auto;
-          padding: 2rem 1.5rem;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-          color: #1f2937;
-          background-color: #f9fafb;
+          padding: 2.5rem 1.5rem;
+          font-family: 'Inter', -apple-system, sans-serif;
+          color: var(--ink, #2a2320);
+          background-color: var(--paper, #faf6ec);
           min-height: 100vh;
         }
+
         .bm-back-btn {
           background: none;
           border: none;
-          color: #4f46e5;
-          font-weight: 500;
+          color: var(--jade, #2e6b57);
+          font-weight: 600;
           cursor: pointer;
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
-          padding: 0.5rem 0;
+          padding: 0.5rem 1rem;
           margin-bottom: 1.5rem;
-          transition: color 0.2s;
+          border-radius: 8px;
+          transition: all 0.2s ease;
+          border: 1px dashed transparent;
         }
-        .bm-back-btn:hover { color: #3730a3; }
+        .bm-back-btn:hover {
+          background: rgba(46, 107, 87, 0.08);
+          border-color: var(--jade, #2e6b57);
+        }
+
         .bm-header {
           margin-bottom: 2.5rem;
-          border-bottom: 1px solid #e5e7eb;
-          padding-bottom: 1rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 1px solid var(--line, #e6dcc6);
+          padding-bottom: 1.5rem;
         }
-        .bm-title { font-size: 2.25rem; font-weight: 800; color: #111827; margin: 0; }
+
+        .bm-title-container {
+          text-align: left;
+        }
+
+        .bm-title-container h1 {
+          font-family: 'Fraunces', Georgia, serif;
+          font-size: 2.5rem;
+          font-weight: 800;
+          color: var(--ink, #2a2320);
+          margin: 0;
+          letter-spacing: -0.5px;
+        }
+
+        .bm-title-container p {
+          color: var(--mist, #7a7266);
+          margin-top: 0.25rem;
+          font-size: 0.95rem;
+        }
+
+        /* Metrics Grid */
+        .bm-metrics-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 1.25rem;
+          margin-bottom: 2.5rem;
+        }
+
+        .bm-metric-card {
+          background: var(--card, #fffdf8);
+          border: 1px solid var(--line, #e6dcc6);
+          border-radius: 12px;
+          padding: 1.25rem;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          box-shadow: 0 4px 12px rgba(42, 35, 32, 0.02);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .bm-metric-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(42, 35, 32, 0.04);
+        }
+
+        .bm-metric-icon {
+          width: 44px;
+          height: 44px;
+          border-radius: 10px;
+          background: rgba(46, 107, 87, 0.08);
+          color: var(--jade, #2e6b57);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.25rem;
+        }
+
+        .bm-metric-icon.gold {
+          background: rgba(201, 154, 60, 0.08);
+          color: var(--gold, #c99a3c);
+        }
+
+        .bm-metric-icon.seal {
+          background: rgba(200, 54, 42, 0.08);
+          color: var(--seal, #c8362a);
+        }
+
+        .bm-metric-details {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .bm-metric-value {
+          font-family: 'Fraunces', serif;
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: var(--ink, #2a2320);
+          line-height: 1.1;
+        }
+
+        .bm-metric-label {
+          font-size: 0.8rem;
+          color: var(--mist, #7a7266);
+          font-weight: 500;
+          margin-top: 0.25rem;
+        }
+
         .bm-error {
-          background-color: #fef2f2;
-          border-left: 4px solid #ef4444;
-          color: #991b1b;
+          background-color: rgba(200, 54, 42, 0.05);
+          border-left: 4px solid var(--seal, #c8362a);
+          color: var(--seal, #c8362a);
           padding: 1rem;
           border-radius: 6px;
           margin-bottom: 2rem;
-          font-size: 0.95rem;
+          font-size: 0.9rem;
+          font-weight: 500;
         }
+
         .bm-workspace {
           display: grid;
           grid-template-columns: 1fr;
           gap: 2.5rem;
         }
+
         @media (min-width: 1024px) {
-          .bm-workspace { grid-template-columns: 7fr 5fr; align-items: start; }
+          .bm-workspace {
+            grid-template-columns: 7fr 5fr;
+            align-items: start;
+          }
         }
+
         .bm-panel {
-          background: #f3fbee;
+          background: var(--card, #fffdf8);
           padding: 2rem;
-          border-radius: 12px;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-          border: 1px solid #e5e7eb;
+          border-radius: 16px;
+          box-shadow: 0 4px 20px rgba(42, 35, 32, 0.03);
+          border: 1px solid var(--line, #e6dcc6);
         }
-        .bm-panel h2 { font-size: 1.5rem; font-weight: 700; margin-top: 0; margin-bottom: 1.5rem; color: #111827; }
-        .bm-form-group { margin-bottom: 1.25rem; }
-        .bm-label { display: block; font-size: 0.875rem; font-weight: 600; color: #4b5563; margin-bottom: 0.5rem; }
-        .bm-input, .bm-select {
-          width: 100%;
-          padding: 0.75rem 1rem;
-          border: 1px solid #d1d5db;
+
+        .bm-panel h2 {
+          font-family: 'Fraunces', serif;
+          font-size: 1.6rem;
+          font-weight: 700;
+          margin-top: 0;
+          margin-bottom: 1.5rem;
+          color: var(--ink, #2a2320);
+          border-bottom: 1px solid var(--line, #e6dcc6);
+          padding-bottom: 0.75rem;
+        }
+
+        /* Tabs Navigation */
+        .bm-tabs-nav {
+          display: flex;
+          gap: 0.5rem;
+          margin-bottom: 1.5rem;
+          border-bottom: 1px solid var(--line, #e6dcc6);
+          padding-bottom: 0.5rem;
+        }
+
+        .bm-tab-btn {
+          background: none;
+          border: none;
+          padding: 0.6rem 1.2rem;
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: var(--mist, #7a7266);
+          cursor: pointer;
           border-radius: 8px;
-          font-size: 1rem;
-          box-sizing: border-box;
-          transition: border-color 0.2s, box-shadow 0.2s;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
         }
-        .bm-input:focus, .bm-select:focus {
-          outline: none;
-          border-color: #4f46e5;
-          box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+
+        .bm-tab-btn:hover {
+          background: rgba(42, 35, 32, 0.04);
+          color: var(--ink, #2a2320);
         }
-        .bm-quill-container { margin-bottom: 1.5rem; }
-        .bm-quill-container .ql-toolbar { border-top-left-radius: 8px; border-top-right-radius: 8px; border-color: #d1d5db; background: #f3f4f6; }
-        .bm-quill-container .ql-container { border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; border-color: #d1d5db; font-size: 1rem; min-height: 250px; }
-        .bm-image-section {
-          background: #f9fafb;
-          border: 2px dashed #d1d5db;
-          border-radius: 8px;
-          padding: 1.25rem;
+
+        .bm-tab-btn.active {
+          background: var(--jade, #2e6b57);
+          color: #ffffff;
+        }
+
+        /* Form styling */
+        .bm-form-group {
           margin-bottom: 1.5rem;
         }
-        .bm-preview-wrapper { position: relative; margin-bottom: 1rem; border-radius: 6px; overflow: hidden; }
-        .bm-preview-img { width: 100%; height: auto; display: block; max-height: 220px; object-fit: cover; }
+
+        .bm-label {
+          display: block;
+          font-size: 0.85rem;
+          font-weight: 700;
+          color: var(--ink, #2a2320);
+          margin-bottom: 0.5rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .bm-input {
+          width: 100%;
+          padding: 0.85rem 1.2rem;
+          border: 1px solid var(--line, #e6dcc6);
+          background: var(--paper, #faf6ec);
+          border-radius: 10px;
+          font-size: 1rem;
+          color: var(--ink, #2a2320);
+          box-sizing: border-box;
+          transition: all 0.2s ease;
+          font-family: inherit;
+        }
+
+        .bm-input:focus {
+          outline: none;
+          border-color: var(--jade, #2e6b57);
+          background: #ffffff;
+          box-shadow: 0 0 0 4px rgba(46, 107, 87, 0.08);
+        }
+
+        .bm-quill-container {
+          margin-bottom: 1.5rem;
+        }
+
+        .bm-quill-container .ql-toolbar {
+          border-top-left-radius: 10px;
+          border-top-right-radius: 10px;
+          border-color: var(--line, #e6dcc6);
+          background: var(--paper, #faf6ec);
+          padding: 8px 12px;
+        }
+
+        .bm-quill-container .ql-container {
+          border-bottom-left-radius: 10px;
+          border-bottom-right-radius: 10px;
+          border-color: var(--line, #e6dcc6);
+          background: #ffffff;
+          font-size: 1rem;
+          min-height: 320px;
+          font-family: 'Inter', sans-serif;
+        }
+
+        /* Modern Image upload zone */
+        .bm-image-dropzone {
+          background: var(--paper, #faf6ec);
+          border: 2px dashed var(--line, #e6dcc6);
+          border-radius: 12px;
+          padding: 1.75rem;
+          text-align: center;
+          transition: all 0.2s ease;
+          position: relative;
+        }
+
+        .bm-image-dropzone:hover {
+          border-color: var(--jade, #2e6b57);
+          background: rgba(46, 107, 87, 0.02);
+        }
+
+        .bm-preview-wrapper {
+          position: relative;
+          margin-bottom: 1.25rem;
+          border-radius: 10px;
+          overflow: hidden;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+          border: 1px solid var(--line, #e6dcc6);
+        }
+
+        .bm-preview-img {
+          width: 100%;
+          height: auto;
+          display: block;
+          max-height: 240px;
+          object-fit: cover;
+        }
+
         .bm-remove-img-btn {
-          position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.9);
-          color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: 500;
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          background: var(--seal, #c8362a);
+          color: white;
+          border: none;
+          padding: 6px 12px;
+          border-radius: 6px;
+          font-size: 0.75rem;
+          cursor: pointer;
+          font-weight: 600;
+          transition: background-color 0.2s;
+          box-shadow: 0 4px 10px rgba(200, 54, 42, 0.2);
         }
-        .bm-remove-img-btn:hover { background: #dc2626; }
-        .bm-upload-controls { display: grid; grid-template-columns: 1fr 120px; gap: 0.75rem; align-items: center; margin-top: 0.5rem; }
-        .bm-file-input { font-size: 0.875rem; color: #6b7280; }
-        .bm-uploading-txt { font-size: 0.875rem; color: #4f46e5; font-weight: 500; margin-top: 0.5rem; }
-        .bm-actions { display: flex; gap: 0.75rem; margin-top: 1.75rem; }
+        .bm-remove-img-btn:hover {
+          background: #a8271d;
+        }
+
+        .bm-upload-icon {
+          font-size: 2.25rem;
+          color: var(--mist, #7a7266);
+          margin-bottom: 0.75rem;
+        }
+
+        .bm-upload-controls {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1rem;
+          align-items: center;
+          justify-content: center;
+          margin-top: 1rem;
+        }
+
+        .bm-file-input-wrapper {
+          position: relative;
+          overflow: hidden;
+          display: inline-block;
+        }
+
+        .bm-btn-upload-file {
+          background: var(--rice, #f3ebd8);
+          color: var(--ink, #2a2320);
+          border: 1px solid var(--line, #e6dcc6);
+          padding: 0.6rem 1.2rem;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 0.85rem;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .bm-file-input-wrapper:hover .bm-btn-upload-file {
+          background: var(--line, #e6dcc6);
+        }
+
+        .bm-file-input-wrapper input[type=file] {
+          font-size: 100px;
+          position: absolute;
+          left: 0;
+          top: 0;
+          opacity: 0;
+          cursor: pointer;
+        }
+
+        .bm-select {
+          padding: 0.6rem 1.2rem;
+          border: 1px solid var(--line, #e6dcc6);
+          background: #ffffff;
+          border-radius: 8px;
+          font-size: 0.85rem;
+          font-weight: 600;
+          color: var(--ink, #2a2320);
+          cursor: pointer;
+          outline: none;
+        }
+        .bm-select:focus {
+          border-color: var(--jade, #2e6b57);
+        }
+
+        .bm-uploading-txt {
+          font-size: 0.85rem;
+          color: var(--jade, #2e6b57);
+          font-weight: 600;
+          margin-top: 0.75rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+        }
+
+        .bm-actions {
+          display: flex;
+          gap: 1rem;
+          margin-top: 2rem;
+        }
+
         .bm-btn-primary {
-          background-color: #4f46e5; color: white; border: none; padding: 0.75rem 1.5rem;
-          border-radius: 8px; font-weight: 600; cursor: pointer; transition: background-color 0.2s; font-size: 1rem;
+          background-color: var(--jade, #2e6b57);
+          color: white;
+          border: none;
+          padding: 0.85rem 1.75rem;
+          border-radius: 10px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          font-size: 1rem;
+          box-shadow: 0 4px 14px rgba(46, 107, 87, 0.2);
         }
-        .bm-btn-primary:hover { background-color: #4338ca; }
+        .bm-btn-primary:hover {
+          background-color: #245444;
+          transform: translateY(-1px);
+          box-shadow: 0 6px 18px rgba(46, 107, 87, 0.3);
+        }
+
         .bm-btn-secondary {
-          background-color: white; color: #4b5563; border: 1px solid #d1d5db; padding: 0.75rem 1.5rem;
-          border-radius: 8px; font-weight: 600; cursor: pointer; transition: background-color 0.2s; font-size: 1rem;
+          background-color: transparent;
+          color: var(--mist, #7a7266);
+          border: 1px solid var(--line, #e6dcc6);
+          padding: 0.85rem 1.75rem;
+          border-radius: 10px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.2s;
+          font-size: 1rem;
         }
-        .bm-btn-secondary:hover { background-color: #f3f4f6; border-color: #9ca3af; }
-        .bm-post-list { display: flex; flex-direction: column; gap: 1rem; }
+        .bm-btn-secondary:hover {
+          background-color: var(--rice, #f3ebd8);
+          color: var(--ink, #2a2320);
+        }
+
+        /* Live Preview Simulator */
+        .bm-preview-simulator {
+          padding: 1rem 0;
+          background: #ffffff;
+          border-radius: 12px;
+          box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.02);
+          border: 1px solid var(--line, #e6dcc6);
+          padding: 2rem;
+        }
+
+        .bm-sim-label {
+          display: inline-block;
+          background: var(--jade, #2e6b57);
+          color: #ffffff;
+          font-size: 10px;
+          font-weight: 700;
+          padding: 3px 10px;
+          border-radius: 20px;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 1rem;
+        }
+
+        .bm-sim-title {
+          font-family: 'Fraunces', Georgia, serif;
+          font-size: 2.2rem;
+          font-weight: 750;
+          color: var(--ink, #2a2320);
+          line-height: 1.25;
+          margin: 0.5rem 0 1.5rem;
+        }
+
+        .bm-sim-author-card {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          border-top: 1px solid var(--line, #e6dcc6);
+          border-bottom: 1px solid var(--line, #e6dcc6);
+          padding: 0.85rem 0;
+          margin-bottom: 1.5rem;
+        }
+
+        .bm-sim-avatar {
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, var(--jade, #2e6b57) 0%, var(--gold, #c99a3c) 100%);
+          color: white;
+          font-weight: 700;
+          font-size: 0.85rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .bm-sim-author-details {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .bm-sim-author-name {
+          font-size: 0.9rem;
+          font-weight: 700;
+          color: var(--ink, #2a2320);
+        }
+
+        .bm-sim-meta-date {
+          font-size: 0.75rem;
+          color: var(--mist, #7a7266);
+        }
+
+        .bm-sim-cover-wrapper {
+          border-radius: 10px;
+          overflow: hidden;
+          margin-bottom: 1.75rem;
+          max-height: 320px;
+        }
+        .bm-sim-cover-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+
+        .bm-sim-body {
+          font-family: 'Inter', sans-serif;
+          font-size: 1.05rem;
+          line-height: 1.8;
+          color: var(--ink, #2a2320);
+        }
+
+        .bm-sim-body p {
+          margin-bottom: 1.5rem;
+        }
+
+        .bm-sim-body h2 {
+          font-family: 'Fraunces', serif;
+          font-size: 1.6rem;
+          font-weight: 700;
+          margin-top: 2.2rem;
+          margin-bottom: 1rem;
+        }
+
+        .bm-sim-placeholder {
+          text-align: center;
+          color: var(--mist, #7a7266);
+          padding: 4rem 1rem;
+          font-style: italic;
+          font-size: 1.05rem;
+        }
+
+        /* Post Cards in list */
+        .bm-post-list {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
         .bm-post-card {
-          border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; display: flex;
-          justify-content: space-between; align-items: center; background: #ffffff; transition: box-shadow 0.2s;
+          border: 1px solid var(--line, #e6dcc6);
+          border-radius: 12px;
+          padding: 1rem;
+          display: flex;
+          gap: 1rem;
+          background: #ffffff;
+          transition: all 0.2s ease;
+          align-items: center;
         }
-        .bm-post-card:hover { box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
-        .bm-post-info { display: flex; flex-direction: column; gap: 0.25rem; max-width: 70%; }
-        .bm-post-title { font-weight: 600; color: #111827; font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .bm-post-meta { font-size: 0.85rem; color: #6b7280; }
-        .bm-list-actions { display: flex; gap: 0.5rem; }
+
+        .bm-post-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(42, 35, 32, 0.03);
+          border-color: var(--jade, #2e6b57);
+        }
+
+        .bm-post-thumbnail {
+          width: 60px;
+          height: 60px;
+          border-radius: 8px;
+          object-fit: cover;
+          background: var(--paper, #faf6ec);
+          flex-shrink: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.5rem;
+          border: 1px solid var(--line, #e6dcc6);
+        }
+
+        .bm-post-info {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+          flex-grow: 1;
+          min-width: 0;
+        }
+
+        .bm-post-title {
+          font-family: 'Fraunces', serif;
+          font-weight: 700;
+          color: var(--ink, #2a2320);
+          font-size: 1.05rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .bm-post-meta {
+          font-size: 0.8rem;
+          color: var(--mist, #7a7266);
+        }
+
+        .bm-list-actions {
+          display: flex;
+          gap: 0.4rem;
+          flex-shrink: 0;
+        }
+
         .bm-btn-sm-edit {
-          background: #f3f4f6; color: #374151; border: none; padding: 6px 12px; border-radius: 6px;
-          font-size: 0.85rem; font-weight: 500; cursor: pointer;
+          background: var(--paper, #faf6ec);
+          color: var(--ink, #2a2320);
+          border: 1px solid var(--line, #e6dcc6);
+          padding: 6px 12px;
+          border-radius: 6px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
         }
-        .bm-btn-sm-edit:hover { background: #e5e7eb; color: #111827; }
+        .bm-btn-sm-edit:hover {
+          background: var(--rice, #f3ebd8);
+        }
+
         .bm-btn-sm-del {
-          background: #fff5f5; color: #c53030; border: none; padding: 6px 12px; border-radius: 6px;
-          font-size: 0.85rem; font-weight: 500; cursor: pointer;
+          background: rgba(200, 54, 42, 0.05);
+          color: var(--seal, #c8362a);
+          border: 1px solid rgba(200, 54, 42, 0.1);
+          padding: 6px 12px;
+          border-radius: 6px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
         }
-        .bm-btn-sm-del:hover { background: #fed7d7; }
-        .bm-empty-state { text-align: center; color: #9ca3af; padding: 3rem 1rem; font-style: italic; }
+        .bm-btn-sm-del:hover {
+          background: rgba(200, 54, 42, 0.1);
+        }
+
+        .bm-empty-state {
+          text-align: center;
+          color: var(--mist, #7a7266);
+          padding: 3rem 1rem;
+          font-style: italic;
+        }
       `}</style>
 
       <button className="bm-back-btn" onClick={onBack}>← Back to home</button>
       
       <div className="bm-header">
-        <h1 className="bm-title">Blog Manager</h1>
+        <div className="bm-title-container">
+          <h1>Insights Studio</h1>
+          <p>Draft, design, and manage your BhashaHub articles</p>
+        </div>
       </div>
 
       {error && <div className="bm-error">{error}</div>}
 
+      {/* Statistics Section */}
+      <div className="bm-metrics-grid">
+        <div className="bm-metric-card">
+          <div className="bm-metric-icon">📝</div>
+          <div className="bm-metric-details">
+            <span className="bm-metric-value">{blogs.length}</span>
+            <span className="bm-metric-label">Total Articles</span>
+          </div>
+        </div>
+        <div className="bm-metric-card">
+          <div className="bm-metric-icon gold">🖋</div>
+          <div className="bm-metric-details">
+            <span className="bm-metric-value">{wordCount}</span>
+            <span className="bm-metric-label">Words in Editor</span>
+          </div>
+        </div>
+        <div className="bm-metric-card">
+          <div className="bm-metric-icon seal">⏱</div>
+          <div className="bm-metric-details">
+            <span className="bm-metric-value">{readTime} min</span>
+            <span className="bm-metric-label">Est. Read Time</span>
+          </div>
+        </div>
+      </div>
+
       <div className="bm-workspace">
-        {/* Left Side: Editor Panel */}
+        {/* Left Side: Editor & Preview Tab Panel */}
         <div className="bm-panel">
-          <h2>{editingId ? 'Edit Post Workspace' : 'Create New Post'}</h2>
-          
-          <div className="bm-form-group">
-            <label className="bm-label">Post Title</label>
-            <input 
-              className="bm-input" 
-              value={title} 
-              onChange={(e) => setTitle(e.target.value)} 
-              placeholder="e.g. 10 Essential Design Rules" 
-            />
+          <div className="bm-tabs-nav">
+            <button 
+              className={`bm-tab-btn ${activeTab === 'write' ? 'active' : ''}`}
+              onClick={() => setActiveTab('write')}
+            >
+              ✍️ Write Editor
+            </button>
+            <button 
+              className={`bm-tab-btn ${activeTab === 'preview' ? 'active' : ''}`}
+              onClick={() => setActiveTab('preview')}
+            >
+              👁 Live Preview
+            </button>
           </div>
 
-          <div className="bm-form-group">
-            <label className="bm-label">Author Name</label>
-            <input 
-              className="bm-input" 
-              value={author} 
-              onChange={(e) => setAuthor(e.target.value)} 
-              placeholder="Your name" 
-            />
-          </div>
+          {activeTab === 'write' ? (
+            <div className="bm-editor-pane">
+              <div className="bm-form-group">
+                <label className="bm-label">Post Title</label>
+                <input 
+                  className="bm-input" 
+                  value={title} 
+                  onChange={(e) => setTitle(e.target.value)} 
+                  placeholder="e.g. Debunking Tones in Mandarin Chinese" 
+                />
+              </div>
 
-          <div className="bm-form-group">
-            <label className="bm-label">Content Body</label>
-            <div className="bm-quill-container">
-              <ReactQuill
-                ref={quillRef}
-                theme="snow"
-                value={body}
-                onChange={setBody}
-                modules={quillModules}
-                placeholder="Share your insights here..."
-              />
+              <div className="bm-form-group">
+                <label className="bm-label">Author Name</label>
+                <input 
+                  className="bm-input" 
+                  value={author} 
+                  onChange={(e) => setAuthor(e.target.value)} 
+                  placeholder="e.g. Anil" 
+                />
+              </div>
+
+              <div className="bm-form-group">
+                <label className="bm-label">Content Body</label>
+                <div className="bm-quill-container">
+                  <ReactQuill
+                    ref={quillRef}
+                    theme="snow"
+                    value={body}
+                    onChange={setBody}
+                    modules={quillModules}
+                    placeholder="Share your insights here... Format headers with H2 or H3."
+                  />
+                </div>
+              </div>
+
+              <div className="bm-form-group">
+                <label className="bm-label">Featured Cover Image</label>
+                <div className="bm-image-dropzone">
+                  {image ? (
+                    <div className="bm-preview-wrapper">
+                      <img src={`${SERVER}${image}`} alt="Featured preview" className="bm-preview-img" />
+                      <button type="button" className="bm-remove-img-btn" onClick={() => setImage('')}>Remove Cover</button>
+                    </div>
+                  ) : (
+                    <div className="bm-upload-icon">🖼</div>
+                  )}
+                  
+                  <p style={{ fontSize: '0.85rem', color: 'var(--mist)', fontWeight: 600, margin: '0.5rem 0' }}>
+                    {image ? 'Change cover image asset' : 'Drag & drop or browse to add an image'}
+                  </p>
+                  
+                  <div className="bm-upload-controls">
+                    <div className="bm-file-input-wrapper">
+                      <button className="bm-btn-upload-file">Upload Image</button>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onClick={(e) => { e.target.value = ''; }}
+                        onChange={(e) => uploadImage(e.target.files[0])}
+                      />
+                    </div>
+                    <select className="bm-select" value={size} onChange={(e) => setSize(e.target.value)}>
+                      <option value="small">Optimize: Small (800px)</option>
+                      <option value="medium">Optimize: Medium (1400px)</option>
+                      <option value="large">Optimize: Large (2000px)</option>
+                    </select>
+                  </div>
+                  {uploading && (
+                    <p className="bm-uploading-txt">
+                      <span className="spinner">⏳</span> Resizing and processing asset...
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="bm-actions">
+                <button className="bm-btn-primary" onClick={save}>
+                  {editingId ? 'Save Changes' : 'Publish Article'}
+                </button>
+                {editingId && <button className="bm-btn-secondary" onClick={reset}>Cancel Edit</button>}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="bm-preview-simulator">
+              {title.trim() || body.trim() || image ? (
+                <div>
+                  <span className="bm-sim-label">{currentCategory}</span>
+                  <h1 className="bm-sim-title">{title || 'Untitled Post'}</h1>
+                  
+                  <div className="bm-sim-author-card">
+                    <div className="bm-sim-avatar">
+                      {initials}
+                    </div>
+                    <div className="bm-sim-author-details">
+                      <span className="bm-sim-author-name">{author || 'Anonymous'}</span>
+                      <span className="bm-sim-meta-date">
+                        {new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })} · ⏱ {readTime} min read
+                      </span>
+                    </div>
+                  </div>
 
-          <div className="bm-form-group">
-            <label className="bm-label">Featured Cover Image</label>
-            <div className="bm-image-section">
-              {image && (
-                <div className="bm-preview-wrapper">
-                  <img src={`${SERVER}${image}`} alt="Featured preview" className="bm-preview-img" />
-                  <button type="button" className="bm-remove-img-btn" onClick={() => setImage('')}>Remove</button>
+                  {image && (
+                    <div className="bm-sim-cover-wrapper">
+                      <img src={`${SERVER}${image}`} alt="Cover" className="bm-sim-cover-img" />
+                    </div>
+                  )}
+
+                  <div className="bm-sim-body" dangerouslySetInnerHTML={{ __html: body || '<p><i>No content written yet.</i></p>' }} />
+                </div>
+              ) : (
+                <div className="bm-sim-placeholder">
+                  <p>Type a title, upload a cover, or start writing content to see a live visual mockup of your article here.</p>
                 </div>
               )}
-              
-              <label className="bm-label" style={{ fontSize: '0.8rem', color: '#6b7280' }}>
-                {image ? 'Replace current image' : 'Upload an image asset'}
-              </label>
-              
-              <div className="bm-upload-controls">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="bm-file-input"
-                  onClick={(e) => { e.target.value = ''; }}
-                  onChange={(e) => uploadImage(e.target.files[0])}
-                />
-                <select className="bm-select" value={size} onChange={(e) => setSize(e.target.value)}>
-                  <option value="small">Small (800px)</option>
-                  <option value="medium">Medium (1400px)</option>
-                  <option value="large">Large (2000px)</option>
-                </select>
-              </div>
-              {uploading && <p className="bm-uploading-txt">Optimizing & uploading canvas asset...</p>}
             </div>
-          </div>
-
-          <div className="bm-actions">
-            <button className="bm-btn-primary" onClick={save}>
-              {editingId ? 'Save Configuration' : 'Publish Article'}
-            </button>
-            {editingId && <button className="bm-btn-secondary" onClick={reset}>Cancel Edit</button>}
-          </div>
+          )}
         </div>
 
         {/* Right Side: Dashboard Archive */}
         <div className="bm-panel">
-          <h2>All Posts ({blogs.length})</h2>
+          <h2>All Articles Archive ({blogs.length})</h2>
           <div className="bm-post-list">
-            {blogs.length === 0 && <p className="bm-empty-state">No articles filed yet.</p>}
+            {blogs.length === 0 && <p className="bm-empty-state">No articles in archive.</p>}
             {blogs.map((b) => (
               <div className="bm-post-card" key={b._id}>
+                {b.image ? (
+                  <img src={`${SERVER}${b.image}`} alt="" className="bm-post-thumbnail" />
+                ) : (
+                  <div className="bm-post-thumbnail">📝</div>
+                )}
                 <div className="bm-post-info">
                   <span className="bm-post-title" title={b.title}>{b.title}</span>
                   <span className="bm-post-meta">{b.author || 'Anonymous'} · {new Date(b.createdAt).toLocaleDateString()}</span>

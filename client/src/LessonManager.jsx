@@ -350,7 +350,9 @@ function LessonManager({ course, onBack }) {
 
       <div className="course-head">
         <span className={`glyph ${course.language === 'chinese' ? 'zh' : 'ne'}`}>
-          {course.glyph}
+          {course.glyph && course.glyph.trim().length > 0 && course.glyph.trim().length <= 2 
+            ? course.glyph 
+            : (course.language === 'chinese' ? '中' : 'ने')}
         </span>
         <div>
           <h1 className="section-title">{course.title}</h1>

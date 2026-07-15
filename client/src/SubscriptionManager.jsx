@@ -151,13 +151,442 @@ function SubscriptionManager({ onBack }) {
 
   return (
     <section className="admin container">
+      {/* Scoped CSS override block to elevate layouts to premium BhashaHub standards */}
+      <style>{`
+        .admin.container {
+          padding-top: 40px;
+          padding-bottom: 80px;
+        }
+
+        .sm-header-row {
+          margin-bottom: 2rem;
+          border-bottom: 1px solid var(--line);
+          padding-bottom: 1.5rem;
+        }
+
+        .sm-header-row h1 {
+          font-family: 'Fraunces', serif;
+          font-size: 2.4rem;
+          font-weight: 800;
+          color: var(--ink);
+          margin: 0;
+        }
+
+        .sm-header-row p {
+          color: var(--mist);
+          font-size: 0.95rem;
+          margin-top: 0.25rem;
+        }
+
+        /* Metrics grid */
+        .subs-stats-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 1.25rem;
+          margin: 0 0 2.5rem 0;
+        }
+
+        .subs-stat-card {
+          background: var(--card);
+          border: 1px solid var(--line);
+          border-radius: 12px;
+          padding: 1.25rem;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          box-shadow: 0 4px 12px rgba(42, 35, 32, 0.02);
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .subs-stat-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(42, 35, 32, 0.04);
+        }
+
+        .subs-stat-icon {
+          width: 44px;
+          height: 44px;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.2rem;
+          font-weight: 700;
+        }
+        .subs-stat-icon.active {
+          background: rgba(46, 107, 87, 0.08);
+          color: var(--jade);
+        }
+        .subs-stat-icon.expired {
+          background: rgba(200, 54, 42, 0.08);
+          color: var(--seal);
+        }
+        .subs-stat-icon.courses {
+          background: rgba(201, 154, 60, 0.08);
+          color: var(--gold);
+        }
+
+        .subs-stat-number {
+          font-family: 'Fraunces', serif;
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: var(--ink);
+          line-height: 1.1;
+        }
+
+        /* Workspaces layout */
+        .subs-manager-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 2.5rem;
+          align-items: start;
+        }
+
+        @media (min-width: 992px) {
+          .subs-manager-grid {
+            grid-template-columns: 380px 1fr;
+          }
+        }
+
+        .admin-form, .admin-list {
+          background: var(--card);
+          border: 1px solid var(--line);
+          border-radius: 16px;
+          padding: 2rem;
+          box-shadow: 0 6px 20px rgba(42, 35, 32, 0.02);
+        }
+
+        .admin-form h2, .admin-list h2 {
+          font-family: 'Fraunces', serif;
+          font-size: 1.4rem;
+          font-weight: 700;
+          color: var(--ink);
+          margin-bottom: 1.5rem;
+          border-bottom: 1px solid var(--line);
+          padding-bottom: 0.75rem;
+        }
+
+        .admin-form label {
+          display: block;
+          font-size: 0.8rem;
+          font-weight: 700;
+          color: var(--ink);
+          margin-bottom: 0.4rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        /* inputs override */
+        .admin-form input[type=text],
+        .admin-form input[type=number],
+        .admin-form select {
+          width: 100%;
+          padding: 0.8rem 1rem;
+          border: 1px solid var(--line);
+          background: var(--paper);
+          border-radius: 10px;
+          font-size: 0.95rem;
+          color: var(--ink);
+          box-sizing: border-box;
+          transition: all 0.2s ease;
+          font-family: inherit;
+        }
+        .admin-form input:focus, .admin-form select:focus {
+          outline: none;
+          border-color: var(--jade);
+          background: #ffffff;
+          box-shadow: 0 0 0 4px rgba(46, 107, 87, 0.08);
+        }
+
+        /* Student Search dropdown results override */
+        .student-search-results {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          width: 100%;
+          background: #ffffff;
+          border: 1px solid var(--line);
+          border-radius: 10px;
+          max-height: 220px;
+          overflow-y: auto;
+          z-index: 10;
+          box-shadow: 0 10px 25px rgba(42, 35, 32, 0.08);
+        }
+
+        .student-search-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 14px;
+          cursor: pointer;
+          border-bottom: 1px solid var(--line);
+          transition: background 0.15s ease;
+        }
+        .student-search-item:hover {
+          background: var(--paper);
+        }
+
+        .student-search-avatar {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, var(--jade) 0%, var(--gold) 100%);
+          color: #ffffff;
+          font-size: 0.85rem;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .student-search-name {
+          font-size: 0.9rem;
+          font-weight: 700;
+          color: var(--ink);
+        }
+
+        .student-search-email {
+          font-size: 0.75rem;
+          color: var(--mist);
+        }
+
+        /* Selected card */
+        .selected-student-card {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: #ffffff;
+          border: 1px solid var(--line);
+          padding: 10px 14px;
+          border-radius: 10px;
+          margin-top: 6px;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.01);
+        }
+        .selected-student-card .name {
+          font-size: 0.95rem;
+          font-weight: 700;
+          color: var(--ink);
+        }
+        .selected-student-card .email {
+          font-size: 0.75rem;
+          color: var(--mist);
+        }
+        .selected-student-card button.remove {
+          background: none;
+          border: none;
+          color: var(--seal);
+          cursor: pointer;
+          font-weight: 700;
+          font-size: 1rem;
+          padding: 4px 8px;
+          transition: transform 0.2s;
+        }
+        .selected-student-card button.remove:hover {
+          transform: scale(1.15);
+        }
+
+        /* Presets pill tags */
+        .duration-presets {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          margin-top: 10px;
+        }
+        .preset-btn {
+          background: var(--paper);
+          border: 1px solid var(--line);
+          color: var(--ink);
+          font-size: 0.75rem;
+          font-weight: 700;
+          padding: 6px 12px;
+          border-radius: 20px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .preset-btn:hover {
+          border-color: var(--jade);
+          color: var(--jade);
+          background: transparent;
+        }
+        .preset-btn.active {
+          background: var(--jade);
+          border-color: var(--jade);
+          color: #ffffff;
+          box-shadow: 0 4px 10px rgba(46, 107, 87, 0.25);
+        }
+
+        /* Action buttons override */
+        .admin-form button.btn-primary {
+          width: 100%;
+          background-color: var(--jade);
+          color: white;
+          border: none;
+          padding: 0.85rem;
+          border-radius: 10px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          font-size: 0.95rem;
+          box-shadow: 0 4px 14px rgba(46, 107, 87, 0.2);
+        }
+        .admin-form button.btn-primary:hover {
+          background-color: #245444;
+          transform: translateY(-1px);
+          box-shadow: 0 6px 18px rgba(46, 107, 87, 0.3);
+        }
+
+        /* Filter bar layout */
+        .list-filter-bar {
+          display: flex;
+          gap: 0.75rem;
+          margin-bottom: 1.5rem;
+          align-items: center;
+          flex-wrap: wrap;
+        }
+        .list-filter-bar input {
+          flex-grow: 1;
+          padding: 0.75rem 1rem;
+          border: 1px solid var(--line);
+          background: var(--paper);
+          border-radius: 10px;
+          font-size: 0.9rem;
+          color: var(--ink);
+          outline: none;
+          transition: all 0.2s;
+        }
+        .list-filter-bar input:focus {
+          border-color: var(--jade);
+          background: #ffffff;
+        }
+        .list-filter-bar select {
+          padding: 0.75rem 1rem;
+          border: 1px solid var(--line);
+          background: #ffffff;
+          border-radius: 10px;
+          font-size: 0.9rem;
+          color: var(--ink);
+          outline: none;
+          cursor: pointer;
+        }
+
+        /* Active list override card items */
+        .admin-row {
+          background: #ffffff !important;
+          border: 1px solid var(--line) !important;
+          border-radius: 14px !important;
+          padding: 1.25rem !important;
+          display: flex !important;
+          align-items: center !important;
+          flex-wrap: wrap !important;
+          gap: 1.25rem !important;
+          transition: all 0.2s ease;
+        }
+        .admin-row:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(42, 35, 32, 0.04);
+          border-color: var(--jade);
+        }
+        .admin-row.sub-expired {
+          background: rgba(122, 114, 102, 0.02) !important;
+          opacity: 0.75;
+          border-color: var(--line) !important;
+        }
+        .admin-row.sub-expired:hover {
+          transform: none;
+          box-shadow: none;
+        }
+
+        .admin-row .student-search-avatar {
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, var(--jade) 0%, var(--gold) 100%);
+          color: #ffffff;
+          font-size: 0.95rem;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+          flex-shrink: 0;
+        }
+        .admin-row.sub-expired .student-search-avatar {
+          background: var(--line) !important;
+          color: var(--mist) !important;
+        }
+
+        .row-info strong {
+          font-family: 'Fraunces', serif;
+          font-size: 1.1rem;
+          font-weight: 750;
+          color: var(--ink);
+          display: block;
+          margin-bottom: 0.15rem;
+        }
+
+        .row-info span {
+          font-size: 0.8rem;
+          font-weight: 600;
+          color: var(--mist);
+        }
+
+        /* Status Pills override */
+        .pill {
+          font-size: 0.75rem;
+          font-weight: 700;
+          padding: 4px 12px;
+          border-radius: 20px;
+          border: 1px solid transparent;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          flex-shrink: 0;
+          text-align: center;
+        }
+        .pill-live {
+          background: rgba(46, 107, 87, 0.08);
+          color: var(--jade);
+          border-color: rgba(46, 107, 87, 0.2);
+        }
+        .pill-draft {
+          background: rgba(122, 114, 102, 0.08);
+          color: var(--mist);
+          border-color: rgba(122, 114, 102, 0.15);
+        }
+
+        /* Revoke button override */
+        .row-delete {
+          font-size: 0.8rem;
+          font-weight: 600;
+          color: var(--seal);
+          background: rgba(200, 54, 42, 0.04);
+          border: 1px solid rgba(200, 54, 42, 0.08);
+          padding: 6px 14px;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.2s;
+          flex-shrink: 0;
+          text-align: center;
+        }
+        .row-delete:hover {
+          background: rgba(200, 54, 42, 0.08);
+          border-color: var(--seal);
+          text-decoration: none;
+        }
+
+        .admin-empty {
+          text-align: center;
+          color: var(--mist);
+          padding: 3rem 1rem;
+          font-style: italic;
+        }
+      `}</style>
+
       {/* Back button */}
       <button className="back-btn" onClick={onBack}>← Back to home</button>
       
-      <h1 className="section-title" style={{ marginBottom: 8 }}>Subscriptions & Access</h1>
-      <p style={{ color: 'var(--mist)', fontSize: 15, marginBottom: 24 }}>
-        Audit active learning tokens and enroll students into academic modules.
-      </p>
+      <div className="sm-header-row">
+        <h1>Subscriptions & Access</h1>
+        <p>Audit active learning tokens, grant course licenses, and manage access logs</p>
+      </div>
 
       {error && <p className="login-error" style={{ marginBottom: 20 }}>{error}</p>}
       {message && <p className="login-success" style={{ marginBottom: 20 }}>{message}</p>}
@@ -168,7 +597,7 @@ function SubscriptionManager({ onBack }) {
           <div className="subs-stat-icon active">✔</div>
           <div className="subs-stat-info">
             <span className="subs-stat-number">{activeCount}</span>
-            <span className="subs-stat-label">Active Enrolments</span>
+            <span className="subs-stat-label">Active Licenses</span>
           </div>
         </div>
         <div className="subs-stat-card">
@@ -182,7 +611,7 @@ function SubscriptionManager({ onBack }) {
           <div className="subs-stat-icon courses">📖</div>
           <div className="subs-stat-info">
             <span className="subs-stat-number">{courses.length}</span>
-            <span className="subs-stat-label">Total Courses</span>
+            <span className="subs-stat-label">Total Paths</span>
           </div>
         </div>
       </div>
@@ -192,15 +621,11 @@ function SubscriptionManager({ onBack }) {
         
         {/* Left Column: Grant Access Form */}
         <div className="admin-form">
-          <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '20px', marginBottom: '20px' }}>
-            Grant course access
-          </h2>
+          <h2>Grant course access</h2>
           
           {/* Student Picker */}
-          <div style={{ marginBottom: '18px' }}>
-            <label style={{ display: 'block', fontWeight: 600, fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--mist)', marginBottom: '8px' }}>
-              Student Account
-            </label>
+          <div className="tm-form-group">
+            <label className="ap-label">Student Account</label>
             
             {!selectedStudent ? (
               <div className="student-search-container">
@@ -209,7 +634,6 @@ function SubscriptionManager({ onBack }) {
                   placeholder="Type name or email to search..."
                   value={studentSearch}
                   onChange={(e) => setStudentSearch(e.target.value)}
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--line)', background: 'var(--paper)', color: 'var(--ink)' }}
                 />
                 {filteredStudents.length > 0 && (
                   <div className="student-search-results">
@@ -256,39 +680,33 @@ function SubscriptionManager({ onBack }) {
           </div>
 
           {/* Course Selector */}
-          <div style={{ marginBottom: '18px' }}>
-            <label style={{ display: 'block', fontWeight: 600, fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--mist)', marginBottom: '8px' }}>
-              Select Course
-            </label>
+          <div className="tm-form-group">
+            <label className="ap-label">Select Course Path</label>
             <select
               value={selectedCourse}
               onChange={(e) => setSelectedCourse(e.target.value)}
-              style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--line)', background: 'var(--paper)', color: 'var(--ink)' }}
             >
-              <option value="">— pick a course —</option>
+              <option value="">— pick a course path —</option>
               {courses.map((c) => (
-                <option key={c._id} value={c._id}>{c.title} ({c.level})</option>
+                <option key={c._id} value={c._id}>{c.title} ({c.level || 'General'})</option>
               ))}
             </select>
           </div>
 
           {/* Duration Input */}
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', fontWeight: 600, fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--mist)', marginBottom: '8px' }}>
-              Licensing Term
-            </label>
+          <div className="tm-form-group">
+            <label className="ap-label">Licensing Term</label>
             <div style={{ display: 'flex', gap: 10 }}>
               <input
                 type="number"
                 min="1"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                style={{ flex: 1, padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--line)', background: 'var(--paper)', color: 'var(--ink)' }}
               />
               <select
                 value={unit}
                 onChange={(e) => setUnit(e.target.value)}
-                style={{ padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--line)', background: 'var(--paper)', color: 'var(--ink)', width: '100px' }}
+                style={{ width: '110px' }}
               >
                 <option value="days">days</option>
                 <option value="months">months</option>
@@ -331,17 +749,14 @@ function SubscriptionManager({ onBack }) {
           <button
             className="btn-primary"
             onClick={grant}
-            style={{ width: '100%', padding: '12px', fontWeight: 650, borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
           >
-            🔑 Grant Access
+            🔑 Grant Course Access
           </button>
         </div>
 
         {/* Right Column: Audit Logs & Search */}
         <div className="admin-list">
-          <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '20px', marginBottom: '20px' }}>
-            All active grants
-          </h2>
+          <h2>All active grants</h2>
 
           {/* Filter Bar */}
           <div className="list-filter-bar">
@@ -363,7 +778,7 @@ function SubscriptionManager({ onBack }) {
           </div>
 
           {filteredSubs.length === 0 ? (
-            <p className="admin-empty" style={{ textAlign: 'center', padding: '30px 0' }}>
+            <p className="admin-empty">
               No subscriptions match your filter criteria.
             </p>
           ) : (
@@ -372,29 +787,28 @@ function SubscriptionManager({ onBack }) {
                 <div
                   className={`admin-row ${isActive(sub) ? '' : 'sub-expired'}`}
                   key={sub._id}
-                  style={{ background: 'var(--paper)', border: '1px solid var(--line)', borderRadius: '10px', padding: '16px', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}
                 >
                   {/* Avatar */}
-                  <div className="student-search-avatar" style={{ width: '40px', height: '40px', fontSize: '13px', background: 'var(--card)' }}>
+                  <div className="student-search-avatar">
                     {getInitials(sub.user?.name)}
                   </div>
 
                   {/* Student Details */}
-                  <div className="row-info" style={{ flex: '1 1 200px', minWidth: '150px' }}>
-                    <strong style={{ fontSize: '15px', color: 'var(--ink)' }}>
+                  <div className="row-info">
+                    <strong>
                       {sub.user ? sub.user.name : 'Deleted Student'}
                     </strong>
-                    <span style={{ fontSize: '12px', color: 'var(--mist)', marginTop: '2px' }}>
+                    <span>
                       {sub.user ? sub.user.email : ''}
                     </span>
                   </div>
 
                   {/* Course Details */}
-                  <div className="row-info" style={{ flex: '1 1 200px', minWidth: '150px' }}>
-                    <strong style={{ fontSize: '15px', color: 'var(--ink)' }}>
+                  <div className="row-info">
+                    <strong>
                       {sub.course ? sub.course.title : 'Deleted Course'}
                     </strong>
-                    <span style={{ fontSize: '12px', color: 'var(--mist)', marginTop: '2px' }}>
+                    <span style={{ color: isActive(sub) ? 'var(--jade)' : 'var(--mist)', fontWeight: 600 }}>
                       {isActive(sub)
                         ? `⏱ ${daysLeft(sub)} days remaining`
                         : `⛔ Expired ${new Date(sub.expiresAt).toLocaleDateString()}`}
@@ -410,7 +824,6 @@ function SubscriptionManager({ onBack }) {
                     <button
                       className="row-delete"
                       onClick={() => revoke(sub._id)}
-                      style={{ padding: '8px 12px', borderRadius: '6px', fontSize: '13px' }}
                     >
                       Revoke
                     </button>

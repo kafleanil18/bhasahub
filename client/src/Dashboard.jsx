@@ -57,7 +57,9 @@ function Dashboard({ user, onOpenCourse, onBrowse }) {
             return (
               <div className="card" key={c._id} onClick={() => onOpenCourse(c)}>
                 <span className={`glyph ${c.language === 'chinese' ? 'zh' : 'ne'}`}>
-                  {c.glyph}
+                  {c.glyph && c.glyph.trim().length > 0 && c.glyph.trim().length <= 2 
+                    ? c.glyph 
+                    : (c.language === 'chinese' ? '中' : 'ने')}
                 </span>
                 <h2>{c.title}</h2>
                 <p>{c.description}</p>
