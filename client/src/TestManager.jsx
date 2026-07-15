@@ -4,10 +4,6 @@ const API = 'http://localhost:5001/api';
 const SERVER = 'http://localhost:5001';
 
 function TestManager({ onBack }) {
-  const token = localStorage.getItem('token');
-  const authHeaders = { Authorization: `Bearer ${token}` };
-  const jsonHeaders = { 'Content-Type': 'application/json', ...authHeaders };
-
   const [tests, setTests] = useState([]);
   const [error, setError] = useState('');
   const [editingId, setEditingId] = useState(null);
@@ -28,7 +24,9 @@ function TestManager({ onBack }) {
 
   const loadTests = async () => {
     try {
-      const res = await fetch(`${API}/tests/all`, { headers: authHeaders });
+      const activeToken = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${activeToken}` };
+      const res = await fetch(`${API}/tests/all`, { headers });
       const data = await res.json();
       if (res.ok) setTests(data);
       else setError(data.error || 'Could not load tests');
@@ -83,7 +81,9 @@ function TestManager({ onBack }) {
     const fd = new FormData();
     fd.append('file', file);
     try {
-      const res = await fetch(`${API}/upload`, { method: 'POST', headers: authHeaders, body: fd });
+      const activeToken = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${activeToken}` };
+      const res = await fetch(`${API}/upload`, { method: 'POST', headers, body: fd });
       const data = await res.json();
       if (res.ok) setter(data.url);
       else setError(data.error || 'Upload failed');
@@ -133,26 +133,86 @@ function TestManager({ onBack }) {
     setError('');
     if (!title.trim()) return setError('Title is required');
     const body = { title, level, description, audioUrl, pdfUrl, questions, published };
-    const res = await fetch(
-      editingId ? `${API}/tests/${editingId}` : `${API}/tests`,
-      { method: editingId ? 'PUT' : 'POST', headers: jsonHeaders, body: JSON.stringify(body) }
-    );
-    if (res.ok) { resetForm(); loadTests(); }
-    else { const d = await res.json(); setError(d.error || 'Could not save test'); }
+    try {
+      const activeToken = localStorage.getItem('token');
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${activeToken}`
+      };
+      const res = await fetch(
+        editingId ? `${API}/tests/${editingId}` : `${API}/tests`,
+        { method: editingId ? 'PUT' : 'POST', headers, body: JSON.stringify(body) }
+      );
+      if (res.ok) {
+        resetForm();
+        await loadTests();
+      } else {
+        let errMsg = 'Could not save test';
+        try {
+          const d = await res.json();
+          errMsg = d.error || errMsg;
+        } catch {
+          // ignore
+        }
+        setError(errMsg);
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Network error: Could not reach the server.');
+    }
   };
 
   const remove = async (id) => {
     if (!confirm('Delete this test?')) return;
-    await fetch(`${API}/tests/${id}`, { method: 'DELETE', headers: authHeaders });
-    if (editingId === id) resetForm();
-    loadTests();
+    try {
+      const activeToken = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${activeToken}` };
+      const res = await fetch(`${API}/tests/${id}`, { method: 'DELETE', headers });
+      if (res.ok) {
+        if (editingId === id) resetForm();
+        await loadTests();
+      } else {
+        let errMsg = 'Could not delete test';
+        try {
+          const d = await res.json();
+          errMsg = d.error || errMsg;
+        } catch {
+          // ignore
+        }
+        setError(errMsg);
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Network error: Could not reach the server.');
+    }
   };
 
   const togglePublish = async (t) => {
-    await fetch(`${API}/tests/${t._id}`, {
-      method: 'PUT', headers: jsonHeaders, body: JSON.stringify({ published: !t.published }),
-    });
-    loadTests();
+    try {
+      const activeToken = localStorage.getItem('token');
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${activeToken}`
+      };
+      const res = await fetch(`${API}/tests/${t._id}`, {
+        method: 'PUT', headers, body: JSON.stringify({ published: !t.published }),
+      });
+      if (res.ok) {
+        await loadTests();
+      } else {
+        let errMsg = 'Could not toggle status';
+        try {
+          const d = await res.json();
+          errMsg = d.error || errMsg;
+        } catch {
+          // ignore
+        }
+        setError(errMsg);
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Network error: Could not reach the server.');
+    }
   };
 
   // Metrics details
