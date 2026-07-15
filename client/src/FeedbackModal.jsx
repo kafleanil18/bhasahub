@@ -42,7 +42,7 @@ function FeedbackModal({ user, onClose }) {
           animation: fbFadeIn 0.2s ease-out;
         }
         .fb-card {
-          background: #ffffff; width: 100%; max-width: 460px; padding: 2.25rem;
+          background: var(--paper); width: 100%; max-width: 460px; padding: 2.25rem;
           border-radius: 14px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
           border: 1px solid rgba(229, 231, 235, 0.6); box-sizing: border-box;
           position: relative; animation: fbSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -64,7 +64,7 @@ function FeedbackModal({ user, onClose }) {
         .fb-label { display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.5rem; }
         .fb-input, .fb-textarea {
           width: 100%; padding: 0.75rem 0.875rem; border: 1px solid #d1d5db; border-radius: 8px;
-          font-size: 0.95rem; box-sizing: border-box; background: #ffffff; color: #1f2937;
+          font-size: 0.95rem; box-sizing: border-box; background: var(--rice); color: var(--ink);
           transition: border-color 0.2s, box-shadow 0.2s; font-family: inherit;
         }
         .fb-input:focus, .fb-textarea:focus {

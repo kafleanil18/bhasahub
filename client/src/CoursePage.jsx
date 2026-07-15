@@ -25,7 +25,7 @@ function CoursePage({ course, onBack, user }) {
   const [accessChecked, setAccessChecked] = useState(false);
   const [showAccessMsg, setShowAccessMsg] = useState(false);
 
-  const isAdmin = user && user.role === 'admin';
+ const isAdmin = user && (user.role === 'admin' || user.role === 'superadmin');
 
   const loadProgress = () => {
     if (!token) return;

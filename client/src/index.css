@@ -2923,8 +2923,9 @@ a.btn-primary {
 }
 
 .course-page {
-  background: #ffffff;
+  background: var(--paper);
 }
+
 /* ---------- Team Modal Backdrop Overlay ---------- */
 .modal-overlay {
   position: fixed;
