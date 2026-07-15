@@ -22,6 +22,7 @@ function TestManager({ onBack }) {
   const [editorTab, setEditorTab] = useState('details'); // 'details' or 'questions'
   const [uploadingAudio, setUploadingAudio] = useState(false);
   const [uploadingPdf, setUploadingPdf] = useState(false);
+  const [uploadingQAudio, setUploadingQAudio] = useState({});
 
   const loadTests = async () => {
     try {
@@ -63,6 +64,7 @@ function TestManager({ onBack }) {
     const parsedQuestions = (t.questions || []).map(q => ({
       questionText: q.questionText || '',
       questionPinyin: q.questionPinyin || '',
+      audioUrl: q.audioUrl || '',
       correctIndex: q.correctIndex || 0,
       options: (q.options || []).map(opt => {
         if (typeof opt === 'object' && opt !== null) {
@@ -99,13 +101,38 @@ function TestManager({ onBack }) {
 
   // ----- questions -----
   const addQuestion = () => {
-    setQuestions((prev) => [...prev, { questionText: '', questionPinyin: '', options: [{ text: '', pinyin: '' }, { text: '', pinyin: '' }], correctIndex: 0 }]);
+    setQuestions((prev) => [...prev, { questionText: '', questionPinyin: '', audioUrl: '', options: [{ text: '', pinyin: '' }, { text: '', pinyin: '' }], correctIndex: 0 }]);
   };
   const updateQuestionText = (qi, text) => {
     setQuestions((prev) => prev.map((q, i) => (i === qi ? { ...q, questionText: text } : q)));
   };
   const updateQuestionPinyin = (qi, pinyin) => {
     setQuestions((prev) => prev.map((q, i) => (i === qi ? { ...q, questionPinyin: pinyin } : q)));
+  };
+  const updateQuestionAudio = (qi, url) => {
+    setQuestions((prev) => prev.map((q, i) => (i === qi ? { ...q, audioUrl: url } : q)));
+  };
+  const uploadQuestionAudioFile = async (qi, file) => {
+    if (!file) return;
+    setUploadingQAudio(prev => ({ ...prev, [qi]: true }));
+    setError('');
+    const fd = new FormData();
+    fd.append('file', file);
+    try {
+      const activeToken = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${activeToken}` };
+      const res = await fetch(`${API}/upload`, { method: 'POST', headers, body: fd });
+      const data = await res.json();
+      if (res.ok) {
+        updateQuestionAudio(qi, data.url);
+      } else {
+        setError(data.error || 'Upload failed');
+      }
+    } catch {
+      setError('Could not reach the server');
+    } finally {
+      setUploadingQAudio(prev => ({ ...prev, [qi]: false }));
+    }
   };
   const updateOptionText = (qi, oi, text) => {
     setQuestions((prev) => prev.map((q, i) =>
@@ -1005,6 +1032,26 @@ function TestManager({ onBack }) {
                           onChange={(e) => updateQuestionPinyin(qi, e.target.value)}
                           placeholder="Pinyin guide (e.g. péng you)"
                         />
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', paddingLeft: '44px', marginTop: '0.25rem' }}>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--mist)' }}>Question Listening Audio</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                          <div className="tm-file-input-btn" style={{ padding: '4px 10px', fontSize: '0.75rem' }}>
+                            Upload Q-Audio
+                            <input 
+                              type="file" 
+                              accept="audio/*" 
+                              onChange={(e) => uploadQuestionAudioFile(qi, e.target.files[0])} 
+                            />
+                          </div>
+                          {uploadingQAudio[qi] && <span style={{ fontSize: '0.75rem', color: 'var(--jade)', fontWeight: 600 }}>Uploading Q-Audio...</span>}
+                          {q.audioUrl && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                              <audio controls src={`${SERVER}${q.audioUrl}`} style={{ height: '28px', width: '200px' }} />
+                              <button type="button" className="tm-btn-row-del" style={{ fontSize: '0.75rem' }} onClick={() => updateQuestionAudio(qi, '')}>Delete Q-Audio</button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
 

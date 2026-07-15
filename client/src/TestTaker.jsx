@@ -107,6 +107,11 @@ function TestTaker({ testId, onBack }) {
                   {q.questionPinyin}
                 </p>
               )}
+              {q.audioUrl && (
+                <div className="test-question-audio" style={{ paddingLeft: '32px', marginBottom: '16px' }}>
+                  <audio controls src={`${SERVER}${q.audioUrl}`} style={{ height: '36px', maxWidth: '100%', width: '320px' }} />
+                </div>
+              )}
               <div className="test-options">
                 {q.options.map((opt, oi) => {
                   let cls = 'test-option';

@@ -17,6 +17,7 @@ const testSchema = new mongoose.Schema(
       {
         questionText: { type: String, default: '' },
         questionPinyin: { type: String, default: '' },
+        audioUrl: { type: String, default: '' },
         options: [optionSchema],
         correctIndex: { type: Number, default: 0 },
       },

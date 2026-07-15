@@ -141,7 +141,7 @@ function Register({ onRegistered, onBack, onSwitch }) {
         {/* Left Column: Welcome & Interactive vocabulary widget */}
         <div className="register-welcome-panel">
           <div className="welcome-header">
-            <h2>Learn <span>Chinese</span></h2>
+            <h2>Learn <span>中文</span></h2>
             <p className="welcome-subtitle">
               Learning Chinese can be fun and rewarding! Start your journey with our interactive lessons and exercises.
             </p>
