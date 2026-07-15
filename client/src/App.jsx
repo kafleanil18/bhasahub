@@ -7,7 +7,7 @@ import LessonManager from './LessonManager';
 import Dashboard from './Dashboard';
 import LanguageChoice from './LanguageChoice';
 import NepaliPage from './NepaliPage';
-import PinyinModal from './PinyinModal';
+import PinyinPage from './PinyinPage';
 import ChangePassword from './ChangePassword';
 import FeedbackModal from './FeedbackModal';
 import FeedbackInbox from './FeedbackInbox';
@@ -42,6 +42,99 @@ const teamMembers = [
   },
 ];
 
+const renderTeamAvatar = (member, isModal = false) => {
+  // If custom photo is uploaded and is not placeholder, render it
+  if (member.photo && member.photo !== '/image.jpg' && member.photo !== 'image.jpg') {
+    return (
+      <div className={isModal ? 'team-modal-photo-svg-wrapper' : 'team-photo-svg-wrapper'}>
+        <img
+          src={member.photo}
+          alt={member.name}
+          className={isModal ? 'team-modal-photo' : 'team-photo'}
+          style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+        />
+      </div>
+    );
+  }
+
+  // Otherwise, render dynamic role-based SVG
+  const isTeacher = member.role.toLowerCase().includes('teacher') || member.role.toLowerCase().includes('founder');
+  const isDev = member.role.toLowerCase().includes('developer') || member.role.toLowerCase().includes('engineer');
+  
+  const gradientId = member.name.replace(/\s+/g, '-').toLowerCase() + (isModal ? '-modal' : '') + '-grad';
+  let startColor = '#c99a3c';
+  let endColor = '#c8362a';
+  let iconContent = null;
+
+  if (isTeacher) {
+    startColor = '#c99a3c'; // gold
+    endColor = '#c8362a';   // red stamp
+    iconContent = (
+      <>
+        {/* Books & glasses */}
+        <rect x="60" y="80" width="80" height="60" rx="4" fill="rgba(255,255,255,0.15)" stroke="#fff" strokeWidth="3"/>
+        <line x1="75" y1="98" x2="125" y2="98" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/>
+        <line x1="75" y1="112" x2="115" y2="112" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/>
+        {/* Glasses */}
+        <circle cx="85" cy="55" r="12" stroke="#fff" strokeWidth="3" fill="none"/>
+        <circle cx="115" cy="55" r="12" stroke="#fff" strokeWidth="3" fill="none"/>
+        <line x1="97" y1="55" x2="103" y2="55" stroke="#fff" strokeWidth="3"/>
+        <line x1="73" y1="55" x2="65" y2="51" stroke="#fff" strokeWidth="3"/>
+        <line x1="127" y1="55" x2="135" y2="51" stroke="#fff" strokeWidth="3"/>
+      </>
+    );
+  } else if (isDev) {
+    startColor = '#2e6b57'; // jade green
+    endColor = '#1a4f3e';
+    iconContent = (
+      <>
+        {/* Code braces </ > */}
+        <rect x="50" y="70" width="100" height="60" rx="8" fill="rgba(255,255,255,0.15)" stroke="#fff" strokeWidth="3"/>
+        <path d="M70 90l-10 10 10 10M130 90l10 10-10 10M105 85l-10 30" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+      </>
+    );
+  } else {
+    // Project Manager / generic admin
+    startColor = '#3a506b'; // deep steel blue
+    endColor = '#1c2541';
+    iconContent = (
+      <>
+        {/* Checklist and target star */}
+        <rect x="55" y="70" width="90" height="65" rx="6" fill="rgba(255,255,255,0.15)" stroke="#fff" strokeWidth="3"/>
+        <path d="M70 92l6 6 14-14" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <line x1="98" y1="88" x2="130" y2="88" stroke="#fff" strokeWidth="3" strokeLinecap="round"/>
+        <line x1="70" y1="112" x2="130" y2="112" stroke="#fff" strokeWidth="3" strokeLinecap="round"/>
+      </>
+    );
+  }
+
+  return (
+    <div className={isModal ? 'team-modal-photo-svg-wrapper' : 'team-photo-svg-wrapper'}>
+      <svg width="100%" height="100%" viewBox="0 0 200 200" className={isModal ? 'team-modal-photo-svg' : 'team-photo-svg'}>
+        <defs>
+          <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor={startColor} />
+            <stop offset="100%" stopColor={endColor} />
+          </linearGradient>
+        </defs>
+        <circle cx="100" cy="100" r="94" fill={`url(#${gradientId})`} stroke="var(--line)" strokeWidth="3"/>
+        <circle cx="100" cy="100" r="82" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="4" strokeDasharray="8 12"/>
+        {iconContent}
+      </svg>
+    </div>
+  );
+};
+
+const dailyImages = [
+  '/images/daily/china_1_great_wall.jpg',
+  '/images/daily/china_2_temple.jpg',
+  '/images/daily/china_3_calligraphy.jpg',
+  '/images/daily/china_4_lanterns.jpg',
+  '/images/daily/china_5_landscape.jpg',
+  '/images/daily/china_6_tea.jpg',
+  '/images/daily/china_7_panda.jpg'
+];
+
 function App() {
   const wotdList = [
     { zh: '谢谢', zhP: 'xiè xie', ne: 'धन्यवाद', neP: 'dhan·ya·bād', meaning: 'thank you' },
@@ -74,7 +167,7 @@ function App() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [levelFilter, setLevelFilter] = useState('all');
-  const [showPinyin, setShowPinyin] = useState(false);
+  const [showPinyinPage, setShowPinyinPage] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [showInbox, setShowInbox] = useState(false);
@@ -87,6 +180,8 @@ function App() {
   const [showTestimonial, setShowTestimonial] = useState(false);
   const [showTestimonialManager, setShowTestimonialManager] = useState(false);
   const [testimonials, setTestimonials] = useState([]);
+  const [unreadFeedbackCount, setUnreadFeedbackCount] = useState(0);
+  const [pendingTestimonialsCount, setPendingTestimonialsCount] = useState(0);
   const [activeTeamMember, setActiveTeamMember] = useState(null);
   const [showSubscriptions, setShowSubscriptions] = useState(false);
   const [myAccessDays, setMyAccessDays] = useState(null);
@@ -162,6 +257,52 @@ function App() {
       .catch(() => setMyAccessDays(null));
   };
 
+  const loadAdminNotificationCounts = () => {
+    const token = localStorage.getItem('token');
+    const savedUser = localStorage.getItem('user');
+    const currentUser = user || (savedUser ? JSON.parse(savedUser) : null);
+    if (!token || !currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'superadmin')) return;
+
+    // Load unread feedback
+    fetch('http://localhost:5001/api/feedback', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          const unread = data.filter(item => !item.read).length;
+          setUnreadFeedbackCount(unread);
+        }
+      })
+      .catch(() => {});
+
+    // Load pending testimonials
+    fetch('http://localhost:5001/api/testimonials/all', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          const pending = data.filter(item => !item.approved).length;
+          setPendingTestimonialsCount(pending);
+        }
+      })
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    const currentUser = user || (savedUser ? JSON.parse(savedUser) : null);
+    if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'superadmin')) {
+      loadAdminNotificationCounts();
+      const interval = setInterval(loadAdminNotificationCounts, 15000); // Check every 15 seconds
+      return () => clearInterval(interval);
+    } else {
+      setUnreadFeedbackCount(0);
+      setPendingTestimonialsCount(0);
+    }
+  }, [user]);
+
   useEffect(() => {
     fetch('http://localhost:5001/api/health')
       .then(res => res.json())
@@ -203,6 +344,7 @@ function App() {
   const goHome = () => {
     setShowLogin(false);
     setShowAdmin(false);
+    setShowPinyinPage(false);
     setActiveCourse(null);
     setManageCourse(null);
     setShowDashboard(false);
@@ -221,6 +363,7 @@ function App() {
     loadFooterBlogs();
     loadTestimonials();
     loadMyAccess();
+    loadAdminNotificationCounts();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -287,7 +430,6 @@ function App() {
   // ---------- Chinese app ----------
   return (
     <>
-      {showPinyin && <PinyinModal onClose={() => setShowPinyin(false)} />}
       {showChangePassword && <ChangePassword onClose={() => setShowChangePassword(false)} />}
       {showFeedback && <FeedbackModal user={user} onClose={() => setShowFeedback(false)} />}
       {showTestimonial && <TestimonialModal user={user} onClose={() => { setShowTestimonial(false); loadTestimonials(); }} />}
@@ -295,7 +437,7 @@ function App() {
       {activeTeamMember && (
         <div className="modal-overlay" onClick={() => setActiveTeamMember(null)}>
           <div className="team-modal" onClick={(e) => e.stopPropagation()}>
-            <img src={activeTeamMember.photo} alt={activeTeamMember.name} className="team-modal-photo" />
+            {renderTeamAvatar(activeTeamMember, true)}
             <h3 className="team-modal-name">{activeTeamMember.name}</h3>
             <p className="team-modal-role">{activeTeamMember.role}</p>
             <p className="team-modal-bio">{activeTeamMember.bio}</p>
@@ -319,21 +461,121 @@ function App() {
           >
             <div className="admin-sidebar-head">
               <div>
-                <p className="admin-sidebar-kicker">Control center</p>
+                <p className="admin-sidebar-kicker">LMS Control Center</p>
                 <h2>Super Admin</h2>
               </div>
               <button className="admin-sidebar-close" onClick={() => setAdminSidebarOpen(false)} aria-label="Close admin navigation">×</button>
             </div>
+
+            {/* Profile info block */}
+            <div className="admin-sidebar-profile">
+              <div className="admin-profile-avatar">
+                SA
+              </div>
+              <div className="admin-profile-details">
+                <span className="admin-profile-name">{user ? user.name : 'Administrator'}</span>
+                <span className="admin-profile-status">
+                  <span className="status-dot-blink"></span>
+                  Active Session
+                </span>
+              </div>
+            </div>
+
             <nav className="admin-sidebar-nav">
-              <button onClick={() => { goHome(); setShowAdmin(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>Manage courses</button>
-              <button onClick={() => { goHome(); setShowTestManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>Manage tests</button>
-              <button onClick={() => { goHome(); setShowBlogManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>Manage blog</button>
-              <button onClick={() => { goHome(); setShowTestimonialManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>Testimonials</button>
-              <button onClick={() => { setShowInbox(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>Feedback inbox</button>
-              <button onClick={() => { goHome(); setShowUserManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>Manage admins</button>
-              <button onClick={() => { goHome(); setShowSubscriptions(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>Subscriptions</button>
+              <button onClick={() => { goHome(); setShowAdmin(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                  <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
+                </svg>
+                Manage courses
+              </button>
+              <button onClick={() => { goHome(); setShowTestManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                  <path d="m9 12 2 2 4-4"></path>
+                </svg>
+                Manage tests
+              </button>
+              <button onClick={() => { goHome(); setShowBlogManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                </svg>
+                Manage blog
+              </button>
+              <button onClick={() => { goHome(); setShowTestimonialManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                Testimonials
+                {pendingTestimonialsCount > 0 && (
+                  <span className="sidebar-badge">{pendingTestimonialsCount}</span>
+                )}
+              </button>
+              <button onClick={() => { setShowInbox(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+                  <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+                </svg>
+                Feedback inbox
+                {unreadFeedbackCount > 0 && (
+                  <span className="sidebar-badge">{unreadFeedbackCount}</span>
+                )}
+              </button>
+              <button onClick={() => { goHome(); setShowUserManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Manage admins
+              </button>
+              <button onClick={() => { goHome(); setShowSubscriptions(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
+                  <line x1="2" y1="10" x2="22" y2="10"></line>
+                </svg>
+                Subscriptions
+              </button>
             </nav>
-            <button className="admin-sidebar-home" onClick={() => { goHome(); setAdminSidebarOpen(false); }}>← Back to site</button>
+
+            {/* Vector Illustration at the bottom of the sidebar */}
+            <div className="admin-sidebar-illustration">
+              <svg width="140" height="110" viewBox="0 0 200 160" fill="none">
+                {/* Desk/Shelf line */}
+                <line x1="20" y1="140" x2="180" y2="140" stroke="var(--line)" strokeWidth="3" strokeLinecap="round"/>
+                
+                {/* Book stack */}
+                <rect x="45" y="105" width="50" height="15" rx="3" fill="var(--seal)" opacity="0.85"/>
+                <rect x="45" y="108" width="50" height="3" fill="#fff" opacity="0.3"/>
+                <rect x="50" y="120" width="45" height="15" rx="3" fill="var(--jade)" opacity="0.85"/>
+                <rect x="50" y="123" width="45" height="3" fill="#fff" opacity="0.3"/>
+                <rect x="40" y="135" width="60" height="5" fill="var(--gold)" opacity="0.85"/>
+
+                {/* Laptop outline */}
+                <rect x="105" y="95" width="55" height="38" rx="4" fill="var(--paper)" stroke="var(--line)" strokeWidth="2"/>
+                <rect x="110" y="100" width="45" height="28" rx="2" fill="var(--card)"/>
+                <line x1="100" y1="135" x2="165" y2="135" stroke="var(--line)" strokeWidth="4" strokeLinecap="round"/>
+                <line x1="125" y1="137" x2="140" y2="137" stroke="var(--mist)" strokeWidth="2"/>
+
+                {/* Glowing light bulb */}
+                <circle cx="100" cy="55" r="16" fill="rgba(201, 154, 60, 0.15)" stroke="var(--gold)" strokeWidth="2" strokeDasharray="3 3"/>
+                <path d="M96 68h8M98 71h4M100 50v4M93 55l3 1M107 55l-3 1" stroke="var(--gold)" strokeWidth="2" strokeLinecap="round"/>
+                
+                {/* Tiny stars/sparks */}
+                <path d="M125 45l2 2-2 2-2-2zM75 65l1.5 1.5-1.5 1.5-1.5-1.5z" fill="var(--gold)"/>
+              </svg>
+              <p className="illustration-caption">Language LMS Manager</p>
+            </div>
+
+            <button className="admin-sidebar-home" onClick={() => { goHome(); setAdminSidebarOpen(false); }}>
+              <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              Back to site
+            </button>
           </aside>
         </>
       )}
@@ -351,7 +593,7 @@ function App() {
           <nav className={`main-nav ${mobileMenuOpen ? 'open' : ''}`}>
             <a className="nav-link" href="#courses" onClick={() => { setMobileMenuOpen(false); goHome(); }}>Courses</a>
 
-            <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowPinyin(true); }}>Pinyin</button>
+            <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowPinyinPage(true); }}>Pinyin</button>
 
             <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowTests(true); }}>Mock Tests</button>
 
@@ -388,8 +630,14 @@ function App() {
                 onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); setAdminSidebarOpen(true); }}
                 aria-expanded={adminSidebarOpen}
                 aria-controls="super-admin-navigation"
+                style={{ position: 'relative' }}
               >
                 <span aria-hidden="true">☰</span> Admin
+                {(unreadFeedbackCount + pendingTestimonialsCount) > 0 && (
+                  <span className="admin-nav-badge">
+                    {unreadFeedbackCount + pendingTestimonialsCount}
+                  </span>
+                )}
               </button>
             )}
 
@@ -428,27 +676,17 @@ function App() {
       {!user && showLogin ? (
         <div>
           {authView === 'login' ? (
-            <>
-              <Login
-                onLogin={(u) => { setUser(u); setShowLogin(false); loadAccess(); loadMyAccess(); }}
-                onBack={goHome}
-              />
-              <p className="auth-switch">
-                New here?{' '}
-                <button onClick={() => setAuthView('register')}>Create an account</button>
-              </p>
-            </>
+            <Login
+              onLogin={(u) => { setUser(u); setShowLogin(false); loadAccess(); loadMyAccess(); }}
+              onBack={goHome}
+              onSwitch={() => setAuthView('register')}
+            />
           ) : (
-            <>
-              <Register
-                onRegistered={() => setAuthView('login')}
-                onBack={goHome}
-              />
-              <p className="auth-switch">
-                Already have an account?{' '}
-                <button onClick={() => setAuthView('login')}>Sign in</button>
-              </p>
-            </>
+            <Register
+              onRegistered={() => setAuthView('login')}
+              onBack={goHome}
+              onSwitch={() => setAuthView('login')}
+            />
           )}
         </div>
       ) : isSuperAdmin && showUserManager ? (
@@ -461,6 +699,8 @@ function App() {
         <BlogManager user={user} onBack={goHome} />
       ) : showBlog ? (
         <BlogPage onBack={goHome} />
+      ) : showPinyinPage ? (
+        <PinyinPage onBack={goHome} />
       ) : isSuperAdmin && showTestManager ? (
         <TestManager onBack={goHome} />
       ) : activeTestId ? (
@@ -531,7 +771,7 @@ function App() {
                   >
                     <video
                       preload="metadata"
-                      poster="/images/china1.jpg"
+                      poster={dailyImages[new Date().getDay()]}
                       controls
                       onPlay={(e) => {
                         const btn = e.currentTarget.parentElement.querySelector('.big-play');
@@ -584,6 +824,8 @@ function App() {
             </div>
           </section>
 
+
+
           <section className="wotd">
             <div className="container wotd-inner">
               <span className="wotd-label">Word of the day</span>
@@ -635,7 +877,7 @@ function App() {
               <div className="team-grid">
                 {teamMembers.map((member) => (
                   <div className="team-card" key={member.name + member.role} onClick={() => setActiveTeamMember(member)}>
-                    <img src={member.photo} alt={member.name} className="team-photo" />
+                    {renderTeamAvatar(member)}
                     <h3 className="team-name">{member.name}</h3>
                     <p className="team-role">{member.role}</p>
                   </div>

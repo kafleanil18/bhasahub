@@ -32,60 +32,191 @@ function FeedbackModal({ user, onClose }) {
 
   return (
     <div className="fb-overlay" onClick={onClose}>
-      {/* Self-contained styling module */}
+      {/* Self-contained styling module using standard BhasaHub theme variables */}
       <style>{`
         .fb-overlay {
-          position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-          background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px);
-          display: flex; align-items: center; justify-content: center; z-index: 1000;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          position: fixed; 
+          top: 0; 
+          left: 0; 
+          width: 100vw; 
+          height: 100vh;
+          background: rgba(42, 35, 32, 0.45); 
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          display: flex; 
+          align-items: center; 
+          justify-content: center; 
+          z-index: 1000;
+          font-family: 'Inter', sans-serif;
           animation: fbFadeIn 0.2s ease-out;
         }
-        .fb-card {
-          background: var(--paper); width: 100%; max-width: 460px; padding: 2.25rem;
-          border-radius: 14px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
-          border: 1px solid rgba(229, 231, 235, 0.6); box-sizing: border-box;
-          position: relative; animation: fbSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .fb-close-btn {
-          position: absolute; top: 20px; right: 20px; background: #f3f4f6;
-          border: none; width: 28px; height: 28px; border-radius: 50%;
-          cursor: pointer; color: #6b7280; font-size: 16px; font-weight: bold;
-          display: flex; align-items: center; justify-content: center; transition: background 0.2s;
-        }
-        .fb-close-btn:hover { background: #e5e7eb; color: #111827; }
-        .fb-title { font-size: 1.5rem; font-weight: 700; color: #111827; margin: 0 0 0.35rem 0; letter-spacing: -0.02em; }
-        .fb-sub { font-size: 0.925rem; color: #6b7280; margin: 0 0 1.5rem 0; line-height: 1.4; }
-        .fb-error {
-          background-color: #fef2f2; border-left: 4px solid #ef4444; color: #991b1b;
-          padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1.25rem; font-size: 0.875rem;
-        }
-        .fb-group { margin-bottom: 1.25rem; }
-        .fb-label { display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.5rem; }
-        .fb-input, .fb-textarea {
-          width: 100%; padding: 0.75rem 0.875rem; border: 1px solid #d1d5db; border-radius: 8px;
-          font-size: 0.95rem; box-sizing: border-box; background: var(--rice); color: var(--ink);
-          transition: border-color 0.2s, box-shadow 0.2s; font-family: inherit;
-        }
-        .fb-input:focus, .fb-textarea:focus {
-          outline: none; border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
-        }
-        .fb-textarea { resize: vertical; min-height: 110px; }
-        .fb-btn-submit {
-          width: 100%; background: #4f46e5; color: white; border: none; padding: 0.875rem;
-          border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer;
-          transition: background 0.2s; display: flex; justify-content: center; align-items: center;
-        }
-        .fb-btn-submit:hover:not(:disabled) { background: #4338ca; }
-        .fb-btn-submit:disabled { background: #9ca3af; cursor: not-allowed; }
         
-        .fb-success { text-align: center; padding: 1.5rem 0 0.5rem 0; }
-        .fb-success-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
-        .fb-btn-close {
-          background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; padding: 0.75rem 2rem;
-          border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 1.5rem;
+        .fb-card {
+          background: var(--card); 
+          width: 90%; 
+          max-width: 460px; 
+          padding: 2.25rem;
+          border-radius: 16px; 
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+          border: 1px solid var(--line); 
+          box-sizing: border-box;
+          position: relative; 
+          animation: fbSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .fb-btn-close:hover { background: #e5e7eb; }
+        
+        .fb-close-btn {
+          position: absolute; 
+          top: 20px; 
+          right: 20px; 
+          background: var(--rice);
+          border: none; 
+          width: 30px; 
+          height: 30px; 
+          border-radius: 50%;
+          cursor: pointer; 
+          color: var(--mist); 
+          font-size: 18px; 
+          font-weight: bold;
+          display: flex; 
+          align-items: center; 
+          justify-content: center; 
+          transition: all 0.2s ease;
+        }
+        
+        .fb-close-btn:hover { 
+          background: var(--line); 
+          color: var(--seal); 
+        }
+        
+        .fb-title { 
+          font-family: 'Fraunces', serif;
+          font-size: 1.6rem; 
+          font-weight: 700; 
+          color: var(--ink); 
+          margin: 0 0 0.35rem 0; 
+          letter-spacing: -0.01em; 
+        }
+        
+        .fb-sub { 
+          font-size: 0.925rem; 
+          color: var(--mist); 
+          margin: 0 0 1.5rem 0; 
+          line-height: 1.5; 
+        }
+        
+        .fb-error {
+          background-color: rgba(200, 54, 42, 0.08); 
+          border-left: 4px solid var(--seal); 
+          color: var(--seal);
+          padding: 0.75rem 1rem; 
+          border-radius: 6px; 
+          margin-bottom: 1.25rem; 
+          font-size: 0.875rem;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        
+        .fb-group { 
+          margin-bottom: 1.25rem; 
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+        
+        .fb-label { 
+          display: block; 
+          font-size: 0.875rem; 
+          font-weight: 600; 
+          color: var(--ink); 
+        }
+        
+        .fb-input, .fb-textarea {
+          width: 100%; 
+          padding: 0.75rem 0.875rem; 
+          border: 1px solid var(--line); 
+          border-radius: 8px;
+          font-size: 0.95rem; 
+          box-sizing: border-box; 
+          background: var(--paper); 
+          color: var(--ink);
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+          font-family: inherit;
+        }
+        
+        .fb-input:focus, .fb-textarea:focus {
+          outline: none; 
+          border-color: var(--jade); 
+          box-shadow: 0 0 0 3px rgba(46, 107, 87, 0.15);
+          background: var(--card);
+        }
+        
+        .fb-textarea { 
+          resize: vertical; 
+          min-height: 110px; 
+        }
+        
+        .fb-btn-submit {
+          width: 100%; 
+          background: var(--jade); 
+          color: white !important; 
+          border: none; 
+          padding: 0.875rem;
+          border-radius: 8px; 
+          font-weight: 600; 
+          font-size: 1rem; 
+          cursor: pointer;
+          transition: all 0.2s ease; 
+          display: flex; 
+          justify-content: center; 
+          align-items: center;
+          box-shadow: 0 4px 12px rgba(46, 107, 87, 0.15);
+        }
+        
+        .fb-btn-submit:hover:not(:disabled) { 
+          background: #256e4e; 
+          transform: translateY(-1px);
+          box-shadow: 0 6px 16px rgba(46, 107, 87, 0.25);
+        }
+        
+        .fb-btn-submit:active:not(:disabled) {
+          transform: translateY(0);
+        }
+        
+        .fb-btn-submit:disabled { 
+          opacity: 0.6;
+          cursor: not-allowed; 
+          box-shadow: none;
+        }
+        
+        .fb-success { 
+          text-align: center; 
+          padding: 1.5rem 0 0.5rem 0; 
+        }
+        
+        .fb-success-icon { 
+          font-size: 3rem; 
+          margin-bottom: 1rem; 
+          display: block; 
+        }
+        
+        .fb-btn-close {
+          background: var(--rice); 
+          color: var(--ink); 
+          border: 1px solid var(--line); 
+          padding: 0.75rem 2rem;
+          border-radius: 8px; 
+          font-weight: 600; 
+          cursor: pointer; 
+          transition: all 0.2s ease; 
+          margin-top: 1.5rem;
+        }
+        
+        .fb-btn-close:hover { 
+          background: var(--line); 
+          color: var(--seal);
+        }
 
         @keyframes fbFadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes fbSlideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -108,7 +239,16 @@ function FeedbackModal({ user, onClose }) {
             <h1 className="fb-title">Message us</h1>
             <p className="fb-sub">Questions, suggestions, or feedback — we'd love to hear from you.</p>
 
-            {error && <div className="fb-error">{error}</div>}
+            {error && (
+              <div className="fb-error">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>{error}</span>
+              </div>
+            )}
 
             <div className="fb-group">
               <label className="fb-label">Name</label>

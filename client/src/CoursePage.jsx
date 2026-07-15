@@ -94,6 +94,26 @@ function CoursePage({ course, onBack, user }) {
       .catch(() => {});
   }, [course._id, token]);
 
+  useEffect(() => {
+    if (!flashMode || words.length === 0) return;
+    const handleKeyDown = (e) => {
+      if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'ArrowDown') {
+        e.preventDefault();
+        setFlipped(prev => !prev);
+      } else if (e.code === 'ArrowLeft') {
+        e.preventDefault();
+        setFlashIndex((i) => (i - 1 + words.length) % words.length);
+        setFlipped(false);
+      } else if (e.code === 'ArrowRight') {
+        e.preventDefault();
+        setFlashIndex((i) => (i + 1) % words.length);
+        setFlipped(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [flashMode, words.length]);
+
   const toggleEnroll = async () => {
     if (!token) return;
     try {
@@ -232,6 +252,11 @@ function CoursePage({ course, onBack, user }) {
           <Quiz words={words} language={course.language} onExit={() => setQuizMode(false)} />
         ) : flashMode && words.length > 0 ? (
           <div className="flashcard-area">
+            {/* Progress indicators */}
+            <div className="flash-progress-bar">
+              <div className="flash-progress-fill" style={{ width: `${((flashIndex + 1) / words.length) * 100}%` }}></div>
+            </div>
+            
             <div
               className={`flashcard ${flipped ? 'flipped' : ''}`}
               onClick={() => setFlipped(!flipped)}
@@ -240,7 +265,7 @@ function CoursePage({ course, onBack, user }) {
                 <span className={`flash-word ${course.language === 'chinese' ? 'zh' : 'ne'}`}>
                   {words[flashIndex].word}
                 </span>
-                <span className="flash-hint">tap to flip</span>
+                <span className="flash-hint">tap or press Space to flip</span>
               </div>
               <div className="flash-back">
                 <span className="flash-pron">{words[flashIndex].pronunciation}</span>
@@ -269,6 +294,10 @@ function CoursePage({ course, onBack, user }) {
                 Next →
               </button>
             </div>
+
+            <p className="keyboard-shortcut-hint">
+              💡 Keyboard controls: Use <strong>Left / Right Arrows</strong> to navigate, <strong>Spacebar</strong> to flip.
+            </p>
           </div>
         ) : (
         <div className="vocab-grid">
@@ -310,22 +339,34 @@ function CoursePage({ course, onBack, user }) {
     (l) => catFilter === 'all' || (l.category || 'vocabulary') === catFilter
   );
 
+  const currentCourseCompleted = completedIds.filter(id => lessons.some(l => l._id === id)).length;
+  const progressPercent = lessons.length ? Math.round((currentCourseCompleted / lessons.length) * 100) : 0;
+  const isBeginner = course.level && (course.level.toLowerCase().includes('hsk 1') || course.level.toLowerCase().includes('beginner'));
+
   return (
     <section className="course-page container">
 
       <button className="back-btn" onClick={onBack}>← Back to courses</button>
-      <div className="course-head">
+      
+      <div className="course-head" style={{ marginTop: 16 }}>
         <div>
+          {isBeginner && (
+            <div className="course-welcome-badge">
+              👋 你好 (Nǐ hǎo) — Start Learning Chinese!
+            </div>
+          )}
           <h1 className="section-title">{course.title}</h1>
           <p className="course-desc">{course.description}</p>
-          <span className="tag">{course.level}</span>
+          <span className="tag" style={{ background: 'var(--jade)', color: '#fff', border: 'none' }}>
+            {course.level}
+          </span>
           {user && (
-            <div className="enroll-wrap">
+            <div className="enroll-wrap" style={{ marginTop: 14 }}>
               <button
                 className={enrolled ? 'nav-btn' : 'btn-primary'}
                 onClick={toggleEnroll}
               >
-                {enrolled ? '✓ Enrolled — click to leave' : 'Enroll in this course'}
+                {enrolled ? '✓ Enrolled' : 'Enroll in this course'}
               </button>
             </div>
           )}
@@ -335,37 +376,57 @@ function CoursePage({ course, onBack, user }) {
       {/* Access banner */}
       {user && !isAdmin && accessChecked && (
         hasAccess ? (
-          <div className="access-banner access-ok">
-            ✓ You have access to this course
-            {accessExpiry && ` until ${new Date(accessExpiry).toLocaleDateString()}`}.
-            <div className="access-banner access-ok">
-            ✓ You have access to this course
-            {accessExpiry && ` until ${new Date(accessExpiry).toLocaleDateString()}`}.
+          <div className="access-banner access-ok" style={{ margin: '16px 0 0' }}>
+            ✓ Active Subscription Access {accessExpiry && `until ${new Date(accessExpiry).toLocaleDateString()}`}
           </div>
-          </div>
-
-          
         ) : (
-          <div className="access-banner access-locked">
-            🔒 You don't have access to this course yet. Please contact the admin to get access.
+          <div className="access-banner access-locked" style={{ margin: '16px 0 0' }}>
+            🔒 You don't have access to this course yet. Please message us to request access keys.
           </div>
         )
       )}
 
       {/* Message shown when a locked lesson is clicked */}
       {showAccessMsg && !canOpenLessons && (
-        <div className="access-msg">
+        <div className="access-msg" style={{ margin: '20px 0 0' }}>
           <p>
-            🔒 This lesson is locked. You need active access to open the lessons in this course.
-            Please contact the admin (use the <strong>Message us</strong> link) to request access.
+            🔒 This lesson is locked. You need active access to open lessons.
+            Please click <strong>Message us</strong> in the top header menu to request access.
           </p>
           <button className="nav-btn" onClick={() => setShowAccessMsg(false)}>Got it</button>
         </div>
       )}
 
-      <h2 className="lessons-heading">Lessons</h2>
+      {/* Progress Dashboard */}
+      {user && (
+        <div className="course-progress-block">
+          <div className="course-progress-header">
+            <span className="course-progress-title">Your Course Progress</span>
+            <span className="course-progress-value">{progressPercent}%</span>
+          </div>
+          <div className="course-progress-bar-bg">
+            <div className="course-progress-bar-fill" style={{ width: `${progressPercent}%` }}></div>
+          </div>
+          <div className="course-meta-grid">
+            <div className="course-meta-item">
+              <span className="course-meta-val">{currentCourseCompleted} of {lessons.length}</span>
+              <span className="course-meta-lbl">Lessons Completed</span>
+            </div>
+            <div className="course-meta-item">
+              <span className="course-meta-val">{(lessons.length * 15)} mins</span>
+              <span className="course-meta-lbl">Estimated Study Time</span>
+            </div>
+            <div className="course-meta-item">
+              <span className="course-meta-val">{enrolled ? 'Active Student' : 'Not Enrolled'}</span>
+              <span className="course-meta-lbl">Enrolment Status</span>
+            </div>
+          </div>
+        </div>
+      )}
 
-      <div className="category-tabs">
+      <h2 className="lessons-heading" style={{ marginTop: 32 }}>Lessons</h2>
+
+      <div className="category-tabs" style={{ marginBottom: 8 }}>
         <button className={`cat-tab ${catFilter === 'all' ? 'active' : ''}`} onClick={() => setCatFilter('all')}>All</button>
         <button className={`cat-tab ${catFilter === 'vocabulary' ? 'active' : ''}`} onClick={() => setCatFilter('vocabulary')}>📚 Vocabulary</button>
         <button className={`cat-tab ${catFilter === 'conversation' ? 'active' : ''}`} onClick={() => setCatFilter('conversation')}>💬 Conversation</button>
@@ -376,19 +437,39 @@ function CoursePage({ course, onBack, user }) {
       {!loading && visibleLessons.length === 0 && (
         <p className="courses-empty">No lessons in this category yet.</p>
       )}
-      <div className="lesson-list">
-        {visibleLessons.map((l) => (
-          <button
-            className={`lesson-row ${!canOpenLessons ? 'lesson-locked' : ''}`}
-            key={l._id}
-            onClick={() => handleLessonClick(l)}
-          >
-            <span className="lesson-num">{l.order}</span>
-            <span className="lesson-title">{l.title}</span>
-            {completedIds.includes(l._id) && <span className="lesson-done">✓</span>}
-            <span className="lesson-arrow">{canOpenLessons ? '→' : '🔒'}</span>
-          </button>
-        ))}
+
+      <div className="lesson-cards-grid">
+        {visibleLessons.map((l) => {
+          const isDone = completedIds.includes(l._id);
+          const categoryLabel = l.category ? l.category : 'vocabulary';
+          const icon = categoryLabel === 'grammar' ? '✏️' : categoryLabel === 'conversation' ? '💬' : '📚';
+
+          return (
+            <button
+              className={`lesson-card-btn ${isDone ? 'completed-card' : ''} ${!canOpenLessons ? 'lesson-locked' : ''}`}
+              key={l._id}
+              onClick={() => handleLessonClick(l)}
+            >
+              <div className="lesson-card-top">
+                <span className="lesson-card-badge">
+                  {icon} {categoryLabel}
+                </span>
+                <div className="lesson-card-order-circle">
+                  {l.order}
+                </div>
+              </div>
+              <h3 className="lesson-card-title">{l.title}</h3>
+              <div className="lesson-card-footer">
+                <span className="lesson-card-status-text">
+                  {!canOpenLessons ? 'Locked' : isDone ? '✓ Completed' : 'Start Lesson'}
+                </span>
+                <span className="lesson-card-arrow">
+                  {!canOpenLessons ? '🔒' : isDone ? '✓' : '→'}
+                </span>
+              </div>
+            </button>
+          );
+        })}
       </div>
     </section>
   );
