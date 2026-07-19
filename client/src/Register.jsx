@@ -110,7 +110,7 @@ function Register({ onRegistered, onBack, onSwitch }) {
 
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5001/api/auth/register', {
+      const res = await fetch(window.API_BASE_URL + '/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -143,7 +143,11 @@ function Register({ onRegistered, onBack, onSwitch }) {
           <div className="welcome-header">
             <h2>Learn <span>中文</span></h2>
             <p className="welcome-subtitle">
-              Learning Chinese can be fun and rewarding! Start your journey with our interactive lessons and exercises.
+             हाम्रा  (Interactive) पाठहरू र अभ्यासहरूसँग आफ्नो यात्रा सुरु गर्नुहोस्। नयाँ vocabularies सिक्नुहोस्, उच्चारणको अभ्यास गर्नुहोस्, र चिनियाँ भाषाको सिक्नुहोस्।
+            </p>
+            <br></br>
+            <p className="welcome-subtitle">
+              तपाईं पूर्ण रूपमा (Beginner) हुनुहुन्छ वा आफ्नो भाषा सीप अझ सुधार गर्न चाहनुहुन्छ भने, हाम्रो platform सामग्री र स्रोतहरू उपलब्ध गराउँछ। आजै सहभागी हुनुहोस् र आत्मविश्वासका साथ चिनियाँ भाषा सिक्न सुरु गर्नुहोस्।
             </p>
           </div>
 
@@ -180,30 +184,6 @@ function Register({ onRegistered, onBack, onSwitch }) {
             </div>
           </div>
 
-          {/* Benefits Bullet Points */}
-          <div className="benefits-list">
-            <div className="benefit-item">
-              <div className="benefit-icon">1</div>
-              <div className="benefit-content">
-                <h4>Teacher-Guided Lessons</h4>
-                <p>Curriculums designed by native speakers.</p>
-              </div>
-            </div>
-            <div className="benefit-item">
-              <div className="benefit-icon">2</div>
-              <div className="benefit-content">
-                <h4>Interactive Exercises</h4>
-                <p>Retain words longer through active quizing & slides.</p>
-              </div>
-            </div>
-            <div className="benefit-item">
-              <div className="benefit-icon">3</div>
-              <div className="benefit-content">
-                <h4>Progress Analytics</h4>
-                <p>Track your score, unlock courses, and test your skills.</p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Right Column: Interactive Form */}

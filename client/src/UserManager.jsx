@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 
-const API = 'http://localhost:5001/api';
+const API = window.API_BASE_URL + '/api';
 
 function UserManager({ onBack }) {
   const token = localStorage.getItem('token');

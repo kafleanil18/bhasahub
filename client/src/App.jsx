@@ -20,21 +20,25 @@ import TestimonialModal from './TestimonialModal';
 import TestimonialManager from './TestimonialManager';
 import SubscriptionManager from './SubscriptionManager';
 import UserManager from './UserManager';
+import TeamManager from './TeamManager';
 
 const teamMembers = [
   {
+    key: 'founder',
     name: 'Anil Kafle',
     role: 'Founder & Teacher',
     photo: '/image.jpg',
     bio: 'Anil is a language teacher specializing in Chinese and Nepali. He founded this platform to make structured, teacher-led language learning accessible to everyone.',
   },
   {
+    key: 'developer',
     name: 'Name Here',
     role: 'Developer',
     photo: '/image.jpg',
     bio: 'Our developer builds and maintains the platform, making sure every lesson, quiz, and feature works smoothly for learners.',
   },
   {
+    key: 'pm',
     name: 'Name Here',
     role: 'Project Manager',
     photo: '/image.jpg',
@@ -147,6 +151,23 @@ function App() {
     { zh: '吃', zhP: 'chī', ne: 'खानु', neP: 'khā·nu', meaning: 'to eat' },
     { zh: '好', zhP: 'hǎo', ne: 'राम्रो', neP: 'rām·ro', meaning: 'good' },
     { zh: '学习', zhP: 'xué xí', ne: 'सिक्नु', neP: 'sik·nu', meaning: 'to learn' },
+    { zh: '工作', zhP: 'gōng zuò', ne: 'काम', neP: 'kām', meaning: 'work' },
+    { zh: '快乐', zhP: 'kuài lè', ne: 'खुसी', neP: 'khu·si', meaning: 'happy' },
+    { zh: '谢谢你', zhP: 'xiè xiè nǐ', ne: 'तिमीलाई धन्यवाद', neP: 'timī·lā·ī dhan·ya·bād', meaning: 'thank you (to you)' },
+    { zh: '对不起', zhP: 'duì bù qǐ', ne: 'माफ गर्नुहोस्', neP: 'māf gar·nu·hoṣ', meaning: 'sorry' },
+    { zh: '请', zhP: 'qǐng', ne: 'कृपया', neP: 'kṛ·payā', meaning: 'please' },
+    { zh: '是', zhP: 'shì', ne: 'हो', neP: 'ho', meaning: 'yes' },
+    { zh: '不是', zhP: 'bù shì', ne: 'होइन', neP: 'ho·in', meaning: 'no' },
+    { zh: '早上好', zhP: 'zǎo shàng hǎo', ne: 'शुभ प्रभात', neP: 'śubha prabhāt', meaning: 'good morning' },
+    { zh: '晚上好', zhP: 'wǎn shàng hǎo', ne: 'शुभ साँझ', neP: 'śubha sā̃jha', meaning: 'good evening' },
+    { zh: '晚安', zhP: 'wǎn ān', ne: 'शुभ रात्री', neP: 'śubha rātrī', meaning: 'good night' },
+    { zh: '再见', zhP: 'zài jiàn', ne: 'फेरि भेटौंला', neP: 'pherī bheṭau·lā', meaning: 'see you again' },
+    { zh: '我爱你', zhP: 'wǒ ài nǐ', ne: 'म तिमीलाई माया गर्छु', neP: 'ma timī·lā·ī māyā gar·chu', meaning: 'I love you' },
+    { zh: '祝你好运', zhP: 'zhù nǐ hǎo yùn', ne: 'तिमीलाई शुभकामना', neP: 'timī·lā·ī śubha·kāmnā', meaning: 'good luck' },
+    { zh: '生日快乐', zhP: 'shēng rì kuài lè', ne: 'जन्मदिनको शुभकामना', neP: 'janma·din·ko śubha·kāmnā', meaning: 'happy birthday' },
+    { zh: '恭喜发财', zhP: 'gōng xǐ fā cái', ne: 'शुभकामना र समृद्धि', neP: 'śubha·kāmnā ra sam·riddhi', meaning: 'wishing you prosperity' },
+    { zh: '新年快乐', zhP: 'xīn nián kuài lè', ne: 'नयाँ वर्षको शुभकामना', neP: 'nayā̃ varṣ·ko śubha·kāmnā', meaning: 'happy new year' },
+    { zh: '万事如意', zhP: 'wàn shì rú yì', ne: 'सबै कुरा इच्छाअनुसार होस्', neP: 'sabāī kurā ichchhā·anusar hoṣ', meaning: 'may allyour wishes come true' },
   ];
   const dayOfYear = Math.floor(
     (Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000
@@ -182,10 +203,13 @@ function App() {
   const [testimonials, setTestimonials] = useState([]);
   const [unreadFeedbackCount, setUnreadFeedbackCount] = useState(0);
   const [pendingTestimonialsCount, setPendingTestimonialsCount] = useState(0);
+  const [pendingAccessRequestsCount, setPendingAccessRequestsCount] = useState(0);
   const [activeTeamMember, setActiveTeamMember] = useState(null);
   const [showSubscriptions, setShowSubscriptions] = useState(false);
   const [myAccessDays, setMyAccessDays] = useState(null);
   const [showUserManager, setShowUserManager] = useState(false);
+  const [showTeamManager, setShowTeamManager] = useState(false);
+  const [teamPhotos, setTeamPhotos] = useState({});
   const [adminSidebarOpen, setAdminSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
 
@@ -204,7 +228,7 @@ function App() {
   const isAdmin = user && (user.role === 'admin' || user.role === 'superadmin');
 
   const loadCourses = () => {
-    fetch('http://localhost:5001/api/courses')
+    fetch(window.API_BASE_URL + '/api/courses')
       .then(res => res.json())
       .then(data => setCourses(data))
       .catch(() => setCourses([]));
@@ -213,7 +237,7 @@ function App() {
   const loadAccess = () => {
     const t = localStorage.getItem('token');
     if (!t) return;
-    fetch('http://localhost:5001/api/enrollments/access', {
+    fetch(window.API_BASE_URL + '/api/enrollments/access', {
       headers: { Authorization: `Bearer ${t}` },
     })
       .then(res => res.json())
@@ -226,23 +250,34 @@ function App() {
   };
 
   const loadFooterBlogs = () => {
-    fetch('http://localhost:5001/api/blogs')
+    fetch(window.API_BASE_URL + '/api/blogs')
       .then(res => res.json())
       .then(data => setFooterBlogs(Array.isArray(data) ? data.slice(0, 3) : []))
       .catch(() => setFooterBlogs([]));
   };
 
   const loadTestimonials = () => {
-    fetch('http://localhost:5001/api/testimonials')
+    fetch(window.API_BASE_URL + '/api/testimonials')
       .then(res => res.json())
       .then(data => setTestimonials(Array.isArray(data) ? data : []))
       .catch(() => setTestimonials([]));
   };
 
+  const loadTeamPhotos = () => {
+    fetch(window.API_BASE_URL + '/api/team')
+      .then(res => res.json())
+      .then(data => {
+        const map = {};
+        (Array.isArray(data) ? data : []).forEach(m => { map[m.key] = m.photo; });
+        setTeamPhotos(map);
+      })
+      .catch(() => {});
+  };
+
   const loadMyAccess = () => {
     const t = localStorage.getItem('token');
     if (!t) { setMyAccessDays(null); return; }
-    fetch('http://localhost:5001/api/subscriptions/my', {
+    fetch(window.API_BASE_URL + '/api/subscriptions/my', {
       headers: { Authorization: `Bearer ${t}` },
     })
       .then(res => res.json())
@@ -264,7 +299,7 @@ function App() {
     if (!token || !currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'superadmin')) return;
 
     // Load unread feedback
-    fetch('http://localhost:5001/api/feedback', {
+    fetch(window.API_BASE_URL + '/api/feedback', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -277,7 +312,7 @@ function App() {
       .catch(() => {});
 
     // Load pending testimonials
-    fetch('http://localhost:5001/api/testimonials/all', {
+    fetch(window.API_BASE_URL + '/api/testimonials/all', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -285,6 +320,19 @@ function App() {
         if (Array.isArray(data)) {
           const pending = data.filter(item => !item.approved).length;
           setPendingTestimonialsCount(pending);
+        }
+      })
+      .catch(() => {});
+
+    // Load pending access requests
+    fetch(window.API_BASE_URL + '/api/access-requests', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          const pending = data.filter(item => item.status === 'pending').length;
+          setPendingAccessRequestsCount(pending);
         }
       })
       .catch(() => {});
@@ -300,11 +348,12 @@ function App() {
     } else {
       setUnreadFeedbackCount(0);
       setPendingTestimonialsCount(0);
+      setPendingAccessRequestsCount(0);
     }
   }, [user]);
 
   useEffect(() => {
-    fetch('http://localhost:5001/api/health')
+    fetch(window.API_BASE_URL + '/api/health')
       .then(res => res.json())
       .then(() => setServerOk(true))
       .catch(() => setServerOk(false));
@@ -312,6 +361,7 @@ function App() {
     loadAccess();
     loadFooterBlogs();
     loadTestimonials();
+    loadTeamPhotos();
     loadMyAccess();
     const savedUser = localStorage.getItem('user');
     if (savedUser) setUser(JSON.parse(savedUser));
@@ -333,6 +383,7 @@ function App() {
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
     setShowUserManager(false);
+    setShowTeamManager(false);
     setAdminSidebarOpen(false);
     setActiveCourse(null);
     setShowLogin(false);
@@ -357,11 +408,13 @@ function App() {
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
     setShowUserManager(false);
+    setShowTeamManager(false);
     setAdminSidebarOpen(false);
     loadCourses();
     loadAccess();
     loadFooterBlogs();
     loadTestimonials();
+    loadTeamPhotos();
     loadMyAccess();
     loadAdminNotificationCounts();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -383,6 +436,7 @@ function App() {
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
     setShowUserManager(false);
+    setShowTeamManager(false);
     setAdminSidebarOpen(false);
     setAuthView('login');
     setShowLogin(true);
@@ -537,37 +591,19 @@ function App() {
                   <line x1="2" y1="10" x2="22" y2="10"></line>
                 </svg>
                 Subscriptions
+                {pendingAccessRequestsCount > 0 && (
+                  <span className="sidebar-badge">{pendingAccessRequestsCount}</span>
+                )}
+              </button>
+              <button onClick={() => { goHome(); setShowTeamManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <circle cx="8.5" cy="10" r="2.5"></circle>
+                  <path d="m21 16-3.5-3.5a2 2 0 0 0-2.83 0L11 16"></path>
+                </svg>
+                Team photos
               </button>
             </nav>
-
-            {/* Vector Illustration at the bottom of the sidebar */}
-            <div className="admin-sidebar-illustration">
-              <svg width="140" height="110" viewBox="0 0 200 160" fill="none">
-                {/* Desk/Shelf line */}
-                <line x1="20" y1="140" x2="180" y2="140" stroke="var(--line)" strokeWidth="3" strokeLinecap="round"/>
-                
-                {/* Book stack */}
-                <rect x="45" y="105" width="50" height="15" rx="3" fill="var(--seal)" opacity="0.85"/>
-                <rect x="45" y="108" width="50" height="3" fill="#fff" opacity="0.3"/>
-                <rect x="50" y="120" width="45" height="15" rx="3" fill="var(--jade)" opacity="0.85"/>
-                <rect x="50" y="123" width="45" height="3" fill="#fff" opacity="0.3"/>
-                <rect x="40" y="135" width="60" height="5" fill="var(--gold)" opacity="0.85"/>
-
-                {/* Laptop outline */}
-                <rect x="105" y="95" width="55" height="38" rx="4" fill="var(--paper)" stroke="var(--line)" strokeWidth="2"/>
-                <rect x="110" y="100" width="45" height="28" rx="2" fill="var(--card)"/>
-                <line x1="100" y1="135" x2="165" y2="135" stroke="var(--line)" strokeWidth="4" strokeLinecap="round"/>
-                <line x1="125" y1="137" x2="140" y2="137" stroke="var(--mist)" strokeWidth="2"/>
-
-                {/* Glowing light bulb */}
-                <circle cx="100" cy="55" r="16" fill="rgba(201, 154, 60, 0.15)" stroke="var(--gold)" strokeWidth="2" strokeDasharray="3 3"/>
-                <path d="M96 68h8M98 71h4M100 50v4M93 55l3 1M107 55l-3 1" stroke="var(--gold)" strokeWidth="2" strokeLinecap="round"/>
-                
-                {/* Tiny stars/sparks */}
-                <path d="M125 45l2 2-2 2-2-2zM75 65l1.5 1.5-1.5 1.5-1.5-1.5z" fill="var(--gold)"/>
-              </svg>
-              <p className="illustration-caption">Language LMS Manager</p>
-            </div>
 
             <button className="admin-sidebar-home" onClick={() => { goHome(); setAdminSidebarOpen(false); }}>
               <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -678,21 +714,24 @@ function App() {
                   style={{ position: 'relative' }}
                 >
                   <span aria-hidden="true">☰</span> Admin
-                  {(unreadFeedbackCount + pendingTestimonialsCount) > 0 && (
+                  {(unreadFeedbackCount + pendingTestimonialsCount + pendingAccessRequestsCount) > 0 && (
                     <span className="admin-nav-badge">
-                      {unreadFeedbackCount + pendingTestimonialsCount}
+                      {unreadFeedbackCount + pendingTestimonialsCount + pendingAccessRequestsCount}
                     </span>
                   )}
                 </button>
               )}
 
               {isAdmin && !isSuperAdmin && (
-                <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowSubscriptions(true); }}>
+                <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowSubscriptions(true); }} style={{ position: 'relative' }}>
                   <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
                     <line x1="2" y1="10" x2="22" y2="10"></line>
                   </svg>
                   Subscriptions
+                  {pendingAccessRequestsCount > 0 && (
+                    <span className="sidebar-badge">{pendingAccessRequestsCount}</span>
+                  )}
                 </button>
               )}
 
@@ -751,6 +790,8 @@ function App() {
         </div>
       ) : isSuperAdmin && showUserManager ? (
         <UserManager onBack={goHome} />
+      ) : isSuperAdmin && showTeamManager ? (
+        <TeamManager onBack={goHome} />
       ) : isAdmin && showSubscriptions ? (
         <SubscriptionManager onBack={goHome} />
       ) : isSuperAdmin && showTestimonialManager ? (
@@ -790,7 +831,7 @@ function App() {
                 <h1>
                   {user
                     ? `Welcome back, ${user.name}`
-                    : 'Learn a language the way a teacher would show you'}
+                    : 'चिनियाँ भाषा सिक्न सुरु गर्नुहोस्।'}
                 </h1>
                 <p className="hero-lead">
                   Learn structured lessons, PinYin, Tones, Vocabulary, and Spoken Chinese! One
@@ -910,7 +951,7 @@ function App() {
                       <p className="testimonial-text">"{t.text}"</p>
                       <div className="testimonial-person">
                         {t.photo ? (
-                          <img className="testimonial-photo" src={`http://localhost:5001${t.photo}`} alt={t.name} />
+                          <img className="testimonial-photo" src={`${window.API_BASE_URL}${t.photo}`} alt={t.name} />
                         ) : (
                           <span className="testimonial-photo-placeholder">{t.name.charAt(0)}</span>
                         )}
@@ -935,13 +976,19 @@ function App() {
               <h2 className="section-title team-title">Meet Our Team</h2>
               <p className="team-intro">This platform is brought to you by a team of passion and expertise.</p>
               <div className="team-grid">
-                {teamMembers.map((member) => (
-                  <div className="team-card" key={member.name + member.role} onClick={() => setActiveTeamMember(member)}>
-                    {renderTeamAvatar(member)}
-                    <h3 className="team-name">{member.name}</h3>
-                    <p className="team-role">{member.role}</p>
-                  </div>
-                ))}
+                {teamMembers.map((member) => {
+                  const uploadedPhoto = teamPhotos[member.key];
+                  const displayMember = uploadedPhoto
+                    ? { ...member, photo: `${window.API_BASE_URL}${uploadedPhoto}` }
+                    : member;
+                  return (
+                    <div className="team-card" key={member.name + member.role} onClick={() => setActiveTeamMember(displayMember)}>
+                      {renderTeamAvatar(displayMember)}
+                      <h3 className="team-name">{member.name}</h3>
+                      <p className="team-role">{member.role}</p>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </section>
@@ -980,7 +1027,7 @@ function App() {
                         }}
                       >
                         {c.image ? (
-                          <img className="course-card-img" src={`http://localhost:5001${c.image}`} alt={c.title} />
+                          <img className="course-card-img" src={`${window.API_BASE_URL}${c.image}`} alt={c.title} />
                         ) : (
                           <div className="course-card-glyph">
                             <span className={c.language === 'chinese' ? 'zh' : 'ne'}>

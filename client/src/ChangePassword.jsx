@@ -34,7 +34,7 @@ function ChangePassword({ onClose }) {
     
     setSaving(true);
     try {
-      const res = await fetch('http://localhost:5001/api/auth/change-password', {
+      const res = await fetch(window.API_BASE_URL + '/api/auth/change-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

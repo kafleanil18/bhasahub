@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const API = 'http://localhost:5001/api';
+const API = window.API_BASE_URL + '/api';
 
 function TestList({ onOpenTest, onBack }) {
   const [tests, setTests] = useState([]);
@@ -24,7 +24,11 @@ function TestList({ onOpenTest, onBack }) {
       <div className="course-cards">
         {tests.map((t) => (
           <div className="course-card" key={t._id} onClick={() => onOpenTest(t._id)}>
-            <div className="course-card-glyph"><span>📝</span></div>
+            {t.image ? (
+              <img className="course-card-img" src={`${window.API_BASE_URL}${t.image}`} alt={t.title} />
+            ) : (
+              <div className="course-card-glyph"><span>📝</span></div>
+            )}
             <div className="course-card-body">
               <h3 className="course-card-title">{t.title}</h3>
               <p className="course-card-desc">{t.description}</p>

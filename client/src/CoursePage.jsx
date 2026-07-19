@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Quiz from './Quiz';
 
-const API = 'http://localhost:5001/api';
-const SERVER = 'http://localhost:5001';
+const API = window.API_BASE_URL + '/api';
+const SERVER = window.API_BASE_URL;
 
 function CoursePage({ course, onBack, user }) {
   const [lessons, setLessons] = useState([]);
@@ -25,9 +25,13 @@ function CoursePage({ course, onBack, user }) {
   const [accessChecked, setAccessChecked] = useState(false);
   const [showAccessMsg, setShowAccessMsg] = useState(false);
 
+  // access request (student asking admin for access)
+  const [requestStatus, setRequestStatus] = useState(null); // null | 'pending' | 'denied'
+  const [requestingAccess, setRequestingAccess] = useState(false);
+
  const isAdmin = user && (user.role === 'admin' || user.role === 'superadmin');
 
-  const loadProgress = () => {
+  const loadProgress = useCallback(() => {
     if (!token) return;
     fetch(`${API}/progress/course/${course._id}`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -35,11 +39,11 @@ function CoursePage({ course, onBack, user }) {
       .then(res => res.json())
       .then(data => setCompletedIds(data.completedLessonIds || []))
       .catch(() => {});
-  };
+  }, [course._id, token]);
 
   useEffect(() => {
     loadProgress();
-  }, [course._id, token]);
+  }, [loadProgress]);
 
   // check subscription access for this course
   useEffect(() => {
@@ -55,6 +59,41 @@ function CoursePage({ course, onBack, user }) {
       })
       .catch(() => setAccessChecked(true));
   }, [course._id, token]);
+
+  const loadRequestStatus = useCallback(() => {
+    if (!token) return;
+    fetch(`${API}/access-requests/my`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(res => res.json())
+      .then(data => {
+        const mine = (Array.isArray(data) ? data : []).filter(r => r.course && r.course._id === course._id);
+        const pending = mine.find(r => r.status === 'pending');
+        if (pending) { setRequestStatus('pending'); return; }
+        const latest = mine.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+        setRequestStatus(latest && latest.status === 'denied' ? 'denied' : null);
+      })
+      .catch(() => {});
+  }, [course._id, token]);
+
+  useEffect(() => { loadRequestStatus(); }, [loadRequestStatus]);
+
+  const requestAccess = async () => {
+    if (!token) return;
+    setRequestingAccess(true);
+    try {
+      const res = await fetch(`${API}/access-requests`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ courseId: course._id }),
+      });
+      if (res.ok) setRequestStatus('pending');
+    } catch {
+      // ignore
+    } finally {
+      setRequestingAccess(false);
+    }
+  };
 
   const toggleComplete = async (lessonId) => {
     if (!token) return;
@@ -158,6 +197,9 @@ function CoursePage({ course, onBack, user }) {
   // gate: admins always allowed; students need active access
   const canOpenLessons = isAdmin || hasAccess;
 
+  const activeIndex = lessons.findIndex((l) => l._id === (activeLesson ? activeLesson._id : ''));
+  const nextLesson = activeIndex !== -1 && activeIndex + 1 < lessons.length ? lessons[activeIndex + 1] : null;
+
   const handleLessonClick = (lesson) => {
     if (canOpenLessons) {
       openLesson(lesson);
@@ -184,9 +226,16 @@ function CoursePage({ course, onBack, user }) {
   if (activeLesson) {
     return (
       <section className="course-page container">
-        <button className="back-btn" onClick={() => setActiveLesson(null)}>
-          ← Back to {course.title}
-        </button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+          <button className="back-btn" style={{ margin: 0 }} onClick={() => setActiveLesson(null)}>
+            ← Back to {course.title}
+          </button>
+          {nextLesson && (
+            <button className="back-btn" style={{ margin: 0 }} onClick={() => handleLessonClick(nextLesson)}>
+              Next Lesson →
+            </button>
+          )}
+        </div>
         <p className="eyebrow">Lesson {activeLesson.order}</p>
         <h1 className="section-title">{activeLesson.title}</h1>
 
@@ -213,15 +262,26 @@ function CoursePage({ course, onBack, user }) {
 
         <p className="lesson-count">{words.length} words</p>
 
-        {user && (
-          <button
-            className={completedIds.includes(activeLesson._id) ? 'nav-btn' : 'btn-primary'}
-            onClick={() => toggleComplete(activeLesson._id)}
-            style={{ marginBottom: 24 }}
-          >
-            {completedIds.includes(activeLesson._id) ? '✓ Completed' : 'Mark as complete'}
-          </button>
-        )}
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap' }}>
+          {user && (
+            <button
+              className={completedIds.includes(activeLesson._id) ? 'nav-btn' : 'btn-primary'}
+              onClick={() => toggleComplete(activeLesson._id)}
+              style={{ margin: 0 }}
+            >
+              {completedIds.includes(activeLesson._id) ? '✓ Completed' : 'Mark as complete'}
+            </button>
+          )}
+          {nextLesson && (
+            <button
+              className="btn-primary"
+              onClick={() => handleLessonClick(nextLesson)}
+              style={{ margin: 0, background: 'var(--jade)', borderColor: 'var(--jade)', boxShadow: '0 4px 12px rgba(46, 204, 113, 0.2)' }}
+            >
+              Next Lesson →
+            </button>
+          )}
+        </div>
 
         {words.length >= 4 && (
           <div className="flash-toggle">
@@ -380,8 +440,20 @@ function CoursePage({ course, onBack, user }) {
             ✓ Active Subscription Access {accessExpiry && `until ${new Date(accessExpiry).toLocaleDateString()}`}
           </div>
         ) : (
-          <div className="access-banner access-locked" style={{ margin: '16px 0 0' }}>
-            🔒 You don't have access to this course yet. Please message us to request access keys.
+          <div className="access-banner access-locked" style={{ margin: '16px 0 0', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+            {requestStatus === 'pending' ? (
+              <span>⏳ Access request sent — waiting for an admin to grant it.</span>
+            ) : (
+              <>
+                <span>
+                  🔒 You don't have access to this course yet.
+                  {requestStatus === 'denied' && ' Your previous request was denied.'}
+                </span>
+                <button className="nav-btn" onClick={requestAccess} disabled={requestingAccess}>
+                  {requestingAccess ? 'Sending...' : 'Request access'}
+                </button>
+              </>
+            )}
           </div>
         )
       )}
@@ -391,7 +463,7 @@ function CoursePage({ course, onBack, user }) {
         <div className="access-msg" style={{ margin: '20px 0 0' }}>
           <p>
             🔒 This lesson is locked. You need active access to open lessons.
-            Please click <strong>Message us</strong> in the top header menu to request access.
+            Scroll up and click <strong>Request access</strong> to ask an admin to grant it.
           </p>
           <button className="nav-btn" onClick={() => setShowAccessMsg(false)}>Got it</button>
         </div>

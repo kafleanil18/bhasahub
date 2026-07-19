@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const API = 'http://localhost:5001/api';
+const API = window.API_BASE_URL + '/api';
 
 function Dashboard({ user, onOpenCourse, onBrowse }) {
   const [courses, setCourses] = useState([]);

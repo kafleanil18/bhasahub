@@ -1,7 +1,37 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-const API = 'http://localhost:5001/api';
-const SERVER = 'http://localhost:5001';
+const API = window.API_BASE_URL + '/api';
+const SERVER = window.API_BASE_URL;
+
+const resizeImage = (file, maxWidth) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Could not read the file'));
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('Could not load the image'));
+      img.onload = () => {
+        const scale = Math.min(1, maxWidth / img.width);
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) return reject(new Error('Could not resize the image'));
+            const name = file.name.replace(/\.[^.]+$/, '') + '.jpg';
+            resolve(new File([blob], name, { type: 'image/jpeg' }));
+          },
+          'image/jpeg',
+          0.85
+        );
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
 
 function LessonManager({ course, onBack }) {
   const token = localStorage.getItem('token');
@@ -18,6 +48,7 @@ function LessonManager({ course, onBack }) {
   const [dialogueImage, setDialogueImage] = useState('');
   const [dialogueLines, setDialogueLines] = useState([]);
   const [lessonCategory, setLessonCategory] = useState('vocabulary');
+  const [uploadSize, setUploadSize] = useState('small');
 
   // word form (create or edit)
   const [word, setWord] = useState('');
@@ -30,20 +61,22 @@ function LessonManager({ course, onBack }) {
   const jsonHeaders = { 'Content-Type': 'application/json', ...authHeaders };
 
   // ---------- lessons ----------
-  const loadLessons = async () => {
+  const loadLessons = useCallback(async () => {
     try {
-      const res = await fetch(`${API}/lessons/course/${course._id}/all`, { headers: authHeaders });
+      const res = await fetch(`${API}/lessons/course/${course._id}/all`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const data = await res.json();
       if (res.ok) setLessons(data);
       else setError(data.error || 'Could not load lessons');
     } catch {
       setError('Could not reach the server');
     }
-  };
+  }, [course._id, token]);
 
   useEffect(() => {
     loadLessons();
-  }, []);
+  }, [loadLessons]);
 
   const resetLessonForm = () => {
     setEditingLessonId(null);
@@ -93,8 +126,18 @@ function LessonManager({ course, onBack }) {
   const uploadDialogueImage = async (file) => {
     if (!file) return;
     setError('');
+    let fileToUpload = file;
+    if (uploadSize !== 'original') {
+      try {
+        const maxWidth = uploadSize === 'xsmall' ? 300 : 600;
+        fileToUpload = await resizeImage(file, maxWidth);
+      } catch (err) {
+        setError(err.message || 'Image resize failed');
+        return;
+      }
+    }
     const fd = new FormData();
-    fd.append('file', file);
+    fd.append('file', fileToUpload);
     try {
       const res = await fetch(`${API}/upload`, { method: 'POST', headers: authHeaders, body: fd });
       const data = await res.json();
@@ -398,6 +441,19 @@ function LessonManager({ course, onBack }) {
         <div className="dialogue-lines-editor">
           <div className="dialogue-lines-head">
             <strong>Conversation image (one for the whole dialogue)</strong>
+            <div className="dialogue-image-size-wrap" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '13px', color: 'var(--mist)' }}>Upload size:</span>
+              <select
+                className="category-select"
+                value={uploadSize}
+                onChange={(e) => setUploadSize(e.target.value)}
+                style={{ padding: '4px 8px', fontSize: '13px', minWidth: '120px' }}
+              >
+                <option value="xsmall">Extra Small (300px)</option>
+                <option value="small">Small (600px)</option>
+                <option value="original">Original</option>
+              </select>
+            </div>
           </div>
           {dialogueImage ? (
             <div className="dialogue-image-preview-wrap">

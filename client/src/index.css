@@ -1345,6 +1345,125 @@ header .container {
   margin-top: 8px;
 }
 
+/* ---------- Quiz Analytics Chart & Legend ---------- */
+.quiz-analytics-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: 24px 36px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  max-width: 500px;
+  width: 100%;
+}
+
+.quiz-chart-wrapper {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quiz-chart-svg {
+  transform: rotate(-90deg);
+}
+
+.quiz-chart-segment {
+  transition: stroke-dasharray 0.6s ease;
+}
+
+.quiz-chart-label {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.quiz-chart-percent {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--ink);
+  font-family: 'Outfit', sans-serif;
+  line-height: 1.1;
+}
+
+.quiz-chart-sub {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mist);
+  font-weight: 600;
+}
+
+.quiz-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+}
+
+.quiz-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.quiz-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.correct-dot {
+  background-color: var(--jade);
+  box-shadow: 0 0 8px rgba(46, 204, 113, 0.4);
+}
+
+.incorrect-dot {
+  background-color: var(--seal);
+  box-shadow: 0 0 8px rgba(200, 54, 42, 0.4);
+}
+
+.total-dot {
+  background-color: var(--mist);
+}
+
+.quiz-legend-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.quiz-legend-label {
+  font-size: 13px;
+  color: var(--mist);
+  font-weight: 500;
+}
+
+.quiz-legend-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.correct-color {
+  color: var(--jade) !important;
+}
+
+.incorrect-color {
+  color: var(--seal) !important;
+}
+
+
 /* ---------- Hero video ---------- */
 .hero-media {
   display: flex;
@@ -2111,6 +2230,19 @@ header .container {
 /* ---------- Dialogue lines editor (admin) ---------- */
 .dialogue-lines-editor {
   margin-top: 16px;
+}
+.dialogue-image-preview-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+.dialogue-image-admin {
+  max-height: 80px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  object-fit: contain;
 }
 
 .dialogue-lines-head {

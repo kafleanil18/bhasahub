@@ -9,6 +9,8 @@ const feedbackRoutes = require('./routes/feedback');
 const testRoutes = require('./routes/tests');
 const blogRoutes = require('./routes/blogs');
 const testimonialRoutes = require('./routes/testimonials');
+const teamRoutes = require('./routes/team');
+const accessRequestRoutes = require('./routes/accessRequests');
 
 require('dotenv').config();
 
@@ -30,6 +32,8 @@ app.use('/api/feedback', feedbackRoutes);
 app.use('/api/tests', testRoutes);
 app.use('/api/blogs', blogRoutes);
 app.use('/api/testimonials', testimonialRoutes);
+app.use('/api/team', teamRoutes);
+app.use('/api/access-requests', accessRequestRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/slides', slideRoutes);

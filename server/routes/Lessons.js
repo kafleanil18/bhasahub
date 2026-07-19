@@ -28,13 +28,22 @@ router.get('/course/:courseId/all', requireAuth, requireAdmin, async (req, res) 
 // POST /api/lessons — admin: create a lesson
 router.post('/', requireAuth, requireAdmin, async (req, res) => {
   try {
-    const { course, title, order, published } = req.body;
+    const { course, title, category, dialogue, dialogueImage, dialogueLines, order, published } = req.body;
     if (!course || !title) {
       return res.status(400).json({ error: 'Course id and title are required' });
     }
-    const lesson = await Lesson.create({ course, title, order, published });
+    const lesson = await Lesson.create({
+      course,
+      title,
+      category,
+      dialogue,
+      dialogueImage,
+      dialogueLines,
+      order,
+      published,
+    });
     res.status(201).json(lesson);
-  } catch {
+  } catch (err) {
     res.status(500).json({ error: 'Could not create lesson' });
   }
 });

@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 
-const API = 'http://localhost:5001/api';
-const SERVER = 'http://localhost:5001';
+const API = window.API_BASE_URL + '/api';
+const SERVER = window.API_BASE_URL;
 
 function TestManager({ onBack }) {
   const [tests, setTests] = useState([]);
@@ -15,6 +15,7 @@ function TestManager({ onBack }) {
   const [testType, setTestType] = useState('listening');
   const [audioUrl, setAudioUrl] = useState('');
   const [pdfUrl, setPdfUrl] = useState('');
+  const [image, setImage] = useState('');
   const [questions, setQuestions] = useState([]);
   const [published, setPublished] = useState(false);
 
@@ -22,6 +23,7 @@ function TestManager({ onBack }) {
   const [editorTab, setEditorTab] = useState('details'); // 'details' or 'questions'
   const [uploadingAudio, setUploadingAudio] = useState(false);
   const [uploadingPdf, setUploadingPdf] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingQAudio, setUploadingQAudio] = useState({});
 
   const loadTests = async () => {
@@ -47,6 +49,7 @@ function TestManager({ onBack }) {
     setTestType('listening');
     setAudioUrl('');
     setPdfUrl('');
+    setImage('');
     setQuestions([]);
     setPublished(false);
     setEditorTab('details');
@@ -60,7 +63,8 @@ function TestManager({ onBack }) {
     setTestType(t.testType || 'listening');
     setAudioUrl(t.audioUrl || '');
     setPdfUrl(t.pdfUrl || '');
-    
+    setImage(t.image || '');
+
     const parsedQuestions = (t.questions || []).map(q => ({
       questionText: q.questionText || '',
       questionPinyin: q.questionPinyin || '',
@@ -162,7 +166,7 @@ function TestManager({ onBack }) {
   const save = async () => {
     setError('');
     if (!title.trim()) return setError('Title is required');
-    const body = { title, level, description, testType, audioUrl, pdfUrl, questions, published };
+    const body = { title, level, description, testType, audioUrl, pdfUrl, image, questions, published };
     try {
       const activeToken = localStorage.getItem('token');
       const headers = {
@@ -459,7 +463,7 @@ function TestManager({ onBack }) {
 
         .tm-form-row {
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
           gap: 1rem;
         }
 
@@ -994,6 +998,32 @@ function TestManager({ onBack }) {
                     <div className="tm-asset-card">
                       <div className="tm-asset-info">📄 PDF Document Attached</div>
                       <button type="button" className="tm-btn-asset-remove" onClick={() => setPdfUrl('')}>Delete</button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="tm-form-group">
+                  <label className="tm-label">Card Glyph Image</label>
+                  <div className="tm-upload-zone">
+                    <div className="tm-file-input-btn">
+                      Upload Image
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => uploadFile(e.target.files[0], setImage, setUploadingImage)}
+                      />
+                    </div>
+                    {uploadingImage && <div className="tm-upload-status">Uploading Image...</div>}
+                  </div>
+                  {image && (
+                    <div className="tm-asset-card">
+                      <img
+                        src={`${SERVER}${image}`}
+                        alt="Test glyph preview"
+                        style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 6 }}
+                      />
+                      <div className="tm-asset-info">🖼️ Glyph Image Attached</div>
+                      <button type="button" className="tm-btn-asset-remove" onClick={() => setImage('')}>Delete</button>
                     </div>
                   )}
                 </div>

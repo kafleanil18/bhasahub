@@ -13,7 +13,7 @@ function FeedbackModal({ user, onClose }) {
     if (!message.trim()) return setError('Please write a message');
     setSending(true);
     try {
-      const res = await fetch('http://localhost:5001/api/feedback', {
+      const res = await fetch(window.API_BASE_URL + '/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, message }),

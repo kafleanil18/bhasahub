@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 function shuffle(array) {
   const arr = [...array];
@@ -59,7 +59,7 @@ function Quiz({ words, language, onExit }) {
 
   const q = questions[current];
 
-  const handleAnswer = (choice) => {
+  const handleAnswer = useCallback((choice) => {
     if (selected) return; // already answered
     setSelected(choice);
     if (choice === q.answer) {
@@ -68,16 +68,16 @@ function Quiz({ words, language, onExit }) {
     } else {
       playIncorrectTone();
     }
-  };
+  }, [selected, q]);
 
-  const next = () => {
+  const next = useCallback(() => {
     if (current + 1 >= questions.length) {
       setFinished(true);
     } else {
       setCurrent((c) => c + 1);
       setSelected(null);
     }
-  };
+  }, [current, questions.length]);
 
   const restart = () => {
     setQuestions(buildQuestions(words));
@@ -117,23 +117,112 @@ function Quiz({ words, language, onExit }) {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [current, selected, finished, questions, q]);
+  }, [current, selected, finished, questions, q, next, handleAnswer]);
 
   if (questions.length === 0) return null;
 
   if (finished) {
     const percent = Math.round((score / questions.length) * 100);
+    const incorrect = questions.length - score;
+
+    // SVG donut chart calculations
+    const radius = 36;
+    const strokeWidth = 8;
+    const circumference = 2 * Math.PI * radius; // ~226.19
+    const correctShare = score / questions.length;
+    const incorrectShare = 1 - correctShare;
+    const correctStroke = circumference * correctShare;
+    const incorrectStroke = circumference * incorrectShare;
+
     return (
       <div className="quiz-area">
         <div className="quiz-result">
           <span className="quiz-result-emoji">
             {percent >= 80 ? '🎉' : percent >= 50 ? '👍' : '📚'}
           </span>
-          <h2 className="section-title">
-            {score} / {questions.length} correct
+          <h2 className="section-title" style={{ marginBottom: 4 }}>
+            Quiz Completed!
           </h2>
-          <p className="quiz-result-percent">{percent}% Score</p>
-          <div className="quiz-result-actions">
+          <p className="quiz-result-percent">Here is your performance breakdown:</p>
+          
+          <div className="quiz-analytics-container">
+            {/* SVG Donut Chart */}
+            <div className="quiz-chart-wrapper">
+              <svg width="160" height="160" viewBox="0 0 100 100" className="quiz-chart-svg">
+                {/* Background Ring */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r={radius}
+                  fill="transparent"
+                  stroke="var(--rice)"
+                  strokeWidth={strokeWidth}
+                />
+                {/* Correct segment */}
+                {score > 0 && (
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r={radius}
+                    fill="transparent"
+                    stroke="var(--jade)"
+                    strokeWidth={strokeWidth}
+                    strokeDasharray={`${correctStroke} ${circumference}`}
+                    strokeDashoffset="0"
+                    strokeLinecap="round"
+                    className="quiz-chart-segment"
+                  />
+                )}
+                {/* Incorrect segment */}
+                {incorrect > 0 && (
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r={radius}
+                    fill="transparent"
+                    stroke="var(--seal)"
+                    strokeWidth={strokeWidth}
+                    strokeDasharray={`${incorrectStroke} ${circumference}`}
+                    strokeDashoffset={-correctStroke}
+                    strokeLinecap={score > 0 ? 'butt' : 'round'}
+                    className="quiz-chart-segment"
+                  />
+                )}
+              </svg>
+              {/* Inner score label */}
+              <div className="quiz-chart-label">
+                <span className="quiz-chart-percent">{percent}%</span>
+                <span className="quiz-chart-sub">Score</span>
+              </div>
+            </div>
+
+            {/* Legend / Breakdown info */}
+            <div className="quiz-legend">
+              <div className="quiz-legend-item">
+                <span className="quiz-legend-dot correct-dot"></span>
+                <div className="quiz-legend-text">
+                  <span className="quiz-legend-label">Correct Answers</span>
+                  <span className="quiz-legend-value correct-color">{score}</span>
+                </div>
+              </div>
+              <div className="quiz-legend-item">
+                <span className="quiz-legend-dot incorrect-dot"></span>
+                <div className="quiz-legend-text">
+                  <span className="quiz-legend-label">Incorrect Answers</span>
+                  <span className="quiz-legend-value incorrect-color">{incorrect}</span>
+                </div>
+              </div>
+              <div className="quiz-legend-item">
+                <span className="quiz-legend-dot total-dot"></span>
+                <div className="quiz-legend-text">
+                  <span className="quiz-legend-label">Total Questions</span>
+                  <span className="quiz-legend-value">{questions.length}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="quiz-result-actions" style={{ marginTop: 24 }}>
             <button className="btn-primary" onClick={restart}>Try again</button>
             <button className="nav-btn" onClick={onExit}>Back to lesson</button>
           </div>

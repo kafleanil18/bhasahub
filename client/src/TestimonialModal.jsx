@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-const API = 'http://localhost:5001/api';
-const SERVER = 'http://localhost:5001';
+const API = window.API_BASE_URL + '/api';
+const SERVER = window.API_BASE_URL;
 
 function TestimonialModal({ user, onClose }) {
   const token = localStorage.getItem('token');

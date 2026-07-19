@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const API = 'http://localhost:5001/api/feedback';
+const API = window.API_BASE_URL + '/api/feedback';
 
 function FeedbackInbox({ onBack }) {
   const [items, setItems] = useState([]);

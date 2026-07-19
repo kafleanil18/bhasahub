@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 
-const API = 'http://localhost:5001/api/courses';
+const API = window.API_BASE_URL + '/api/courses';
 
 function AdminPanel({ onBack, onManageLessons }) {
   const [courses, setCourses] = useState([]);
@@ -19,7 +19,7 @@ function AdminPanel({ onBack, onManageLessons }) {
 
   const token = localStorage.getItem('token');
 
-  const loadCourses = async () => {
+  const loadCourses = useCallback(async () => {
     try {
       const res = await fetch(`${API}/all`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -33,11 +33,11 @@ function AdminPanel({ onBack, onManageLessons }) {
     } catch {
       setError('Could not reach the server');
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     loadCourses();
-  }, []);
+  }, [loadCourses]);
 
   const resetForm = () => {
     setEditingId(null);
@@ -68,7 +68,7 @@ function AdminPanel({ onBack, onManageLessons }) {
     const fd = new FormData();
     fd.append('file', file);
     try {
-      const res = await fetch('http://localhost:5001/api/upload', {
+      const res = await fetch(window.API_BASE_URL + '/api/upload', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: fd,
@@ -658,7 +658,7 @@ function AdminPanel({ onBack, onManageLessons }) {
           {image && (
             <div className="admin-img-preview-card">
               <img
-                src={`http://localhost:5001${image}`}
+                src={`${window.API_BASE_URL}${image}`}
                 alt="Course preview"
                 className="admin-img-preview"
               />

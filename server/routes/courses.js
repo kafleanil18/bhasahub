@@ -28,11 +28,11 @@ router.get('/all', requireAuth, requireAdmin, async (req, res) => {
 // POST /api/courses — admin: create a course
 router.post('/', requireAuth, requireAdmin, async (req, res) => {
   try {
-    const { title, language, level, description, glyph, published } = req.body;
+    const { title, language, level, description, glyph, image, published } = req.body;
     if (!title || !language) {
       return res.status(400).json({ error: 'Title and language are required' });
     }
-    const course = await Course.create({ title, language, level, description, glyph, published });
+    const course = await Course.create({ title, language, level, description, glyph, image, published });
     res.status(201).json(course);
   } catch (err) {
     res.status(500).json({ error: 'Could not create course' });

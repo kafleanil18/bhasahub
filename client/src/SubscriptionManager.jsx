@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const API = 'http://localhost:5001/api';
+const API = window.API_BASE_URL + '/api';
 
 function SubscriptionManager({ onBack }) {
   const token = localStorage.getItem('token');
@@ -10,6 +10,8 @@ function SubscriptionManager({ onBack }) {
   const [students, setStudents] = useState([]);
   const [courses, setCourses] = useState([]);
   const [subs, setSubs] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const [requestDays, setRequestDays] = useState({});
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
 
@@ -55,11 +57,57 @@ function SubscriptionManager({ onBack }) {
     }
   };
 
+  const loadRequests = async () => {
+    try {
+      const res = await fetch(`${API}/access-requests`, { headers: authHeaders });
+      const data = await res.json();
+      if (res.ok) setRequests(data);
+    } catch {
+      // ignore
+    }
+  };
+
   useEffect(() => {
     loadStudents();
     loadCourses();
     loadSubs();
+    loadRequests();
   }, []);
+
+  const pendingRequests = requests.filter((r) => r.status === 'pending');
+
+  const approveRequest = async (id) => {
+    setError('');
+    setMessage('');
+    const days = Number(requestDays[id]) || 30;
+    try {
+      const res = await fetch(`${API}/access-requests/${id}/approve`, {
+        method: 'PUT',
+        headers: jsonHeaders,
+        body: JSON.stringify({ days }),
+      });
+      if (res.ok) {
+        setMessage('Access granted successfully!');
+        loadRequests();
+        loadSubs();
+      } else {
+        const data = await res.json();
+        setError(data.error || 'Could not grant access');
+      }
+    } catch {
+      setError('Could not reach the server');
+    }
+  };
+
+  const denyRequest = async (id) => {
+    if (!confirm('Deny this access request?')) return;
+    try {
+      await fetch(`${API}/access-requests/${id}/deny`, { method: 'PUT', headers: authHeaders });
+      loadRequests();
+    } catch {
+      // ignore
+    }
+  };
 
   const grant = async () => {
     setError('');
@@ -614,7 +662,56 @@ function SubscriptionManager({ onBack }) {
             <span className="subs-stat-label">Total Paths</span>
           </div>
         </div>
+        <div className="subs-stat-card">
+          <div className="subs-stat-icon gold">🙋</div>
+          <div className="subs-stat-info">
+            <span className="subs-stat-number">{pendingRequests.length}</span>
+            <span className="subs-stat-label">Pending Requests</span>
+          </div>
+        </div>
       </div>
+
+      {/* Pending access requests */}
+      {pendingRequests.length > 0 && (
+        <div className="admin-list" style={{ marginBottom: '2.5rem' }}>
+          <h2>Pending access requests ({pendingRequests.length})</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            {pendingRequests.map((r) => (
+              <div className="admin-row" key={r._id}>
+                <div className="student-search-avatar">{getInitials(r.user?.name)}</div>
+
+                <div className="row-info">
+                  <strong>{r.user ? r.user.name : 'Deleted Student'}</strong>
+                  <span>{r.user ? r.user.email : ''}</span>
+                </div>
+
+                <div className="row-info">
+                  <strong>{r.course ? r.course.title : 'Deleted Course'}</strong>
+                  <span>Requested {new Date(r.createdAt).toLocaleDateString()}</span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <input
+                    type="number"
+                    min="1"
+                    value={requestDays[r._id] ?? 30}
+                    onChange={(e) => setRequestDays((prev) => ({ ...prev, [r._id]: e.target.value }))}
+                    style={{ width: '70px' }}
+                    title="Days of access to grant"
+                  />
+                  <span style={{ fontSize: '0.8rem', color: 'var(--mist)' }}>days</span>
+                  <button className="preset-btn active" onClick={() => approveRequest(r._id)}>
+                    Grant
+                  </button>
+                  <button className="row-delete" onClick={() => denyRequest(r._id)}>
+                    Deny
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 2. Main layout */}
       <div className="subs-manager-grid">

@@ -2,8 +2,8 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 
-const API = 'http://localhost:5001/api';
-const SERVER = 'http://localhost:5001';
+const API = window.API_BASE_URL + '/api';
+const SERVER = window.API_BASE_URL;
 
 const SIZE_MAP = { small: 800, medium: 1400, large: 2000 };
 
