@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
@@ -33,6 +33,18 @@ const resizeImage = (file, maxWidth) =>
     reader.readAsDataURL(file);
   });
 
+function getSupportedMimeType() {
+  if (!window.MediaRecorder) return '';
+  const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus'];
+  return candidates.find((type) => MediaRecorder.isTypeSupported(type)) || '';
+}
+
+function extForMimeType(mimeType) {
+  if (mimeType.includes('mp4')) return 'm4a';
+  if (mimeType.includes('ogg')) return 'ogg';
+  return 'webm';
+}
+
 function LessonManager({ course, onBack }) {
   const token = localStorage.getItem('token');
 
@@ -56,6 +68,10 @@ function LessonManager({ course, onBack }) {
   const [meaning, setMeaning] = useState('');
   const [editingWordId, setEditingWordId] = useState(null);
   const [dragIndex, setDragIndex] = useState(null);
+  const [recordingWordId, setRecordingWordId] = useState(null);
+
+  const mediaRecorderRef = useRef(null);
+  const chunksRef = useRef([]);
 
   const authHeaders = { Authorization: `Bearer ${token}` };
   const jsonHeaders = { 'Content-Type': 'application/json', ...authHeaders };
@@ -307,6 +323,37 @@ function LessonManager({ course, onBack }) {
     }
   };
 
+  const startRecording = async (vocabItem) => {
+    setError('');
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mimeType = getSupportedMimeType();
+      const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+      chunksRef.current = [];
+      recorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
+      recorder.onstop = () => {
+        stream.getTracks().forEach((track) => track.stop());
+        const mimeUsed = recorder.mimeType || 'audio/webm';
+        const blob = new Blob(chunksRef.current, { type: mimeUsed });
+        const ext = extForMimeType(mimeUsed);
+        const file = new File([blob], `word-${vocabItem._id}-${Date.now()}.${ext}`, { type: mimeUsed });
+        uploadAudio(vocabItem, file);
+      };
+      mediaRecorderRef.current = recorder;
+      recorder.start();
+      setRecordingWordId(vocabItem._id);
+    } catch {
+      setError('Could not access the microphone. Check your browser permissions.');
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop();
+    }
+    setRecordingWordId(null);
+  };
+
   // ---------- WORD VIEW ----------
   if (activeLesson) {
     return (
@@ -362,21 +409,20 @@ function LessonManager({ course, onBack }) {
                 <span>{w.meaning}</span>
               </div>
               <button className="nav-btn" onClick={() => startEditWord(w)}>Edit</button>
-              {w.audioUrl ? (
-                <>
-                  <audio controls src={`${SERVER}${w.audioUrl}`} className="row-audio" />
-                  <label className="pill pill-draft upload-label">
-                    Replace
-                    <input type="file" accept="audio/*" hidden
-                      onChange={(e) => e.target.files[0] && uploadAudio(w, e.target.files[0])} />
-                  </label>
-                </>
+              {w.audioUrl && <audio controls src={`${SERVER}${w.audioUrl}`} className="row-audio" />}
+              {recordingWordId === w._id ? (
+                <button type="button" className="pill pill-draft recording-pill" onClick={stopRecording}>
+                  ⏹ Stop
+                </button>
               ) : (
-                <label className="pill pill-live upload-label">
-                  + Audio
-                  <input type="file" accept="audio/*" hidden
-                    onChange={(e) => e.target.files[0] && uploadAudio(w, e.target.files[0])} />
-                </label>
+                <button
+                  type="button"
+                  className={`pill ${w.audioUrl ? 'pill-draft' : 'pill-live'}`}
+                  onClick={() => startRecording(w)}
+                  disabled={recordingWordId !== null}
+                >
+                  {w.audioUrl ? '🎙 Re-record' : '🎙 Record'}
+                </button>
               )}
               <button className="row-delete" onClick={() => deleteWord(w._id)}>Delete</button>
             </div>

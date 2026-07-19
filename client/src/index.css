@@ -713,6 +713,18 @@ header .container {
   color: var(--mist);
 }
 
+.recording-pill {
+  color: #fff;
+  background: var(--seal);
+  border-color: var(--seal);
+  animation: pill-recording-pulse 1s ease-in-out infinite;
+}
+
+@keyframes pill-recording-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
 .row-delete {
   font-size: 13px;
   font-family: 'Inter', sans-serif;
