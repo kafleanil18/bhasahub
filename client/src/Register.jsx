@@ -152,6 +152,7 @@ function Register({ onRegistered, onBack, onSwitch }) {
           </div>
 
           {/* Interactive widget */}
+          
           <div className="interactive-widget">
             <div className="widget-tabs">
               <button 

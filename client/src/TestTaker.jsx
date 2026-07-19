@@ -1,7 +1,62 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
+
+function formatElapsed(totalSeconds) {
+  const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+  const s = (totalSeconds % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
+}
+
+// Audio player that, once started, cannot be paused or stopped by the student.
+function LockedAudio({ src, style, onPlay, onPlayStateChange }) {
+  const audioRef = useRef(null);
+  const [playing, setPlaying] = useState(false);
+  const [ended, setEnded] = useState(false);
+
+  const play = () => {
+    if (!audioRef.current) return;
+    audioRef.current.play();
+    setPlaying(true);
+    setEnded(false);
+    if (onPlay) onPlay();
+    if (onPlayStateChange) onPlayStateChange(true);
+  };
+
+  // If the component unmounts mid-playback (e.g. user confirmed leaving the exam), clear the guard.
+  useEffect(() => () => { if (onPlayStateChange) onPlayStateChange(false); }, []);
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', ...style }}>
+      <audio
+        ref={audioRef}
+        src={src}
+        onEnded={() => { setPlaying(false); setEnded(true); if (onPlayStateChange) onPlayStateChange(false); }}
+        onPause={() => {
+          // Block manual pause (e.g. via keyboard media keys) by resuming immediately.
+          const el = audioRef.current;
+          if (playing && el && !el.ended) el.play();
+        }}
+      />
+      {!playing && (
+        <button
+          type="button"
+          onClick={play}
+          className="btn-primary"
+          style={{ padding: '8px 16px', fontSize: '0.9rem' }}
+        >
+          {ended ? '🔁 Play again' : '▶ Play audio'}
+        </button>
+      )}
+      {playing && (
+        <span style={{ color: 'var(--jade)', fontWeight: 600, fontSize: '0.9rem' }}>
+          🔊 Playing… (cannot be paused)
+        </span>
+      )}
+    </div>
+  );
+}
 
 function TestTaker({ testId, onBack }) {
   const [test, setTest] = useState(null);
@@ -10,6 +65,21 @@ function TestTaker({ testId, onBack }) {
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
+  const [timerStarted, setTimerStarted] = useState(false);
+  const [playingAudios, setPlayingAudios] = useState(() => new Set());
+  const [leaveWarning, setLeaveWarning] = useState(null);
+  const containerRef = useRef(null);
+  const bypassNextClick = useRef(false);
+  const audioPlaying = playingAudios.size > 0;
+
+  const setAudioPlaying = (key, isPlaying) => {
+    setPlayingAudios((prev) => {
+      const next = new Set(prev);
+      if (isPlaying) next.add(key); else next.delete(key);
+      return next;
+    });
+  };
 
   useEffect(() => {
     fetch(`${API}/tests/${testId}`)
@@ -29,6 +99,60 @@ function TestTaker({ testId, onBack }) {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (!test) return;
+    const hasAudio = (test.testType === 'listening' && test.audioUrl) || test.questions.some((q) => q.audioUrl);
+    if (!hasAudio) setTimerStarted(true);
+  }, [test]);
+
+  useEffect(() => {
+    if (!test || submitted || !timerStarted) return;
+    const id = setInterval(() => setElapsed((e) => e + 1), 1000);
+    return () => clearInterval(id);
+  }, [test, submitted, timerStarted]);
+
+  // Warn before leaving the exam (clicking other links/nav) while audio is playing.
+  useEffect(() => {
+    if (!audioPlaying || submitted) return;
+    const handleDocumentClick = (e) => {
+      if (bypassNextClick.current) {
+        bypassNextClick.current = false;
+        return;
+      }
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        const target = e.target;
+        setLeaveWarning(() => () => {
+          bypassNextClick.current = true;
+          target.click();
+        });
+      }
+    };
+    document.addEventListener('click', handleDocumentClick, true);
+    return () => document.removeEventListener('click', handleDocumentClick, true);
+  }, [audioPlaying, submitted]);
+
+  // Warn before an actual browser navigation/refresh/close while audio is playing.
+  useEffect(() => {
+    if (!audioPlaying || submitted) return;
+    const handleBeforeUnload = (e) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [audioPlaying, submitted]);
+
+  const handleBackClick = () => {
+    if (audioPlaying) {
+      setLeaveWarning(() => onBack);
+    } else {
+      onBack();
+    }
+  };
 
   const selectAnswer = (qi, oi) => {
     if (submitted) return;
@@ -73,8 +197,8 @@ function TestTaker({ testId, onBack }) {
   const percent = total ? Math.round((score / total) * 100) : 0;
 
   return (
-    <section className="course-page container">
-      <button className="back-btn" onClick={onBack}>Back to tests</button>
+    <section className="course-page container" ref={containerRef}>
+      <button className="back-btn" onClick={handleBackClick}>Back to tests</button>
       <p className="eyebrow">{test.level}</p>
       <h1 className="section-title">{test.title}</h1>
       {test.description && <p className="course-desc">{test.description}</p>}
@@ -91,7 +215,11 @@ function TestTaker({ testId, onBack }) {
       {test.testType === 'listening' && test.audioUrl && (
         <div className="test-media">
           <h3 className="dialogue-heading">🎧 Listening Audio</h3>
-          <audio controls src={`${SERVER}${test.audioUrl}`} style={{ width: '100%' }} />
+          <LockedAudio
+            src={`${SERVER}${test.audioUrl}`}
+            onPlay={() => setTimerStarted(true)}
+            onPlayStateChange={(p) => setAudioPlaying('main', p)}
+          />
         </div>
       )}
 
@@ -122,7 +250,11 @@ function TestTaker({ testId, onBack }) {
               )}
               {q.audioUrl && (
                 <div className="test-question-audio" style={{ paddingLeft: '32px', marginBottom: '16px' }}>
-                  <audio controls src={`${SERVER}${q.audioUrl}`} style={{ height: '36px', maxWidth: '100%', width: '320px' }} />
+                  <LockedAudio
+                    src={`${SERVER}${q.audioUrl}`}
+                    onPlay={() => setTimerStarted(true)}
+                    onPlayStateChange={(p) => setAudioPlaying(`q-${qi}`, p)}
+                  />
                 </div>
               )}
               {q.image && (
@@ -175,6 +307,29 @@ function TestTaker({ testId, onBack }) {
         </button>
       )}
 
+      {!submitted && timerStarted && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '1.5rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            backgroundColor: 'var(--jade, #2e6b57)',
+            color: '#ffffff',
+            borderRadius: '999px',
+            padding: '14px 32px',
+            fontSize: '1.6rem',
+            fontWeight: 700,
+            letterSpacing: '0.03em',
+            boxShadow: '0 4px 16px rgba(42, 35, 32, 0.2)',
+            zIndex: 1000,
+          }}
+          title="Time elapsed"
+        >
+          ⏱ {formatElapsed(elapsed)}
+        </div>
+      )}
+
       {showScrollTop && (
         <>
           <style>{`
@@ -210,6 +365,53 @@ function TestTaker({ testId, onBack }) {
             ↑
           </button>
         </>
+      )}
+
+      {leaveWarning && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(20, 20, 20, 0.55)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+            padding: '1rem',
+          }}
+        >
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: '14px',
+              padding: '28px 32px',
+              maxWidth: '400px',
+              width: '100%',
+              textAlign: 'center',
+              boxShadow: '0 12px 40px rgba(0, 0, 0, 0.3)',
+            }}
+          >
+            <h3 style={{ marginTop: 0, marginBottom: 12 }}>⚠️ Audio is still playing</h3>
+            <p style={{ color: 'var(--mist)', marginBottom: 24, lineHeight: 1.5 }}>
+              You're in the middle of the exam and the audio hasn't finished. Do you want to continue the exam, or quit now?
+            </p>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+              <button className="btn-primary" onClick={() => setLeaveWarning(null)}>
+                Continue exam
+              </button>
+              <button
+                className="back-btn"
+                onClick={() => {
+                  const proceed = leaveWarning;
+                  setLeaveWarning(null);
+                  proceed();
+                }}
+              >
+                Quit exam
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </section>
   );

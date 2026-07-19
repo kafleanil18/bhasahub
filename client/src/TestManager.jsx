@@ -297,6 +297,12 @@ function TestManager({ onBack, onPreviewTest }) {
     return { total, totalQuestions, publishedCount };
   }, [tests]);
 
+  const [levelFilter, setLevelFilter] = useState('All');
+  const filteredTests = useMemo(() => {
+    if (levelFilter === 'All') return tests;
+    return tests.filter((t) => (t.level || '').toLowerCase().includes(levelFilter.toLowerCase()));
+  }, [tests, levelFilter]);
+
   return (
     <section className="tm-dashboard">
       <style>{`
@@ -969,12 +975,17 @@ function TestManager({ onBack, onPreviewTest }) {
 
               <div className="tm-form-group">
                 <label className="tm-label">Target Level <span style={{ color: 'var(--seal, #c8362a)' }}>*</span></label>
-                <input 
-                  className="tm-input" 
-                  value={level} 
-                  onChange={(e) => setLevel(e.target.value)} 
-                  placeholder="e.g. HSK 1" 
-                />
+                <select
+                  className="tm-input"
+                  value={level}
+                  onChange={(e) => setLevel(e.target.value)}
+                >
+                  <option value="">Select a level…</option>
+                  <option value="HSK 1">HSK 1</option>
+                  <option value="HSK 2">HSK 2</option>
+                  <option value="HSK 3">HSK 3</option>
+                  <option value="HSK 4">HSK 4</option>
+                </select>
               </div>
 
               <div className="tm-form-group">
@@ -1217,11 +1228,30 @@ function TestManager({ onBack, onPreviewTest }) {
 
         {/* Right Side: Assessments Archive */}
         <div className="tm-panel">
-          <h2>All Tests Registry ({tests.length})</h2>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+            <h2>All Tests Registry ({filteredTests.length})</h2>
+            <select
+              className="tm-input"
+              value={levelFilter}
+              onChange={(e) => setLevelFilter(e.target.value)}
+              style={{ maxWidth: '160px' }}
+              aria-label="Filter by HSK level"
+            >
+              <option value="All">All Levels</option>
+              <option value="HSK 1">HSK 1</option>
+              <option value="HSK 2">HSK 2</option>
+              <option value="HSK 3">HSK 3</option>
+              <option value="HSK 4">HSK 4</option>
+            </select>
+          </div>
           <div className="tm-test-list">
-            {tests.length === 0 && <p className="tm-empty-state">No mock tests available in registry.</p>}
-            
-            {tests.map((t) => (
+            {filteredTests.length === 0 && (
+              <p className="tm-empty-state">
+                {tests.length === 0 ? 'No mock tests available in registry.' : `No ${levelFilter} tests found.`}
+              </p>
+            )}
+
+            {filteredTests.map((t) => (
               <div className="tm-test-card" key={t._id}>
                 <div className="tm-test-icon-badge">📑</div>
                 

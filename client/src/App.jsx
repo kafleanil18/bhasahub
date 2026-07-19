@@ -805,7 +805,7 @@ function App() {
       ) : showBlog ? (
         <BlogPage onBack={goHome} />
       ) : showPinyinPage ? (
-        <PinyinPage onBack={goHome} />
+        <PinyinPage onBack={goHome} isSuperAdmin={isSuperAdmin} />
       ) : isSuperAdmin && showTestManager ? (
         <TestManager 
           onBack={goHome} 

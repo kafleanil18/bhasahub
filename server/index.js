@@ -11,6 +11,7 @@ const blogRoutes = require('./routes/blogs');
 const testimonialRoutes = require('./routes/testimonials');
 const teamRoutes = require('./routes/team');
 const accessRequestRoutes = require('./routes/accessRequests');
+const pinyinRecordingRoutes = require('./routes/pinyinRecordings');
 
 require('dotenv').config();
 
@@ -37,6 +38,7 @@ app.use('/api/access-requests', accessRequestRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/slides', slideRoutes);
+app.use('/api/pinyin-recordings', pinyinRecordingRoutes);
 
 
 mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/language-lms')
