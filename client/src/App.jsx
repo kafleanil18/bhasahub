@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Login from './Login';
 import Register from './Register';
 import AdminPanel from './AdminPanel';
@@ -202,6 +202,13 @@ function App() {
   const [showTestimonial, setShowTestimonial] = useState(false);
   const [showTestimonialManager, setShowTestimonialManager] = useState(false);
   const [testimonials, setTestimonials] = useState([]);
+  const testimonialsScrollRef = useRef(null);
+  const scrollTestimonials = (direction) => {
+    const el = testimonialsScrollRef.current;
+    if (!el) return;
+    const cardWidth = el.querySelector('.testimonial-card')?.offsetWidth || 280;
+    el.scrollBy({ left: direction * (cardWidth + 24), behavior: 'smooth' });
+  };
   const [unreadFeedbackCount, setUnreadFeedbackCount] = useState(0);
   const [pendingTestimonialsCount, setPendingTestimonialsCount] = useState(0);
   const [pendingAccessRequestsCount, setPendingAccessRequestsCount] = useState(0);
@@ -966,21 +973,43 @@ function App() {
               {testimonials.length === 0 ? (
                 <p className="courses-empty">Be the first to share your experience!</p>
               ) : (
-                <div className="testimonials-grid">
-                  {testimonials.map((t) => (
-                    <div className="testimonial-card" key={t._id}>
-                      <span className="testimonial-stars">{'★'.repeat(t.rating)}</span>
-                      <p className="testimonial-text">"{t.text}"</p>
-                      <div className="testimonial-person">
-                        {t.photo ? (
-                          <img className="testimonial-photo" src={`${window.API_BASE_URL}${t.photo}`} alt={t.name} />
-                        ) : (
-                          <span className="testimonial-photo-placeholder">{t.name.charAt(0)}</span>
-                        )}
-                        <span className="testimonial-name">{t.name}</span>
+                <div className="testimonials-slider">
+                  {testimonials.length > 1 && (
+                    <button
+                      type="button"
+                      className="testimonials-arrow testimonials-arrow-left"
+                      onClick={() => scrollTestimonials(-1)}
+                      aria-label="Scroll testimonials left"
+                    >
+                      ‹
+                    </button>
+                  )}
+                  <div className="testimonials-grid" ref={testimonialsScrollRef}>
+                    {testimonials.map((t) => (
+                      <div className="testimonial-card" key={t._id}>
+                        <span className="testimonial-stars">{'★'.repeat(t.rating)}</span>
+                        <p className="testimonial-text">"{t.text}"</p>
+                        <div className="testimonial-person">
+                          {t.photo ? (
+                            <img className="testimonial-photo" src={`${window.API_BASE_URL}${t.photo}`} alt={t.name} />
+                          ) : (
+                            <span className="testimonial-photo-placeholder">{t.name.charAt(0)}</span>
+                          )}
+                          <span className="testimonial-name">{t.name}</span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+                  {testimonials.length > 1 && (
+                    <button
+                      type="button"
+                      className="testimonials-arrow testimonials-arrow-right"
+                      onClick={() => scrollTestimonials(1)}
+                      aria-label="Scroll testimonials right"
+                    >
+                      ›
+                    </button>
+                  )}
                 </div>
               )}
               {user && (

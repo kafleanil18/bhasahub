@@ -2791,10 +2791,61 @@ a.btn-primary {
 }
 
 /* ---------- Testimonials ---------- */
+.testimonials-slider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.testimonials-arrow {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--seal);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.testimonials-arrow:hover {
+  background: var(--seal);
+  color: #fff;
+  transform: scale(1.05);
+}
+
 .testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  display: flex;
   gap: 24px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  scroll-padding-left: 4px;
+  padding: 4px 4px 16px;
+  margin: -4px -4px 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+.testimonials-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.testimonials-grid::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 999px;
+}
+
+.testimonials-grid::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .testimonial-card {
@@ -2805,6 +2856,8 @@ a.btn-primary {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  flex: 0 0 280px;
+  scroll-snap-align: start;
 }
 
 .testimonial-stars {
