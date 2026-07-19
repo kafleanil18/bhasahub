@@ -36,8 +36,9 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
   try {
     const test = await Test.create(req.body);
     res.status(201).json(test);
-  } catch {
-    res.status(500).json({ error: 'Could not create test' });
+  } catch (err) {
+    console.error('Create test error:', err);
+    res.status(500).json({ error: err.message || 'Could not create test' });
   }
 });
 
@@ -46,8 +47,9 @@ router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
     const test = await Test.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!test) return res.status(404).json({ error: 'Test not found' });
     res.json(test);
-  } catch {
-    res.status(500).json({ error: 'Could not update test' });
+  } catch (err) {
+    console.error('Update test error:', err);
+    res.status(500).json({ error: err.message || 'Could not update test' });
   }
 });
 

@@ -195,6 +195,7 @@ function App() {
   const [showTests, setShowTests] = useState(false);
   const [showTestManager, setShowTestManager] = useState(false);
   const [activeTestId, setActiveTestId] = useState(null);
+  const [testTakerBackToManager, setTestTakerBackToManager] = useState(false);
   const [showBlog, setShowBlog] = useState(false);
   const [showBlogManager, setShowBlogManager] = useState(false);
   const [footerBlogs, setFooterBlogs] = useState([]);
@@ -378,6 +379,7 @@ function App() {
     setShowTests(false);
     setShowTestManager(false);
     setActiveTestId(null);
+    setTestTakerBackToManager(false);
     setShowBlog(false);
     setShowBlogManager(false);
     setShowTestimonialManager(false);
@@ -403,6 +405,7 @@ function App() {
     setShowTests(false);
     setShowTestManager(false);
     setActiveTestId(null);
+    setTestTakerBackToManager(false);
     setShowBlog(false);
     setShowBlogManager(false);
     setShowTestimonialManager(false);
@@ -431,6 +434,7 @@ function App() {
     setShowTests(false);
     setShowTestManager(false);
     setActiveTestId(null);
+    setTestTakerBackToManager(false);
     setShowBlog(false);
     setShowBlogManager(false);
     setShowTestimonialManager(false);
@@ -803,9 +807,27 @@ function App() {
       ) : showPinyinPage ? (
         <PinyinPage onBack={goHome} />
       ) : isSuperAdmin && showTestManager ? (
-        <TestManager onBack={goHome} />
+        <TestManager 
+          onBack={goHome} 
+          onPreviewTest={(testId) => {
+            setActiveTestId(testId);
+            setTestTakerBackToManager(true);
+            setShowTestManager(false);
+          }}
+        />
       ) : activeTestId ? (
-        <TestTaker testId={activeTestId} onBack={() => { setActiveTestId(null); setShowTests(true); }} />
+        <TestTaker 
+          testId={activeTestId} 
+          onBack={() => { 
+            setActiveTestId(null); 
+            if (testTakerBackToManager) {
+              setShowTestManager(true);
+              setTestTakerBackToManager(false);
+            } else {
+              setShowTests(true); 
+            }
+          }} 
+        />
       ) : showTests ? (
         <TestList onOpenTest={(id) => { setShowTests(false); setActiveTestId(id); }} onBack={goHome} />
       ) : isSuperAdmin && manageCourse ? (

@@ -9,6 +9,7 @@ function TestTaker({ testId, onBack }) {
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
     fetch(`${API}/tests/${testId}`)
@@ -16,6 +17,18 @@ function TestTaker({ testId, onBack }) {
       .then(data => { setTest(data); setLoading(false); })
       .catch(() => setLoading(false));
   }, [testId]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const selectAnswer = (qi, oi) => {
     if (submitted) return;
@@ -112,6 +125,11 @@ function TestTaker({ testId, onBack }) {
                   <audio controls src={`${SERVER}${q.audioUrl}`} style={{ height: '36px', maxWidth: '100%', width: '320px' }} />
                 </div>
               )}
+              {q.image && (
+                <div className="test-question-image" style={{ paddingLeft: '32px', marginBottom: '16px' }}>
+                  <img src={`${SERVER}${q.image}`} alt={`Question ${qi + 1}`} style={{ maxWidth: '100%', width: '320px', borderRadius: '10px', display: 'block' }} />
+                </div>
+              )}
               <div className="test-options">
                 {q.options.map((opt, oi) => {
                   let cls = 'test-option';
@@ -155,6 +173,43 @@ function TestTaker({ testId, onBack }) {
         <button className="btn-primary" onClick={submit} style={{ marginTop: 24 }}>
           Submit test
         </button>
+      )}
+
+      {showScrollTop && (
+        <>
+          <style>{`
+            .scroll-to-top-btn:hover {
+              background-color: #204b3d !important;
+              transform: translateY(-3px);
+            }
+          `}</style>
+          <button 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} 
+            style={{
+              position: 'fixed',
+              bottom: '2.5rem',
+              right: '2.5rem',
+              backgroundColor: 'var(--jade, #2e6b57)',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: '50%',
+              width: '46px',
+              height: '46px',
+              fontSize: '1.4rem',
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(42, 35, 32, 0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1000,
+              transition: 'transform 0.2s ease, background-color 0.2s ease',
+            }}
+            className="scroll-to-top-btn"
+            title="Scroll to top"
+          >
+            ↑
+          </button>
+        </>
       )}
     </section>
   );

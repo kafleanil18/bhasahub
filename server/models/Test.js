@@ -8,7 +8,7 @@ const optionSchema = new mongoose.Schema({
 const testSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    level: { type: String, default: '' },
+    level: { type: String, required: true },
     description: { type: String, default: '' },
     testType: { type: String, enum: ['listening', 'reading'], default: 'listening' },
     audioUrl: { type: String, default: '' },
@@ -19,6 +19,7 @@ const testSchema = new mongoose.Schema(
         questionText: { type: String, default: '' },
         questionPinyin: { type: String, default: '' },
         audioUrl: { type: String, default: '' },
+        image: { type: String, default: '' },
         options: [optionSchema],
         correctIndex: { type: Number, default: 0 },
       },

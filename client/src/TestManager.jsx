@@ -3,9 +3,13 @@ import { useState, useEffect, useMemo } from 'react';
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
 
-function TestManager({ onBack }) {
+function TestManager({ onBack, onPreviewTest }) {
   const [tests, setTests] = useState([]);
   const [error, setError] = useState('');
+  const showError = (msg) => {
+    setError(msg);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
   const [editingId, setEditingId] = useState(null);
 
   // form fields
@@ -25,6 +29,7 @@ function TestManager({ onBack }) {
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingQAudio, setUploadingQAudio] = useState({});
+  const [uploadingQImage, setUploadingQImage] = useState({});
 
   const loadTests = async () => {
     try {
@@ -69,6 +74,7 @@ function TestManager({ onBack }) {
       questionText: q.questionText || '',
       questionPinyin: q.questionPinyin || '',
       audioUrl: q.audioUrl || '',
+      image: q.image || '',
       correctIndex: q.correctIndex || 0,
       options: (q.options || []).map(opt => {
         if (typeof opt === 'object' && opt !== null) {
@@ -95,9 +101,9 @@ function TestManager({ onBack }) {
       const res = await fetch(`${API}/upload`, { method: 'POST', headers, body: fd });
       const data = await res.json();
       if (res.ok) setter(data.url);
-      else setError(data.error || 'Upload failed');
+      else showError(data.error || 'Upload failed');
     } catch {
-      setError('Could not reach the server');
+      showError('Could not reach the server');
     } finally {
       setUploading(false);
     }
@@ -105,7 +111,7 @@ function TestManager({ onBack }) {
 
   // ----- questions -----
   const addQuestion = () => {
-    setQuestions((prev) => [...prev, { questionText: '', questionPinyin: '', audioUrl: '', options: [{ text: '', pinyin: '' }, { text: '', pinyin: '' }], correctIndex: 0 }]);
+    setQuestions((prev) => [...prev, { questionText: '', questionPinyin: '', audioUrl: '', image: '', options: [{ text: '', pinyin: '' }, { text: '', pinyin: '' }], correctIndex: 0 }]);
   };
   const updateQuestionText = (qi, text) => {
     setQuestions((prev) => prev.map((q, i) => (i === qi ? { ...q, questionText: text } : q)));
@@ -130,12 +136,37 @@ function TestManager({ onBack }) {
       if (res.ok) {
         updateQuestionAudio(qi, data.url);
       } else {
-        setError(data.error || 'Upload failed');
+        showError(data.error || 'Upload failed');
       }
     } catch {
-      setError('Could not reach the server');
+      showError('Could not reach the server');
     } finally {
       setUploadingQAudio(prev => ({ ...prev, [qi]: false }));
+    }
+  };
+  const updateQuestionImage = (qi, url) => {
+    setQuestions((prev) => prev.map((q, i) => (i === qi ? { ...q, image: url } : q)));
+  };
+  const uploadQuestionImageFile = async (qi, file) => {
+    if (!file) return;
+    setUploadingQImage(prev => ({ ...prev, [qi]: true }));
+    setError('');
+    const fd = new FormData();
+    fd.append('file', file);
+    try {
+      const activeToken = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${activeToken}` };
+      const res = await fetch(`${API}/upload`, { method: 'POST', headers, body: fd });
+      const data = await res.json();
+      if (res.ok) {
+        updateQuestionImage(qi, data.url);
+      } else {
+        showError(data.error || 'Upload failed');
+      }
+    } catch {
+      showError('Could not reach the server');
+    } finally {
+      setUploadingQImage(prev => ({ ...prev, [qi]: false }));
     }
   };
   const updateOptionText = (qi, oi, text) => {
@@ -165,7 +196,16 @@ function TestManager({ onBack }) {
 
   const save = async () => {
     setError('');
-    if (!title.trim()) return setError('Title is required');
+    if (!title.trim()) {
+      setEditorTab('details');
+      showError('Test Title is required');
+      return;
+    }
+    if (!level.trim()) {
+      setEditorTab('details');
+      showError('Target Level is required');
+      return;
+    }
     const body = { title, level, description, testType, audioUrl, pdfUrl, image, questions, published };
     try {
       const activeToken = localStorage.getItem('token');
@@ -188,11 +228,11 @@ function TestManager({ onBack }) {
         } catch {
           // ignore
         }
-        setError(errMsg);
+        showError(errMsg);
       }
     } catch (err) {
       console.error(err);
-      setError('Network error: Could not reach the server.');
+      showError('Network error: Could not reach the server.');
     }
   };
 
@@ -213,11 +253,11 @@ function TestManager({ onBack }) {
         } catch {
           // ignore
         }
-        setError(errMsg);
+        showError(errMsg);
       }
     } catch (err) {
       console.error(err);
-      setError('Network error: Could not reach the server.');
+      showError('Network error: Could not reach the server.');
     }
   };
 
@@ -241,11 +281,11 @@ function TestManager({ onBack }) {
         } catch {
           // ignore
         }
-        setError(errMsg);
+        showError(errMsg);
       }
     } catch (err) {
       console.error(err);
-      setError('Network error: Could not reach the server.');
+      showError('Network error: Could not reach the server.');
     }
   };
 
@@ -831,6 +871,16 @@ function TestManager({ onBack }) {
           background: var(--rice, #f3ebd8);
         }
 
+        .tm-btn-action.view {
+          background: rgba(46, 107, 87, 0.04);
+          color: var(--jade, #2e6b57);
+          border-color: rgba(46, 107, 87, 0.08);
+        }
+        .tm-btn-action.view:hover {
+          background: rgba(46, 107, 87, 0.08);
+          border-color: var(--jade, #2e6b57);
+        }
+
         .tm-btn-action.delete {
           background: rgba(200, 54, 42, 0.04);
           color: var(--seal, #c8362a);
@@ -895,20 +945,20 @@ function TestManager({ onBack }) {
               className={`tm-tab-btn ${editorTab === 'details' ? 'active' : ''}`}
               onClick={() => setEditorTab('details')}
             >
-              📋 details & assets
+              📋 General details & assets
             </button>
             <button 
               className={`tm-tab-btn ${editorTab === 'questions' ? 'active' : ''}`}
               onClick={() => setEditorTab('questions')}
             >
-              ❓ questions editor ({questions.length})
+              ❓ Manual questions editor ({questions.length})
             </button>
           </div>
 
           {editorTab === 'details' ? (
             <div className="tm-tab-pane">
               <div className="tm-form-group">
-                <label className="tm-label">Test Title</label>
+                <label className="tm-label">Test Title <span style={{ color: 'var(--seal, #c8362a)' }}>*</span></label>
                 <input 
                   className="tm-input" 
                   value={title} 
@@ -918,7 +968,7 @@ function TestManager({ onBack }) {
               </div>
 
               <div className="tm-form-group">
-                <label className="tm-label">Target Level</label>
+                <label className="tm-label">Target Level <span style={{ color: 'var(--seal, #c8362a)' }}>*</span></label>
                 <input 
                   className="tm-input" 
                   value={level} 
@@ -953,7 +1003,7 @@ function TestManager({ onBack }) {
               <div className="tm-form-row">
                 {testType === 'listening' ? (
                   <div className="tm-form-group">
-                    <label className="tm-label">Listening Audio (MP3)</label>
+                    <label className="tm-label">Global Listening Audio (MP3)</label>
                     <div className="tm-upload-zone">
                       <div className="tm-file-input-btn">
                         Upload Audio
@@ -970,6 +1020,7 @@ function TestManager({ onBack }) {
                         <div className="tm-asset-info">🎵 MP3 Audio Loaded</div>
                         <button type="button" className="tm-btn-asset-remove" onClick={() => setAudioUrl('')}>Delete</button>
                       </div>
+
                     )}
                     {audioUrl && <audio controls src={`${SERVER}${audioUrl}`} style={{ width: '100%', marginTop: 8 }} />}
                   </div>
@@ -1083,6 +1134,26 @@ function TestManager({ onBack }) {
                           )}
                         </div>
                       </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', paddingLeft: '44px', marginTop: '0.25rem' }}>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--mist)' }}>Question Image</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                          <div className="tm-file-input-btn" style={{ padding: '4px 10px', fontSize: '0.75rem' }}>
+                            Upload Q-Image
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => uploadQuestionImageFile(qi, e.target.files[0])}
+                            />
+                          </div>
+                          {uploadingQImage[qi] && <span style={{ fontSize: '0.75rem', color: 'var(--jade)', fontWeight: 600 }}>Uploading Q-Image...</span>}
+                          {q.image && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                              <img src={`${SERVER}${q.image}`} alt={`Question ${qi + 1}`} style={{ height: '40px', width: '40px', objectFit: 'cover', borderRadius: '6px' }} />
+                              <button type="button" className="tm-btn-row-del" style={{ fontSize: '0.75rem' }} onClick={() => updateQuestionImage(qi, '')}>Delete Q-Image</button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     {q.options.map((opt, oi) => {
@@ -1167,6 +1238,7 @@ function TestManager({ onBack }) {
                   {t.published ? 'Live' : 'Draft'}
                 </button>
                 
+                <button className="tm-btn-action view" onClick={() => onPreviewTest && onPreviewTest(t._id)}>View</button>
                 <button className="tm-btn-action" onClick={() => startEdit(t)}>Edit</button>
                 <button className="tm-btn-action delete" onClick={() => remove(t._id)}>Delete</button>
               </div>
