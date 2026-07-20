@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { parseCSV, downloadCSV } from './csv';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
@@ -59,6 +60,8 @@ function LessonManager({ course, onBack }) {
   const [lessonDialogue, setLessonDialogue] = useState('');
   const [dialogueImage, setDialogueImage] = useState('');
   const [dialogueLines, setDialogueLines] = useState([]);
+  const [grammarExplanation, setGrammarExplanation] = useState('');
+  const [grammarImage, setGrammarImage] = useState('');
   const [lessonCategory, setLessonCategory] = useState('vocabulary');
   const [uploadSize, setUploadSize] = useState('small');
 
@@ -68,10 +71,16 @@ function LessonManager({ course, onBack }) {
   const [meaning, setMeaning] = useState('');
   const [editingWordId, setEditingWordId] = useState(null);
   const [dragIndex, setDragIndex] = useState(null);
+  const [lineDragIndex, setLineDragIndex] = useState(null);
   const [recordingWordId, setRecordingWordId] = useState(null);
+  const [recordingLineIndex, setRecordingLineIndex] = useState(null);
+  const [importing, setImporting] = useState(false);
+  const [importMessage, setImportMessage] = useState('');
 
   const mediaRecorderRef = useRef(null);
   const chunksRef = useRef([]);
+  const csvInputRef = useRef(null);
+  const lineAudioRefs = useRef({});
 
   const authHeaders = { Authorization: `Bearer ${token}` };
   const jsonHeaders = { 'Content-Type': 'application/json', ...authHeaders };
@@ -94,12 +103,16 @@ function LessonManager({ course, onBack }) {
     loadLessons();
   }, [loadLessons]);
 
+  const visibleLessons = lessons.filter((l) => (l.category || 'vocabulary') === lessonCategory);
+
   const resetLessonForm = () => {
     setEditingLessonId(null);
     setLessonTitle('');
     setLessonDialogue('');
     setDialogueImage('');
     setDialogueLines([]);
+    setGrammarExplanation('');
+    setGrammarImage('');
     setLessonCategory('vocabulary');
   };
 
@@ -115,8 +128,8 @@ function LessonManager({ course, onBack }) {
         headers: jsonHeaders,
         body: JSON.stringify(
           isEditing
-            ? { title: lessonTitle, category: lessonCategory, dialogue: lessonDialogue, dialogueImage, dialogueLines }
-            : { course: course._id, title: lessonTitle, category: lessonCategory, dialogue: lessonDialogue, dialogueImage, dialogueLines, order: lessons.length + 1, published: true }
+            ? { title: lessonTitle, category: lessonCategory, dialogue: lessonDialogue, dialogueImage, dialogueLines, grammarExplanation, grammarImage }
+            : { course: course._id, title: lessonTitle, category: lessonCategory, dialogue: lessonDialogue, dialogueImage, dialogueLines, grammarExplanation, grammarImage, order: lessons.length + 1, published: true }
         ),
       }
     );
@@ -135,11 +148,14 @@ function LessonManager({ course, onBack }) {
     setLessonDialogue(lesson.dialogue || '');
     setDialogueImage(lesson.dialogueImage || '');
     setDialogueLines(lesson.dialogueLines || []);
+    setGrammarExplanation(lesson.grammarExplanation || '');
+    setGrammarImage(lesson.grammarImage || '');
     setLessonCategory(lesson.category || 'vocabulary');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // ---------- dialogue ----------
-  const uploadDialogueImage = async (file) => {
+  // ---------- images (dialogue + grammar), both resizable on upload ----------
+  const uploadResizableImage = async (file, setter) => {
     if (!file) return;
     setError('');
     let fileToUpload = file;
@@ -158,22 +174,45 @@ function LessonManager({ course, onBack }) {
       const res = await fetch(`${API}/upload`, { method: 'POST', headers: authHeaders, body: fd });
       const data = await res.json();
       if (!res.ok) return setError(data.error || 'Upload failed');
-      setDialogueImage(data.url);
+      setter(data.url);
     } catch {
       setError('Could not reach the server');
     }
   };
 
+  const uploadDialogueImage = (file) => uploadResizableImage(file, setDialogueImage);
+  const uploadGrammarImage = (file) => uploadResizableImage(file, setGrammarImage);
+
   const addDialogueLine = () => {
-    setDialogueLines((prev) => [...prev, { text: '', audioUrl: '' }]);
+    setDialogueLines((prev) => [...prev, { speaker: '', text: '', pinyin: '', meaning: '', audioUrl: '' }]);
   };
 
-  const updateLineText = (index, text) => {
-    setDialogueLines((prev) => prev.map((l, i) => (i === index ? { ...l, text } : l)));
+  const updateLineField = (index, field, value) => {
+    setDialogueLines((prev) => prev.map((l, i) => (i === index ? { ...l, [field]: value } : l)));
   };
 
   const removeDialogueLine = (index) => {
     setDialogueLines((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleLineDragStart = (index) => {
+    setLineDragIndex(index);
+  };
+
+  const handleLineDragOver = (e, index) => {
+    e.preventDefault();
+    if (lineDragIndex === null || lineDragIndex === index) return;
+    setDialogueLines((prev) => {
+      const updated = [...prev];
+      const [moved] = updated.splice(lineDragIndex, 1);
+      updated.splice(index, 0, moved);
+      return updated;
+    });
+    setLineDragIndex(index);
+  };
+
+  const handleLineDrop = () => {
+    setLineDragIndex(null);
   };
 
   const uploadLineAudio = async (index, file) => {
@@ -191,6 +230,37 @@ function LessonManager({ course, onBack }) {
     } catch {
       setError('Could not reach the server');
     }
+  };
+
+  const startLineRecording = async (index) => {
+    setError('');
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mimeType = getSupportedMimeType();
+      const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+      chunksRef.current = [];
+      recorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
+      recorder.onstop = () => {
+        stream.getTracks().forEach((track) => track.stop());
+        const mimeUsed = recorder.mimeType || 'audio/webm';
+        const blob = new Blob(chunksRef.current, { type: mimeUsed });
+        const ext = extForMimeType(mimeUsed);
+        const file = new File([blob], `line-${index}-${Date.now()}.${ext}`, { type: mimeUsed });
+        uploadLineAudio(index, file);
+      };
+      mediaRecorderRef.current = recorder;
+      recorder.start();
+      setRecordingLineIndex(index);
+    } catch {
+      setError('Could not access the microphone. Check your browser permissions.');
+    }
+  };
+
+  const stopLineRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop();
+    }
+    setRecordingLineIndex(null);
   };
 
   const deleteLesson = async (id) => {
@@ -218,6 +288,53 @@ function LessonManager({ course, onBack }) {
     const res = await fetch(`${API}/lessons/${lesson._id}/vocabulary`);
     const data = await res.json();
     if (res.ok) setWords(data);
+  };
+
+  const exportWordsCSV = () => {
+    const rows = [['word', 'pronunciation', 'meaning'], ...words.map((w) => [w.word, w.pronunciation, w.meaning])];
+    downloadCSV(`${activeLesson.title.replace(/[^a-z0-9]+/gi, '-')}-vocabulary.csv`, rows);
+  };
+
+  const importWordsCSV = async (file) => {
+    setError('');
+    setImportMessage('');
+    setImporting(true);
+    try {
+      const text = await file.text();
+      const rows = parseCSV(text);
+      if (rows.length === 0) throw new Error('The file is empty');
+
+      // allow an optional header row (word,pronunciation,meaning)
+      const first = rows[0].map((c) => c.trim().toLowerCase());
+      const dataRows = first[0] === 'word' ? rows.slice(1) : rows;
+      if (dataRows.length === 0) throw new Error('No rows to import');
+
+      const newWords = dataRows.map((r) => ({
+        word: (r[0] || '').trim(),
+        pronunciation: (r[1] || '').trim(),
+        meaning: (r[2] || '').trim(),
+      }));
+      const missingIndex = newWords.findIndex((w) => !w.word || !w.pronunciation || !w.meaning);
+      if (missingIndex !== -1) {
+        throw new Error(`Row ${missingIndex + 1} is missing a word, pronunciation, or meaning`);
+      }
+
+      const res = await fetch(`${API}/lessons/${activeLesson._id}/vocabulary/bulk`, {
+        method: 'POST',
+        headers: jsonHeaders,
+        body: JSON.stringify({ words: newWords }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not import words');
+
+      setImportMessage(`Imported ${data.length} word${data.length === 1 ? '' : 's'}.`);
+      openLesson(activeLesson);
+    } catch (err) {
+      setError(err.message || 'Could not import the CSV file');
+    } finally {
+      setImporting(false);
+      if (csvInputRef.current) csvInputRef.current.value = '';
+    }
   };
 
   const resetWordForm = () => {
@@ -259,6 +376,7 @@ function LessonManager({ course, onBack }) {
     setWord(w.word);
     setPronunciation(w.pronunciation);
     setMeaning(w.meaning);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const deleteWord = async (vocabId) => {
@@ -391,8 +509,26 @@ function LessonManager({ course, onBack }) {
         </div>
 
         <div className="admin-list">
-          <h2>Words ({words.length})</h2>
-          <p className="reorder-hint">Tip: drag the ⠿ handle to reorder words.</p>
+          <div className="csv-toolbar">
+            <h2 style={{ marginBottom: 0 }}>Words ({words.length})</h2>
+            <div className="csv-toolbar-actions">
+              <button className="nav-btn" type="button" onClick={exportWordsCSV} disabled={words.length === 0}>
+                ⬇ Export CSV
+              </button>
+              <button className="nav-btn" type="button" onClick={() => csvInputRef.current?.click()} disabled={importing}>
+                {importing ? 'Importing…' : '⬆ Import CSV'}
+              </button>
+              <input
+                ref={csvInputRef}
+                type="file"
+                accept=".csv,text/csv"
+                style={{ display: 'none' }}
+                onChange={(e) => e.target.files[0] && importWordsCSV(e.target.files[0])}
+              />
+            </div>
+          </div>
+          {importMessage && <p className="login-success" style={{ marginBottom: 12 }}>{importMessage}</p>}
+          <p className="reorder-hint">Tip: drag the ⠿ handle to reorder words. CSV columns: word, pronunciation, meaning.</p>
           {words.map((w, index) => (
             <div
               className="admin-row draggable-row"
@@ -476,88 +612,189 @@ function LessonManager({ course, onBack }) {
             <button className="nav-btn" onClick={resetLessonForm}>Cancel</button>
           )}
         </div>
-        <textarea
-          className="dialogue-input"
-          rows="4"
-          value={lessonDialogue}
-          onChange={(e) => setLessonDialogue(e.target.value)}
-          placeholder="Optional plain dialogue text (or use the per-line editor below for audio)."
-        />
+        {lessonCategory === 'vocabulary' && (
+          <p className="category-form-hint">
+            Save this lesson, then use the <strong>Words</strong> button below to add, edit, and reorder vocabulary.
+          </p>
+        )}
 
-        <div className="dialogue-lines-editor">
-          <div className="dialogue-lines-head">
-            <strong>Conversation image (one for the whole dialogue)</strong>
-            <div className="dialogue-image-size-wrap" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '13px', color: 'var(--mist)' }}>Upload size:</span>
-              <select
-                className="category-select"
-                value={uploadSize}
-                onChange={(e) => setUploadSize(e.target.value)}
-                style={{ padding: '4px 8px', fontSize: '13px', minWidth: '120px' }}
-              >
-                <option value="xsmall">Extra Small (300px)</option>
-                <option value="small">Small (600px)</option>
-                <option value="original">Original</option>
-              </select>
+        {lessonCategory === 'grammar' && (
+          <div className="grammar-editor">
+            <div className="dialogue-lines-head">
+              <strong>Grammar image (optional)</strong>
+              <div className="dialogue-image-size-wrap" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '13px', color: 'var(--mist)' }}>Upload size:</span>
+                <select
+                  className="category-select"
+                  value={uploadSize}
+                  onChange={(e) => setUploadSize(e.target.value)}
+                  style={{ padding: '4px 8px', fontSize: '13px', minWidth: '120px' }}
+                >
+                  <option value="xsmall">Extra Small (300px)</option>
+                  <option value="small">Small (600px)</option>
+                  <option value="original">Original</option>
+                </select>
+              </div>
             </div>
-          </div>
-          {dialogueImage ? (
-            <div className="dialogue-image-preview-wrap">
-              <img src={`${SERVER}${dialogueImage}`} alt="dialogue" className="dialogue-image-admin" />
-              <label className="pill pill-draft upload-label">
-                Change image
+            {grammarImage ? (
+              <div className="dialogue-image-preview-wrap">
+                <img src={`${SERVER}${grammarImage}`} alt="grammar" className="dialogue-image-admin" />
+                <label className="pill pill-draft upload-label">
+                  Change image
+                  <input type="file" accept="image/*" hidden
+                    onChange={(e) => e.target.files[0] && uploadGrammarImage(e.target.files[0])} />
+                </label>
+                <button className="row-delete" type="button" onClick={() => setGrammarImage('')}>Remove image</button>
+              </div>
+            ) : (
+              <label className="pill pill-live upload-label">
+                + Add grammar image
                 <input type="file" accept="image/*" hidden
-                  onChange={(e) => e.target.files[0] && uploadDialogueImage(e.target.files[0])} />
+                  onChange={(e) => e.target.files[0] && uploadGrammarImage(e.target.files[0])} />
               </label>
-              <button className="row-delete" type="button" onClick={() => setDialogueImage('')}>Remove image</button>
-            </div>
-          ) : (
-            <label className="pill pill-live upload-label">
-              + Add dialogue image
-              <input type="file" accept="image/*" hidden
-                onChange={(e) => e.target.files[0] && uploadDialogueImage(e.target.files[0])} />
-            </label>
-          )}
+            )}
 
-          <div className="dialogue-lines-head" style={{ marginTop: 20 }}>
-            <strong>Conversation lines (with audio)</strong>
-            <button className="nav-btn" onClick={addDialogueLine} type="button">+ Add line</button>
-          </div>
-          {dialogueLines.map((line, i) => (
-            <div className="dialogue-line-row" key={i}>
-              <input
-                className="dialogue-line-input"
-                value={line.text}
-                onChange={(e) => updateLineText(i, e.target.value)}
-                placeholder="A: 你好！ (Nǐ hǎo!) — Hello!"
+            <label style={{ display: 'block', marginTop: 20 }}>
+              Grammar explanation
+              <textarea
+                className="dialogue-input"
+                rows="8"
+                value={grammarExplanation}
+                onChange={(e) => setGrammarExplanation(e.target.value)}
+                placeholder="Explain the grammar point: structure, usage, and example sentences."
               />
-              {line.audioUrl ? (
-                <>
-                  <audio controls src={`${SERVER}${line.audioUrl}`} className="row-audio" />
+            </label>
+          </div>
+        )}
+
+        {lessonCategory === 'conversation' && (
+          <>
+            <textarea
+              className="dialogue-input"
+              rows="4"
+              value={lessonDialogue}
+              onChange={(e) => setLessonDialogue(e.target.value)}
+              placeholder="Optional plain dialogue text (or use the per-line editor below for audio)."
+            />
+
+            <div className="dialogue-lines-editor">
+              <div className="dialogue-lines-head">
+                <strong>Conversation image (one for the whole dialogue)</strong>
+                <div className="dialogue-image-size-wrap" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '13px', color: 'var(--mist)' }}>Upload size:</span>
+                  <select
+                    className="category-select"
+                    value={uploadSize}
+                    onChange={(e) => setUploadSize(e.target.value)}
+                    style={{ padding: '4px 8px', fontSize: '13px', minWidth: '120px' }}
+                  >
+                    <option value="xsmall">Extra Small (300px)</option>
+                    <option value="small">Small (600px)</option>
+                    <option value="original">Original</option>
+                  </select>
+                </div>
+              </div>
+              {dialogueImage ? (
+                <div className="dialogue-image-preview-wrap">
+                  <img src={`${SERVER}${dialogueImage}`} alt="dialogue" className="dialogue-image-admin" />
                   <label className="pill pill-draft upload-label">
-                    Replace audio
-                    <input type="file" accept="audio/*" hidden
-                      onChange={(e) => e.target.files[0] && uploadLineAudio(i, e.target.files[0])} />
+                    Change image
+                    <input type="file" accept="image/*" hidden
+                      onChange={(e) => e.target.files[0] && uploadDialogueImage(e.target.files[0])} />
                   </label>
-                </>
+                  <button className="row-delete" type="button" onClick={() => setDialogueImage('')}>Remove image</button>
+                </div>
               ) : (
                 <label className="pill pill-live upload-label">
-                  + Audio
-                  <input type="file" accept="audio/*" hidden
-                    onChange={(e) => e.target.files[0] && uploadLineAudio(i, e.target.files[0])} />
+                  + Add dialogue image
+                  <input type="file" accept="image/*" hidden
+                    onChange={(e) => e.target.files[0] && uploadDialogueImage(e.target.files[0])} />
                 </label>
               )}
-              <button className="row-delete" onClick={() => removeDialogueLine(i)} type="button">Remove</button>
+
+              <div className="dialogue-lines-head" style={{ marginTop: 20 }}>
+                <strong>Conversation lines (with audio)</strong>
+                <button className="nav-btn" onClick={addDialogueLine} type="button">+ Add line</button>
+              </div>
+              <p className="reorder-hint">Tip: drag the ⠿ handle to reorder lines.</p>
+              {dialogueLines.map((line, i) => (
+                <div
+                  className="dialogue-line-row draggable-row"
+                  key={i}
+                  draggable
+                  onDragStart={() => handleLineDragStart(i)}
+                  onDragOver={(e) => handleLineDragOver(e, i)}
+                  onDrop={handleLineDrop}
+                >
+                  <span className="drag-handle" title="Drag to reorder">⠿</span>
+                  <input
+                    className="dialogue-line-input dialogue-line-input-narrow"
+                    value={line.speaker || ''}
+                    onChange={(e) => updateLineField(i, 'speaker', e.target.value)}
+                    placeholder="Speaker (A)"
+                  />
+                  <input
+                    className="dialogue-line-input"
+                    value={line.text}
+                    onChange={(e) => updateLineField(i, 'text', e.target.value)}
+                    placeholder="你好！"
+                  />
+                  <input
+                    className="dialogue-line-input dialogue-line-input-narrow"
+                    value={line.pinyin || ''}
+                    onChange={(e) => updateLineField(i, 'pinyin', e.target.value)}
+                    placeholder="Nǐ hǎo!"
+                  />
+                  <input
+                    className="dialogue-line-input"
+                    value={line.meaning || ''}
+                    onChange={(e) => updateLineField(i, 'meaning', e.target.value)}
+                    placeholder="Hello!"
+                  />
+                  {line.audioUrl && (
+                    <>
+                      <audio ref={(el) => { lineAudioRefs.current[i] = el; }} src={`${SERVER}${line.audioUrl}`} style={{ display: 'none' }} />
+                      <button
+                        type="button"
+                        className="pill pill-play"
+                        onClick={() => lineAudioRefs.current[i]?.play()}
+                      >
+                        ▶ Play
+                      </button>
+                    </>
+                  )}
+                  {recordingLineIndex === i ? (
+                    <button type="button" className="pill pill-draft recording-pill" onClick={stopLineRecording}>
+                      ⏹ Stop
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className={`pill ${line.audioUrl ? 'pill-draft' : 'pill-live'}`}
+                      onClick={() => startLineRecording(i)}
+                      disabled={recordingLineIndex !== null}
+                    >
+                      {line.audioUrl ? '🎙 Re-record' : '🎙 Record'}
+                    </button>
+                  )}
+                  <button className="row-delete" onClick={() => removeDialogueLine(i)} type="button">Remove</button>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
 
-      <h2 className="lessons-heading">Lessons ({lessons.length})</h2>
+      <h2 className="lessons-heading">
+        {lessonCategory.charAt(0).toUpperCase() + lessonCategory.slice(1)} lessons ({visibleLessons.length})
+      </h2>
       {lessons.length === 0 && <p className="courses-empty">No lessons yet — add one above.</p>}
+      {lessons.length > 0 && visibleLessons.length === 0 && (
+        <p className="courses-empty">No {lessonCategory} lessons yet — add one above.</p>
+      )}
 
       <div className="lesson-list">
-        {lessons.map((l) => (
+        {visibleLessons.map((l) => (
           <div className="lesson-row admin-lesson-row" key={l._id}>
             <span className="lesson-num">{l.order}</span>
             <span className="lesson-title">{l.title}</span>

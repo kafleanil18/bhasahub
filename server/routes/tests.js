@@ -1,6 +1,7 @@
 const express = require('express');
 const Test = require('../models/Test');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { logActivity } = require('../utils/auditLog');
 
 const router = express.Router();
 
@@ -35,6 +36,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', requireAuth, requireAdmin, async (req, res) => {
   try {
     const test = await Test.create(req.body);
+    logActivity(req, { action: 'create', resourceType: 'test', resourceId: test._id, label: test.title });
     res.status(201).json(test);
   } catch (err) {
     console.error('Create test error:', err);
@@ -46,6 +48,7 @@ router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
   try {
     const test = await Test.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!test) return res.status(404).json({ error: 'Test not found' });
+    logActivity(req, { action: 'update', resourceType: 'test', resourceId: test._id, label: test.title });
     res.json(test);
   } catch (err) {
     console.error('Update test error:', err);
@@ -55,7 +58,8 @@ router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
 
 router.delete('/:id', requireAuth, requireAdmin, async (req, res) => {
   try {
-    await Test.findByIdAndDelete(req.params.id);
+    const test = await Test.findByIdAndDelete(req.params.id);
+    if (test) logActivity(req, { action: 'delete', resourceType: 'test', resourceId: test._id, label: test.title });
     res.json({ message: 'Test deleted' });
   } catch {
     res.status(500).json({ error: 'Could not delete test' });

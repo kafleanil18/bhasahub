@@ -7,10 +7,16 @@ const lessonSchema = new mongoose.Schema(
     category: { type: String, default: 'vocabulary' },
     dialogue: { type: String, default: '' },
     dialogueImage: { type: String, default: '' },
+    grammarExplanation: { type: String, default: '' },
+    grammarImage: { type: String, default: '' },
     dialogueLines: [
       {
-        text: { type: String, default: '' },
+        speaker: { type: String, default: '' },
+        text: { type: String, default: '' }, // the sentence in its native script
+        pinyin: { type: String, default: '' },
+        meaning: { type: String, default: '' },
         audioUrl: { type: String, default: '' },
+        order: { type: Number, default: 0 },
       },
     ],
     order: { type: Number, default: 0 },

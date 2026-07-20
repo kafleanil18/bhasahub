@@ -719,6 +719,7 @@ function AdminPanel({ onBack, onManageLessons }) {
         </div>
       </div>
     </section>
+    
   );
 }
 

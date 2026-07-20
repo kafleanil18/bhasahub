@@ -2,7 +2,9 @@ const express = require('express');
 const AccessRequest = require('../models/AccessRequest');
 const Subscription = require('../models/Subscription');
 const Course = require('../models/Course');
+const User = require('../models/User');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { logActivity } = require('../utils/auditLog');
 
 const router = express.Router();
 
@@ -79,6 +81,17 @@ router.put('/:id/approve', requireAuth, requireAdmin, async (req, res) => {
     request.status = 'approved';
     await request.save();
 
+    const [reqUser, reqCourse] = await Promise.all([
+      User.findById(request.user).select('name'),
+      Course.findById(request.course).select('title'),
+    ]);
+    logActivity(req, {
+      action: 'approve',
+      resourceType: 'access-request',
+      resourceId: request._id,
+      label: `${reqUser ? reqUser.name : 'Unknown'} → ${reqCourse ? reqCourse.title : 'Unknown'} (${days}d)`,
+    });
+
     res.json({ request, subscription: sub });
   } catch {
     res.status(500).json({ error: 'Could not approve access request' });
@@ -92,8 +105,14 @@ router.put('/:id/deny', requireAuth, requireAdmin, async (req, res) => {
       req.params.id,
       { status: 'denied' },
       { new: true }
-    );
+    ).populate('user', 'name').populate('course', 'title');
     if (!request) return res.status(404).json({ error: 'Request not found' });
+    logActivity(req, {
+      action: 'deny',
+      resourceType: 'access-request',
+      resourceId: request._id,
+      label: `${request.user ? request.user.name : 'Unknown'} → ${request.course ? request.course.title : 'Unknown'}`,
+    });
     res.json(request);
   } catch {
     res.status(500).json({ error: 'Could not deny access request' });

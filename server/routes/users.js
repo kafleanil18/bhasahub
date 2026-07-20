@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../models/User');
 const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
+const { logActivity } = require('../utils/auditLog');
 
 const router = express.Router();
 
@@ -28,8 +29,15 @@ router.put('/:id/role', requireAuth, requireSuperAdmin, async (req, res) => {
     if (target.role === 'superadmin') {
       return res.status(403).json({ error: 'Cannot change a super admin\'s role' });
     }
+    const previousRole = target.role;
     target.role = role;
     await target.save();
+    logActivity(req, {
+      action: 'role-change',
+      resourceType: 'user',
+      resourceId: target._id,
+      label: `${target.name}: ${previousRole} → ${role}`,
+    });
     res.json({ message: 'Role updated', user: { id: target._id, name: target.name, role: target.role } });
   } catch {
     res.status(500).json({ error: 'Could not update role' });

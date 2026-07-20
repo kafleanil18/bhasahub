@@ -1,6 +1,7 @@
 const express = require('express');
 const TeamMember = require('../models/TeamMember');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { logActivity } = require('../utils/auditLog');
 
 const router = express.Router();
 
@@ -32,6 +33,7 @@ router.put('/:key', requireAuth, requireAdmin, async (req, res) => {
       updateFields,
       { new: true, upsert: true }
     );
+    logActivity(req, { action: 'update', resourceType: 'team-member', resourceId: member._id, label: member.name });
     res.json(member);
   } catch {
     res.status(500).json({ error: 'Could not update team member' });
@@ -49,6 +51,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
       bio: 'Bio details...',
     });
     await member.save();
+    logActivity(req, { action: 'create', resourceType: 'team-member', resourceId: member._id, label: member.name });
     res.status(201).json(member);
   } catch {
     res.status(500).json({ error: 'Could not create team member' });
@@ -59,7 +62,8 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
 router.delete('/:key', requireAuth, requireAdmin, async (req, res) => {
   try {
     const { key } = req.params;
-    await TeamMember.findOneAndDelete({ key });
+    const member = await TeamMember.findOneAndDelete({ key });
+    if (member) logActivity(req, { action: 'delete', resourceType: 'team-member', resourceId: member._id, label: member.name });
     res.json({ success: true });
   } catch {
     res.status(500).json({ error: 'Could not delete team member' });

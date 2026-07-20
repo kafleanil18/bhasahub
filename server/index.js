@@ -12,6 +12,9 @@ const testimonialRoutes = require('./routes/testimonials');
 const teamRoutes = require('./routes/team');
 const accessRequestRoutes = require('./routes/accessRequests');
 const pinyinRecordingRoutes = require('./routes/pinyinRecordings');
+const pinyinTableRoutes = require('./routes/pinyinTable');
+const adminStatsRoutes = require('./routes/adminStats');
+const auditLogRoutes = require('./routes/auditLog');
 
 require('dotenv').config();
 
@@ -39,6 +42,9 @@ app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/slides', slideRoutes);
 app.use('/api/pinyin-recordings', pinyinRecordingRoutes);
+app.use('/api/pinyin-table', pinyinTableRoutes);
+app.use('/api/admin-stats', adminStatsRoutes);
+app.use('/api/audit-log', auditLogRoutes);
 
 
 const TeamMember = require('./models/TeamMember');

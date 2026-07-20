@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { parseCSV, downloadCSV } from './csv';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
@@ -30,6 +31,8 @@ function TestManager({ onBack, onPreviewTest }) {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingQAudio, setUploadingQAudio] = useState({});
   const [uploadingQImage, setUploadingQImage] = useState({});
+  const [importMessage, setImportMessage] = useState('');
+  const csvInputRef = useRef(null);
 
   const loadTests = async () => {
     try {
@@ -194,6 +197,68 @@ function TestManager({ onBack, onPreviewTest }) {
     setQuestions((prev) => prev.filter((_, i) => i !== qi));
   };
 
+  // CSV covers question/option text only — audio and images stay a manual,
+  // per-question upload since a spreadsheet cell can't hold a file.
+  const exportQuestionsCSV = () => {
+    const header = ['questionText', 'questionPinyin', 'optionA', 'optionAPinyin', 'optionB', 'optionBPinyin', 'optionC', 'optionCPinyin', 'optionD', 'optionDPinyin', 'correctAnswer'];
+    const rows = questions.map((q) => {
+      const opts = [0, 1, 2, 3].map((i) => q.options[i] || { text: '', pinyin: '' });
+      return [
+        q.questionText, q.questionPinyin || '',
+        ...opts.flatMap((o) => [o.text, o.pinyin || '']),
+        String.fromCharCode(65 + q.correctIndex),
+      ];
+    });
+    downloadCSV(`${(title || 'test').replace(/[^a-z0-9]+/gi, '-')}-questions.csv`, [header, ...rows]);
+  };
+
+  const importQuestionsCSV = async (file) => {
+    setError('');
+    setImportMessage('');
+    try {
+      const text = await file.text();
+      const rows = parseCSV(text);
+      if (rows.length === 0) throw new Error('The file is empty');
+
+      const first = rows[0].map((c) => c.trim().toLowerCase());
+      const dataRows = first[0] === 'questiontext' ? rows.slice(1) : rows;
+      if (dataRows.length === 0) throw new Error('No rows to import');
+
+      const imported = dataRows.map((r, rowIndex) => {
+        const questionText = (r[0] || '').trim();
+        const questionPinyin = (r[1] || '').trim();
+        // one cell per lettered slot (A-D), kept in original order so the
+        // correct-answer letter can be resolved before empty slots are dropped
+        const optionCells = [1, 2, 3, 4].map((n) => ({
+          text: (r[2 * n] || '').trim(),
+          pinyin: (r[2 * n + 1] || '').trim(),
+        }));
+
+        const correctRaw = (r[10] || '').trim().toUpperCase();
+        const originalIndex = /^[1-4]$/.test(correctRaw) ? Number(correctRaw) - 1 : correctRaw.charCodeAt(0) - 65;
+        const correctCell = optionCells[originalIndex];
+        if (!questionText) throw new Error(`Row ${rowIndex + 1} is missing question text`);
+        if (!correctCell || correctCell.text === '') {
+          throw new Error(`Row ${rowIndex + 1} has an invalid correct answer ("${r[10] || ''}")`);
+        }
+
+        const options = optionCells.filter((o) => o.text !== '');
+        if (options.length < 2) throw new Error(`Row ${rowIndex + 1} needs at least 2 options`);
+        const correctIndex = options.indexOf(correctCell);
+
+        return { questionText, questionPinyin, audioUrl: '', image: '', options, correctIndex };
+      });
+
+      setQuestions((prev) => [...prev, ...imported]);
+      setEditorTab('questions');
+      setImportMessage(`Imported ${imported.length} question${imported.length === 1 ? '' : 's'} — remember to Save.`);
+    } catch (err) {
+      showError(err.message || 'Could not import the CSV file');
+    } finally {
+      if (csvInputRef.current) csvInputRef.current.value = '';
+    }
+  };
+
   const save = async () => {
     setError('');
     if (!title.trim()) {
@@ -296,12 +361,6 @@ function TestManager({ onBack, onPreviewTest }) {
     const publishedCount = tests.filter((t) => t.published).length;
     return { total, totalQuestions, publishedCount };
   }, [tests]);
-
-  const [levelFilter, setLevelFilter] = useState('All');
-  const filteredTests = useMemo(() => {
-    if (levelFilter === 'All') return tests;
-    return tests.filter((t) => (t.level || '').toLowerCase().includes(levelFilter.toLowerCase()));
-  }, [tests, levelFilter]);
 
   return (
     <section className="tm-dashboard">
@@ -628,6 +687,15 @@ function TestManager({ onBack, onPreviewTest }) {
           display: flex;
           justify-content: space-between;
           align-items: center;
+          flex-wrap: wrap;
+          gap: 12px;
+          margin-bottom: 0.5rem;
+        }
+
+        .tm-csv-hint {
+          font-size: 0.75rem;
+          color: var(--mist);
+          margin-top: -0.25rem;
           margin-bottom: 0.5rem;
         }
 
@@ -975,17 +1043,12 @@ function TestManager({ onBack, onPreviewTest }) {
 
               <div className="tm-form-group">
                 <label className="tm-label">Target Level <span style={{ color: 'var(--seal, #c8362a)' }}>*</span></label>
-                <select
-                  className="tm-input"
-                  value={level}
-                  onChange={(e) => setLevel(e.target.value)}
-                >
-                  <option value="">Select a level…</option>
-                  <option value="HSK 1">HSK 1</option>
-                  <option value="HSK 2">HSK 2</option>
-                  <option value="HSK 3">HSK 3</option>
-                  <option value="HSK 4">HSK 4</option>
-                </select>
+                <input 
+                  className="tm-input" 
+                  value={level} 
+                  onChange={(e) => setLevel(e.target.value)} 
+                  placeholder="e.g. HSK 1" 
+                />
               </div>
 
               <div className="tm-form-group">
@@ -1014,7 +1077,8 @@ function TestManager({ onBack, onPreviewTest }) {
               <div className="tm-form-row">
                 {testType === 'listening' ? (
                   <div className="tm-form-group">
-                    <label className="tm-label">Global Listening Audio (MP3)</label>
+                    <label className="tm-label">Global 
+                      Listening Audio (MP3)</label>
                     <div className="tm-upload-zone">
                       <div className="tm-file-input-btn">
                         Upload Audio
@@ -1096,8 +1160,27 @@ function TestManager({ onBack, onPreviewTest }) {
               <div className="tm-questions-editor">
                 <div className="tm-question-header-row">
                   <strong>Question Pool Editor ({questions.length} total)</strong>
-                  <button className="tm-btn-action" type="button" onClick={addQuestion}>+ Add Question</button>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <button className="tm-btn-action" type="button" onClick={exportQuestionsCSV} disabled={questions.length === 0}>
+                      ⬇ Export CSV
+                    </button>
+                    <button className="tm-btn-action" type="button" onClick={() => csvInputRef.current?.click()}>
+                      ⬆ Import CSV
+                    </button>
+                    <input
+                      ref={csvInputRef}
+                      type="file"
+                      accept=".csv,text/csv"
+                      style={{ display: 'none' }}
+                      onChange={(e) => e.target.files[0] && importQuestionsCSV(e.target.files[0])}
+                    />
+                    <button className="tm-btn-action" type="button" onClick={addQuestion}>+ Add Question</button>
+                  </div>
                 </div>
+                <p className="tm-csv-hint">
+                  CSV columns: questionText, questionPinyin, optionA, optionAPinyin, optionB, optionBPinyin, optionC, optionCPinyin, optionD, optionDPinyin, correctAnswer (A-D or 1-4). Audio/images are added per question after import.
+                </p>
+                {importMessage && <p className="login-success" style={{ marginBottom: 12 }}>{importMessage}</p>}
 
                 {questions.length === 0 && (
                   <p className="tm-empty-state">No questions defined. Click '+ Add Question' to write choice answers.</p>
@@ -1228,30 +1311,11 @@ function TestManager({ onBack, onPreviewTest }) {
 
         {/* Right Side: Assessments Archive */}
         <div className="tm-panel">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
-            <h2>All Tests Registry ({filteredTests.length})</h2>
-            <select
-              className="tm-input"
-              value={levelFilter}
-              onChange={(e) => setLevelFilter(e.target.value)}
-              style={{ maxWidth: '160px' }}
-              aria-label="Filter by HSK level"
-            >
-              <option value="All">All Levels</option>
-              <option value="HSK 1">HSK 1</option>
-              <option value="HSK 2">HSK 2</option>
-              <option value="HSK 3">HSK 3</option>
-              <option value="HSK 4">HSK 4</option>
-            </select>
-          </div>
+          <h2>All Tests Registry ({tests.length})</h2>
           <div className="tm-test-list">
-            {filteredTests.length === 0 && (
-              <p className="tm-empty-state">
-                {tests.length === 0 ? 'No mock tests available in registry.' : `No ${levelFilter} tests found.`}
-              </p>
-            )}
-
-            {filteredTests.map((t) => (
+            {tests.length === 0 && <p className="tm-empty-state">No mock tests available in registry.</p>}
+            
+            {tests.map((t) => (
               <div className="tm-test-card" key={t._id}>
                 <div className="tm-test-icon-badge">📑</div>
                 

@@ -3,36 +3,13 @@ import { useState, useEffect, useRef } from 'react';
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
 
-const INITIALS = ['', 'b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'zh', 'ch', 'sh', 'r', 'z', 'c', 's'];
-const FINALS = [
+const DEFAULT_INITIALS = ['', 'b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'zh', 'ch', 'sh', 'r', 'z', 'c', 's'];
+const DEFAULT_FINALS = [
   'a', 'o', 'e', 'er', 'ai', 'ei', 'ao', 'ou', 'an', 'en', 'ang', 'eng', 'ong',
   'i', 'ia', 'iao', 'ie', 'iu', 'ian', 'in', 'iang', 'ing', 'iong',
   'u', 'ua', 'uo', 'uai', 'ui', 'uan', 'un', 'uang', 'ueng',
   'ü', 'üe', 'üan', 'ün',
 ];
-
-const VALID_SYLLABLES = new Set([
-  'a', 'ai', 'an', 'ang', 'ao', 'ba', 'bai', 'ban', 'bang', 'bao', 'bei', 'ben', 'beng', 'bi', 'bian', 'biao', 'bie', 'bin', 'bing', 'bo', 'bu',
-  'ca', 'cai', 'can', 'cang', 'cao', 'ce', 'cei', 'cen', 'ceng', 'cha', 'chai', 'chan', 'chang', 'chao', 'che', 'chen', 'cheng', 'chi', 'chong', 'chou', 'chu', 'chua', 'chuai', 'chuan', 'chuang', 'chui', 'chun', 'chuo', 'ci', 'cong', 'cou', 'cu', 'cuan', 'cui', 'cun', 'cuo',
-  'da', 'dai', 'dan', 'dang', 'dao', 'de', 'dei', 'deng', 'di', 'dian', 'diao', 'die', 'ding', 'diu', 'dong', 'dou', 'du', 'duan', 'dui', 'dun', 'duo',
-  'e', 'ei', 'en', 'eng', 'er', 'fa', 'fan', 'fang', 'fei', 'fen', 'feng', 'fo', 'fou', 'fu',
-  'ga', 'gai', 'gan', 'gang', 'gao', 'ge', 'gei', 'gen', 'geng', 'gong', 'gou', 'gu', 'gua', 'guai', 'guan', 'guang', 'gui', 'gun', 'guo',
-  'ha', 'hai', 'han', 'hang', 'hao', 'he', 'hei', 'hen', 'heng', 'hong', 'hou', 'hu', 'hua', 'huai', 'huan', 'huang', 'hui', 'hun', 'huo',
-  'ji', 'jia', 'jian', 'jiang', 'jiao', 'jie', 'jin', 'jing', 'jiong', 'jiu', 'ju', 'juan', 'jue', 'jun',
-  'ka', 'kai', 'kan', 'kang', 'kao', 'ke', 'ken', 'keng', 'kong', 'kou', 'ku', 'kua', 'kuai', 'kuan', 'kuang', 'kui', 'kun', 'kuo',
-  'la', 'lai', 'lan', 'lang', 'lao', 'le', 'lei', 'leng', 'li', 'lia', 'lian', 'liang', 'liao', 'lie', 'lin', 'ling', 'liu', 'lo', 'long', 'lou', 'lu', 'luan', 'lun', 'luo', 'lü', 'lüe',
-  'ma', 'mai', 'man', 'mang', 'mao', 'me', 'mei', 'men', 'meng', 'mi', 'mian', 'miao', 'mie', 'min', 'ming', 'miu', 'mo', 'mou', 'mu',
-  'na', 'nai', 'nan', 'nang', 'nao', 'ne', 'nei', 'nen', 'neng', 'ni', 'nian', 'niang', 'niao', 'nie', 'nin', 'ning', 'niu', 'nong', 'nou', 'nu', 'nuan', 'nuo', 'nü', 'nüe',
-  'o', 'ou', 'pa', 'pai', 'pan', 'pang', 'pao', 'pei', 'pen', 'peng', 'pi', 'pian', 'piao', 'pie', 'pin', 'ping', 'po', 'pou', 'pu',
-  'qi', 'qia', 'qian', 'qiang', 'qiao', 'qie', 'qin', 'qing', 'qiong', 'qiu', 'qu', 'quan', 'que', 'qun',
-  'ran', 'rang', 'rao', 're', 'ren', 'reng', 'ri', 'rong', 'rou', 'ru', 'ruan', 'rui', 'run', 'ruo',
-  'sa', 'sai', 'san', 'sang', 'sao', 'se', 'sen', 'seng', 'sha', 'shai', 'shan', 'shang', 'shao', 'she', 'shen', 'sheng', 'shi', 'shou', 'shu', 'shua', 'shuai', 'shuan', 'shuang', 'shui', 'shun', 'shuo', 'si', 'song', 'sou', 'su', 'suan', 'sui', 'sun', 'suo',
-  'ta', 'tai', 'tan', 'tang', 'tao', 'te', 'teng', 'ti', 'tian', 'tiao', 'tie', 'ting', 'tong', 'tou', 'tu', 'tuan', 'tui', 'tun', 'tuo',
-  'wa', 'wai', 'wan', 'wang', 'wei', 'wen', 'weng', 'wo', 'wu',
-  'xi', 'xia', 'xian', 'xiang', 'xiao', 'xie', 'xin', 'xing', 'xiong', 'xiu', 'xu', 'xuan', 'xue', 'xun',
-  'ya', 'yan', 'yang', 'yao', 'ye', 'yi', 'yin', 'ying', 'yo', 'yong', 'you', 'yu', 'yuan', 'yue', 'yun',
-  'za', 'zai', 'zan', 'zang', 'zao', 'ze', 'zei', 'zen', 'zeng', 'zha', 'zhai', 'zhan', 'zhang', 'zhao', 'zhe', 'zhen', 'zheng', 'zhi', 'zhong', 'zhou', 'zhu', 'zhua', 'zhuai', 'zhuan', 'zhuang', 'zhui', 'zhun', 'zhuo', 'zi', 'zong', 'zou', 'zu', 'zuan', 'zui', 'zun', 'zuo',
-]);
 
 const TONE_MARKS = {
   a: ['ā', 'á', 'ǎ', 'à'],
@@ -76,14 +53,6 @@ function normalizeSyllable(initial, final) {
 
   return rawSyllable;
 }
-
-const GRID = INITIALS.map((initial) => ({
-  initial,
-  cells: FINALS.map((final) => {
-    const syllable = normalizeSyllable(initial, final);
-    return { final, syllable, valid: VALID_SYLLABLES.has(syllable) };
-  }),
-}));
 
 function playTone(syllable, tone) {
   const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -144,6 +113,15 @@ function PinyinPage({ onBack, isSuperAdmin }) {
   const [uploadingTone, setUploadingTone] = useState(null);
   const [micError, setMicError] = useState('');
 
+  const [initials, setInitials] = useState(DEFAULT_INITIALS);
+  const [finals, setFinals] = useState(DEFAULT_FINALS);
+  const [syllables, setSyllables] = useState([]);
+  const [editMode, setEditMode] = useState(false);
+  const [newInitial, setNewInitial] = useState('');
+  const [newFinal, setNewFinal] = useState('');
+  const [tableError, setTableError] = useState('');
+  const [savingTable, setSavingTable] = useState(false);
+
   const audioPlayerRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const chunksRef = useRef([]);
@@ -159,7 +137,109 @@ function PinyinPage({ onBack, isSuperAdmin }) {
         setRecordings(map);
       })
       .catch(() => {});
+
+    fetch(`${API}/pinyin-table`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data) return;
+        if (Array.isArray(data.initials)) setInitials(data.initials);
+        if (Array.isArray(data.finals)) setFinals(data.finals);
+        if (Array.isArray(data.syllables)) setSyllables(data.syllables);
+      })
+      .catch(() => {});
   }, []);
+
+  const syllableMap = {};
+  syllables.forEach((s) => { syllableMap[`${s.initial}|${s.final}`] = s.syllable; });
+
+  const highlightMap = {};
+  syllables.forEach((s) => { highlightMap[`${s.initial}|${s.final}`] = !!s.highlighted; });
+
+  const GRID = initials.map((initial) => ({
+    initial,
+    cells: finals.map((final) => {
+      const syllable = syllableMap[`${initial}|${final}`];
+      return { final, syllable: syllable || '', valid: !!syllable, highlighted: !!highlightMap[`${initial}|${final}`] };
+    }),
+  }));
+
+  // Each mutation hits a dedicated endpoint that applies one targeted Mongo
+  // array operation and returns the fresh document, instead of PUTting the
+  // whole table from a possibly-stale local copy (which let one tab's save
+  // silently wipe out another tab's concurrent edits).
+  const applyTableUpdate = async (request) => {
+    setSavingTable(true);
+    setTableError('');
+    try {
+      const activeToken = localStorage.getItem('token');
+      const res = await request(activeToken);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not save the table');
+      setInitials(data.initials);
+      setFinals(data.finals);
+      setSyllables(data.syllables);
+    } catch (err) {
+      setTableError(err.message || 'Could not save the table');
+    } finally {
+      setSavingTable(false);
+    }
+  };
+
+  const addInitial = () => {
+    const value = newInitial.trim().toLowerCase();
+    if (!value || initials.includes(value)) return;
+    setNewInitial('');
+    applyTableUpdate((token) => fetch(`${API}/pinyin-table/initials`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ value }),
+    }));
+  };
+
+  const removeInitial = (initial) => {
+    applyTableUpdate((token) => fetch(`${API}/pinyin-table/initials/${encodeURIComponent(initial)}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    }));
+  };
+
+  const addFinal = () => {
+    const value = newFinal.trim().toLowerCase();
+    if (!value || finals.includes(value)) return;
+    setNewFinal('');
+    applyTableUpdate((token) => fetch(`${API}/pinyin-table/finals`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ value }),
+    }));
+  };
+
+  const removeFinal = (final) => {
+    applyTableUpdate((token) => fetch(`${API}/pinyin-table/finals/${encodeURIComponent(final)}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    }));
+  };
+
+  const setCellSyllable = (initial, final, text) => {
+    const value = text.trim();
+    const current = syllableMap[`${initial}|${final}`] || '';
+    if (value === current) return;
+    applyTableUpdate((token) => fetch(`${API}/pinyin-table/syllable`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ initial, final, syllable: value }),
+    }));
+  };
+
+  const toggleHighlight = (initial, final) => {
+    const highlighted = !highlightMap[`${initial}|${final}`];
+    applyTableUpdate((token) => fetch(`${API}/pinyin-table/syllable/highlight`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ initial, final, highlighted }),
+    }));
+  };
 
   const handleToneClick = (tone) => {
     const rec = recordings[keyFor(selected, tone)];
@@ -457,6 +537,150 @@ function PinyinPage({ onBack, isSuperAdmin }) {
           margin-top: 10px;
           text-align: center;
         }
+        .pinyin-admin-bar {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          margin-bottom: 16px;
+        }
+        .pinyin-edit-toggle {
+          background: var(--seal);
+          color: #fff;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 6px;
+          font-weight: 600;
+          font-size: 0.85rem;
+          cursor: pointer;
+        }
+        .pinyin-edit-toggle:hover {
+          opacity: 0.9;
+        }
+        .pinyin-saving {
+          color: var(--mist);
+          font-size: 0.8rem;
+          font-style: italic;
+        }
+        .pinyin-manage-panel {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 24px;
+          background: var(--paper);
+          border: 1px solid var(--line);
+          border-radius: 8px;
+          padding: 16px;
+          margin-bottom: 20px;
+        }
+        .pinyin-manage-col {
+          flex: 1;
+          min-width: 240px;
+        }
+        .pinyin-manage-col h4 {
+          margin: 0 0 10px;
+          color: var(--seal);
+          font-size: 0.9rem;
+        }
+        .pinyin-chip-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          margin-bottom: 10px;
+        }
+        .pinyin-chip {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          background: var(--card);
+          border: 1px solid var(--line);
+          border-radius: 20px;
+          padding: 3px 6px 3px 10px;
+          font-size: 0.8rem;
+        }
+        .pinyin-chip button {
+          background: none;
+          border: none;
+          color: var(--mist);
+          cursor: pointer;
+          font-size: 0.9rem;
+          line-height: 1;
+          padding: 2px 4px;
+        }
+        .pinyin-chip button:hover {
+          color: var(--seal);
+        }
+        .pinyin-add-row {
+          display: flex;
+          gap: 6px;
+        }
+        .pinyin-add-row input {
+          flex: 1;
+          padding: 6px 8px;
+          border: 1px solid var(--line);
+          border-radius: 4px;
+          background: var(--card);
+          color: var(--ink);
+          font-size: 0.85rem;
+        }
+        .pinyin-add-row button {
+          background: var(--jade);
+          color: #fff;
+          border: none;
+          padding: 6px 12px;
+          border-radius: 4px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          cursor: pointer;
+        }
+        .pinyin-manage-hint {
+          width: 100%;
+          margin: 0;
+          font-size: 0.8rem;
+          color: var(--mist);
+          font-style: italic;
+        }
+        .pinyin-edit-cell {
+          padding: 4px !important;
+          position: relative;
+        }
+        .pinyin-cell-input {
+          width: 100%;
+          min-width: 56px;
+          box-sizing: border-box;
+          text-align: center;
+          border: 1px solid var(--line);
+          border-radius: 4px;
+          padding: 6px 4px;
+          background: var(--card);
+          color: var(--ink);
+          font-size: 0.9rem;
+        }
+        .pinyin-cell-input:focus {
+          outline: none;
+          border-color: var(--seal);
+        }
+        .pinyin-highlighted {
+          background-color: rgba(201, 154, 60, 0.25) !important;
+          box-shadow: inset 0 0 0 2px var(--gold);
+        }
+        .pinyin-highlight-toggle {
+          position: absolute;
+          top: 1px;
+          right: 1px;
+          background: none;
+          border: none;
+          color: var(--line);
+          font-size: 0.75rem;
+          line-height: 1;
+          padding: 2px;
+          cursor: pointer;
+        }
+        .pinyin-highlight-toggle:hover {
+          color: var(--gold);
+        }
+        .pinyin-highlight-toggle.is-on {
+          color: var(--gold);
+        }
       `}</style>
 
       <div className="container">
@@ -465,6 +689,74 @@ function PinyinPage({ onBack, isSuperAdmin }) {
         <div className="pinyin-card">
           <h1 className="pinyin-h1"> (Mandarin Pinyin Table)</h1>
           <p className="pinyin-subtitle">Click and  listen to all four tones.</p>
+
+          {isSuperAdmin && (
+            <div className="pinyin-admin-bar">
+              <button
+                type="button"
+                className="pinyin-edit-toggle"
+                onClick={() => setEditMode((v) => !v)}
+              >
+                {editMode ? '✓ Done editing' : '✎ Edit table'}
+              </button>
+              {savingTable && <span className="pinyin-saving">Saving…</span>}
+              {tableError && <span className="pinyin-mic-error">{tableError}</span>}
+            </div>
+          )}
+
+          {isSuperAdmin && editMode && (
+            <div className="pinyin-manage-panel">
+              <div className="pinyin-manage-col">
+                <h4>Consonants (initials)</h4>
+                <div className="pinyin-chip-list">
+                  {initials.map((initial) => (
+                    <span className="pinyin-chip" key={initial || 'zero'}>
+                      {initial === '' ? 'Ø' : initial}
+                      {initial !== '' && (
+                        <button type="button" onClick={() => removeInitial(initial)} title="Remove initial">×</button>
+                      )}
+                    </span>
+                  ))}
+                </div>
+                <div className="pinyin-add-row">
+                  <input
+                    type="text"
+                    value={newInitial}
+                    onChange={(e) => setNewInitial(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') addInitial(); }}
+                    placeholder="e.g. zh"
+                  />
+                  <button type="button" onClick={addInitial}>Add</button>
+                </div>
+              </div>
+
+              <div className="pinyin-manage-col">
+                <h4>Vowels (finals)</h4>
+                <div className="pinyin-chip-list">
+                  {finals.map((final) => (
+                    <span className="pinyin-chip" key={final}>
+                      {final}
+                      <button type="button" onClick={() => removeFinal(final)} title="Remove final">×</button>
+                    </span>
+                  ))}
+                </div>
+                <div className="pinyin-add-row">
+                  <input
+                    type="text"
+                    value={newFinal}
+                    onChange={(e) => setNewFinal(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') addFinal(); }}
+                    placeholder="e.g. iang"
+                  />
+                  <button type="button" onClick={addFinal}>Add</button>
+                </div>
+              </div>
+              <p className="pinyin-manage-hint">
+                Edit a syllable directly in the table below by typing in its cell, or clear a cell to remove it.
+                Click the ★ on a filled cell to highlight it for everyone.
+              </p>
+            </div>
+          )}
 
           <div className="pinyin-dashboard">
             {!selected ? (
@@ -532,18 +824,47 @@ function PinyinPage({ onBack, isSuperAdmin }) {
               <thead>
                 <tr>
                   <th className="pinyin-initial-header">Initials \ Finals</th>
-                  {FINALS.map((final) => <th key={final}>{final}</th>)}
+                  {finals.map((final) => <th key={final}>{final}</th>)}
                 </tr>
               </thead>
               <tbody>
                 {GRID.map(({ initial, cells }) => (
                   <tr key={initial || 'zero'}>
                     <td className="pinyin-initial-col">{initial === '' ? 'Ø (zero)' : initial}</td>
-                    {cells.map(({ final, syllable, valid }) => (
-                      valid ? (
+                    {cells.map(({ final, syllable, valid, highlighted }) => (
+                      editMode ? (
                         <td
                           key={final}
-                          className="pinyin-syllable"
+                          className={[
+                            valid ? 'pinyin-syllable' : 'pinyin-empty-cell',
+                            'pinyin-edit-cell',
+                            highlighted ? 'pinyin-highlighted' : '',
+                          ].join(' ').trim()}
+                        >
+                          <input
+                            type="text"
+                            className="pinyin-cell-input"
+                            key={syllable}
+                            defaultValue={syllable}
+                            placeholder={normalizeSyllable(initial, final)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') e.target.blur(); }}
+                            onBlur={(e) => setCellSyllable(initial, final, e.target.value)}
+                          />
+                          {valid && (
+                            <button
+                              type="button"
+                              className={`pinyin-highlight-toggle ${highlighted ? 'is-on' : ''}`}
+                              onClick={() => toggleHighlight(initial, final)}
+                              title={highlighted ? 'Remove highlight' : 'Highlight this syllable'}
+                            >
+                              ★
+                            </button>
+                          )}
+                        </td>
+                      ) : valid ? (
+                        <td
+                          key={final}
+                          className={`pinyin-syllable ${highlighted ? 'pinyin-highlighted' : ''}`}
                           onClick={() => setSelected(syllable)}
                         >
                           {syllable}

@@ -21,6 +21,8 @@ import TestimonialManager from './TestimonialManager';
 import SubscriptionManager from './SubscriptionManager';
 import UserManager from './UserManager';
 import TeamManager from './TeamManager';
+import AdminDashboard from './AdminDashboard';
+import AuditLog from './AuditLog';
 
 
 
@@ -169,6 +171,8 @@ function App() {
   const [showLogin, setShowLogin] = useState(false);
   const [authView, setAuthView] = useState('login');
   const [showAdmin, setShowAdmin] = useState(false);
+  const [showAdminDashboard, setShowAdminDashboard] = useState(false);
+  const [showAuditLog, setShowAuditLog] = useState(false);
   const [courses, setCourses] = useState([]);
   const [access, setAccess] = useState({});
   const [activeCourse, setActiveCourse] = useState(null);
@@ -367,6 +371,8 @@ function App() {
     localStorage.removeItem('user');
     setUser(null);
     setShowAdmin(false);
+    setShowAdminDashboard(false);
+    setShowAuditLog(false);
     setManageCourse(null);
     setShowDashboard(false);
     setShowInbox(false);
@@ -391,6 +397,8 @@ function App() {
   const goHome = () => {
     setShowLogin(false);
     setShowAdmin(false);
+    setShowAdminDashboard(false);
+    setShowAuditLog(false);
     setShowPinyinPage(false);
     setActiveCourse(null);
     setManageCourse(null);
@@ -421,6 +429,8 @@ function App() {
   const openLogin = () => {
     setMobileMenuOpen(false);
     setShowAdmin(false);
+    setShowAdminDashboard(false);
+    setShowAuditLog(false);
     setActiveCourse(null);
     setManageCourse(null);
     setShowDashboard(false);
@@ -534,6 +544,22 @@ function App() {
             </div>
 
             <nav className="admin-sidebar-nav">
+              <button onClick={() => { goHome(); setShowAdminDashboard(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="7" height="9"></rect>
+                  <rect x="14" y="3" width="7" height="5"></rect>
+                  <rect x="14" y="12" width="7" height="9"></rect>
+                  <rect x="3" y="16" width="7" height="5"></rect>
+                </svg>
+                Dashboard
+              </button>
+              <button onClick={() => { goHome(); setShowAuditLog(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Activity log
+              </button>
               <button onClick={() => { goHome(); setShowAdmin(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
                 <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
@@ -693,7 +719,7 @@ function App() {
               )}
 
               {user && (
-                <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); setShowDashboard(true); }}>
+                <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowDashboard(true); }}>
                   <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                     <polyline points="2 17 12 22 22 17"></polyline>
@@ -830,6 +856,10 @@ function App() {
         <FeedbackInbox onBack={goHome} />
       ) : isSuperAdmin && showAdmin ? (
         <AdminPanel onBack={goHome} onManageLessons={(c) => setManageCourse(c)} />
+      ) : isSuperAdmin && showAdminDashboard ? (
+        <AdminDashboard onBack={goHome} />
+      ) : isSuperAdmin && showAuditLog ? (
+        <AuditLog onBack={goHome} />
       ) : user && showDashboard ? (
         <Dashboard
           user={user}

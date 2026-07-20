@@ -239,6 +239,22 @@ function CoursePage({ course, onBack, user }) {
         <p className="eyebrow">Lesson {activeLesson.order}</p>
         <h1 className="section-title">{activeLesson.title}</h1>
 
+        {activeLesson.category === 'grammar' && (activeLesson.grammarExplanation || activeLesson.grammarImage) && (
+          <div className="lesson-dialogue">
+            <h3 className="dialogue-heading">📘 Grammar</h3>
+            {activeLesson.grammarImage && (
+              <img
+                src={`${SERVER}${activeLesson.grammarImage}`}
+                alt=""
+                className="dialogue-main-image"
+              />
+            )}
+            {activeLesson.grammarExplanation && (
+              <p className="grammar-explanation-text">{activeLesson.grammarExplanation}</p>
+            )}
+          </div>
+        )}
+
         {(activeLesson.dialogueImage || (activeLesson.dialogueLines && activeLesson.dialogueLines.length > 0)) && (
           <div className="lesson-dialogue">
             <h3 className="dialogue-heading">💬 Conversation</h3>
@@ -252,9 +268,23 @@ function CoursePage({ course, onBack, user }) {
             {activeLesson.dialogueLines && activeLesson.dialogueLines.map((line, i) => (
               <div className="dialogue-line-block" key={i}>
                 {line.audioUrl && (
-                  <audio controls src={`${SERVER}${line.audioUrl}`} className="dialogue-line-audio" />
+                  <button
+                    type="button"
+                    className="play-btn"
+                    onClick={() => new Audio(`${SERVER}${line.audioUrl}`).play()}
+                    title="Play audio"
+                  >
+                    ▶
+                  </button>
                 )}
-                {line.text && <p className="dialogue-line-caption">{line.text}</p>}
+                {line.text && (
+                  <p className="dialogue-line-caption">
+                    {line.speaker && <strong>{line.speaker}: </strong>}
+                    {line.text}
+                    {line.pinyin && <span className="dialogue-line-pinyin"> ({line.pinyin})</span>}
+                  </p>
+                )}
+                {line.meaning && <p className="dialogue-line-meaning">{line.meaning}</p>}
               </div>
             ))}
           </div>

@@ -1,6 +1,7 @@
 const express = require('express');
 const Testimonial = require('../models/Testimonial');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { logActivity } = require('../utils/auditLog');
 
 const router = express.Router();
 
@@ -44,7 +45,10 @@ router.post('/', requireAuth, async (req, res) => {
 // PUT /api/testimonials/:id/approve — admin: approve
 router.put('/:id/approve', requireAuth, requireAdmin, async (req, res) => {
   try {
-    await Testimonial.findByIdAndUpdate(req.params.id, { approved: true });
+    const testimonial = await Testimonial.findByIdAndUpdate(req.params.id, { approved: true }, { new: true });
+    if (testimonial) {
+      logActivity(req, { action: 'approve', resourceType: 'testimonial', resourceId: testimonial._id, label: testimonial.name });
+    }
     res.json({ message: 'Approved' });
   } catch {
     res.status(500).json({ error: 'Could not approve' });
@@ -54,7 +58,10 @@ router.put('/:id/approve', requireAuth, requireAdmin, async (req, res) => {
 // DELETE /api/testimonials/:id — admin: delete
 router.delete('/:id', requireAuth, requireAdmin, async (req, res) => {
   try {
-    await Testimonial.findByIdAndDelete(req.params.id);
+    const testimonial = await Testimonial.findByIdAndDelete(req.params.id);
+    if (testimonial) {
+      logActivity(req, { action: 'delete', resourceType: 'testimonial', resourceId: testimonial._id, label: testimonial.name });
+    }
     res.json({ message: 'Deleted' });
   } catch {
     res.status(500).json({ error: 'Could not delete' });

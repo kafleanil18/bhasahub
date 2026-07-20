@@ -1,7 +1,9 @@
 const express = require('express');
 const Subscription = require('../models/Subscription');
 const User = require('../models/User');
+const Course = require('../models/Course');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { logActivity } = require('../utils/auditLog');
 
 const router = express.Router();
 
@@ -53,6 +55,16 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
         user: userId, course: courseId, expiresAt, grantedBy: req.user.id,
       });
     }
+    const [grantedUser, grantedCourse] = await Promise.all([
+      User.findById(userId).select('name'),
+      Course.findById(courseId).select('title'),
+    ]);
+    logActivity(req, {
+      action: 'grant',
+      resourceType: 'subscription',
+      resourceId: existing._id,
+      label: `${grantedUser ? grantedUser.name : 'Unknown'} → ${grantedCourse ? grantedCourse.title : 'Unknown'} (${days}d)`,
+    });
     res.status(201).json(existing);
   } catch {
     res.status(500).json({ error: 'Could not grant access' });
@@ -62,7 +74,18 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
 // DELETE /api/subscriptions/:id — admin: revoke
 router.delete('/:id', requireAuth, requireAdmin, async (req, res) => {
   try {
+    const sub = await Subscription.findById(req.params.id)
+      .populate('user', 'name')
+      .populate('course', 'title');
     await Subscription.findByIdAndDelete(req.params.id);
+    if (sub) {
+      logActivity(req, {
+        action: 'revoke',
+        resourceType: 'subscription',
+        resourceId: sub._id,
+        label: `${sub.user ? sub.user.name : 'Unknown'} → ${sub.course ? sub.course.title : 'Unknown'}`,
+      });
+    }
     res.json({ message: 'Access revoked' });
   } catch {
     res.status(500).json({ error: 'Could not revoke access' });

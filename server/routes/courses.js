@@ -1,6 +1,7 @@
 const express = require('express');
 const Course = require('../models/Course');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { logActivity } = require('../utils/auditLog');
 
 const router = express.Router();
 
@@ -33,6 +34,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Title and language are required' });
     }
     const course = await Course.create({ title, language, level, description, glyph, image, published });
+    logActivity(req, { action: 'create', resourceType: 'course', resourceId: course._id, label: course.title });
     res.status(201).json(course);
   } catch (err) {
     res.status(500).json({ error: 'Could not create course' });
@@ -44,6 +46,7 @@ router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
   try {
     const course = await Course.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!course) return res.status(404).json({ error: 'Course not found' });
+    logActivity(req, { action: 'update', resourceType: 'course', resourceId: course._id, label: course.title });
     res.json(course);
   } catch {
     res.status(500).json({ error: 'Could not update course' });
@@ -55,6 +58,7 @@ router.delete('/:id', requireAuth, requireAdmin, async (req, res) => {
   try {
     const course = await Course.findByIdAndDelete(req.params.id);
     if (!course) return res.status(404).json({ error: 'Course not found' });
+    logActivity(req, { action: 'delete', resourceType: 'course', resourceId: course._id, label: course.title });
     res.json({ message: 'Course deleted' });
   } catch {
     res.status(500).json({ error: 'Could not delete course' });
