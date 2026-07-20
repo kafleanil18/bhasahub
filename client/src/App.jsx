@@ -22,40 +22,29 @@ import SubscriptionManager from './SubscriptionManager';
 import UserManager from './UserManager';
 import TeamManager from './TeamManager';
 
-const teamMembers = [
-  {
-    key: 'founder',
-    name: 'Anil Kafle',
-    role: 'Founder & Teacher',
-    photo: '/image.jpg',
-    bio: 'Anil is a language teacher specializing in Chinese and Nepali. He founded this platform to make structured, teacher-led language learning accessible to everyone.',
-  },
-  {
-    key: 'developer',
-    name: 'Name Here',
-    role: 'Developer',
-    photo: '/image.jpg',
-    bio: 'Our developer builds and maintains the platform, making sure every lesson, quiz, and feature works smoothly for learners.',
-  },
-  {
-    key: 'pm',
-    name: 'Name Here',
-    role: 'Project Manager',
-    photo: '/image.jpg',
-    bio: 'Our project manager keeps everything on track, coordinating content, design, and development so the learning experience stays seamless.',
-  },
-];
+
 
 const renderTeamAvatar = (member, isModal = false) => {
   // If custom photo is uploaded and is not placeholder, render it
   if (member.photo && member.photo !== '/image.jpg' && member.photo !== 'image.jpg') {
+    const frameSize = isModal ? '130px' : '120px';
     return (
-      <div className={isModal ? 'team-modal-photo-svg-wrapper' : 'team-photo-svg-wrapper'}>
+      <div 
+        className={isModal ? 'team-modal-photo-svg-wrapper' : 'team-photo-svg-wrapper'}
+        style={{ borderRadius: '12px', width: frameSize, height: frameSize, overflow: 'hidden', background: 'var(--paper, #faf6ec)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
         <img
           src={member.photo}
           alt={member.name}
           className={isModal ? 'team-modal-photo' : 'team-photo'}
-          style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+          style={{ 
+            width: '100%', 
+            height: '100%', 
+            borderRadius: '12px', 
+            objectFit: 'contain',
+            transform: `translate(${(member.offsetX !== undefined ? member.offsetX : 50) - 50}%, ${(member.offsetY !== undefined ? member.offsetY : 50) - 50}%) scale(${member.scale !== undefined ? member.scale : 1})`,
+            transformOrigin: 'center center'
+          }}
         />
       </div>
     );
@@ -217,7 +206,7 @@ function App() {
   const [myAccessDays, setMyAccessDays] = useState(null);
   const [showUserManager, setShowUserManager] = useState(false);
   const [showTeamManager, setShowTeamManager] = useState(false);
-  const [teamPhotos, setTeamPhotos] = useState({});
+  const [teamPhotos, setTeamPhotos] = useState([]);
   const [adminSidebarOpen, setAdminSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
 
@@ -275,9 +264,7 @@ function App() {
     fetch(window.API_BASE_URL + '/api/team')
       .then(res => res.json())
       .then(data => {
-        const map = {};
-        (Array.isArray(data) ? data : []).forEach(m => { map[m.key] = m.photo; });
-        setTeamPhotos(map);
+        setTeamPhotos(Array.isArray(data) ? data : []);
       })
       .catch(() => {});
   };
@@ -928,7 +915,7 @@ function App() {
           <section className="features">
             <div className="container">
               <div className="feature">
-                <span className="feature-glyph zh">字</span>
+                <span className="feature-glyph zh">SPEAK</span>
                 <h3>Read the script</h3>
                 <p>
                   Start from zero with Pinyin and Devanagari — every character
@@ -936,7 +923,7 @@ function App() {
                 </p>
               </div>
               <div className="feature">
-                <span className="feature-glyph ne">听</span>
+                <span className="feature-glyph ne">LISTEN</span>
                 <h3>Hear it spoken</h3>
                 <p>
                   Native audio on every word and phrase, recorded clearly —
@@ -944,7 +931,7 @@ function App() {
                 </p>
               </div>
               <div className="feature">
-                <span className="feature-glyph zh">步</span>
+                <span className="feature-glyph zh">READ</span>
                 <h3>Progress step by step</h3>
                 <p>
                   Lessons build on each other like a real course — track what
@@ -1027,16 +1014,22 @@ function App() {
               <h2 className="section-title team-title">Meet Our Team</h2>
               <p className="team-intro">This platform is brought to you by a team of passion and expertise.</p>
               <div className="team-grid">
-                {teamMembers.map((member) => {
-                  const uploadedPhoto = teamPhotos[member.key];
-                  const displayMember = uploadedPhoto
-                    ? { ...member, photo: `${window.API_BASE_URL}${uploadedPhoto}` }
-                    : member;
+                {(Array.isArray(teamPhotos) ? teamPhotos : []).map((dbMemberObj) => {
+                  const displayMember = {
+                    key: dbMemberObj.key,
+                    name: dbMemberObj.name || '',
+                    role: dbMemberObj.role || '',
+                    bio: dbMemberObj.bio || '',
+                    photo: dbMemberObj.photo ? `${window.API_BASE_URL}${dbMemberObj.photo}` : '',
+                    offsetX: dbMemberObj.offsetX !== undefined ? dbMemberObj.offsetX : 50,
+                    offsetY: dbMemberObj.offsetY !== undefined ? dbMemberObj.offsetY : 50,
+                    scale: dbMemberObj.scale !== undefined ? dbMemberObj.scale : 1
+                  };
                   return (
-                    <div className="team-card" key={member.name + member.role} onClick={() => setActiveTeamMember(displayMember)}>
+                    <div className="team-card" key={displayMember.key} onClick={() => setActiveTeamMember(displayMember)}>
                       {renderTeamAvatar(displayMember)}
-                      <h3 className="team-name">{member.name}</h3>
-                      <p className="team-role">{member.role}</p>
+                      <h3 className="team-name">{displayMember.name}</h3>
+                      <p className="team-role">{displayMember.role}</p>
                     </div>
                   );
                 })}
@@ -1126,17 +1119,6 @@ function App() {
                 </a>
                 <a href="https://linkedin.com/in/YOURPROFILE" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="social-link">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zm1.78 13.02H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
-                </a>
-              </div>
-
-              <div className="footer-links">
-                <a
-                  href="https://www.hskcourse.com/tool/pinyin-chart.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="footer-link"
-                >
-                  Pinyin Chart
                 </a>
               </div>
 

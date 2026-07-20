@@ -3,18 +3,14 @@ import { useState, useEffect } from 'react';
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
 
-const SLOTS = [
-  { key: 'founder', name: 'Anil Kafle', role: 'Founder & Teacher' },
-  { key: 'developer', name: 'Name Here', role: 'Developer' },
-  { key: 'pm', name: 'Name Here', role: 'Project Manager' },
-];
-
 function TeamManager({ onBack }) {
   const token = localStorage.getItem('token');
   const authHeaders = { Authorization: `Bearer ${token}` };
 
-  const [photos, setPhotos] = useState({});
+  const [teamList, setTeamList] = useState([]);
   const [uploading, setUploading] = useState({});
+  const [savingDetails, setSavingDetails] = useState({});
+  const [savedFeedback, setSavedFeedback] = useState({});
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -22,9 +18,7 @@ function TeamManager({ onBack }) {
     fetch(`${API}/team`)
       .then(res => res.json())
       .then(data => {
-        const map = {};
-        (Array.isArray(data) ? data : []).forEach(m => { map[m.key] = m.photo; });
-        setPhotos(map);
+        setTeamList(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -56,7 +50,7 @@ function TeamManager({ onBack }) {
       });
       const saved = await saveRes.json();
       if (saveRes.ok) {
-        setPhotos(prev => ({ ...prev, [key]: saved.photo }));
+        setTeamList(prev => prev.map(m => m.key === key ? saved : m));
       } else {
         setError(saved.error || 'Could not save photo');
       }
@@ -76,10 +70,120 @@ function TeamManager({ onBack }) {
         body: JSON.stringify({ photo: '' }),
       });
       if (res.ok) {
-        setPhotos(prev => ({ ...prev, [key]: '' }));
+        const saved = await res.json();
+        setTeamList(prev => prev.map(m => m.key === key ? saved : m));
       } else {
         const data = await res.json();
         setError(data.error || 'Could not remove photo');
+      }
+    } catch {
+      setError('Could not reach the server');
+    }
+  };
+
+  const handleOffsetChange = (key, field, value) => {
+    setTeamList(prev => prev.map(m => {
+      if (m.key === key) {
+        return { ...m, [field]: value };
+      }
+      return m;
+    }));
+  };
+
+  const saveOffset = async (key) => {
+    const member = teamList.find(m => m.key === key);
+    if (!member) return;
+    try {
+      const res = await fetch(`${API}/team/${key}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
+        body: JSON.stringify({ 
+          offsetX: member.offsetX !== undefined ? member.offsetX : 50, 
+          offsetY: member.offsetY !== undefined ? member.offsetY : 50,
+          scale: member.scale !== undefined ? member.scale : 1
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || 'Could not save offset');
+      }
+    } catch {
+      setError('Could not save offset adjustment to server');
+    }
+  };
+
+  const handleFieldChange = (key, field, value) => {
+    setTeamList(prev => prev.map(m => {
+      if (m.key === key) {
+        return { ...m, [field]: value };
+      }
+      return m;
+    }));
+  };
+
+  const saveDetails = async (key) => {
+    const member = teamList.find(m => m.key === key);
+    if (!member) return;
+    setError('');
+    setSavingDetails(prev => ({ ...prev, [key]: true }));
+    try {
+      const res = await fetch(`${API}/team/${key}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
+        body: JSON.stringify({ 
+          name: member.name !== undefined ? member.name : '',
+          role: member.role !== undefined ? member.role : '',
+          bio: member.bio !== undefined ? member.bio : ''
+        }),
+      });
+      const saved = await res.json();
+      if (res.ok) {
+        setTeamList(prev => prev.map(m => m.key === key ? saved : m));
+        setSavedFeedback(prev => ({ ...prev, [key]: true }));
+        setTimeout(() => {
+          setSavedFeedback(prev => ({ ...prev, [key]: false }));
+        }, 2000);
+      } else {
+        setError(saved.error || 'Could not save details');
+      }
+    } catch {
+      setError('Could not reach the server');
+    } finally {
+      setSavingDetails(prev => ({ ...prev, [key]: false }));
+    }
+  };
+
+  const createTeamMember = async () => {
+    setError('');
+    try {
+      const res = await fetch(`${API}/team`, {
+        method: 'POST',
+        headers: authHeaders,
+      });
+      const newMember = await res.json();
+      if (res.ok) {
+        setTeamList(prev => [...prev, newMember]);
+      } else {
+        setError(newMember.error || 'Could not create team member');
+      }
+    } catch {
+      setError('Could not reach the server');
+    }
+  };
+
+  const deleteTeamMember = async (key) => {
+    if (!window.confirm('Are you sure you want to delete this team member?')) return;
+    setError('');
+    try {
+      const res = await fetch(`${API}/team/${key}`, {
+        method: 'DELETE',
+        headers: authHeaders,
+      });
+      if (res.ok) {
+        setTeamList(prev => prev.filter(m => m.key !== key));
+      } else {
+        const data = await res.json();
+        setError(data.error || 'Could not delete team member');
       }
     } catch {
       setError('Could not reach the server');
@@ -248,31 +352,144 @@ function TeamManager({ onBack }) {
 
       <button className="tmg-back-btn" onClick={onBack}>← Back to home</button>
 
-      <div className="tmg-header">
-        <h1>Team Photos</h1>
-        <p>Upload the profile photo shown on the "Meet Our Team" section</p>
+      <div className="tmg-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem', marginBottom: '2.5rem' }}>
+        <div>
+          <h1>Team Photos</h1>
+          <p>Upload the profile photo shown on the "Meet Our Team" section</p>
+        </div>
+        <button 
+          onClick={createTeamMember}
+          style={{
+            background: 'var(--jade, #2e6b57)',
+            color: '#fff',
+            border: 'none',
+            padding: '10px 20px',
+            borderRadius: '8px',
+            fontSize: '0.9rem',
+            fontWeight: 600,
+            cursor: 'pointer',
+            boxShadow: '0 4px 12px rgba(46,107,87,0.15)',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          ➕ Add Team Member
+        </button>
       </div>
 
       {error && <p className="tmg-error">{error}</p>}
 
       {!loading && (
         <div className="tmg-grid">
-          {SLOTS.map((slot) => {
-            const photo = photos[slot.key];
+          {teamList.map((slot) => {
+            const photoUrl = slot.photo || '';
             return (
               <div className="tmg-card" key={slot.key}>
-                <div className="tmg-avatar-wrap">
-                  {photo ? (
-                    <img src={`${SERVER}${photo}`} alt={slot.name} />
-                  ) : (
-                    <div className="tmg-avatar-fallback">{slot.name.charAt(0)}</div>
+                <div style={{ display: 'flex', gap: '1.5rem', width: '100%', alignItems: 'flex-start', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '1rem' }}>
+                  
+                  {/* Live Avatar Preview (how it looks on the website) */}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--mist, #7a7266)' }}>Live Site Preview</span>
+                    <div className="tmg-avatar-wrap" style={{ borderRadius: '12px', width: '120px', height: '120px', border: '3px solid var(--jade, #2e6b57)', overflow: 'hidden', position: 'relative', margin: 0, background: 'var(--paper, #faf6ec)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {photoUrl ? (
+                        <img 
+                          src={`${SERVER}${photoUrl}`} 
+                          alt={slot.name} 
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: '12px',
+                            objectFit: 'contain',
+                            transform: `translate(${(slot.offsetX !== undefined ? slot.offsetX : 50) - 50}%, ${(slot.offsetY !== undefined ? slot.offsetY : 50) - 50}%) scale(${slot.scale !== undefined ? slot.scale : 1})`,
+                            transformOrigin: 'center center'
+                          }}
+                        />
+                      ) : (
+                        <div className="tmg-avatar-fallback">{slot.name ? slot.name.charAt(0) : 'T'}</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Full Original Image (so they can see the whole photo they uploaded) */}
+                  {photoUrl && (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', flex: '1', minWidth: '150px' }}>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--mist, #7a7266)' }}>Uploaded Original Photo</span>
+                      <div style={{ border: '1px solid var(--line, #e6dcc6)', borderRadius: '12px', padding: '4px', background: 'var(--card, #fffdf8)', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '120px', maxHeight: '120px', overflow: 'hidden' }}>
+                        <img 
+                          src={`${SERVER}${photoUrl}`} 
+                          alt="Original uploaded file" 
+                          style={{
+                            maxWidth: '100%',
+                            maxHeight: '110px',
+                            objectFit: 'contain',
+                            borderRadius: '8px'
+                          }}
+                        />
+                      </div>
+                    </div>
                   )}
                 </div>
-                <strong className="tmg-name">{slot.name}</strong>
-                <span className="tmg-role">{slot.role}</span>
+                <div style={{ width: '100%', margin: '1rem 0 1rem', display: 'flex', flexDirection: 'column', gap: '10px', textAlign: 'left' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--mist)' }}>Name</label>
+                    <input 
+                      type="text" 
+                      value={slot.name || ''} 
+                      onChange={(e) => handleFieldChange(slot.key, 'name', e.target.value)}
+                      placeholder="Enter name..."
+                      style={{ padding: '6px 10px', border: '1px solid var(--line)', borderRadius: '6px', fontSize: '0.85rem', width: '100%', background: 'var(--card)', color: 'var(--ink)', fontFamily: 'inherit' }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--mist)' }}>Role</label>
+                    <input 
+                      type="text" 
+                      value={slot.role || ''} 
+                      onChange={(e) => handleFieldChange(slot.key, 'role', e.target.value)}
+                      placeholder="Enter role..."
+                      style={{ padding: '6px 10px', border: '1px solid var(--line)', borderRadius: '6px', fontSize: '0.85rem', width: '100%', background: 'var(--card)', color: 'var(--ink)', fontFamily: 'inherit' }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--mist)' }}>Short Bio</label>
+                    <textarea 
+                      value={slot.bio || ''} 
+                      onChange={(e) => handleFieldChange(slot.key, 'bio', e.target.value)}
+                      placeholder="Enter biography..."
+                      rows="3"
+                      style={{ padding: '6px 10px', border: '1px solid var(--line)', borderRadius: '6px', fontSize: '0.8rem', width: '100%', resize: 'vertical', background: 'var(--card)', color: 'var(--ink)', fontFamily: 'inherit' }}
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => saveDetails(slot.key)}
+                  disabled={savingDetails[slot.key]}
+                  style={{
+                    padding: '8px 16px',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    width: '100%',
+                    marginBottom: '1rem',
+                    backgroundColor: savedFeedback[slot.key] ? 'var(--jade)' : 'var(--ink)',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  {savingDetails[slot.key] ? 'Saving...' : savedFeedback[slot.key] ? '✓ Saved!' : 'Save Details'}
+                </button>
 
                 <label className="tmg-upload-btn">
-                  {uploading[slot.key] ? 'Uploading...' : photo ? 'Replace photo' : 'Upload photo'}
+                  {uploading[slot.key] ? 'Uploading...' : photoUrl ? 'Replace photo' : 'Upload photo'}
                   <input
                     type="file"
                     accept="image/*"
@@ -280,13 +497,85 @@ function TeamManager({ onBack }) {
                   />
                 </label>
 
-                {photo && (
+                {photoUrl && (
                   <button className="tmg-remove-btn" onClick={() => removePhoto(slot.key)}>
                     Remove photo
                   </button>
                 )}
 
-                <p className="tmg-hint">Square images work best — they're auto-cropped to fit the circle.</p>
+                {photoUrl && (
+                  <div className="tmg-position-controls" style={{ width: '100%', margin: '1.25rem 0 0.5rem', borderTop: '1px dashed var(--line)', paddingTop: '1rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 600, color: 'var(--mist)', marginBottom: '4px' }}>
+                      <span>🔍 Zoom</span>
+                      <span>{Math.round((slot.scale !== undefined ? slot.scale : 1) * 100)}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="1"
+                      max="3"
+                      step="0.05"
+                      value={slot.scale !== undefined ? slot.scale : 1}
+                      onChange={(e) => handleOffsetChange(slot.key, 'scale', parseFloat(e.target.value))}
+                      onMouseUp={() => saveOffset(slot.key)}
+                      onTouchEnd={() => saveOffset(slot.key)}
+                      style={{ width: '100%', accentColor: 'var(--jade)', cursor: 'pointer', marginBottom: '10px' }}
+                    />
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 600, color: 'var(--mist)', marginBottom: '4px' }}>
+                      <span>Horizontal position</span>
+                      <span>{slot.offsetX !== undefined ? slot.offsetX : 50}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={slot.offsetX !== undefined ? slot.offsetX : 50}
+                      onChange={(e) => handleOffsetChange(slot.key, 'offsetX', parseInt(e.target.value))}
+                      onMouseUp={() => saveOffset(slot.key)}
+                      onTouchEnd={() => saveOffset(slot.key)}
+                      style={{ width: '100%', accentColor: 'var(--jade)', cursor: 'pointer', marginBottom: '10px' }}
+                    />
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 600, color: 'var(--mist)', marginBottom: '4px' }}>
+                      <span>Vertical position</span>
+                      <span>{slot.offsetY !== undefined ? slot.offsetY : 50}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={slot.offsetY !== undefined ? slot.offsetY : 50}
+                      onChange={(e) => handleOffsetChange(slot.key, 'offsetY', parseInt(e.target.value))}
+                      onMouseUp={() => saveOffset(slot.key)}
+                      onTouchEnd={() => saveOffset(slot.key)}
+                      style={{ width: '100%', accentColor: 'var(--jade)', cursor: 'pointer' }}
+                    />
+                    <p style={{ fontSize: '0.65rem', color: 'var(--mist)', marginTop: '8px', fontStyle: 'italic' }}>
+                      Drag sliders to adjust. Position is saved automatically on release.
+                    </p>
+                  </div>
+                )}
+
+                <button 
+                  onClick={() => deleteTeamMember(slot.key)}
+                  style={{
+                    background: 'none',
+                    border: '1px solid var(--line)',
+                    color: 'var(--seal, #c8362a)',
+                    padding: '8px 16px',
+                    borderRadius: '8px',
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    width: '100%',
+                    marginTop: '0.75rem',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  🗑️ Delete Member
+                </button>
+
+                <p className="tmg-hint">Images display inside a consistent frame. Adjust zoom & position above to fit it perfectly.</p>
               </div>
             );
           })}

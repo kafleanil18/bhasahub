@@ -69,6 +69,7 @@ function TestTaker({ testId, onBack }) {
   const [timerStarted, setTimerStarted] = useState(false);
   const [playingAudios, setPlayingAudios] = useState(() => new Set());
   const [leaveWarning, setLeaveWarning] = useState(null);
+  const [mobileTab, setMobileTab] = useState('pdf');
   const containerRef = useRef(null);
   const bypassNextClick = useRef(false);
   const audioPlaying = playingAudios.size > 0;
@@ -197,7 +198,7 @@ function TestTaker({ testId, onBack }) {
   const percent = total ? Math.round((score / total) * 100) : 0;
 
   return (
-    <section className="course-page container" ref={containerRef}>
+    <section className={`course-page container ${test.pdfUrl ? 'test-pdf-layout' : ''}`} ref={containerRef}>
       <button className="back-btn" onClick={handleBackClick}>Back to tests</button>
       <p className="eyebrow">{test.level}</p>
       <h1 className="section-title">{test.title}</h1>
@@ -223,91 +224,95 @@ function TestTaker({ testId, onBack }) {
         </div>
       )}
 
-      {test.pdfUrl && (
-        <div className="test-media">
+      {test.pdfUrl ? (
+        <div className="test-pdf-container">
           <h3 className="dialogue-heading">📄 Question paper</h3>
-          <iframe
-            src={`${SERVER}${test.pdfUrl}`}
-            title="Question paper"
-            className="test-pdf"
-          ></iframe>
+          <div className="pdf-iframe-container" onContextMenu={(e) => e.preventDefault()}>
+            <iframe
+              src={`${SERVER}${test.pdfUrl}#toolbar=0`}
+              title="Question paper"
+              className="test-pdf-iframe"
+            ></iframe>
+            <div className="pdf-overlay"></div>
+          </div>
         </div>
+      ) : (
+        <>
+          <div className="test-questions">
+            <h3 className="dialogue-heading">✏️ Answers</h3>
+            {test.questions.map((q, qi) => {
+              const chosen = answers[qi];
+              return (
+                <div className="test-question" key={qi}>
+                  <p className="test-question-text" style={{ marginBottom: q.questionPinyin ? '6px' : '16px' }}>
+                    <strong>Q{qi + 1}.</strong> {q.questionText}
+                  </p>
+                  {q.questionPinyin && (
+                    <p className="test-question-pinyin" style={{ color: 'var(--mist)', fontSize: '0.9rem', marginTop: '-4px', marginBottom: '16px', paddingLeft: '32px' }}>
+                      {q.questionPinyin}
+                    </p>
+                  )}
+                  {q.audioUrl && (
+                    <div className="test-question-audio" style={{ paddingLeft: '32px', marginBottom: '16px' }}>
+                      <LockedAudio
+                        src={`${SERVER}${q.audioUrl}`}
+                        onPlay={() => setTimerStarted(true)}
+                        onPlayStateChange={(p) => setAudioPlaying(`q-${qi}`, p)}
+                      />
+                    </div>
+                  )}
+                  {q.image && (
+                    <div className="test-question-image" style={{ paddingLeft: '32px', marginBottom: '16px' }}>
+                      <img src={`${SERVER}${q.image}`} alt={`Question ${qi + 1}`} style={{ maxWidth: '100%', width: '320px', borderRadius: '10px', display: 'block' }} />
+                    </div>
+                  )}
+                  <div className="test-options">
+                    {q.options.map((opt, oi) => {
+                      let cls = 'test-option';
+                      if (submitted) {
+                        if (oi === q.correctIndex) cls += ' correct';
+                        else if (chosen === oi) cls += ' wrong';
+                      } else if (chosen === oi) {
+                        cls += ' selected';
+                      }
+
+                      const optionText = opt && typeof opt === 'object' ? opt.text : opt;
+                      const optionPinyin = opt && typeof opt === 'object' ? opt.pinyin : '';
+
+                      return (
+                        <button
+                          key={oi}
+                          className={cls}
+                          onClick={() => selectAnswer(qi, oi)}
+                          disabled={submitted}
+                          style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: optionPinyin ? '10px 16px' : '14px 16px', gap: '2px' }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: '8px' }}>
+                            <span className="option-letter" style={{ flexShrink: 0 }}>{String.fromCharCode(65 + oi)}</span>
+                            <span style={{ fontWeight: 600, textAlign: 'left' }}>{optionText}</span>
+                          </div>
+                          {optionPinyin && (
+                            <span className="option-pinyin" style={{ fontSize: '0.85rem', color: 'var(--mist)', marginLeft: '32px', textAlign: 'left' }}>
+                              {optionPinyin}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {!submitted && total > 0 && (
+            <button className="btn-primary" onClick={submit} style={{ marginTop: 24 }}>
+              Submit test
+            </button>
+          )}
+        </>
       )}
 
-      <div className="test-questions">
-        <h3 className="dialogue-heading">✏️ Answers</h3>
-        {test.questions.map((q, qi) => {
-          const chosen = answers[qi];
-          return (
-            <div className="test-question" key={qi}>
-              <p className="test-question-text" style={{ marginBottom: q.questionPinyin ? '6px' : '16px' }}>
-                <strong>Q{qi + 1}.</strong> {q.questionText}
-              </p>
-              {q.questionPinyin && (
-                <p className="test-question-pinyin" style={{ color: 'var(--mist)', fontSize: '0.9rem', marginTop: '-4px', marginBottom: '16px', paddingLeft: '32px' }}>
-                  {q.questionPinyin}
-                </p>
-              )}
-              {q.audioUrl && (
-                <div className="test-question-audio" style={{ paddingLeft: '32px', marginBottom: '16px' }}>
-                  <LockedAudio
-                    src={`${SERVER}${q.audioUrl}`}
-                    onPlay={() => setTimerStarted(true)}
-                    onPlayStateChange={(p) => setAudioPlaying(`q-${qi}`, p)}
-                  />
-                </div>
-              )}
-              {q.image && (
-                <div className="test-question-image" style={{ paddingLeft: '32px', marginBottom: '16px' }}>
-                  <img src={`${SERVER}${q.image}`} alt={`Question ${qi + 1}`} style={{ maxWidth: '100%', width: '320px', borderRadius: '10px', display: 'block' }} />
-                </div>
-              )}
-              <div className="test-options">
-                {q.options.map((opt, oi) => {
-                  let cls = 'test-option';
-                  if (submitted) {
-                    if (oi === q.correctIndex) cls += ' correct';
-                    else if (chosen === oi) cls += ' wrong';
-                  } else if (chosen === oi) {
-                    cls += ' selected';
-                  }
-
-                  const optionText = opt && typeof opt === 'object' ? opt.text : opt;
-                  const optionPinyin = opt && typeof opt === 'object' ? opt.pinyin : '';
-
-                  return (
-                    <button
-                      key={oi}
-                      className={cls}
-                      onClick={() => selectAnswer(qi, oi)}
-                      disabled={submitted}
-                      style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', padding: optionPinyin ? '10px 16px' : '14px 16px', gap: '2px' }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: '8px' }}>
-                        <span className="option-letter" style={{ flexShrink: 0 }}>{String.fromCharCode(65 + oi)}</span>
-                        <span style={{ fontWeight: 600, textAlign: 'left' }}>{optionText}</span>
-                      </div>
-                      {optionPinyin && (
-                        <span className="option-pinyin" style={{ fontSize: '0.85rem', color: 'var(--mist)', marginLeft: '32px', textAlign: 'left' }}>
-                          {optionPinyin}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {!submitted && total > 0 && (
-        <button className="btn-primary" onClick={submit} style={{ marginTop: 24 }}>
-          Submit test
-        </button>
-      )}
-
-      {!submitted && timerStarted && (
+      {!submitted && timerStarted && !test.pdfUrl && (
         <div
           style={{
             position: 'fixed',

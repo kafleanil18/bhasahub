@@ -1,37 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Login.css';
 
-const QUIZ_QUESTIONS = [
-  {
-    id: 1,
-    question: "What is the English translation for the Nepali word 'धन्यवाद' (dhan·ya·bād)?",
-    options: ["Hello", "Thank you", "Goodbye", "Friend"],
-    correctAnswer: "Thank you",
-    explanation: "Correct! 'धन्यवाद' translates directly to 'Thank you' in English."
-  },
-  {
-    id: 2,
-    question: "What is the Pinyin pronunciation for the Chinese word '朋友'?",
-    options: ["nǐ hǎo", "xiè xie", "zài jiàn", "péng you"],
-    correctAnswer: "péng you",
-    explanation: "Correct! '朋友' (péng you) means 'Friend' in Chinese."
-  },
-  {
-    id: 3,
-    question: "What does the Chinese word '家' (jiā) mean?",
-    options: ["Water", "Friend", "Home / Family", "To eat"],
-    correctAnswer: "Home / Family",
-    explanation: "Correct! '家' (jiā) represents family, home, or house."
-  },
-  {
-    id: 4,
-    question: "What is the English translation for the Nepali greeting 'नमस्ते' (na·mas·te)?",
-    options: ["Thank you", "Friend", "Hello", "Goodbye"],
-    correctAnswer: "Hello",
-    explanation: "Correct! 'नमस्ते' is the standard respectful greeting for 'Hello' in Nepali."
-  }
-];
-
 function Login({ onLogin, onBack, onSwitch }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -41,33 +10,6 @@ function Login({ onLogin, onBack, onSwitch }) {
   // UX states
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-
-  // Quiz state
-  const [quizIndex, setQuizIndex] = useState(0);
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [quizStatus, setQuizStatus] = useState(null); // 'correct' or 'incorrect'
-
-  useEffect(() => {
-    // Select a random quiz to start
-    setQuizIndex(Math.floor(Math.random() * QUIZ_QUESTIONS.length));
-  }, []);
-
-  const handleOptionClick = (option) => {
-    if (quizStatus === 'correct') return; // Locked once correct
-    setSelectedOption(option);
-    const quiz = QUIZ_QUESTIONS[quizIndex];
-    if (option === quiz.correctAnswer) {
-      setQuizStatus('correct');
-    } else {
-      setQuizStatus('incorrect');
-    }
-  };
-
-  const nextQuizQuestion = () => {
-    setSelectedOption(null);
-    setQuizStatus(null);
-    setQuizIndex((prev) => (prev + 1) % QUIZ_QUESTIONS.length);
-  };
 
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
@@ -94,8 +36,10 @@ function Login({ onLogin, onBack, onSwitch }) {
         
         if (rememberMe) {
           localStorage.setItem('remembered_email', email);
+          localStorage.setItem('remembered_password', password);
         } else {
           localStorage.removeItem('remembered_email');
+          localStorage.removeItem('remembered_password');
         }
 
         onLogin(data.user);
@@ -106,88 +50,33 @@ function Login({ onLogin, onBack, onSwitch }) {
     setLoading(false);
   };
 
-  // Pre-fill email if remembered
+  // Pre-fill email and password if remembered
   useEffect(() => {
     const savedEmail = localStorage.getItem('remembered_email');
+    const savedPassword = localStorage.getItem('remembered_password');
     if (savedEmail) {
       setEmail(savedEmail);
       setRememberMe(true);
     }
+    if (savedPassword) {
+      setPassword(savedPassword);
+    }
   }, []);
-
-  const currentQuiz = QUIZ_QUESTIONS[quizIndex] || QUIZ_QUESTIONS[0];
 
   return (
     <section className="login" style={{ padding: '40px 16px' }}>
       <div className="login-layout">
         
-        {/* Left Column: Interactive Welcome Panel */}
+        {/* Left Column: Portrait & Heading */}
         <div className="login-welcome-panel">
-          <div className="login-welcome-header">
-            <h2>Welcome <span>Back</span></h2>
-            <p className="login-welcome-subtitle">
-              Sign in to continue your path towards Chinese and Nepali language fluency.
-            </p>
-          </div>
-
-          {/* Interactive Quiz Widget */}
-          <div className="quiz-widget">
-            <span className="quiz-badge">Language Challenge</span>
-            <div className="quiz-question">{currentQuiz.question}</div>
+          <div className="login-welcome-content">
+            <h1 className="hsk-mock-title">Learn Chinese with <span style={{ color: 'var(--seal)' }}>Anil</span> now</h1>
+          
             
-            <div className="quiz-options">
-              {currentQuiz.options.map((option, idx) => {
-                let btnClass = '';
-                if (selectedOption === option) {
-                  btnClass = quizStatus === 'correct' ? 'selected-correct' : 'selected-incorrect';
-                }
-                return (
-                  <button
-                    key={idx}
-                    type="button"
-                    className={`quiz-option-btn ${btnClass}`}
-                    onClick={() => handleOptionClick(option)}
-                    disabled={quizStatus === 'correct' && option !== selectedOption}
-                  >
-                    {option}
-                  </button>
-                );
-              })}
-            </div>
-
-            {quizStatus && (
-              <div className={`quiz-feedback ${quizStatus}`}>
-                {quizStatus === 'correct' ? (
-                  <>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                    <span>{currentQuiz.explanation}</span>
-                  </>
-                ) : (
-                  <>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                    <span>Incorrect. Give it another try!</span>
-                  </>
-                )}
-              </div>
-            )}
-
-            {(quizStatus === 'correct' || quizStatus === 'incorrect') && (
-              <button type="button" className="quiz-reset-btn" onClick={nextQuizQuestion}>
-                {quizStatus === 'correct' ? 'Next Challenge →' : 'Skip / Try another'}
-              </button>
-            )}
           </div>
+          
 
-          {/* Cultural Proverb */}
-          <div className="login-quote">
-            <p>“To learn a language is to have one more window from which to look at the world.”</p>
-            <span>— Chinese Proverb</span>
-          </div>
+          
         </div>
 
         {/* Right Column: Sign In Form */}

@@ -41,8 +41,44 @@ app.use('/api/slides', slideRoutes);
 app.use('/api/pinyin-recordings', pinyinRecordingRoutes);
 
 
+const TeamMember = require('./models/TeamMember');
+
+const seedTeam = async () => {
+  try {
+    const count = await TeamMember.countDocuments();
+    if (count === 0) {
+      await TeamMember.insertMany([
+        {
+          key: 'founder',
+          name: 'Anil Kafle',
+          role: 'Founder & Teacher',
+          bio: 'Anil Kafle is the founder and head instructor of BhashaHub. He brings years of language teaching experience, helping hundreds of students achieve success in their Chinese exams.',
+        },
+        {
+          key: 'developer',
+          name: 'Name Here',
+          role: 'Developer',
+          bio: 'Our developer builds the interactive features, quizzes, and backend engines that power BhashaHub, making sure everything runs smoothly and securely.',
+        },
+        {
+          key: 'pm',
+          name: 'Name Here',
+          role: 'Project Manager',
+          bio: 'Our project manager keeps everything on track, coordinating content, design, and development so the learning experience stays seamless.',
+        }
+      ]);
+      console.log('🌱 Seeded default team members');
+    }
+  } catch (err) {
+    console.error('Error seeding team members:', err);
+  }
+};
+
 mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/language-lms')
-  .then(() => console.log('✅ MongoDB connected'))
+  .then(() => {
+    console.log('✅ MongoDB connected');
+    seedTeam();
+  })
   .catch(err => console.error('❌ MongoDB error:', err));
 
 app.use('/api/auth', authRoutes);

@@ -5044,3 +5044,69 @@ h1, h2, h3, h4, h5, h6,
   font-family: 'Playfair Display', Georgia, Cambria, 'Times New Roman', Times, serif !important;
 }
 
+/* ---------- Test Split PDF Layout ---------- */
+.test-pdf-layout {
+  max-width: 1400px !important;
+  width: 96% !important;
+}
+
+.test-pdf-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 240px);
+  min-height: 550px;
+  margin-top: 24px;
+}
+
+.pdf-iframe-container {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--rice);
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(42, 35, 32, 0.05);
+}
+
+.test-pdf-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.pdf-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 56px;
+  background: transparent;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+/* Responsive Overrides */
+@media (max-width: 768px) {
+  .test-pdf-layout {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 24px 16px 80px !important;
+  }
+
+  .test-pdf-container {
+    height: 75vh;
+    min-height: 480px;
+  }
+}
+
+/* Anti-copy and Anti-download print block */
+@media print {
+  body {
+    display: none !important;
+  }
+}
+
+
