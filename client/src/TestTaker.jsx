@@ -168,6 +168,15 @@ function TestTaker({ testId, onBack }) {
     setScore(correct);
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    const token = localStorage.getItem('token');
+    if (token) {
+      fetch(`${API}/attempts/test`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ testId: test._id, score: correct, total: test.questions.length }),
+      }).catch(() => {});
+    }
   };
 
   const retake = () => {

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import Quiz from './Quiz';
+import SrsReview from './SrsReview';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
@@ -17,6 +18,7 @@ function CoursePage({ course, onBack, user }) {
   const [flashIndex, setFlashIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [quizMode, setQuizMode] = useState(false);
+  const [srsMode, setSrsMode] = useState(false);
   const [catFilter, setCatFilter] = useState('all');
 
   // subscription access
@@ -216,6 +218,7 @@ function CoursePage({ course, onBack, user }) {
     setFlashIndex(0);
     setFlipped(false);
     setQuizMode(false);
+    setSrsMode(false);
     fetch(`${API}/lessons/${lesson._id}/vocabulary`)
       .then(res => res.json())
       .then(data => setWords(data))
@@ -320,6 +323,7 @@ function CoursePage({ course, onBack, user }) {
               onClick={() => {
                 setFlashMode(!flashMode);
                 setQuizMode(false);
+                setSrsMode(false);
                 setFlashIndex(0);
                 setFlipped(false);
               }}
@@ -331,15 +335,30 @@ function CoursePage({ course, onBack, user }) {
               onClick={() => {
                 setQuizMode(!quizMode);
                 setFlashMode(false);
+                setSrsMode(false);
               }}
             >
               {quizMode ? '← Back to word list' : '✏️ Take quiz'}
             </button>
+            {token && (
+              <button
+                className="nav-btn flash-toggle-srs"
+                onClick={() => {
+                  setSrsMode(!srsMode);
+                  setFlashMode(false);
+                  setQuizMode(false);
+                }}
+              >
+                {srsMode ? '← Back to word list' : '🔁 Review due cards'}
+              </button>
+            )}
           </div>
         )}
 
-        {quizMode && words.length >= 4 ? (
-          <Quiz words={words} language={course.language} onExit={() => setQuizMode(false)} />
+        {srsMode ? (
+          <SrsReview lessonId={activeLesson._id} language={course.language} token={token} onExit={() => setSrsMode(false)} />
+        ) : quizMode && words.length >= 4 ? (
+          <Quiz words={words} language={course.language} lessonId={activeLesson._id} token={token} onExit={() => setQuizMode(false)} />
         ) : flashMode && words.length > 0 ? (
           <div className="flashcard-area">
             {/* Progress indicators */}

@@ -15,6 +15,9 @@ const pinyinRecordingRoutes = require('./routes/pinyinRecordings');
 const pinyinTableRoutes = require('./routes/pinyinTable');
 const adminStatsRoutes = require('./routes/adminStats');
 const auditLogRoutes = require('./routes/auditLog');
+const srsRoutes = require('./routes/srs');
+const attemptRoutes = require('./routes/attempts');
+const analyticsRoutes = require('./routes/analytics');
 
 require('dotenv').config();
 
@@ -45,6 +48,9 @@ app.use('/api/pinyin-recordings', pinyinRecordingRoutes);
 app.use('/api/pinyin-table', pinyinTableRoutes);
 app.use('/api/admin-stats', adminStatsRoutes);
 app.use('/api/audit-log', auditLogRoutes);
+app.use('/api/srs', srsRoutes);
+app.use('/api/attempts', attemptRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 
 const TeamMember = require('./models/TeamMember');

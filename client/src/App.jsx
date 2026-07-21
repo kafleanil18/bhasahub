@@ -5,6 +5,7 @@ import AdminPanel from './AdminPanel';
 import CoursePage from './CoursePage';
 import LessonManager from './LessonManager';
 import Dashboard from './Dashboard';
+import ProgressAnalytics from './ProgressAnalytics';
 import LanguageChoice from './LanguageChoice';
 import NepaliPage from './NepaliPage';
 import PinyinPage from './PinyinPage';
@@ -178,6 +179,7 @@ function App() {
   const [activeCourse, setActiveCourse] = useState(null);
   const [manageCourse, setManageCourse] = useState(null);
   const [showDashboard, setShowDashboard] = useState(false);
+  const [showAnalytics, setShowAnalytics] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [levelFilter, setLevelFilter] = useState('all');
@@ -375,6 +377,7 @@ function App() {
     setShowAuditLog(false);
     setManageCourse(null);
     setShowDashboard(false);
+    setShowAnalytics(false);
     setShowInbox(false);
     setShowTests(false);
     setShowTestManager(false);
@@ -403,6 +406,7 @@ function App() {
     setActiveCourse(null);
     setManageCourse(null);
     setShowDashboard(false);
+    setShowAnalytics(false);
     setShowInbox(false);
     setShowTests(false);
     setShowTestManager(false);
@@ -434,6 +438,7 @@ function App() {
     setActiveCourse(null);
     setManageCourse(null);
     setShowDashboard(false);
+    setShowAnalytics(false);
     setShowInbox(false);
     setShowTests(false);
     setShowTestManager(false);
@@ -729,6 +734,15 @@ function App() {
                 </button>
               )}
 
+              {user && user.role === 'student' && (
+                <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowAnalytics(true); }}>
+                  <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                  </svg>
+                  My Progress
+                </button>
+              )}
+
               {isSuperAdmin && (
                 <button
                   className="admin-nav-toggle"
@@ -866,6 +880,8 @@ function App() {
           onOpenCourse={(c) => { setShowDashboard(false); setActiveCourse(c); }}
           onBrowse={goHome}
         />
+      ) : user && showAnalytics ? (
+        <ProgressAnalytics user={user} onBack={goHome} />
       ) : activeCourse ? (
         <CoursePage course={activeCourse} onBack={() => setActiveCourse(null)} user={user} />
       ) : (

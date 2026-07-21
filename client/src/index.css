@@ -5387,3 +5387,173 @@ h1, h2, h3, h4, h5, h6,
 }
 
 
+
+/* ---------- Spaced-repetition review ---------- */
+.nav-btn.flash-toggle-srs {
+  background: var(--gold);
+  box-shadow: 0 4px 14px rgba(201, 154, 60, 0.32);
+}
+
+.srs-review-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 0 40px;
+}
+
+.srs-empty {
+  font-size: 16px;
+  color: var(--ink);
+  text-align: center;
+}
+
+.srs-grade-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.srs-grade-btn {
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.srs-grade-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+}
+
+.srs-grade-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.srs-grade-again { background: var(--seal); }
+.srs-grade-hard { background: var(--gold); }
+.srs-grade-good { background: var(--jade); }
+.srs-grade-easy { background: #3a8f78; }
+
+/* ---------- Learner progress analytics ---------- */
+.analytics-section {
+  margin: 32px 0;
+}
+
+.analytics-heading {
+  font-size: 18px;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+
+.analytics-trend-wrap {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.analytics-trend-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--mist);
+  height: 120px;
+  padding-bottom: 2px;
+}
+
+.analytics-trend-chart {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 120px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0;
+}
+
+.analytics-trend-bar {
+  width: 14px;
+  min-width: 14px;
+  border-radius: 4px 4px 0 0;
+  background: var(--jade);
+}
+
+.analytics-bar-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.analytics-bar-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 220px) 1fr 48px;
+  align-items: center;
+  gap: 12px;
+}
+
+.analytics-bar-label {
+  font-size: 14px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.analytics-bar-value {
+  font-size: 13px;
+  color: var(--mist);
+  text-align: right;
+}
+
+.analytics-weak-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.analytics-weak-item {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+.analytics-weak-word {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.analytics-weak-pron {
+  font-size: 13px;
+  color: var(--mist);
+}
+
+.analytics-weak-meaning {
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.analytics-weak-misses {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--seal);
+  font-weight: 600;
+}
+
+

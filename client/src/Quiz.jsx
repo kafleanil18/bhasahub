@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
+const API = window.API_BASE_URL + '/api';
+
 function shuffle(array) {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -46,12 +48,13 @@ const playIncorrectTone = () => {
   playTone(180, 0.35, 'sawtooth'); // low buzz
 };
 
-function Quiz({ words, language, onExit }) {
+function Quiz({ words, language, lessonId, token, onExit }) {
   const [questions, setQuestions] = useState([]);
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState(null);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
+  const [missedIds, setMissedIds] = useState([]);
 
   useEffect(() => {
     setQuestions(buildQuestions(words));
@@ -66,6 +69,7 @@ function Quiz({ words, language, onExit }) {
       setScore((s) => s + 1);
       playCorrectTone();
     } else {
+      setMissedIds((ids) => [...ids, q.word._id]);
       playIncorrectTone();
     }
   }, [selected, q]);
@@ -79,7 +83,18 @@ function Quiz({ words, language, onExit }) {
     }
   }, [current, questions.length]);
 
+  useEffect(() => {
+    if (!finished || !lessonId || !token) return;
+    fetch(`${API}/attempts/quiz`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ lessonId, score, total: questions.length, missedVocabularyIds: missedIds }),
+    }).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finished]);
+
   const restart = () => {
+    setMissedIds([]);
     setQuestions(buildQuestions(words));
     setCurrent(0);
     setSelected(null);
