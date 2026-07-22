@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Quiz from './Quiz';
 import SrsReview from './SrsReview';
 
@@ -17,6 +17,8 @@ function CoursePage({ course, onBack, user }) {
   const [flashMode, setFlashMode] = useState(false);
   const [flashIndex, setFlashIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const [flashMuted, setFlashMuted] = useState(() => localStorage.getItem('flashMuted') === 'true');
+  const studyAreaRef = useRef(null);
   const [quizMode, setQuizMode] = useState(false);
   const [srsMode, setSrsMode] = useState(false);
   const [catFilter, setCatFilter] = useState('all');
@@ -135,6 +137,23 @@ function CoursePage({ course, onBack, user }) {
       .catch(() => {});
   }, [course._id, token]);
 
+  const playCurrentWordAudio = useCallback((indexToPlay = flashIndex) => {
+    const currentWord = words[indexToPlay];
+    if (!currentWord) return;
+    if (currentWord.audioUrl) {
+      new Audio(`${SERVER}${currentWord.audioUrl}`).play().catch(() => {});
+    } else if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(currentWord.word);
+      if (course?.language === 'chinese') {
+        utterance.lang = 'zh-CN';
+      } else if (course?.language === 'nepali') {
+        utterance.lang = 'ne-NP';
+      }
+      window.speechSynthesis.speak(utterance);
+    }
+  }, [words, flashIndex, course?.language]);
+
   useEffect(() => {
     if (!flashMode || words.length === 0) return;
     const handleKeyDown = (e) => {
@@ -149,11 +168,37 @@ function CoursePage({ course, onBack, user }) {
         e.preventDefault();
         setFlashIndex((i) => (i + 1) % words.length);
         setFlipped(false);
+      } else if (e.code === 'KeyR') {
+        e.preventDefault();
+        playCurrentWordAudio();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [flashMode, words.length]);
+  }, [flashMode, words.length, playCurrentWordAudio]);
+
+  useEffect(() => {
+    if (!flashMode || words.length === 0 || flashMuted) return;
+    playCurrentWordAudio(flashIndex);
+  }, [flashMode, flashIndex, words, flashMuted, playCurrentWordAudio]);
+
+  useEffect(() => {
+    if (!flashMode && !quizMode) return;
+    // Quiz builds its questions in its own effect, so it renders empty on the
+    // first pass — wait a tick so the section has real content before scrolling.
+    const id = setTimeout(() => {
+      studyAreaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+    return () => clearTimeout(id);
+  }, [flashMode, quizMode]);
+
+  const toggleFlashMuted = () => {
+    setFlashMuted((prev) => {
+      const next = !prev;
+      localStorage.setItem('flashMuted', String(next));
+      return next;
+    });
+  };
 
   const toggleEnroll = async () => {
     if (!token) return;
@@ -319,7 +364,7 @@ function CoursePage({ course, onBack, user }) {
         {words.length >= 4 && (
           <div className="flash-toggle">
             <button
-              className="nav-btn"
+              className="nav-btn flash-toggle-btn flash-toggle-flashcards"
               onClick={() => {
                 setFlashMode(!flashMode);
                 setQuizMode(false);
@@ -331,7 +376,7 @@ function CoursePage({ course, onBack, user }) {
               {flashMode ? '← Back to word list' : '🃏 Study flashcards'}
             </button>
             <button
-              className="nav-btn"
+              className="nav-btn flash-toggle-btn flash-toggle-quiz"
               onClick={() => {
                 setQuizMode(!quizMode);
                 setFlashMode(false);
@@ -342,7 +387,7 @@ function CoursePage({ course, onBack, user }) {
             </button>
             {token && (
               <button
-                className="nav-btn flash-toggle-srs"
+                className="nav-btn flash-toggle-btn flash-toggle-srs"
                 onClick={() => {
                   setSrsMode(!srsMode);
                   setFlashMode(false);
@@ -355,17 +400,27 @@ function CoursePage({ course, onBack, user }) {
           </div>
         )}
 
+        <div ref={studyAreaRef}>
         {srsMode ? (
           <SrsReview lessonId={activeLesson._id} language={course.language} token={token} onExit={() => setSrsMode(false)} />
         ) : quizMode && words.length >= 4 ? (
-          <Quiz words={words} language={course.language} lessonId={activeLesson._id} token={token} onExit={() => setQuizMode(false)} />
+          <Quiz words={words} language={course.language} lessonId={activeLesson._id} token={token} onExit={() => setQuizMode(false)} muted={flashMuted} onToggleMute={toggleFlashMuted} />
         ) : flashMode && words.length > 0 ? (
           <div className="flashcard-area">
             {/* Progress indicators */}
             <div className="flash-progress-bar">
               <div className="flash-progress-fill" style={{ width: `${((flashIndex + 1) / words.length) * 100}%` }}></div>
             </div>
-            
+
+            <button
+              type="button"
+              className="nav-btn flash-mute-btn"
+              onClick={toggleFlashMuted}
+              title={flashMuted ? 'Unmute audio' : 'Mute audio'}
+            >
+              {flashMuted ? '🔇 Unmute' : '🔊 Mute'}
+            </button>
+
             <div
               className={`flashcard ${flipped ? 'flipped' : ''}`}
               onClick={() => setFlipped(!flipped)}
@@ -374,11 +429,33 @@ function CoursePage({ course, onBack, user }) {
                 <span className={`flash-word ${course.language === 'chinese' ? 'zh' : 'ne'}`}>
                   {words[flashIndex].word}
                 </span>
+                <button
+                  type="button"
+                  className="flash-repeat-icon-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    playCurrentWordAudio();
+                  }}
+                  title="Repeat word audio (Key: R)"
+                >
+                  🔊 Listen again
+                </button>
                 <span className="flash-hint">tap or press Space to flip</span>
               </div>
               <div className="flash-back">
                 <span className="flash-pron">{words[flashIndex].pronunciation}</span>
                 <span className="flash-meaning">{words[flashIndex].meaning}</span>
+                <button
+                  type="button"
+                  className="flash-repeat-icon-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    playCurrentWordAudio();
+                  }}
+                  title="Repeat word audio (Key: R)"
+                >
+                  🔊 Listen again
+                </button>
               </div>
             </div>
 
@@ -392,7 +469,17 @@ function CoursePage({ course, onBack, user }) {
               >
                 ← Prev
               </button>
+
+              <button
+                className="nav-btn flash-repeat-word-btn"
+                onClick={() => playCurrentWordAudio()}
+                title="Repeat audio pronunciation for this word (Key: R)"
+              >
+                🔊 Repeat Word
+              </button>
+
               <span className="flash-count">{flashIndex + 1} / {words.length}</span>
+
               <button
                 className="nav-btn"
                 onClick={() => {
@@ -405,7 +492,7 @@ function CoursePage({ course, onBack, user }) {
             </div>
 
             <p className="keyboard-shortcut-hint">
-              💡 Keyboard controls: Use <strong>Left / Right Arrows</strong> to navigate, <strong>Spacebar</strong> to flip.
+              💡 Keyboard controls: Use <strong>Left / Right Arrows</strong> to navigate, <strong>Spacebar</strong> to flip, <strong>R</strong> to repeat audio.
             </p>
           </div>
         ) : (
@@ -439,6 +526,7 @@ function CoursePage({ course, onBack, user }) {
           ))}
         </div>
         )}
+        </div>
       </section>
     );
   }

@@ -15,9 +15,11 @@ const pinyinRecordingRoutes = require('./routes/pinyinRecordings');
 const pinyinTableRoutes = require('./routes/pinyinTable');
 const adminStatsRoutes = require('./routes/adminStats');
 const auditLogRoutes = require('./routes/auditLog');
+const settingsRoutes = require('./routes/settings');
 const srsRoutes = require('./routes/srs');
 const attemptRoutes = require('./routes/attempts');
 const analyticsRoutes = require('./routes/analytics');
+const hanziClipRoutes = require('./routes/hanziClips');
 
 require('dotenv').config();
 
@@ -48,9 +50,11 @@ app.use('/api/pinyin-recordings', pinyinRecordingRoutes);
 app.use('/api/pinyin-table', pinyinTableRoutes);
 app.use('/api/admin-stats', adminStatsRoutes);
 app.use('/api/audit-log', auditLogRoutes);
+app.use('/api/settings', settingsRoutes);
 app.use('/api/srs', srsRoutes);
 app.use('/api/attempts', attemptRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/hanzi-clips', hanziClipRoutes);
 
 
 const TeamMember = require('./models/TeamMember');

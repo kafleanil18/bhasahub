@@ -6,6 +6,7 @@ const blogSchema = new mongoose.Schema(
     body: { type: String, default: '' },
     image: { type: String, default: '' },
     author: { type: String, default: '' },
+    category: { type: String, default: 'Language Tips' },
     published: { type: Boolean, default: true },
   },
   { timestamps: true }

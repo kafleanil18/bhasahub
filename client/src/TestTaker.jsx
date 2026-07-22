@@ -9,20 +9,9 @@ function formatElapsed(totalSeconds) {
   return `${m}:${s}`;
 }
 
-// Audio player that, once started, cannot be paused or stopped by the student.
-function LockedAudio({ src, style, onPlay, onPlayStateChange }) {
+// Audio player with native play/pause and a seek bar for rewinding.
+function AudioPlayer({ src, style, onPlay, onPlayStateChange }) {
   const audioRef = useRef(null);
-  const [playing, setPlaying] = useState(false);
-  const [ended, setEnded] = useState(false);
-
-  const play = () => {
-    if (!audioRef.current) return;
-    audioRef.current.play();
-    setPlaying(true);
-    setEnded(false);
-    if (onPlay) onPlay();
-    if (onPlayStateChange) onPlayStateChange(true);
-  };
 
   // If the component unmounts mid-playback (e.g. user confirmed leaving the exam), clear the guard.
   useEffect(() => () => { if (onPlayStateChange) onPlayStateChange(false); }, []);
@@ -32,28 +21,15 @@ function LockedAudio({ src, style, onPlay, onPlayStateChange }) {
       <audio
         ref={audioRef}
         src={src}
-        onEnded={() => { setPlaying(false); setEnded(true); if (onPlayStateChange) onPlayStateChange(false); }}
-        onPause={() => {
-          // Block manual pause (e.g. via keyboard media keys) by resuming immediately.
-          const el = audioRef.current;
-          if (playing && el && !el.ended) el.play();
+        controls
+        style={{ width: '100%', maxWidth: '420px' }}
+        onPlay={() => {
+          if (onPlay) onPlay();
+          if (onPlayStateChange) onPlayStateChange(true);
         }}
+        onPause={() => { if (onPlayStateChange) onPlayStateChange(false); }}
+        onEnded={() => { if (onPlayStateChange) onPlayStateChange(false); }}
       />
-      {!playing && (
-        <button
-          type="button"
-          onClick={play}
-          className="btn-primary"
-          style={{ padding: '8px 16px', fontSize: '0.9rem' }}
-        >
-          {ended ? '🔁 Play again' : '▶ Play audio'}
-        </button>
-      )}
-      {playing && (
-        <span style={{ color: 'var(--jade)', fontWeight: 600, fontSize: '0.9rem' }}>
-          🔊 Playing… (cannot be paused)
-        </span>
-      )}
     </div>
   );
 }
@@ -225,7 +201,7 @@ function TestTaker({ testId, onBack }) {
       {test.testType === 'listening' && test.audioUrl && (
         <div className="test-media">
           <h3 className="dialogue-heading">🎧 Listening Audio</h3>
-          <LockedAudio
+          <AudioPlayer
             src={`${SERVER}${test.audioUrl}`}
             onPlay={() => setTimerStarted(true)}
             onPlayStateChange={(p) => setAudioPlaying('main', p)}
@@ -263,7 +239,7 @@ function TestTaker({ testId, onBack }) {
                   )}
                   {q.audioUrl && (
                     <div className="test-question-audio" style={{ paddingLeft: '32px', marginBottom: '16px' }}>
-                      <LockedAudio
+                      <AudioPlayer
                         src={`${SERVER}${q.audioUrl}`}
                         onPlay={() => setTimerStarted(true)}
                         onPlayStateChange={(p) => setAudioPlaying(`q-${qi}`, p)}

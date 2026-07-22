@@ -35,6 +35,22 @@ function SrsReview({ lessonId, language, token, onExit }) {
 
   const card = cards && cards[index];
 
+  const playCurrentCardAudio = useCallback(() => {
+    if (!card) return;
+    if (card.audioUrl) {
+      new Audio(`${window.API_BASE_URL}${card.audioUrl}`).play().catch(() => {});
+    } else if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(card.word);
+      if (language === 'chinese') {
+        utterance.lang = 'zh-CN';
+      } else if (language === 'nepali') {
+        utterance.lang = 'ne-NP';
+      }
+      window.speechSynthesis.speak(utterance);
+    }
+  }, [card, language]);
+
   const grade = (quality) => {
     if (!card || submitting) return;
     setSubmitting(true);
@@ -55,6 +71,11 @@ function SrsReview({ lessonId, language, token, onExit }) {
   useEffect(() => {
     if (!card || submitting) return;
     const handleKeyDown = (e) => {
+      if (e.key === 'r' || e.key === 'R') {
+        e.preventDefault();
+        playCurrentCardAudio();
+        return;
+      }
       if (!flipped) {
         if (e.code === 'Space' || e.code === 'Enter') {
           e.preventDefault();
@@ -70,7 +91,7 @@ function SrsReview({ lessonId, language, token, onExit }) {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [card, flipped, submitting]);
+  }, [card, flipped, submitting, playCurrentCardAudio]);
 
   if (cards === null) {
     return <div className="srs-review-area"><p>Loading review queue…</p></div>;
@@ -102,7 +123,16 @@ function SrsReview({ lessonId, language, token, onExit }) {
       <div className="flash-progress-bar">
         <div className="flash-progress-fill" style={{ width: `${((index + 1) / cards.length) * 100}%` }}></div>
       </div>
-      <span className="flash-count">{index + 1} / {cards.length}{card.isNew ? ' · new' : ''}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <span className="flash-count">{index + 1} / {cards.length}{card.isNew ? ' · new' : ''}</span>
+        <button
+          className="nav-btn flash-repeat-word-btn"
+          onClick={() => playCurrentCardAudio()}
+          title="Repeat audio pronunciation for this word (Key: R)"
+        >
+          🔊 Repeat Word
+        </button>
+      </div>
 
       <div
         className={`flashcard ${flipped ? 'flipped' : ''}`}
@@ -110,11 +140,33 @@ function SrsReview({ lessonId, language, token, onExit }) {
       >
         <div className="flash-front">
           <span className={`flash-word ${language === 'chinese' ? 'zh' : 'ne'}`}>{card.word}</span>
+          <button
+            type="button"
+            className="flash-repeat-icon-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              playCurrentCardAudio();
+            }}
+            title="Repeat word audio (Key: R)"
+          >
+            🔊 Listen again
+          </button>
           <span className="flash-hint">tap or press Space to flip</span>
         </div>
         <div className="flash-back">
           <span className="flash-pron">{card.pronunciation}</span>
           <span className="flash-meaning">{card.meaning}</span>
+          <button
+            type="button"
+            className="flash-repeat-icon-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              playCurrentCardAudio();
+            }}
+            title="Repeat word audio (Key: R)"
+          >
+            🔊 Listen again
+          </button>
         </div>
       </div>
 
@@ -133,7 +185,7 @@ function SrsReview({ lessonId, language, token, onExit }) {
         </div>
       ) : (
         <p className="keyboard-shortcut-hint">
-          💡 Press <strong>Space</strong> to flip, then <strong>1-4</strong> to grade (Again / Hard / Good / Easy).
+          💡 Press <strong>Space</strong> to flip, <strong>R</strong> to repeat audio, then <strong>1-4</strong> to grade (Again / Hard / Good / Easy).
         </p>
       )}
     </div>

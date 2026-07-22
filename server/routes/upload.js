@@ -23,12 +23,12 @@ const storage = multer.diskStorage({
   },
 });
 
-// Allow audio, image, and PDF files, max 25 MB
+// Allow audio, image, PDF, and video files, max 200 MB (videos need more room)
 const upload = multer({
   storage,
-  limits: { fileSize: 25 * 1024 * 1024 },
+  limits: { fileSize: 200 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const allowed = ['.mp3', '.m4a', '.wav', '.ogg', '.webm', '.jpg', '.jpeg', '.png', '.webp', '.pdf'];
+    const allowed = ['.mp3', '.m4a', '.wav', '.ogg', '.webm', '.jpg', '.jpeg', '.png', '.webp', '.pdf', '.mp4', '.mov'];
     const ext = path.extname(file.originalname).toLowerCase();
     if (allowed.includes(ext)) {
       cb(null, true);

@@ -5,6 +5,14 @@ import 'react-quill-new/dist/quill.snow.css';
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
 
+const resolveImageUrl = (img) => {
+  if (!img) return '';
+  if (img.startsWith('http://') || img.startsWith('https://')) return img;
+  if (img.startsWith('/images/')) return img;
+  const base = window.API_BASE_URL || '';
+  return img.startsWith('/') ? `${base}${img}` : `${base}/${img}`;
+};
+
 const SIZE_MAP = { small: 800, medium: 1400, large: 2000 };
 
 const resizeImage = (file, maxWidth) =>
@@ -50,6 +58,8 @@ function BlogManager({ user, onBack }) {
   const [body, setBody] = useState('');
   const [image, setImage] = useState('');
   const [author, setAuthor] = useState(user ? user.name : '');
+  const [category, setCategory] = useState('Language Tips');
+  const [published, setPublished] = useState(true);
   const [size, setSize] = useState('medium');
   const [uploading, setUploading] = useState(false);
   const [activeTab, setActiveTab] = useState('write'); // 'write' or 'preview'
@@ -75,6 +85,8 @@ function BlogManager({ user, onBack }) {
     setBody('');
     setImage('');
     setAuthor(user ? user.name : '');
+    setCategory('Language Tips');
+    setPublished(true);
     setActiveTab('write');
   };
 
@@ -84,6 +96,8 @@ function BlogManager({ user, onBack }) {
     setBody(b.body || '');
     setImage(b.image || '');
     setAuthor(b.author || '');
+    setCategory(b.category || 'Language Tips');
+    setPublished(b.published !== false);
     setActiveTab('write');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -155,13 +169,26 @@ function BlogManager({ user, onBack }) {
   const save = async () => {
     setError('');
     if (!title.trim()) return setError('Title is required');
-    const bodyData = { title, body, image, author };
+    const bodyData = { title, body, image, author, category, published };
     const res = await fetch(
       editingId ? `${API}/blogs/${editingId}` : `${API}/blogs`,
       { method: editingId ? 'PUT' : 'POST', headers: jsonHeaders, body: JSON.stringify(bodyData) }
     );
     if (res.ok) { reset(); load(); }
     else { const d = await res.json(); setError(d.error || 'Could not save'); }
+  };
+
+  const togglePublish = async (b) => {
+    try {
+      const res = await fetch(`${API}/blogs/${b._id}`, {
+        method: 'PUT',
+        headers: jsonHeaders,
+        body: JSON.stringify({ published: !b.published })
+      });
+      if (res.ok) load();
+    } catch {
+      setError('Could not update status');
+    }
   };
 
   const remove = async (id) => {
@@ -202,6 +229,18 @@ function BlogManager({ user, onBack }) {
     if (!author) return 'E';
     return author[0].toUpperCase();
   }, [author]);
+
+  if (user && user.role !== 'superadmin') {
+    return (
+      <section style={{ padding: '80px 20px', textAlign: 'center', maxWidth: 520, margin: '0 auto' }}>
+        <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 28, marginBottom: 12 }}>Access Denied</h2>
+        <p style={{ color: 'var(--mist)', fontSize: 15, marginBottom: 24 }}>
+          Blog management (creating, editing, publishing, and deleting articles) is restricted exclusively to Super Administrators.
+        </p>
+        <button className="bm-back-btn" onClick={onBack}>← Return to Dashboard</button>
+      </section>
+    );
+  }
 
   return (
     <section className="bm-dashboard">
@@ -919,6 +958,37 @@ function BlogManager({ user, onBack }) {
                 />
               </div>
 
+              <div className="bm-form-group" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label className="bm-label">Category</label>
+                  <select 
+                    className="bm-input" 
+                    value={category} 
+                    onChange={(e) => setCategory(e.target.value)}
+                  >
+                    <option value="Pronunciation">Pronunciation</option>
+                    <option value="Characters">Characters</option>
+                    <option value="Nepali">Nepali</option>
+                    <option value="HSK Prep">HSK Prep</option>
+                    <option value="Grammar">Grammar</option>
+                    <option value="Culture">Culture</option>
+                    <option value="Language Tips">Language Tips</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="bm-label">Visibility Status</label>
+                  <select 
+                    className="bm-input" 
+                    value={published ? 'published' : 'draft'} 
+                    onChange={(e) => setPublished(e.target.value === 'published')}
+                  >
+                    <option value="published">🟢 Published (Live on Blog)</option>
+                    <option value="draft">🟡 Draft (Hidden from Public)</option>
+                  </select>
+                </div>
+              </div>
+
               <div className="bm-form-group">
                 <label className="bm-label">Content Body</label>
                 <div className="bm-quill-container">
@@ -938,7 +1008,7 @@ function BlogManager({ user, onBack }) {
                 <div className="bm-image-dropzone">
                   {image ? (
                     <div className="bm-preview-wrapper">
-                      <img src={`${SERVER}${image}`} alt="Featured preview" className="bm-preview-img" />
+                      <img src={resolveImageUrl(image)} alt="Featured preview" className="bm-preview-img" />
                       <button type="button" className="bm-remove-img-btn" onClick={() => setImage('')}>Remove Cover</button>
                     </div>
                   ) : (
@@ -1001,7 +1071,7 @@ function BlogManager({ user, onBack }) {
 
                   {image && (
                     <div className="bm-sim-cover-wrapper">
-                      <img src={`${SERVER}${image}`} alt="Cover" className="bm-sim-cover-img" />
+                      <img src={resolveImageUrl(image)} alt="Cover" className="bm-sim-cover-img" />
                     </div>
                   )}
 
@@ -1024,16 +1094,25 @@ function BlogManager({ user, onBack }) {
             {blogs.map((b) => (
               <div className="bm-post-card" key={b._id}>
                 {b.image ? (
-                  <img src={`${SERVER}${b.image}`} alt="" className="bm-post-thumbnail" />
+                  <img src={resolveImageUrl(b.image)} alt="" className="bm-post-thumbnail" />
                 ) : (
                   <div className="bm-post-thumbnail">📝</div>
                 )}
                 <div className="bm-post-info">
                   <span className="bm-post-title" title={b.title}>{b.title}</span>
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center', margin: '4px 0' }}>
+                    <span style={{ fontSize: '11px', background: 'var(--paper)', padding: '2px 6px', borderRadius: '4px', border: '1px solid var(--line)' }}>{b.category || 'General'}</span>
+                    <span style={{ fontSize: '11px', color: b.published !== false ? '#2e6b57' : '#d97706', fontWeight: 600 }}>
+                      {b.published !== false ? '🟢 Published' : '🟡 Draft'}
+                    </span>
+                  </div>
                   <span className="bm-post-meta">{b.author || 'Anonymous'} · {new Date(b.createdAt).toLocaleDateString()}</span>
                 </div>
-                <div className="bm-list-actions">
+                <div className="bm-list-actions" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   <button className="bm-btn-sm-edit" onClick={() => startEdit(b)}>Edit</button>
+                  <button className="bm-btn-sm-edit" style={{ background: b.published !== false ? 'rgba(217, 119, 6, 0.1)' : 'rgba(46, 107, 87, 0.1)', color: b.published !== false ? '#d97706' : '#2e6b57' }} onClick={() => togglePublish(b)}>
+                    {b.published !== false ? 'Unpublish' : 'Publish'}
+                  </button>
                   <button className="bm-btn-sm-del" onClick={() => remove(b._id)}>Delete</button>
                 </div>
               </div>

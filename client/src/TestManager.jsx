@@ -514,6 +514,7 @@ function TestManager({ onBack, onPreviewTest }) {
           border-radius: 16px;
           box-shadow: 0 4px 20px rgba(42, 35, 32, 0.03);
           border: 1px solid var(--line, #e6dcc6);
+          min-width: 0;
         }
 
         .tm-panel h2 {
@@ -847,10 +848,29 @@ function TestManager({ onBack, onPreviewTest }) {
           border-radius: 12px;
           padding: 1.2rem;
           display: flex;
+          flex-wrap: wrap;
           gap: 1.25rem;
           background: #ffffff;
           align-items: center;
           transition: all 0.2s ease;
+        }
+
+        .tm-test-actions {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: 0.6rem;
+          flex-shrink: 0;
+        }
+
+        @media (max-width: 640px) {
+          .tm-test-card { gap: 0.75rem; }
+          .tm-test-info { flex: 1 1 180px; }
+          .tm-test-actions { flex-basis: 100%; padding-left: calc(48px + 1.25rem); }
+        }
+
+        @media (max-width: 460px) {
+          .tm-test-actions { padding-left: 0; }
         }
         .tm-test-card:hover {
           transform: translateY(-2px);
@@ -1324,17 +1344,19 @@ function TestManager({ onBack, onPreviewTest }) {
                   <span className="tm-test-meta">{t.level || 'General'} · {t.testType === 'reading' ? '📖 Reading' : '🎧 Listening'} · {t.questions?.length || 0} questions</span>
                 </div>
 
-                <button 
-                  className={`tm-status-pill ${t.published ? 'published' : 'draft'}`} 
-                  onClick={() => togglePublish(t)}
-                  title="Click to toggle status"
-                >
-                  {t.published ? 'Live' : 'Draft'}
-                </button>
-                
-                <button className="tm-btn-action view" onClick={() => onPreviewTest && onPreviewTest(t._id)}>View</button>
-                <button className="tm-btn-action" onClick={() => startEdit(t)}>Edit</button>
-                <button className="tm-btn-action delete" onClick={() => remove(t._id)}>Delete</button>
+                <div className="tm-test-actions">
+                  <button
+                    className={`tm-status-pill ${t.published ? 'published' : 'draft'}`}
+                    onClick={() => togglePublish(t)}
+                    title="Click to toggle status"
+                  >
+                    {t.published ? 'Live' : 'Draft'}
+                  </button>
+
+                  <button className="tm-btn-action view" onClick={() => onPreviewTest && onPreviewTest(t._id)}>View</button>
+                  <button className="tm-btn-action" onClick={() => startEdit(t)}>Edit</button>
+                  <button className="tm-btn-action delete" onClick={() => remove(t._id)}>Delete</button>
+                </div>
               </div>
             ))}
           </div>

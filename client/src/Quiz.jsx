@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
+const SERVER = window.API_BASE_URL;
 const API = window.API_BASE_URL + '/api';
 
 function shuffle(array) {
@@ -48,7 +49,7 @@ const playIncorrectTone = () => {
   playTone(180, 0.35, 'sawtooth'); // low buzz
 };
 
-function Quiz({ words, language, lessonId, token, onExit }) {
+function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute }) {
   const [questions, setQuestions] = useState([]);
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState(null);
@@ -61,6 +62,14 @@ function Quiz({ words, language, lessonId, token, onExit }) {
   }, [words]);
 
   const q = questions[current];
+
+  useEffect(() => {
+    if (muted) return;
+    const audioUrl = q?.word?.audioUrl;
+    if (audioUrl) {
+      new Audio(`${SERVER}${audioUrl}`).play().catch(() => {});
+    }
+  }, [q, muted]);
 
   const handleAnswer = useCallback((choice) => {
     if (selected) return; // already answered
@@ -258,6 +267,17 @@ function Quiz({ words, language, lessonId, token, onExit }) {
       <div className="quiz-progress">
         Question {current + 1} of {questions.length} · Score: {score}
       </div>
+
+      {onToggleMute && (
+        <button
+          type="button"
+          className="nav-btn flash-mute-btn"
+          onClick={onToggleMute}
+          title={muted ? 'Unmute audio' : 'Mute audio'}
+        >
+          {muted ? '🔇 Unmute' : '🔊 Mute'}
+        </button>
+      )}
 
       {/* 2. Question word details */}
       <div className="quiz-question">

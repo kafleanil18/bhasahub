@@ -160,74 +160,62 @@ function AdminPanel({ onBack, onManageLessons }) {
       <style>{`
         /* Overriding standard styles with premium designs */
         .admin.container {
-          padding-top: 40px;
+          padding-top: 32px;
           padding-bottom: 80px;
         }
 
         .admin-title-row {
-          margin-bottom: 2rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          flex-wrap: wrap;
+          gap: 16px;
+          margin-bottom: 28px;
           border-bottom: 1px solid var(--line);
-          padding-bottom: 1.5rem;
+          padding-bottom: 20px;
         }
 
-        .admin-title-row h1 {
-          font-family: 'Fraunces', serif;
-          font-size: 2.4rem;
-          font-weight: 800;
-          color: var(--ink);
-          margin: 0;
-        }
-
-        .admin-title-row p {
-          color: var(--mist);
-          font-size: 0.95rem;
-          margin-top: 0.25rem;
-        }
-
-        /* Metrics cards */
         .admin-metrics {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          gap: 1.25rem;
-          margin-bottom: 2.5rem;
+          gap: 20px;
+          margin-bottom: 32px;
         }
 
         .metric-card {
           background: var(--card);
           border: 1px solid var(--line);
-          border-radius: 12px;
-          padding: 1.25rem;
+          border-radius: 16px;
+          padding: 20px;
           display: flex;
           align-items: center;
-          gap: 1rem;
-          box-shadow: 0 4px 12px rgba(42, 35, 32, 0.02);
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          gap: 16px;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 2px 8px rgba(42, 35, 32, 0.02);
         }
-        
         .metric-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 16px rgba(42, 35, 32, 0.04);
+          transform: translateY(-4px);
+          box-shadow: 0 10px 20px rgba(42, 35, 32, 0.06);
+          border-color: var(--mist);
         }
 
         .metric-icon {
-          width: 44px;
-          height: 44px;
-          border-radius: 10px;
-          background: rgba(46, 107, 87, 0.08);
+          width: 48px;
+          height: 48px;
+          border-radius: 12px;
+          background: rgba(46, 107, 87, 0.1);
           color: var(--jade);
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 1.25rem;
+          font-size: 22px;
         }
-
         .metric-icon.gold {
-          background: rgba(201, 154, 60, 0.08);
+          background: rgba(201, 154, 60, 0.1);
           color: var(--gold);
         }
-
         .metric-icon.seal {
-          background: rgba(200, 54, 42, 0.08);
+          background: rgba(200, 54, 42, 0.1);
           color: var(--seal);
         }
 
@@ -238,58 +226,64 @@ function AdminPanel({ onBack, onManageLessons }) {
 
         .metric-value {
           font-family: 'Fraunces', serif;
-          font-size: 1.5rem;
+          font-size: 26px;
           font-weight: 700;
           color: var(--ink);
           line-height: 1.1;
         }
 
         .metric-label {
-          font-size: 0.8rem;
+          font-size: 12px;
           color: var(--mist);
-          font-weight: 500;
-          margin-top: 0.25rem;
+          font-weight: 600;
+          margin-top: 4px;
         }
 
-        /* Clean wrapper layout */
-        .admin-form,
-        .admin-list {
+        /* Form styling */
+        .admin-form {
           background: var(--card);
           border: 1px solid var(--line);
           border-radius: 16px;
-          padding: 2rem;
-          box-shadow: 0 6px 20px rgba(42, 35, 32, 0.02);
+          padding: 24px;
+          box-shadow: 0 4px 15px rgba(42, 35, 32, 0.02);
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
         }
 
-        .admin-form h2,
-        .admin-list h2 {
+        .admin-form h2 {
           font-family: 'Fraunces', serif;
-          font-size: 1.4rem;
+          font-size: 18px;
           font-weight: 700;
           color: var(--ink);
-          margin-bottom: 1.5rem;
           border-bottom: 1px solid var(--line);
-          padding-bottom: 0.75rem;
+          padding-bottom: 12px;
+          margin: 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
         }
 
-        .admin-form label {
-          display: block;
-          font-size: 0.8rem;
+        .admin-form-group {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .admin-form-group label {
+          font-size: 12px;
           font-weight: 700;
           color: var(--ink);
-          margin-bottom: 1rem;
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
 
-        .admin-form input,
-        .admin-form select,
-        .admin-form textarea {
-          display: block;
+        .admin-form-group input,
+        .admin-form-group select,
+        .admin-form-group textarea {
           width: 100%;
-          margin-top: 6px;
-          padding: 0.75rem 1rem;
-          font-size: 0.95rem;
+          padding: 10px 14px;
+          font-size: 14px;
           font-family: 'Inter', sans-serif;
           border: 1px solid var(--line);
           border-radius: 10px;
@@ -298,29 +292,30 @@ function AdminPanel({ onBack, onManageLessons }) {
           transition: all 0.2s ease;
         }
 
-        .admin-form input:focus,
-        .admin-form select:focus,
-        .admin-form textarea:focus {
+        .admin-form-group input:focus,
+        .admin-form-group select:focus,
+        .admin-form-group textarea:focus {
           outline: none;
           border-color: var(--jade);
           background: #ffffff;
           box-shadow: 0 0 0 4px rgba(46, 107, 87, 0.08);
         }
 
-        /* Inline upload styles */
+        /* Upload zone */
         .admin-upload-zone {
           background: var(--paper);
           border: 2px dashed var(--line);
           border-radius: 10px;
-          padding: 1rem;
+          padding: 16px;
           text-align: center;
-          margin-top: 6px;
-          transition: border-color 0.2s;
+          transition: border-color 0.2s ease;
           position: relative;
+          cursor: pointer;
         }
         .admin-upload-zone:hover {
           border-color: var(--jade);
         }
+
         .admin-upload-btn-wrap {
           position: relative;
           overflow: hidden;
@@ -328,12 +323,17 @@ function AdminPanel({ onBack, onManageLessons }) {
           background: var(--rice);
           color: var(--ink);
           border: 1px solid var(--line);
-          padding: 0.5rem 1rem;
-          border-radius: 8px;
+          padding: 8px 16px;
+          border-radius: 20px;
           font-weight: 600;
-          font-size: 0.8rem;
+          font-size: 12px;
           cursor: pointer;
+          transition: all 0.2s ease;
         }
+        .admin-upload-btn-wrap:hover {
+          background: var(--line);
+        }
+
         .admin-upload-btn-wrap input[type=file] {
           position: absolute;
           left: 0;
@@ -344,17 +344,18 @@ function AdminPanel({ onBack, onManageLessons }) {
         }
 
         .admin-img-preview-card {
-          margin-top: 1rem;
-          border-radius: 8px;
+          margin-top: 12px;
+          border-radius: 12px;
           overflow: hidden;
           border: 1px solid var(--line);
           position: relative;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
         .admin-img-preview {
           width: 100%;
           height: auto;
           display: block;
-          max-height: 150px;
+          max-height: 160px;
           object-fit: cover;
         }
         .admin-img-remove-btn {
@@ -365,47 +366,53 @@ function AdminPanel({ onBack, onManageLessons }) {
           color: white;
           border: none;
           padding: 4px 8px;
-          border-radius: 4px;
-          font-size: 0.7rem;
+          border-radius: 6px;
+          font-size: 11px;
           cursor: pointer;
           font-weight: 600;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+          transition: background 0.2s ease;
+        }
+        .admin-img-remove-btn:hover {
+          background: #a6281e;
         }
 
         .check-label {
-          display: flex !important;
+          display: flex;
           align-items: center;
           gap: 8px;
-          margin-top: 1.25rem;
           cursor: pointer;
           user-select: none;
+          font-size: 13px;
+          font-weight: 600;
+          color: var(--ink);
         }
         .check-label input {
-          width: 18px !important;
-          height: 18px !important;
+          width: 18px;
+          height: 18px;
           accent-color: var(--jade);
-          margin-top: 0 !important;
           cursor: pointer;
         }
 
-        .admin-form button.btn-primary {
+        .btn-primary-studio {
           width: 100%;
           background-color: var(--jade);
           color: white;
           border: none;
-          padding: 0.85rem;
+          padding: 12px;
           border-radius: 10px;
           font-weight: 700;
           cursor: pointer;
           transition: all 0.2s ease;
-          font-size: 0.95rem;
+          font-size: 14px;
           box-shadow: 0 4px 14px rgba(46, 107, 87, 0.2);
         }
-        .admin-form button.btn-primary:hover:not(:disabled) {
+        .btn-primary-studio:hover:not(:disabled) {
           background-color: #245444;
           transform: translateY(-1px);
           box-shadow: 0 6px 18px rgba(46, 107, 87, 0.3);
         }
-        .admin-form button.btn-primary:disabled {
+        .btn-primary-studio:disabled {
           opacity: 0.6;
           cursor: not-allowed;
           box-shadow: none;
@@ -416,16 +423,16 @@ function AdminPanel({ onBack, onManageLessons }) {
           background-color: transparent;
           color: var(--mist);
           border: 1px solid var(--line);
-          padding: 0.85rem;
+          padding: 11px;
           border-radius: 10px;
-          font-weight: 700;
+          font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s;
-          font-size: 0.95rem;
-          margin-top: 0.75rem;
+          transition: all 0.2s ease;
+          font-size: 14px;
           text-align: center;
           display: block;
           box-sizing: border-box;
+          margin-top: 8px;
         }
         .cancel-edit:hover {
           background-color: var(--rice);
@@ -433,21 +440,39 @@ function AdminPanel({ onBack, onManageLessons }) {
         }
 
         /* Course List Card Override */
+        .admin-list {
+          background: var(--card);
+          border: 1px solid var(--line);
+          border-radius: 16px;
+          padding: 24px;
+          box-shadow: 0 4px 15px rgba(42, 35, 32, 0.02);
+        }
+
+        .admin-list h2 {
+          font-family: 'Fraunces', serif;
+          font-size: 18px;
+          font-weight: 700;
+          color: var(--ink);
+          border-bottom: 1px solid var(--line);
+          padding-bottom: 12px;
+          margin: 0 0 16px;
+        }
+
         .admin-list-container {
           display: flex;
           flex-direction: column;
-          gap: 1rem;
+          gap: 12px;
         }
 
         .admin-row {
           display: flex;
           align-items: center;
-          gap: 1.25rem;
-          padding: 1.25rem;
+          justify-content: space-between;
+          gap: 16px;
+          padding: 16px;
           border: 1px solid var(--line);
-          border-radius: 12px;
+          border-radius: 14px;
           background: #ffffff;
-          margin-bottom: 0px; /* Reset original margin */
           transition: all 0.2s ease;
         }
 
@@ -457,15 +482,23 @@ function AdminPanel({ onBack, onManageLessons }) {
           border-color: var(--jade);
         }
 
+        .row-left-group {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          min-width: 0;
+          flex: 1;
+        }
+
         .row-glyph {
-          width: 52px;
-          height: 52px;
+          width: 48px;
+          height: 48px;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 1.5rem;
-          min-width: 52px;
+          font-size: 18px;
+          min-width: 48px;
           flex-shrink: 0;
           border: 1px solid var(--line);
         }
@@ -483,42 +516,50 @@ function AdminPanel({ onBack, onManageLessons }) {
         }
 
         .row-info {
-          flex-grow: 1;
           min-width: 0;
         }
 
         .row-info strong {
           font-family: 'Fraunces', serif;
-          font-size: 1.1rem;
+          font-size: 15px;
           font-weight: 750;
           color: var(--ink);
           display: block;
-          margin-bottom: 0.15rem;
+          margin-bottom: 2px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
 
         .row-info span {
-          font-size: 0.8rem;
+          font-size: 12px;
           font-weight: 600;
           color: var(--mist);
           text-transform: capitalize;
         }
 
+        .row-actions-group {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+
         /* Status Pills */
         .pill {
-          font-size: 0.75rem;
+          font-size: 11px;
           font-weight: 700;
-          padding: 4px 10px;
-          border-radius: 20px;
+          padding: 6px 12px;
+          border-radius: 12px;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: all 0.2s ease;
           border: 1px solid transparent;
           text-transform: uppercase;
           letter-spacing: 0.5px;
-          flex-shrink: 0;
         }
 
         .pill-live {
-          background: rgba(46, 107, 87, 0.08);
+          background: rgba(46, 107, 87, 0.1);
           color: var(--jade);
           border-color: rgba(46, 107, 87, 0.2);
         }
@@ -528,7 +569,7 @@ function AdminPanel({ onBack, onManageLessons }) {
         }
 
         .pill-draft {
-          background: rgba(122, 114, 102, 0.08);
+          background: rgba(122, 114, 102, 0.1);
           color: var(--mist);
           border-color: rgba(122, 114, 102, 0.15);
         }
@@ -537,51 +578,56 @@ function AdminPanel({ onBack, onManageLessons }) {
           color: #ffffff;
         }
 
-        .nav-btn {
-          background: var(--paper);
+        .nav-btn-studio {
+          background: var(--card);
           color: var(--ink);
           border: 1px solid var(--line);
-          padding: 6px 12px;
-          border-radius: 6px;
-          font-size: 0.8rem;
+          padding: 6px 14px;
+          border-radius: 12px;
+          font-size: 12px;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s;
-          flex-shrink: 0;
+          transition: all 0.2s ease;
         }
-        .nav-btn:hover {
+        .nav-btn-studio:hover {
           background: var(--rice);
           border-color: var(--mist);
         }
 
-        .row-delete {
-          font-size: 0.8rem;
+        .row-delete-studio {
+          font-size: 12px;
           font-weight: 600;
           color: var(--seal);
-          background: rgba(200, 54, 42, 0.04);
-          border: 1px solid rgba(200, 54, 42, 0.08);
-          padding: 6px 12px;
-          border-radius: 6px;
+          background: rgba(200, 54, 42, 0.05);
+          border: 1px solid rgba(200, 54, 42, 0.1);
+          padding: 6px 14px;
+          border-radius: 12px;
           cursor: pointer;
-          transition: all 0.2s;
-          flex-shrink: 0;
-          text-align: center;
+          transition: all 0.2s ease;
         }
-        .row-delete:hover {
-          background: rgba(200, 54, 42, 0.08);
+        .row-delete-studio:hover {
+          background: var(--seal);
+          color: #ffffff;
           border-color: var(--seal);
-          text-decoration: none;
+        }
+
+        .admin-empty {
+          color: var(--mist);
+          font-size: 13px;
+          font-style: italic;
+          text-align: center;
+          padding: 24px 0;
         }
       `}</style>
 
-      <button className="back-btn" onClick={onBack}>← Back to home</button>
+      <button className="btn-back-pill" onClick={onBack}>← Back to control panel</button>
       
       <div className="admin-title-row">
-        <h1>Course Studio</h1>
-        <p>Manage path tracks, curriculum targets, and status</p>
+        <h1 style={{ margin: 0, marginTop: 12 }}>Course Studio</h1>
+        <p className="um-subtitle">Manage path tracks, curriculum targets, and status.</p>
       </div>
 
-      {error && <p className="login-error">{error}</p>}
+      {error && <p className="login-error" style={{ marginBottom: 20 }}>{error}</p>}
 
       {/* Metrics Section */}
       <div className="admin-metrics">
@@ -613,39 +659,39 @@ function AdminPanel({ onBack, onManageLessons }) {
         <div className="admin-form">
           <h2>{editingId ? 'Edit path details' : 'New curriculum path'}</h2>
 
-          <label>
-            Title
+          <div className="admin-form-group">
+            <label>Title</label>
             <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Chinese for Beginners" />
-          </label>
+          </div>
 
-          <label>
-            Language
+          <div className="admin-form-group">
+            <label>Language</label>
             <select value={language} onChange={(e) => setLanguage(e.target.value)}>
               <option value="chinese">Chinese</option>
               <option value="nepali">Nepali</option>
             </select>
-          </label>
+          </div>
 
-          <label>
-            Level
+          <div className="admin-form-group">
+            <label>Level</label>
             <input value={level} onChange={(e) => setLevel(e.target.value)} placeholder="HSK 1 · Beginner" />
-          </label>
+          </div>
 
-          <label>
-            Description
+          <div className="admin-form-group">
+            <label>Description</label>
             <textarea rows="3" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="What will students learn?" />
-          </label>
+          </div>
 
-          <label>
-            Card glyph
+          <div className="admin-form-group">
+            <label>Card glyph</label>
             <input value={glyph} onChange={(e) => setGlyph(e.target.value)} placeholder="你好 or नमस्ते" />
-          </label>
+          </div>
 
-          <label>
-            Course image
+          <div className="admin-form-group">
+            <label>Course cover image</label>
             <div className="admin-upload-zone">
               <div className="admin-upload-btn-wrap">
-                Upload Cover
+                📤 Upload Cover Cover
                 <input
                   type="file"
                   accept="image/*"
@@ -653,7 +699,7 @@ function AdminPanel({ onBack, onManageLessons }) {
                 />
               </div>
             </div>
-          </label>
+          </div>
 
           {image && (
             <div className="admin-img-preview-card">
@@ -666,12 +712,12 @@ function AdminPanel({ onBack, onManageLessons }) {
             </div>
           )}
 
-          <label className="check-label">
+          <label className="check-label" style={{ margin: '8px 0' }}>
             <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
             {editingId ? 'Published & Active' : 'Publish immediately'}
           </label>
 
-          <button className="btn-primary" onClick={handleSave} disabled={saving}>
+          <button className="btn-primary-studio" onClick={handleSave} disabled={saving}>
             {saving ? 'Saving...' : editingId ? 'Save changes' : 'Create course'}
           </button>
 
@@ -690,29 +736,33 @@ function AdminPanel({ onBack, onManageLessons }) {
           <div className="admin-list-container">
             {courses.map((c) => (
               <div className="admin-row" key={c._id}>
-                <span className={`row-glyph ${c.language === 'chinese' ? 'zh' : 'ne'}`}>
-                  {c.glyph && c.glyph.trim().length > 0 && c.glyph.trim().length <= 2 
-                    ? c.glyph 
-                    : (c.language === 'chinese' ? '中' : 'ने')}
-                </span>
-                
-                <div className="row-info">
-                  <strong>{c.title}</strong>
-                  <span>{c.language} · {c.level || 'no level'}</span>
+                <div className="row-left-group">
+                  <span className={`row-glyph ${c.language === 'chinese' ? 'zh' : 'ne'}`}>
+                    {c.glyph && c.glyph.trim().length > 0 && c.glyph.trim().length <= 2 
+                      ? c.glyph 
+                      : (c.language === 'chinese' ? '中' : 'ने')}
+                  </span>
+                  
+                  <div className="row-info">
+                    <strong>{c.title}</strong>
+                    <span>{c.language} · {c.level || 'no level'}</span>
+                  </div>
                 </div>
                 
-                <button className="nav-btn" onClick={() => startEdit(c)}>Edit</button>
-                <button className="nav-btn" onClick={() => onManageLessons(c)}>Lessons</button>
-                
-                <button
-                  className={c.published ? 'pill pill-live' : 'pill pill-draft'}
-                  onClick={() => togglePublished(c)}
-                  title="Click to toggle status"
-                >
-                  {c.published ? 'Live' : 'Draft'}
-                </button>
-                
-                <button className="row-delete" onClick={() => handleDelete(c._id)}>Delete</button>
+                <div className="row-actions-group">
+                  <button className="nav-btn-studio" onClick={() => startEdit(c)}>Edit</button>
+                  <button className="nav-btn-studio" onClick={() => onManageLessons(c)}>Lessons</button>
+                  
+                  <button
+                    className={c.published ? 'pill pill-live' : 'pill pill-draft'}
+                    onClick={() => togglePublished(c)}
+                    title="Click to toggle status"
+                  >
+                    {c.published ? 'Live' : 'Draft'}
+                  </button>
+                  
+                  <button className="row-delete-studio" onClick={() => handleDelete(c._id)}>Delete</button>
+                </div>
               </div>
             ))}
           </div>

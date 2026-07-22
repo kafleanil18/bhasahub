@@ -24,6 +24,7 @@ import UserManager from './UserManager';
 import TeamManager from './TeamManager';
 import AdminDashboard from './AdminDashboard';
 import AuditLog from './AuditLog';
+import HanziClipsPage from './HanziClipsPage';
 
 
 
@@ -193,6 +194,7 @@ function App() {
   const [testTakerBackToManager, setTestTakerBackToManager] = useState(false);
   const [showBlog, setShowBlog] = useState(false);
   const [showBlogManager, setShowBlogManager] = useState(false);
+  const [showHanziClips, setShowHanziClips] = useState(false);
   const [footerBlogs, setFooterBlogs] = useState([]);
   const [showTestimonial, setShowTestimonial] = useState(false);
   const [showTestimonialManager, setShowTestimonialManager] = useState(false);
@@ -213,6 +215,7 @@ function App() {
   const [showUserManager, setShowUserManager] = useState(false);
   const [showTeamManager, setShowTeamManager] = useState(false);
   const [teamPhotos, setTeamPhotos] = useState([]);
+  const [welcomeVideoUrl, setWelcomeVideoUrl] = useState('');
   const [adminSidebarOpen, setAdminSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
 
@@ -271,6 +274,15 @@ function App() {
       .then(res => res.json())
       .then(data => {
         setTeamPhotos(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {});
+  };
+
+  const loadSiteSettings = () => {
+    fetch(window.API_BASE_URL + '/api/settings')
+      .then(res => res.json())
+      .then(data => {
+        if (data.welcomeVideoUrl) setWelcomeVideoUrl(data.welcomeVideoUrl);
       })
       .catch(() => {});
   };
@@ -363,6 +375,7 @@ function App() {
     loadFooterBlogs();
     loadTestimonials();
     loadTeamPhotos();
+    loadSiteSettings();
     loadMyAccess();
     const savedUser = localStorage.getItem('user');
     if (savedUser) setUser(JSON.parse(savedUser));
@@ -385,6 +398,7 @@ function App() {
     setTestTakerBackToManager(false);
     setShowBlog(false);
     setShowBlogManager(false);
+    setShowHanziClips(false);
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
     setShowUserManager(false);
@@ -414,6 +428,7 @@ function App() {
     setTestTakerBackToManager(false);
     setShowBlog(false);
     setShowBlogManager(false);
+    setShowHanziClips(false);
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
     setShowUserManager(false);
@@ -427,6 +442,11 @@ function App() {
     loadMyAccess();
     loadAdminNotificationCounts();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const goAdminDashboard = () => {
+    goHome();
+    setShowAdminDashboard(true);
   };
 
   // open the sign-in screen from anywhere (clears other views first)
@@ -481,12 +501,9 @@ function App() {
       <>
         <header>
           <div className="container header-row">
-            <button className="logo" onClick={() => setLanguage(null)}>
+            <span className="logo">
               Learn Chinese with <span>Anil</span>
-            </button>
-            <nav className="main-nav">
-              <button className="nav-link" onClick={() => setLanguage(null)}>Switch language</button>
-            </nav>
+            </span>
           </div>
         </header>
         <NepaliPage onBack={() => setLanguage(null)} />
@@ -579,13 +596,24 @@ function App() {
                 </svg>
                 Manage tests
               </button>
-              <button onClick={() => { goHome(); setShowBlogManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 20h9"></path>
-                  <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-                </svg>
-                Manage blog
-              </button>
+              {isSuperAdmin && (
+                <button onClick={() => { goHome(); setShowBlogManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
+                  <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                  </svg>
+                  Manage blog
+                </button>
+              )}
+              {isSuperAdmin && (
+                <button onClick={() => { goHome(); setShowHanziClips(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
+                  <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                  </svg>
+                  Writing clips
+                </button>
+              )}
               <button onClick={() => { goHome(); setShowTestimonialManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
                 <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -697,20 +725,19 @@ function App() {
                 Blog
               </button>
 
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowHanziClips(true); }}>
+                <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                </svg>
+                Writing Clips
+              </button>
+
               <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowFeedback(true); }}>
                 <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                 </svg>
                 Message us
-              </button>
-
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setLanguage(null); }}>
-                <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="2" y1="12" x2="22" y2="12"></line>
-                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                </svg>
-                Switch language
               </button>
             </div>
 
@@ -827,22 +854,24 @@ function App() {
           )}
         </div>
       ) : isSuperAdmin && showUserManager ? (
-        <UserManager onBack={goHome} />
+        <UserManager onBack={goAdminDashboard} />
       ) : isSuperAdmin && showTeamManager ? (
-        <TeamManager onBack={goHome} />
+        <TeamManager onBack={goAdminDashboard} />
       ) : isAdmin && showSubscriptions ? (
-        <SubscriptionManager onBack={goHome} />
+        <SubscriptionManager onBack={goAdminDashboard} />
       ) : isSuperAdmin && showTestimonialManager ? (
-        <TestimonialManager onBack={goHome} />
+        <TestimonialManager onBack={goAdminDashboard} />
       ) : isSuperAdmin && showBlogManager ? (
-        <BlogManager user={user} onBack={goHome} />
+        <BlogManager user={user} onBack={goAdminDashboard} />
       ) : showBlog ? (
         <BlogPage onBack={goHome} />
+      ) : showHanziClips ? (
+        <HanziClipsPage user={user} token={localStorage.getItem('token')} onBack={goHome} />
       ) : showPinyinPage ? (
         <PinyinPage onBack={goHome} isSuperAdmin={isSuperAdmin} />
       ) : isSuperAdmin && showTestManager ? (
         <TestManager 
-          onBack={goHome} 
+          onBack={goAdminDashboard} 
           onPreviewTest={(testId) => {
             setActiveTestId(testId);
             setTestTakerBackToManager(true);
@@ -867,13 +896,27 @@ function App() {
       ) : isSuperAdmin && manageCourse ? (
         <LessonManager course={manageCourse} onBack={() => setManageCourse(null)} />
       ) : isSuperAdmin && showInbox ? (
-        <FeedbackInbox onBack={goHome} />
+        <FeedbackInbox onBack={goAdminDashboard} />
       ) : isSuperAdmin && showAdmin ? (
-        <AdminPanel onBack={goHome} onManageLessons={(c) => setManageCourse(c)} />
+        <AdminPanel onBack={goAdminDashboard} onManageLessons={(c) => setManageCourse(c)} />
       ) : isSuperAdmin && showAdminDashboard ? (
-        <AdminDashboard onBack={goHome} />
+        <AdminDashboard 
+          onBack={goHome} 
+          onNavigate={(view) => {
+            goHome();
+            if (view === 'courses') setShowAdmin(true);
+            else if (view === 'audit') setShowAuditLog(true);
+            else if (view === 'tests') setShowTestManager(true);
+            else if (view === 'blog' && isSuperAdmin) setShowBlogManager(true);
+            else if (view === 'testimonials') setShowTestimonialManager(true);
+            else if (view === 'inbox') setShowInbox(true);
+            else if (view === 'admins') setShowUserManager(true);
+            else if (view === 'subscriptions') setShowSubscriptions(true);
+            else if (view === 'team') setShowTeamManager(true);
+          }} 
+        />
       ) : isSuperAdmin && showAuditLog ? (
-        <AuditLog onBack={goHome} />
+        <AuditLog onBack={goAdminDashboard} />
       ) : user && showDashboard ? (
         <Dashboard
           user={user}
@@ -933,6 +976,7 @@ function App() {
                     }}
                   >
                     <video
+                      key={welcomeVideoUrl || 'default'}
                       preload="metadata"
                       poster={dailyImages[new Date().getDay()]}
                       controls
@@ -945,7 +989,7 @@ function App() {
                         if (btn) btn.style.display = 'flex';
                       }}
                     >
-                      <source src="/video/intro.mp4" type="video/mp4" />
+                      <source src={welcomeVideoUrl ? `${window.API_BASE_URL}${welcomeVideoUrl}` : '/video/intro.mp4'} type="video/mp4" />
                       Your browser doesn't support the video tag.
                     </video>
                     <button className="big-play" aria-label="Play intro video">
@@ -961,7 +1005,7 @@ function App() {
           <section className="features">
             <div className="container">
               <div className="feature">
-                <span className="feature-glyph zh">SPEAK</span>
+                <span className="feature-glyph">SPEAK</span>
                 <h3>Read the script</h3>
                 <p>
                   Start from zero with Pinyin and Devanagari — every character
@@ -969,7 +1013,7 @@ function App() {
                 </p>
               </div>
               <div className="feature">
-                <span className="feature-glyph ne">LISTEN</span>
+                <span className="feature-glyph">LISTEN</span>
                 <h3>Hear it spoken</h3>
                 <p>
                   Native audio on every word and phrase, recorded clearly —
@@ -977,7 +1021,7 @@ function App() {
                 </p>
               </div>
               <div className="feature">
-                <span className="feature-glyph zh">READ</span>
+                <span className="feature-glyph">READ</span>
                 <h3>Progress step by step</h3>
                 <p>
                   Lessons build on each other like a real course — track what
