@@ -235,7 +235,13 @@ function TestTaker({ testId, onBack }) {
       ) : (
         <>
           <div className="test-questions">
-            <h3 className="dialogue-heading">✏️ Answers</h3>
+            <h3 className="dialogue-heading">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: 6, verticalAlign: '-2px' }}>
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+              </svg>
+              Answers
+            </h3>
             {test.questions.map((q, qi) => {
               const chosen = answers[qi];
               return (
@@ -392,7 +398,14 @@ function TestTaker({ testId, onBack }) {
               boxShadow: '0 12px 40px rgba(0, 0, 0, 0.3)',
             }}
           >
-            <h3 style={{ marginTop: 0, marginBottom: 12 }}>⚠️ Audio is still playing</h3>
+            <h3 style={{ marginTop: 0, marginBottom: 12 }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="2" style={{ marginRight: 6, verticalAlign: '-2px' }}>
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              Audio is still playing
+            </h3>
             <p style={{ color: 'var(--mist)', marginBottom: 24, lineHeight: 1.5 }}>
               You're in the middle of the exam and the audio hasn't finished. Do you want to continue the exam, or quit now?
             </p>
