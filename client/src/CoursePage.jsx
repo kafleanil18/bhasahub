@@ -291,7 +291,13 @@ function CoursePage({ course, onBack, user }) {
 
         {activeLesson.category === 'grammar' && (activeLesson.grammarExplanation || activeLesson.grammarImage) && (
           <div className="lesson-dialogue">
-            <h3 className="dialogue-heading">📘 Grammar</h3>
+            <h3 className="dialogue-heading">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8, verticalAlign: '-2px' }}>
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+              Grammar
+            </h3>
             {activeLesson.grammarImage && (
               <img
                 src={`${SERVER}${activeLesson.grammarImage}`}
@@ -702,9 +708,26 @@ function CoursePage({ course, onBack, user }) {
 
       <div className="category-tabs" style={{ marginBottom: 8 }}>
         <button className={`cat-tab ${catFilter === 'all' ? 'active' : ''}`} onClick={() => setCatFilter('all')}>All</button>
-        <button className={`cat-tab ${catFilter === 'vocabulary' ? 'active' : ''}`} onClick={() => setCatFilter('vocabulary')}>📚 Vocabulary</button>
-        <button className={`cat-tab ${catFilter === 'conversation' ? 'active' : ''}`} onClick={() => setCatFilter('conversation')}>💬 Conversation</button>
-        <button className={`cat-tab ${catFilter === 'grammar' ? 'active' : ''}`} onClick={() => setCatFilter('grammar')}>✏️ Grammar</button>
+        <button className={`cat-tab ${catFilter === 'vocabulary' ? 'active' : ''}`} onClick={() => setCatFilter('vocabulary')}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          Vocabulary
+        </button>
+        <button className={`cat-tab ${catFilter === 'conversation' ? 'active' : ''}`} onClick={() => setCatFilter('conversation')}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          Conversation
+        </button>
+        <button className={`cat-tab ${catFilter === 'grammar' ? 'active' : ''}`} onClick={() => setCatFilter('grammar')}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+          </svg>
+          Grammar
+        </button>
       </div>
 
       {loading && <p className="courses-empty">Loading lessons...</p>}
@@ -716,7 +739,21 @@ function CoursePage({ course, onBack, user }) {
         {visibleLessons.map((l) => {
           const isDone = completedIds.includes(l._id);
           const categoryLabel = l.category ? l.category : 'vocabulary';
-          const icon = categoryLabel === 'grammar' ? '✏️' : categoryLabel === 'conversation' ? '💬' : '📚';
+          const categoryVectorIcon = categoryLabel === 'grammar' ? (
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+            </svg>
+          ) : categoryLabel === 'conversation' ? (
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          ) : (
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+          );
 
           return (
             <button
@@ -725,8 +762,8 @@ function CoursePage({ course, onBack, user }) {
               onClick={() => handleLessonClick(l)}
             >
               <div className="lesson-card-top">
-                <span className="lesson-card-badge">
-                  {icon} {categoryLabel}
+                <span className="lesson-card-badge" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  {categoryVectorIcon} {categoryLabel}
                 </span>
                 <div className="lesson-card-order-circle">
                   {l.order}
