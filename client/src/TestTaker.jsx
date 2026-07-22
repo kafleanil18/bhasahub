@@ -191,7 +191,18 @@ function TestTaker({ testId, onBack }) {
 
       {submitted && (
         <div className="test-result">
-          <span className="quiz-result-emoji">{percent >= 60 ? '🎉' : '📚'}</span>
+          <span className="quiz-result-emoji">
+            {percent >= 60 ? (
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+            ) : (
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--seal)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+            )}
+          </span>
           <h2>You scored {score} / {total}</h2>
           <p className="quiz-result-percent">{percent}%</p>
           <button className="nav-btn" onClick={retake}>Retake test</button>

@@ -162,7 +162,20 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
       <div className="quiz-area">
         <div className="quiz-result">
           <span className="quiz-result-emoji">
-            {percent >= 80 ? '🎉' : percent >= 50 ? '👍' : '📚'}
+            {percent >= 80 ? (
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+            ) : percent >= 50 ? (
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--jade)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+              </svg>
+            ) : (
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--seal)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+            )}
           </span>
           <h2 className="section-title" style={{ marginBottom: 4 }}>
             Quiz Completed!
@@ -318,7 +331,12 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
         </button>
       ) : (
         <p className="keyboard-shortcut-hint">
-          💡 Keyboard controls: Press <strong>A, B, C, D</strong> (or <strong>1, 2, 3, 4</strong>) to select your answer.
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6, verticalAlign: '-2px' }}>
+            <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
+            <path d="M9 18h6"></path>
+            <path d="M10 22h4"></path>
+          </svg>
+          Keyboard controls: Press <strong>A, B, C, D</strong> (or <strong>1, 2, 3, 4</strong>) to select your answer.
         </p>
       )}
     </div>

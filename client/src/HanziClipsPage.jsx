@@ -208,18 +208,32 @@ function HanziClipsPage({ user, onBack, token }) {
       {/* Top Bar Navigation */}
       <div className="hanzi-clips-nav-header">
         <button className="nav-btn" onClick={onBack}>
-          ← Back to site
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Back to site
         </button>
         {isSuperAdmin && (
           <button className="btn-primary" onClick={handleOpenCreateModal}>
-            ➕ Upload Hanzi Clip
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Upload Hanzi Clip
           </button>
         )}
       </div>
 
       {/* Hero Header */}
       <div className="hanzi-clips-hero">
-        <p className="eyebrow">✍️ CHINESE CALLIGRAPHY & STROKE ORDER</p>
+        <p className="eyebrow" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+          </svg>
+          CHINESE CALLIGRAPHY &amp; STROKE ORDER
+        </p>
         <h1 className="hanzi-hero-title">Hanzi Writing Demonstrations</h1>
         <p className="hanzi-hero-desc">
           Watch short, step-by-step video clips demonstrating proper stroke order, balance, and writing techniques for Chinese characters.
@@ -228,7 +242,12 @@ function HanziClipsPage({ user, onBack, token }) {
         {/* Search & Category Filter Controls */}
         <div className="hanzi-controls-bar">
           <div className="hanzi-search-box">
-            <span className="search-icon">🔍</span>
+            <span className="search-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
             <input
               type="text"
               placeholder="Search by character (水), pinyin (shuǐ), meaning (water), or title..."
@@ -260,12 +279,17 @@ function HanziClipsPage({ user, onBack, token }) {
       {/* Main Video Clips Grid */}
       {loading ? (
         <div className="hanzi-loading-state">
-          <span className="spinner">⏳</span>
-          <p>Loading Hanzi writing demonstrations...</p>
+          <span className="status-spinner"></span>
+          <p style={{ marginTop: 8 }}>Loading Hanzi writing demonstrations...</p>
         </div>
       ) : filteredClips.length === 0 ? (
         <div className="hanzi-empty-state">
-          <span className="empty-icon">📹</span>
+          <span className="empty-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="23 7 16 12 23 17 23 7"></polygon>
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+            </svg>
+          </span>
           <h3>No character videos found</h3>
           <p>Try clearing your search query or selecting a different category filter.</p>
         </div>
@@ -286,12 +310,18 @@ function HanziClipsPage({ user, onBack, token }) {
                     <div className="hanzi-sub-meta">
                       {clip.pinyin && <span className="hanzi-pinyin">{clip.pinyin}</span>}
                       {clip.meaning && <span className="hanzi-meaning">"{clip.meaning}"</span>}
-                      <span className="hanzi-stroke-count">✏️ {clip.strokeCount || 1} Strokes</span>
+                      <span className="hanzi-stroke-count">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4 }}>
+                          <path d="M12 20h9"></path>
+                          <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                        </svg>
+                        {clip.strokeCount || 1} Strokes
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Video Player (Supports YouTube URLs and uploaded video files) */}
+                {/* Video Player */}
                 <div className="hanzi-video-wrapper">
                   {ytEmbedUrl ? (
                     <iframe
@@ -324,7 +354,7 @@ function HanziClipsPage({ user, onBack, token }) {
                               handlePlaybackSpeedChange(clip._id, el, speed);
                             }}
                           >
-                            {speed === 0.5 ? '🐢 0.5x Slow' : `${speed}x`}
+                            {speed === 0.5 ? '0.5x Slow' : `${speed}x`}
                           </button>
                         ))}
                       </div>
@@ -335,9 +365,15 @@ function HanziClipsPage({ user, onBack, token }) {
                 {/* Stroke Tips & Rules */}
                 {clip.tips && (
                   <div className="hanzi-tips-box">
-                    <span className="tips-icon">💡</span>
+                    <span className="tips-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
+                        <path d="M9 18h6"></path>
+                        <path d="M10 22h4"></path>
+                      </svg>
+                    </span>
                     <div>
-                      <strong>Stroke Order & Writing Tips:</strong>
+                      <strong>Stroke Order &amp; Writing Tips:</strong>
                       <p>{clip.tips}</p>
                     </div>
                   </div>
@@ -347,10 +383,18 @@ function HanziClipsPage({ user, onBack, token }) {
                 {isSuperAdmin && (
                   <div className="hanzi-admin-actions">
                     <button className="nav-btn" onClick={() => handleOpenEditModal(clip)}>
-                      ✏️ Edit Clip
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4 }}>
+                        <path d="M12 20h9"></path>
+                        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                      </svg>
+                      Edit Clip
                     </button>
                     <button className="nav-btn bm-remove-img-btn" onClick={() => handleDeleteClip(clip._id, clip.title)}>
-                      🗑️ Delete Clip
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4 }}>
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                      </svg>
+                      Delete Clip
                     </button>
                   </div>
                 )}
@@ -365,7 +409,9 @@ function HanziClipsPage({ user, onBack, token }) {
         <div className="modal-overlay" onClick={() => setModalOpen(false)}>
           <div className="hanzi-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="hanzi-modal-header">
-              <h2>{editingClip ? '✏️ Edit Hanzi Writing Clip' : '➕ Upload Hanzi Writing Clip'}</h2>
+              <h2>
+                {editingClip ? 'Edit Hanzi Writing Clip' : 'Upload Hanzi Writing Clip'}
+              </h2>
               <button className="hanzi-modal-close" onClick={() => setModalOpen(false)}>
                 ✕
               </button>
@@ -453,15 +499,19 @@ function HanziClipsPage({ user, onBack, token }) {
 
               {/* Video Asset Upload / URL Input */}
               <div className="form-group">
-                <label className="bm-label">Demonstration Video Clip (.mp4, .webm, .mov)</label>
+                <label className="bm-label">Demonstration Video Clip (.mp4, .webm, .mov, YouTube)</label>
                 <div className="bm-image-dropzone">
                   <p style={{ fontSize: '0.85rem', color: 'var(--mist)', fontWeight: 600, margin: '0.25rem 0' }}>
-                    Upload video file (up to 200MB) or provide a video URL
+                    Upload video file (up to 200MB) or paste a YouTube URL
                   </p>
 
                   <div className="bm-file-input-wrapper" style={{ margin: '8px 0' }}>
                     <button type="button" className="bm-btn-upload-file">
-                      📹 Choose Video File
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+                        <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                      </svg>
+                      Choose Video File
                     </button>
                     <input
                       type="file"
@@ -473,16 +523,16 @@ function HanziClipsPage({ user, onBack, token }) {
 
                   {uploadingVideo && (
                     <p className="bm-uploading-txt">
-                      <span className="spinner">⏳</span> Uploading video file...
+                      <span className="status-spinner"></span> Uploading video file...
                     </p>
                   )}
 
                   <div style={{ marginTop: '12px', textAlign: 'left' }}>
-                    <label style={{ fontSize: '0.8rem', color: 'var(--ink-light)', fontWeight: 600 }}>Or Direct Video URL:</label>
+                    <label style={{ fontSize: '0.8rem', color: 'var(--ink-light)', fontWeight: 600 }}>Or YouTube / Direct Video URL:</label>
                     <input
                       type="text"
                       className="bm-input"
-                      placeholder="https://... or /uploads/video.mp4"
+                      placeholder="https://www.youtube.com/watch?v=... or /uploads/video.mp4"
                       value={formVideoUrl}
                       onChange={(e) => setFormVideoUrl(e.target.value)}
                       required
@@ -492,7 +542,7 @@ function HanziClipsPage({ user, onBack, token }) {
               </div>
 
               <div className="form-group">
-                <label className="bm-label">Writing Tips & Stroke Rules</label>
+                <label className="bm-label">Writing Tips &amp; Stroke Rules</label>
                 <textarea
                   className="bm-input"
                   rows="3"

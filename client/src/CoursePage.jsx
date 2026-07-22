@@ -385,7 +385,15 @@ function CoursePage({ course, onBack, user }) {
                 setSrsMode(false);
               }}
             >
-              {quizMode ? '← Back to word list' : '✏️ Take quiz'}
+              {quizMode ? '← Back to word list' : (
+                <>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                  </svg>
+                  Take quiz
+                </>
+              )}
             </button>
             {token && (
               <button
@@ -420,7 +428,23 @@ function CoursePage({ course, onBack, user }) {
               onClick={toggleFlashMuted}
               title={flashMuted ? 'Unmute audio' : 'Mute audio'}
             >
-              {flashMuted ? '🔇 Unmute' : '🔊 Mute'}
+              {flashMuted ? (
+                <>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                    <path d="M9 9v6a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
+                  </svg>
+                  Unmute
+                </>
+              ) : (
+                <>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                  </svg>
+                  Mute
+                </>
+              )}
             </button>
 
             <div
@@ -440,7 +464,11 @@ function CoursePage({ course, onBack, user }) {
                   }}
                   title="Repeat word audio (Key: R)"
                 >
-                  🔊 Listen again
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4 }}>
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                  </svg>
+                  Listen again
                 </button>
                 <span className="flash-hint">tap or press Space to flip</span>
               </div>
@@ -456,7 +484,11 @@ function CoursePage({ course, onBack, user }) {
                   }}
                   title="Repeat word audio (Key: R)"
                 >
-                  🔊 Listen again
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4 }}>
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                  </svg>
+                  Listen again
                 </button>
               </div>
             </div>
@@ -477,7 +509,11 @@ function CoursePage({ course, onBack, user }) {
                 onClick={() => playCurrentWordAudio()}
                 title="Repeat audio pronunciation for this word (Key: R)"
               >
-                🔊 Repeat Word
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+                Repeat Word
               </button>
 
               <span className="flash-count">{flashIndex + 1} / {words.length}</span>
@@ -494,7 +530,12 @@ function CoursePage({ course, onBack, user }) {
             </div>
 
             <p className="keyboard-shortcut-hint">
-              💡 Keyboard controls: Use <strong>Left / Right Arrows</strong> to navigate, <strong>Spacebar</strong> to flip, <strong>R</strong> to repeat audio.
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6, verticalAlign: '-2px' }}>
+                <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
+                <path d="M9 18h6"></path>
+                <path d="M10 22h4"></path>
+              </svg>
+              Keyboard controls: Use <strong>Left / Right Arrows</strong> to navigate, <strong>Spacebar</strong> to flip, <strong>R</strong> to repeat audio.
             </p>
           </div>
         ) : (
@@ -581,7 +622,13 @@ function CoursePage({ course, onBack, user }) {
         ) : (
           <div className="access-banner access-locked" style={{ margin: '16px 0 0', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             {requestStatus === 'pending' ? (
-              <span>⏳ Access request sent — waiting for an admin to grant it.</span>
+              <span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Access request sent — waiting for an admin to grant it.
+              </span>
             ) : (
               <>
                 <span>

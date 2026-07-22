@@ -897,7 +897,12 @@ function BlogManager({ user, onBack }) {
       {/* Statistics Section */}
       <div className="bm-metrics-grid">
         <div className="bm-metric-card">
-          <div className="bm-metric-icon">📝</div>
+          <div className="bm-metric-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+          </div>
           <div className="bm-metric-details">
             <span className="bm-metric-value">{blogs.length}</span>
             <span className="bm-metric-label">Total Articles</span>
@@ -923,18 +928,26 @@ function BlogManager({ user, onBack }) {
         {/* Left Side: Editor & Preview Tab Panel */}
         <div className="bm-panel">
           <div className="bm-tabs-nav">
-            <button 
-              className={`bm-tab-btn ${activeTab === 'write' ? 'active' : ''}`}
-              onClick={() => setActiveTab('write')}
-            >
-              ✍️ Write Editor
-            </button>
-            <button 
-              className={`bm-tab-btn ${activeTab === 'preview' ? 'active' : ''}`}
-              onClick={() => setActiveTab('preview')}
-            >
-              👁 Live Preview
-            </button>
+              <button
+                className={`bm-tab-btn ${activeTab === 'write' ? 'active' : ''}`}
+                onClick={() => setActiveTab('write')}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: 6 }}>
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                </svg>
+                Write Editor
+              </button>
+              <button
+                className={`bm-tab-btn ${activeTab === 'preview' ? 'active' : ''}`}
+                onClick={() => setActiveTab('preview')}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: 6 }}>
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                Live Preview
+              </button>
           </div>
 
           {activeTab === 'write' ? (
@@ -1013,7 +1026,13 @@ function BlogManager({ user, onBack }) {
                       <button type="button" className="bm-remove-img-btn" onClick={() => setImage('')}>Remove Cover</button>
                     </div>
                   ) : (
-                    <div className="bm-upload-icon">🖼</div>
+                    <div className="bm-upload-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                      </svg>
+                    </div>
                   )}
                   
                   <p style={{ fontSize: '0.85rem', color: 'var(--mist)', fontWeight: 600, margin: '0.5rem 0' }}>
@@ -1097,7 +1116,12 @@ function BlogManager({ user, onBack }) {
                 {b.image ? (
                   <img src={resolveImageUrl(b.image)} alt="" className="bm-post-thumbnail" />
                 ) : (
-                  <div className="bm-post-thumbnail">📝</div>
+                  <div className="bm-post-thumbnail">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                  </div>
                 )}
                 <div className="bm-post-info">
                   <span className="bm-post-title" title={b.title}>{b.title}</span>

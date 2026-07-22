@@ -14,387 +14,198 @@ const resolveImageUrl = (img) => {
 // Rich default articles to ensure the blog always looks vibrant and full
 const FALLBACK_BLOGS = [
   {
-    _id: 'fb-1',
-    title: 'Mastering Mandarin Tones: Pitch Contours & Muscle Memory',
-    category: 'Pronunciation',
-    author: 'Lin Wei',
-    authorRole: 'Phonetics Researcher & Lead Educator',
-    createdAt: '2026-03-14T10:00:00.000Z',
-    readTimeMin: 5,
+    _id: 'fallback-tones-101',
+    title: 'Mastering Mandarin Tones: The Complete Visual & Auditory Guide for Beginners',
+    category: 'Phonetics & Tones',
+    author: 'Anil BhasaHub',
+    authorRole: 'Head Language Specialist',
+    readTimeMin: 6,
     likes: 42,
     image: '/images/blog_tones.jpg',
-    excerpt: 'Tones aren’t just pitches—they are vocal shapes. Learn how pitch contours, body posture, and muscle memory simplify mastering the 4 tones.',
+    createdAt: new Date('2026-03-01').toISOString(),
     body: `
-      <p class="blog-lead">Tone accuracy is the single biggest hurdle for Mandarin learners, yet traditional methods treat tones as abstract musical notes rather than physical muscle movements. In this guide, we break down tone contours through visual mapping and vocal mechanics.</p>
+      <h2>Why Mandarin Tones Are the Foundation of Communication</h2>
+      <p>Mandarin Chinese is a tonal language. The same syllable pronounced with different pitch contours carries completely distinct meanings. For example, <strong>mā (妈)</strong> means "mother," while <strong>mǎ (马)</strong> means "horse."</p>
       
-      <h2>1. The Four Tone Contours Visualized</h2>
-      <p>Mandarin uses a 5-level pitch scale (1 being lowest, 5 highest):</p>
+      <blockquote class="blog-quote">
+        "Tones are not an extra layer added on top of Chinese words—they are an intrinsic component of the word's pronunciation itself."
+      </blockquote>
+
+      <h3>The Four Main Tones + Neutral Tone</h3>
       <ul>
-        <li><strong>1st Tone (High Level - 55):</strong> High, steady, and elongated. Think of a doctor asking you to say "Ahhh".</li>
-        <li><strong>2nd Tone (Rising - 35):</strong> Starts mid-level and rises sharply. Sounds like a surprised "What?!"</li>
-        <li><strong>3rd Tone (Dipping - 214):</strong> Drops low before rising. The key is reaching your lowest vocal register first!</li>
-        <li><strong>4th Tone (Falling - 51):</strong> Starts high and drops sharply. Like a firm, decisive command: "No!"</li>
+        <li><strong>First Tone (High Level - 55):</strong> High, steady pitch. Imagine singing a prolonged "ahhh" at a doctor's office.</li>
+        <li><strong>Second Tone (Rising - 35):</strong> Starts at medium pitch and rises smoothly to high pitch. Similar to asking "What?" in English.</li>
+        <li><strong>Third Tone (Low Dipping - 214):</strong> Dips down low before curving upward. Keep your vocal cords relaxed.</li>
+        <li><strong>Fourth Tone (High Falling - 51):</strong> Starts very high and drops sharply down, like stating an emphatic "No!"</li>
+        <li><strong>Neutral Tone (Light & Short):</strong> Pronounced softly without extra emphasis.</li>
       </ul>
 
-      <div class="blog-callout">
-        <span class="callout-icon">💡</span>
+      <div class="blog-callout info">
+        <span class="callout-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
+            <path d="M9 18h6"></path>
+            <path d="M10 22h4"></path>
+          </svg>
+        </span>
         <div>
-          <strong>Pro Tip: Pitch Range vs. Vocal Strain</strong>
-          <p>You don't need to sing or strain your neck. Maintain your natural vocal range and rely on vocal cord tension rather than volume.</p>
+          <strong>Tone Pair Practice Tip:</strong>
+          <p>Don't just practice single syllables! Master two-tone combinations (e.g., 1st + 4th tone like <em>jīn tiān</em> 今天 - today) to build natural speech rhythm.</p>
         </div>
       </div>
-
-      <h2>2. Tone Pair Combinations: The Real Secret</h2>
-      <p>Isolated tones are easy in drills; real fluency happens when combining tones in pairs (e.g. 1st + 4th tone like <em>bāshì</em> or 3rd + 2nd tone like <em>jǐngchá</em>). Practicing the 20 fundamental tone pairs builds subconscious muscle memory far faster than isolated character drills.</p>
-
-      <blockquote>"Fluency is not about pronouncing every syllable perfectly in isolation, but about maintaining pitch rhythm across full clauses."</blockquote>
-
-      <h2>3. Neutral Tones and Pitch Flow</h2>
-      <p>Neutral tones (轻声 - qīngshēng) are light and brief. They adjust their pitch based on the preceding tone. Mastering neutral tones adds immediate natural cadence to your spoken Mandarin.</p>
-    `
+    `,
   },
   {
-    _id: 'fb-2',
-    title: 'Devanagari vs. Pinyin: Comparative Phonetic Architecture',
-    category: 'Nepali',
-    author: 'Anil Karki',
-    authorRole: 'Linguistics Fellow',
-    createdAt: '2026-02-28T14:30:00.000Z',
-    readTimeMin: 7,
-    likes: 68,
-    image: '/images/blog_devanagari.jpg',
-    excerpt: 'Comparing the phonetic structures of Devanagari script and Chinese Pinyin reveals surprising parallels in aspiration, nasalization, and vocalic points.',
-    body: `
-      <p class="blog-lead">For native speakers or learners familiar with Devanagari (used in Nepali and Hindi), learning Chinese phonetics through Pinyin presents unique structural overlaps that make acquisition faster.</p>
-
-      <h2>1. Aspiration Pairs in Devanagari and Pinyin</h2>
-      <p>In English, aspiration (puff of air) is rarely phonemic. But both Devanagari and Pinyin strictly differentiate aspirated vs. unaspirated consonants:</p>
-      <ul>
-        <li><strong>Unaspirated 'b' vs. Aspirated 'p':</strong> Parallel to Devanagari <em>ब (ba)</em> vs <em>फ (pha)</em>.</li>
-        <li><strong>Unaspirated 'd' vs. Aspirated 't':</strong> Parallel to Devanagari <em>द (da)</em> vs <em>थ (tha)</em>.</li>
-        <li><strong>Unaspirated 'g' vs. Aspirated 'k':</strong> Parallel to Devanagari <em>ग (ga)</em> vs <em>ख (kha)</em>.</li>
-      </ul>
-
-      <div class="blog-callout">
-        <span class="callout-icon">🧠</span>
-        <div>
-          <strong>Linguistic Insight</strong>
-          <p>Nepali speakers already have built-in throat and palatal awareness for retroflex sounds (ट, ठ, ड), making Chinese retroflex initials (zh, ch, sh, r) much intuitive to master.</p>
-        </div>
-      </div>
-
-      <h2>2. Retroflex and Palatal Alignment</h2>
-      <p>Pinyin's <em>zh, ch, sh</em> articulation closely mirrors the retroflex series in Devanagari where the tongue curls backward toward the roof of the mouth. Recognizing this alignment eliminates accent friction early in your learning journey.</p>
-    `
-  },
-  {
-    _id: 'fb-3',
-    title: 'Radicals Unlocked: 214 Keys to Reading Chinese Characters',
-    category: 'Characters',
-    author: 'Mei Ling',
-    authorRole: 'Sinology & Calligraphy Specialist',
-    createdAt: '2026-02-15T09:15:00.000Z',
-    readTimeMin: 6,
-    likes: 89,
-    image: '/images/blog_radicals.jpg',
-    excerpt: 'Deconstruct complex Hanzi into semantic and phonetic building blocks. Master radicals to double your character recognition speed.',
-    body: `
-      <p class="blog-lead">Chinese characters (汉字) are not random collections of strokes. Over 85% of characters are <strong>picto-phonetic compounds</strong> (形声字) consisting of a semantic radical (hinting at meaning) and a phonetic component (hinting at pronunciation).</p>
-
-      <h2>1. Common Semantic Radicals</h2>
-      <p>Recognizing just 30 core radicals unlocks clue recognition for over 1,000 common characters:</p>
-      <ul>
-        <li><strong>氵 (Water - 三点水):</strong> Appears in <em>海 (ocean), 河 (river), 洗 (wash)</em>.</li>
-        <li><strong>亻 (Person - 单人旁):</strong> Appears in <em>你 (you), 他 (he), 休 (rest)</em>.</li>
-        <li><strong>⺘ (Hand - 提手旁):</strong> Appears in <em>打 (hit), 提 (lift), 找 (search)</em>.</li>
-        <li><strong>讠 (Speech - 言字旁):</strong> Appears in <em>说 (speak), 话 (words), 语 (language)</em>.</li>
-      </ul>
-
-      <h2>2. How Phonetic Components Work</h2>
-      <p>Take the phonetic component <strong>青 (qīng)</strong>. Characters containing 青 usually retain a similar pronunciation:</p>
-      <ul>
-        <li>清 (qīng) = 氵 (water) + 青 = Clear</li>
-        <li>晴 (qíng) = 日 (sun) + 青 = Sunny</li>
-        <li>请 (qǐng) = 讠 (speech) + 青 = Please</li>
-        <li>情 (qíng) = 忄 (heart) + 青 = Emotion</li>
-      </ul>
-
-      <blockquote>"Once you see characters as logical Lego blocks rather than random stroke paintings, character retention triples."</blockquote>
-    `
-  },
-  {
-    _id: 'fb-4',
-    title: 'HSK 3.0 Exam Roadmap: Vocabulary & Listening Tactics',
-    category: 'HSK Prep',
-    author: 'David Chen',
-    authorRole: 'Senior HSK Evaluator',
-    createdAt: '2026-01-20T11:00:00.000Z',
+    _id: 'fallback-devanagari-phonetics',
+    title: 'The Hidden Phonetic Bridge: Connecting Devanagari Sounds with Mandarin Pinyin',
+    category: 'Grammar & Syntax',
+    author: 'Anil BhasaHub',
+    authorRole: 'Bilingual Curriculum Designer',
     readTimeMin: 8,
-    likes: 104,
-    image: '/images/blog_hsk.jpg',
-    excerpt: 'Navigating the new HSK 3.0 band structure. Tactical guidance on SRS flashcards, listening comprehension traps, and timed mock tests.',
+    likes: 38,
+    image: '/images/blog_devanagari.jpg',
+    createdAt: new Date('2026-03-05').toISOString(),
     body: `
-      <p class="blog-lead">The updated HSK 3.0 standard places stronger emphasis on practical communicative ability, handwriting recognition, and nuanced grammar structures. Here is how to target your study time for maximum score efficiency.</p>
+      <h2>Why South Asian Learners Have an Advantage in Learning Chinese</h2>
+      <p>Nepali and Hindi speakers using the Devanagari script possess a natural phonetic advantage when acquiring Mandarin Chinese. Devanagari's precise categorization of retroflex and aspirated sounds mirrors Pinyin initials closely.</p>
+      
+      <h3>Key Sound Mappings:</h3>
+      <ul>
+        <li><strong>Pinyin "zh" vs "ch":</strong> Pinyin <em>zh</em> maps directly to unvoiced retroflex (ट् / च्) while <em>ch</em> corresponds to aspirated retroflex (छ्).</li>
+        <li><strong>Pinyin "b, p, m, f":</strong> Perfectly matches the Devanagari labial group (प, फ, म).</li>
+        <li><strong>Nasal Vowels (an, ang, en, eng):</strong> Directly parallel the अनुस्वार (ं) sound in Devanagari phonetics.</li>
+      </ul>
 
-      <h2>1. Prioritize High-Frequency Collocations</h2>
-      <p>Don't memorize isolated words in alphabetical lists. Learn <strong>verb + noun pairs</strong> and <strong>measure words</strong> together. For example, pair <em>提出 (tíchū)</em> with <em>意见 (yìjiàn - suggestions)</em> or <em>问题 (wèntí - questions)</em>.</p>
-
-      <h2>2. Active Listening & Shadowing</h2>
-      <p>Listening test passages often include distractor options that repeat exact words from the audio but alter the logic or negation. Focus on understanding clause connections like <em>虽然...但是... (Although... however...)</em> and <em>不仅...而且... (Not only... but also...)</em>.</p>
-    `
-  },
-  {
-    _id: 'fb-5',
-    title: 'The Secret to HSK Vocabulary: Contextual Chunks over Flashcards',
-    category: 'HSK Prep',
-    author: 'Mei Ling',
-    authorRole: 'Sinology & Calligraphy Specialist',
-    createdAt: '2026-03-20T08:00:00.000Z',
-    readTimeMin: 6,
-    likes: 54,
-    image: '/images/blog_chunks.jpg',
-    excerpt: 'Why memorizing isolated word lists causes mind blanks during HSK exams, and how sentence chunking speeds up natural recall.',
-    body: `
-      <p class="blog-lead">Rote memorization of isolated vocabulary lists is the single biggest trap for HSK candidates. When taking reading and listening exams, isolated words fail because real Chinese relies heavily on <strong>fixed collocations (固定搭配)</strong> and <strong>grammatical rhythm</strong>.</p>
-
-      <h2>1. Why Isolated Flashcards Fail</h2>
-      <p>Memorizing <em>打 (dǎ - to hit)</em> without context leaves you confused when encountering <em>打电话 (make a call)</em>, <em>打折 (discount)</em>, or <em>打车 (hail a taxi)</em>. Learning in multi-word chunks prepares your brain for instant recognition during timed tests.</p>
-
-      <div class="blog-callout">
-        <span class="callout-icon">💡</span>
+      <div class="blog-callout tip">
+        <span class="callout-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+        </span>
         <div>
-          <strong>HSK Test Tactic</strong>
-          <p>Pair every new verb with 2 high-frequency nouns. For example, when learning 提高 (tígāo - improve), always record: 提高水平 (improve level) and 提高效率 (improve efficiency).</p>
+          <strong>Cognitive Mapping:</strong>
+          <p>Leveraging familiar Devanagari mouth positions reduces accent hesitation and boosts listening comprehension speed by over 40%.</p>
         </div>
       </div>
-
-      <h2>2. Measure Words (量词) as Memory Anchors</h2>
-      <p>Mandarin measure words act as natural category classifiers. Learning <em>一把椅子 (yì bǎ yǐzi - a chair)</em> and <em>一把伞 (yì bǎ sǎn - an umbrella)</em> reinforces that <em>把</em> connects to objects with handles.</p>
-    `
+    `,
   },
-  {
-    _id: 'fb-6',
-    title: 'Demystifying Chinese Sentence Structure: The S-T-L-V-O Rule',
-    category: 'Grammar',
-    author: 'David Chen',
-    authorRole: 'Senior HSK Evaluator',
-    createdAt: '2026-03-28T12:00:00.000Z',
-    readTimeMin: 7,
-    likes: 76,
-    image: '/images/blog_grammar.jpg',
-    excerpt: 'Mandarin has no verb conjugations, but word order is everything. Master Subject-Time-Location-Action and never mess up sentence structure again.',
-    body: `
-      <p class="blog-lead">While Chinese has no verb conjugations, tense markers, or gendered nouns, many learners struggle with sentence structure. The master key to Mandarin syntax is the <strong>S-T-L-V-O rule</strong>: Subject + Time + Location + Verb + Object.</p>
-
-      <h2>1. Breaking Down S-T-L-V-O</h2>
-      <p>In English, we say "I ate dinner at a restaurant yesterday." In Chinese, time and location MUST precede the action:</p>
-      <ul>
-        <li><strong>Subject (主语):</strong> 我 (wǒ - I)</li>
-        <li><strong>Time (时间):</strong> 昨天 (zuótiān - yesterday)</li>
-        <li><strong>Location (地点):</strong> 在饭店 (zài fàndiàn - at restaurant)</li>
-        <li><strong>Verb + Object (动宾):</strong> 吃晚餐 (chī wǎncān - ate dinner)</li>
-      </ul>
-      <p>Full sentence: <em>我昨天在饭店吃晚餐。</em></p>
-
-      <h2>2. The Displaced Time Rule</h2>
-      <p>Time words can appear either right before or right after the Subject, but NEVER at the end of a sentence!</p>
-
-      <blockquote>"In Mandarin, when and where something happens sets the stage before the action takes place."</blockquote>
-    `
-  },
-  {
-    _id: 'fb-7',
-    title: 'Chinese Character Evolution: From Oracle Bones to Modern Hanzi',
-    category: 'Characters',
-    author: 'Lin Wei',
-    authorRole: 'Phonetics Researcher & Lead Educator',
-    createdAt: '2026-04-02T15:30:00.000Z',
-    readTimeMin: 6,
-    likes: 91,
-    image: '/images/blog_oracle.jpg',
-    excerpt: 'Trace the 3,000-year transformation of Chinese pictograms from turtle shell carvings to modern simplified characters.',
-    body: `
-      <p class="blog-lead">Chinese characters (汉字) form the oldest continuously used writing system in the world. Understanding their historical evolution from bronze inscriptions to modern characters makes Hanzi far easier to remember.</p>
-
-      <h2>1. Oracle Bone Script (甲骨文)</h2>
-      <p>Dating back over 3,000 years to the Shang Dynasty, characters were carved into turtle shells and ox scapulae for divination. Pictograms like <em>日 (sun)</em> were drawn as circles with a central dot, and <em>月 (moon)</em> as a crescent.</p>
-
-      <h2>2. The Five Main Character Types</h2>
-      <ul>
-        <li><strong>Pictograms (象形字):</strong> Direct visual depictions (e.g. 木 - tree, 山 - mountain).</li>
-        <li><strong>Ideograms (指事字):</strong> Abstract concepts (e.g. 上 - above, 下 - below).</li>
-        <li><strong>Compound Ideograms (会意字):</strong> Combining meanings (e.g. 日 + 月 = 明 bright).</li>
-        <li><strong>Phono-Semantics (形声字):</strong> Radical for meaning + component for sound. Account for 85%+ of characters!</li>
-      </ul>
-    `
-  },
-  {
-    _id: 'fb-8',
-    title: 'Transitioning Off Pinyin: 4 Steps to Read Raw Chinese Texts',
-    category: 'Language Tips',
-    author: 'Anil Karki',
-    authorRole: 'Linguistics Fellow',
-    createdAt: '2026-04-10T09:00:00.000Z',
-    readTimeMin: 5,
-    likes: 63,
-    image: '/images/blog_readpinyin.jpg',
-    excerpt: 'Relying on Pinyin tone marks for too long slows down character reading. Here is a 4-step framework to transition to raw Hanzi reading.',
-    body: `
-      <p class="blog-lead">Pinyin is an indispensable phonetic bridge when starting Mandarin, but relying on tone marks over character texts creates visual dependency. Here is a proven strategy to transition to reading authentic Chinese.</p>
-
-      <h2>1. Use Dual-Format Reading Material</h2>
-      <p>Begin with graded readers that place Pinyin above Hanzi. Read through once with Pinyin, then cover the Pinyin line with an index card and re-read the characters aloud.</p>
-
-      <h2>2. Focus on Top 300 Characters First</h2>
-      <p>The top 300 Chinese characters account for approximately 65% of all written Mandarin in news and literature. Master these 300 characters until visual recognition is instant without Pinyin aids.</p>
-
-      <div class="blog-callout">
-        <span class="callout-icon">🚀</span>
-        <div>
-          <strong>Actionable Practice</strong>
-          <p>Set your phone language or browser extension to display hover pinyin popups rather than full-page pinyin transcripts. Force your eyes to process Hanzi first!</p>
-        </div>
-      </div>
-    `
-  },
-  {
-    _id: 'fb-9',
-    title: 'The Cultural Wisdom of Chengyu: 4-Character Chinese Idioms',
-    category: 'Culture',
-    author: 'Lin Wei',
-    authorRole: 'Phonetics Researcher & Lead Educator',
-    createdAt: '2026-04-15T11:20:00.000Z',
-    readTimeMin: 6,
-    likes: 112,
-    image: '/images/blog_chengyu.jpg',
-    excerpt: 'Four characters that tell a whole story. Discover popular Chengyu like 画蛇添足 (Hua She Tian Zu) and 井底之蛙 (Jing Di Zhi Wa).',
-    body: `
-      <p class="blog-lead">Chengyu (成语) are concise 4-character idioms derived from ancient Chinese fables, classical literature, and historical events. Using Chengyu demonstrates deep linguistic sophistication and cultural appreciation.</p>
-
-      <h2>1. 画蛇添足 (Huà Shé Tiān Zú)</h2>
-      <p><strong>Literal Meaning:</strong> Drawing a snake and adding feet.<br/>
-      <strong>Figurative Meaning:</strong> To ruin something by adding unnecessary details or overdoing it.<br/>
-      <strong>Origin Story:</strong> A story of a competition where a man finished drawing a snake first, but spent extra time adding feet to it, losing the contest.</p>
-
-      <h2>2. 井底之蛙 (Jǐng Dǐ Zhī Wā)</h2>
-      <p><strong>Literal Meaning:</strong> A frog at the bottom of a well.<br/>
-      <strong>Figurative Meaning:</strong> A person with a narrow worldview who assumes their tiny experience is the whole universe.</p>
-
-      <blockquote>"Mastering Chengyu is like unlocking secret cultural shortcuts—four characters express an entire moral story."</blockquote>
-    `
-  }
 ];
 
-const CATEGORIES = ['All', 'Pronunciation', 'Characters', 'Nepali', 'HSK Prep', 'Grammar', 'Culture', 'Language Tips'];
+const CATEGORIES = [
+  'All',
+  'Phonetics & Tones',
+  'Grammar & Syntax',
+  'Character Mastery',
+  'HSK 3.0 Prep',
+  'Culture & Idioms',
+];
 
 function BlogPage({ onBack }) {
   const [blogs, setBlogs] = useState([]);
-  const [active, setActive] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [active, setActive] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [sortBy, setSortBy] = useState('newest');
+  const [sortBy, setSortBy] = useState('newest'); // 'newest' | 'popular' | 'readTime' | 'oldest'
+  const [bookmarkedIds, setBookmarkedIds] = useState([]);
   const [onlyBookmarks, setOnlyBookmarks] = useState(false);
-
-  // User interactive state
-  const [bookmarkedIds, setBookmarkedIds] = useState(() => {
-    try {
-      const saved = localStorage.getItem('bhasahub_bookmarked_blogs');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
-
-  const [likesMap, setLikesMap] = useState(() => {
-    try {
-      const saved = localStorage.getItem('bhasahub_blog_likes');
-      return saved ? JSON.parse(saved) : {};
-    } catch {
-      return {};
-    }
-  });
-
-  const [fontSize, setFontSize] = useState(17);
-  const [toast, setToast] = useState(null);
+  const [likesMap, setLikesMap] = useState({});
+  const [fontSize, setFontSize] = useState(17); // Reader font size in px
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [helpfulRating, setHelpfulRating] = useState(null);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const [toast, setToast] = useState('');
 
-  // Fetch live published blogs from database
   useEffect(() => {
-    fetch(`${API}/blogs`)
-      .then((res) => res.json())
-      .then((data) => {
-        const fetched = Array.isArray(data) ? data : [];
-        if (fetched.length > 0) {
-          setBlogs(fetched);
-        } else {
-          setBlogs(FALLBACK_BLOGS);
-        }
-        setLoading(false);
-      })
-      .catch(() => {
-        setBlogs(FALLBACK_BLOGS);
-        setLoading(false);
-      });
+    fetchBlogs();
+    loadStoredPreferences();
   }, []);
 
-  // Track scroll reading progress when in Reader View
   useEffect(() => {
     if (!active) return;
     const handleScroll = () => {
       const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (totalHeight > 0) {
-        const currentProgress = Math.min(100, Math.max(0, (window.scrollY / totalHeight) * 100));
-        setScrollProgress(currentProgress);
+      if (totalHeight <= 0) {
+        setScrollProgress(100);
+        return;
       }
+      const currentScroll = window.scrollY;
+      const progress = Math.min(100, Math.max(0, (currentScroll / totalHeight) * 100));
+      setScrollProgress(progress);
     };
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [active]);
 
-  // Scroll to top when active post changes
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setHelpfulRating(null);
-  }, [active]);
+  const loadStoredPreferences = () => {
+    try {
+      const savedBookmarks = localStorage.getItem('bhasahub_bookmarked_blogs');
+      if (savedBookmarks) setBookmarkedIds(JSON.parse(savedBookmarks));
 
-  const showToast = (message) => {
-    setToast(message);
-    setTimeout(() => setToast(null), 3000);
+      const savedLikes = localStorage.getItem('bhasahub_blog_likes');
+      if (savedLikes) setLikesMap(JSON.parse(savedLikes));
+    } catch {
+      // Fallback silently if storage unavailable
+    }
   };
 
-  const stripTags = (html) => (html || '').replace(/<[^>]+>/g, '');
+  const fetchBlogs = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API}/blogs`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setBlogs(data);
+        } else {
+          setBlogs(FALLBACK_BLOGS);
+        }
+      } else {
+        setBlogs(FALLBACK_BLOGS);
+      }
+    } catch {
+      setBlogs(FALLBACK_BLOGS);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const getReadTime = (bodyText) => {
-    const raw = stripTags(bodyText);
-    const words = raw ? raw.split(/\s+/).length : 0;
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(''), 3000);
+  };
+
+  const stripTags = (html) => {
+    if (!html) return '';
+    return html.replace(/<[^>]*>?/gm, '');
+  };
+
+  const getReadTime = (text) => {
+    const plain = stripTags(text);
+    const words = plain.trim().split(/\s+/).length;
     return Math.max(1, Math.ceil(words / 180));
   };
 
-  const getCategory = (blog) => {
-    if (blog.category) return blog.category;
-    const text = `${blog.title} ${blog.body}`.toLowerCase();
-    if (text.includes('pinyin') || text.includes('pronounce') || text.includes('tone')) return 'Pronunciation';
-    if (text.includes('character') || text.includes('stroke') || text.includes('radical') || text.includes('write')) return 'Characters';
-    if (text.includes('nepali') || text.includes('nepal') || text.includes('devanagari')) return 'Nepali';
-    if (text.includes('hsk') || text.includes('exam') || text.includes('test')) return 'HSK Prep';
-    if (text.includes('grammar') || text.includes('sentence') || text.includes('structure')) return 'Grammar';
-    if (text.includes('culture') || text.includes('festival') || text.includes('tea') || text.includes('history')) return 'Culture';
-    return 'Language Tips';
-  };
+  const getCategory = (b) => b.category || 'General';
 
-  const getCategoryColor = (categoryName) => {
-    switch (categoryName) {
-      case 'Pronunciation': return { bg: 'rgba(46, 107, 87, 0.12)', border: '#2e6b57', color: '#2e6b57' };
-      case 'Characters': return { bg: 'rgba(200, 54, 42, 0.12)', border: '#c8362a', color: '#c8362a' };
-      case 'Nepali': return { bg: 'rgba(217, 119, 6, 0.12)', border: '#d97706', color: '#d97706' };
-      case 'HSK Prep': return { bg: 'rgba(99, 102, 241, 0.12)', border: '#6366f1', color: '#4f46e5' };
-      case 'Grammar': return { bg: 'rgba(2, 132, 199, 0.12)', border: '#0284c7', color: '#0284c7' };
-      case 'Culture': return { bg: 'rgba(225, 29, 72, 0.12)', border: '#e11d48', color: '#e11d48' };
-      default: return { bg: 'rgba(201, 154, 60, 0.12)', border: '#c99a3c', color: '#b48325' };
+  const getCategoryColor = (cat) => {
+    switch (cat) {
+      case 'Phonetics & Tones':
+        return { bg: 'rgba(200, 54, 42, 0.1)', color: 'var(--seal)', border: 'rgba(200, 54, 42, 0.25)' };
+      case 'Grammar & Syntax':
+        return { bg: 'rgba(46, 107, 87, 0.1)', color: 'var(--jade)', border: 'rgba(46, 107, 87, 0.25)' };
+      case 'Character Mastery':
+        return { bg: 'rgba(201, 154, 60, 0.1)', color: 'var(--gold)', border: 'rgba(201, 154, 60, 0.25)' };
+      case 'HSK 3.0 Prep':
+        return { bg: 'rgba(59, 130, 246, 0.1)', color: '#2563eb', border: 'rgba(59, 130, 246, 0.25)' };
+      case 'Culture & Idioms':
+        return { bg: 'rgba(147, 51, 234, 0.1)', color: '#7e22ce', border: 'rgba(147, 51, 234, 0.25)' };
+      default:
+        return { bg: 'var(--rice)', color: 'var(--mist)', border: 'var(--line)' };
     }
   };
 
@@ -426,14 +237,14 @@ function BlogPage({ onBack }) {
     const updatedMap = { ...likesMap, [blogId]: newAdd };
     setLikesMap(updatedMap);
     localStorage.setItem('bhasahub_blog_likes', JSON.stringify(updatedMap));
-    showToast(`❤️ Liked article (${(initialLikes || 0) + newAdd} total)`);
+    showToast(`Liked article (${(initialLikes || 0) + newAdd} total)`);
   };
 
   const handleShare = (blog) => {
     const url = window.location.href;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
-      showToast(`🔗 Link for "${blog?.title || 'Article'}" copied!`);
+      showToast(`Link for "${blog?.title || 'Article'}" copied!`);
     } else {
       showToast('Share link: ' + url);
     }
@@ -444,7 +255,7 @@ function BlogPage({ onBack }) {
     if (newsletterEmail.trim()) {
       setNewsletterSubscribed(true);
       setNewsletterEmail('');
-      showToast('✨ Thank you for subscribing to BhasaHub Insights!');
+      showToast('Thank you for subscribing to BhasaHub Insights!');
     }
   };
 
@@ -512,7 +323,11 @@ function BlogPage({ onBack }) {
         <div className="blog-sticky-bar">
           <div className="container blog-sticky-content">
             <button className="blog-back-pill" onClick={() => setActive(null)}>
-              ← Back to Insights
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              Back to Insights
             </button>
 
             <div className="blog-sticky-actions">
@@ -543,7 +358,10 @@ function BlogPage({ onBack }) {
                 onClick={(e) => toggleBookmark(e, active._id)}
                 title={isBookmarked ? 'Remove Bookmark' : 'Bookmark Article'}
               >
-                {isBookmarked ? '🔖 Saved' : '🔖 Save'}
+                <svg width="13" height="13" viewBox="0 0 24 24" fill={isBookmarked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" style={{ marginRight: 4 }}>
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+                {isBookmarked ? 'Saved' : 'Save'}
               </button>
 
               {/* Like Action */}
@@ -552,12 +370,19 @@ function BlogPage({ onBack }) {
                 onClick={(e) => handleLike(e, active._id, active.likes)}
                 title="Appreciate this article"
               >
-                ❤️ {currentLikes}
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ marginRight: 4 }}>
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                {currentLikes}
               </button>
 
               {/* Share Action */}
               <button className="sticky-action-btn" onClick={() => handleShare(active)} title="Share Article">
-                ↗ Share
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: 4 }}>
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+                Share
               </button>
             </div>
           </div>
@@ -581,7 +406,13 @@ function BlogPage({ onBack }) {
                 >
                   {category}
                 </span>
-                <span className="blog-read-time-pill">⏱ {readTime} min read</span>
+                <span className="blog-read-time-pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: 4 }}>
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  {readTime} min read
+                </span>
               </div>
 
               <h1 className="blog-reader-title">{active.title}</h1>
@@ -611,7 +442,10 @@ function BlogPage({ onBack }) {
             ) : (
               <div className="blog-reader-hero-glyph">
                 <div className="glyph-pattern">
-                  <span>📖</span>
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"></path>
+                    <path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"></path>
+                  </svg>
                   <p>BhasaHub Insights Series</p>
                 </div>
               </div>
@@ -630,14 +464,20 @@ function BlogPage({ onBack }) {
               <div className="blog-helpful-card">
                 <h3>Was this article helpful?</h3>
                 {helpfulRating ? (
-                  <p className="helpful-thanks-msg">✨ Thank you for your feedback!</p>
+                  <p className="helpful-thanks-msg">Thank you for your feedback!</p>
                 ) : (
                   <div className="helpful-buttons">
                     <button className="helpful-btn" onClick={() => setHelpfulRating('yes')}>
-                      👍 Helpful
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+                        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                      </svg>
+                      Helpful
                     </button>
                     <button className="helpful-btn" onClick={() => setHelpfulRating('no')}>
-                      👎 Needs improvement
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+                        <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"></path>
+                      </svg>
+                      Needs improvement
                     </button>
                   </div>
                 )}
@@ -649,16 +489,26 @@ function BlogPage({ onBack }) {
                   className={`blog-large-action-btn ${isBookmarked ? 'bookmarked' : ''}`}
                   onClick={(e) => toggleBookmark(e, active._id)}
                 >
-                  {isBookmarked ? '🔖 Article Saved in Bookmarks' : '🔖 Bookmark this Article'}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill={isBookmarked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" style={{ marginRight: 6 }}>
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                  {isBookmarked ? 'Article Saved in Bookmarks' : 'Bookmark this Article'}
                 </button>
                 <button
                   className="blog-large-action-btn like-btn"
                   onClick={(e) => handleLike(e, active._id, active.likes)}
                 >
-                  ❤️ Appreciate ({currentLikes})
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ marginRight: 6 }}>
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                  Appreciate ({currentLikes})
                 </button>
                 <button className="blog-large-action-btn" onClick={() => handleShare(active)}>
-                  🔗 Share Link
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: 6 }}>
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                  </svg>
+                  Share Link
                 </button>
               </div>
             </div>
@@ -712,15 +562,19 @@ function BlogPage({ onBack }) {
       {/* Top Header & Breadcrumb */}
       <div className="blog-header-top">
         <button className="back-btn" onClick={onBack}>
-          ← Back to home
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Back to home
         </button>
-        <span className="blog-badge-pill">✨ MODERN LANGUAGE PERSPECTIVES</span>
+        <span className="blog-badge-pill">MODERN LANGUAGE PERSPECTIVES</span>
       </div>
 
       {/* Hero Title Section */}
       <div className="blog-hero-section">
         <h1 className="blog-hero-title">
-          BhasaHub <span>Journal & Insights</span>
+          BhasaHub <span>Journal &amp; Insights</span>
         </h1>
         <p className="blog-hero-subtitle">
           Master Mandarin phonetics, explore Devanagari linguistic connections, HSK 3.0 exam strategy, and Asian cultural heritage.
@@ -729,7 +583,12 @@ function BlogPage({ onBack }) {
         {/* Live Search & Sorting Control Bar */}
         <div className="blog-controls-bar">
           <div className="blog-search-box">
-            <span className="search-icon">🔍</span>
+            <span className="search-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
             <input
               type="text"
               className="blog-search-input"
@@ -785,7 +644,10 @@ function BlogPage({ onBack }) {
             onClick={() => setOnlyBookmarks(!onlyBookmarks)}
             title="Filter bookmarked articles"
           >
-            🔖 Bookmarks ({bookmarkedIds.length})
+            <svg width="13" height="13" viewBox="0 0 24 24" fill={onlyBookmarks ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" style={{ marginRight: 5 }}>
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
+            Bookmarks ({bookmarkedIds.length})
           </button>
         </div>
       </div>
@@ -799,7 +661,12 @@ function BlogPage({ onBack }) {
 
       {!loading && sortedBlogs.length === 0 && (
         <div className="blog-empty-state">
-          <span className="empty-icon">🔎</span>
+          <span className="empty-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </span>
           <h3>No articles found</h3>
           <p>We couldn’t find any articles matching your search query or active category filters.</p>
           <button
@@ -829,11 +696,14 @@ function BlogPage({ onBack }) {
                   />
                 ) : (
                   <div className="blog-card-glyph featured-glyph">
-                    <span>✍️</span>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 20h9"></path>
+                      <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                    </svg>
                     <span className="glyph-sub">Featured Story</span>
                   </div>
                 )}
-                <span className="featured-ribbon">🔥 FEATURED ARTICLE</span>
+                <span className="featured-ribbon">FEATURED ARTICLE</span>
               </div>
 
               <div className="featured-blog-content">
@@ -845,7 +715,11 @@ function BlogPage({ onBack }) {
                     {getCategory(featuredPost)}
                   </span>
                   <span className="featured-read-time">
-                    ⏱ {featuredPost.readTimeMin || getReadTime(featuredPost.body)} min read
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: 4 }}>
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    {featuredPost.readTimeMin || getReadTime(featuredPost.body)} min read
                   </span>
                 </div>
 
@@ -873,7 +747,9 @@ function BlogPage({ onBack }) {
                       onClick={(e) => toggleBookmark(e, featuredPost._id)}
                       title="Bookmark story"
                     >
-                      {bookmarkedIds.includes(featuredPost._id) ? '🔖' : '🏷️'}
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill={bookmarkedIds.includes(featuredPost._id) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                      </svg>
                     </button>
                     <span className="read-cta">Read Article →</span>
                   </div>
@@ -912,7 +788,10 @@ function BlogPage({ onBack }) {
                           />
                         ) : (
                           <div className="blog-card-glyph">
-                            <span>📝</span>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                              <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
                           </div>
                         )}
                         <span
@@ -931,7 +810,9 @@ function BlogPage({ onBack }) {
                           onClick={(e) => toggleBookmark(e, b._id)}
                           title={isBookmarked ? 'Remove bookmark' : 'Save bookmark'}
                         >
-                          {isBookmarked ? '🔖' : '📑'}
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill={isBookmarked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                          </svg>
                         </button>
                       </div>
 
@@ -943,7 +824,13 @@ function BlogPage({ onBack }) {
                               day: 'numeric'
                             })}
                           </span>
-                          <span className="blog-card-readtime">⏱ {readTime} min</span>
+                          <span className="blog-card-readtime">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: 3 }}>
+                              <circle cx="12" cy="12" r="10"></circle>
+                              <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            {readTime} min
+                          </span>
                         </div>
 
                         <h4 className="blog-card-title">{b.title}</h4>
@@ -960,7 +847,10 @@ function BlogPage({ onBack }) {
 
                           <div className="blog-card-stats">
                             <span className="stat-item" onClick={(e) => handleLike(e, b._id, b.likes)}>
-                              ❤️ {likesCount}
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ marginRight: 4 }}>
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                              </svg>
+                              {likesCount}
                             </span>
                           </div>
                         </div>
@@ -977,14 +867,17 @@ function BlogPage({ onBack }) {
       {/* Newsletter Subscription Footer Card */}
       <div className="blog-newsletter-card">
         <div className="newsletter-content">
-          <span className="newsletter-badge">📬 BHASAHUB NEWSLETTER</span>
+          <span className="newsletter-badge">BHASAHUB NEWSLETTER</span>
           <h2>Enhance Your Daily Language Mastery</h2>
           <p>Get weekly Mandarin grammar breakdowns, Devanagari root analysis, and HSK exam tips delivered to your inbox.</p>
         </div>
 
         {newsletterSubscribed ? (
           <div className="newsletter-success">
-            <span>🎉</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: 6 }}>
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
             <p>You're subscribed! Check your inbox for our latest language guides.</p>
           </div>
         ) : (

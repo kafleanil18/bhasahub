@@ -102,7 +102,12 @@ function SrsReview({ lessonId, language, token, onExit }) {
   if (cards.length === 0) {
     return (
       <div className="srs-review-area">
-        <p className="srs-empty">🎉 Nothing due for review right now — check back later!</p>
+        <p className="srs-empty">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          Nothing due for review right now — check back later!
+        </p>
         <button className="nav-btn" onClick={onExit}>← Back to word list</button>
       </div>
     );
@@ -111,7 +116,13 @@ function SrsReview({ lessonId, language, token, onExit }) {
   if (index >= cards.length) {
     return (
       <div className="srs-review-area">
-        <p className="srs-empty">✅ Reviewed {reviewedCount} card{reviewedCount === 1 ? '' : 's'}. Nice work!</p>
+        <p className="srs-empty">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+          Reviewed {reviewedCount} card{reviewedCount === 1 ? '' : 's'}. Nice work!
+        </p>
         <div className="quiz-result-actions">
           <button className="btn-primary" onClick={loadDue}>Review more</button>
           <button className="nav-btn" onClick={onExit}>Back to word list</button>
@@ -132,7 +143,11 @@ function SrsReview({ lessonId, language, token, onExit }) {
           onClick={() => playCurrentCardAudio()}
           title="Repeat audio pronunciation for this word (Key: R)"
         >
-          🔊 Repeat Word
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+          Repeat Word
         </button>
       </div>
 
@@ -151,7 +166,11 @@ function SrsReview({ lessonId, language, token, onExit }) {
             }}
             title="Repeat word audio (Key: R)"
           >
-            🔊 Listen again
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4 }}>
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+            Listen again
           </button>
           <span className="flash-hint">tap or press Space to flip</span>
         </div>
@@ -167,7 +186,11 @@ function SrsReview({ lessonId, language, token, onExit }) {
             }}
             title="Repeat word audio (Key: R)"
           >
-            🔊 Listen again
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4 }}>
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+            Listen again
           </button>
         </div>
       </div>

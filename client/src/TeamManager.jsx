@@ -506,7 +506,15 @@ function TeamManager({ onBack }) {
                 {photoUrl && (
                   <div className="tmg-position-controls" style={{ width: '100%', margin: '1.25rem 0 0.5rem', borderTop: '1px dashed var(--line)', paddingTop: '1rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 600, color: 'var(--mist)', marginBottom: '4px' }}>
-                      <span>🔍 Zoom</span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                          <circle cx="11" cy="11" r="8"></circle>
+                          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                          <line x1="11" y1="8" x2="11" y2="14"></line>
+                          <line x1="8" y1="11" x2="14" y2="11"></line>
+                        </svg>
+                        Zoom
+                      </span>
                       <span>{Math.round((slot.scale !== undefined ? slot.scale : 1) * 100)}%</span>
                     </div>
                     <input

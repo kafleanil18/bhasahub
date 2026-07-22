@@ -378,14 +378,23 @@ function TestimonialManager({ onBack }) {
           </div>
         </div>
         <div className="tmm-metric-card">
-          <div className="tmm-metric-icon gold">⏳</div>
+          <div className="tmm-metric-icon gold">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
           <div className="tmm-metric-details">
             <span className="tmm-metric-value">{stats.pending}</span>
             <span className="tmm-metric-label">Pending Approval</span>
           </div>
         </div>
         <div className="tmm-metric-card">
-          <div className="tmm-metric-icon seal">⭐️</div>
+          <div className="tmm-metric-icon seal">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </div>
           <div className="tmm-metric-details">
             <span className="tmm-metric-value">{stats.average} / 5</span>
             <span className="tmm-metric-label">Average Score</span>

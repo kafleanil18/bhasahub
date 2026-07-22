@@ -417,14 +417,25 @@ function UserManager({ onBack }) {
       {/* Metrics Cards */}
       <div className="um-metrics-grid">
         <div className="um-metric-card">
-          <div className="um-metric-icon">👥</div>
+          <div className="um-metric-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
           <div className="um-metric-details">
             <span className="um-metric-value">{stats.total}</span>
             <span className="um-metric-label">Registered Profiles</span>
           </div>
         </div>
         <div className="um-metric-card">
-          <div className="um-metric-icon gold">🛠</div>
+          <div className="um-metric-icon gold">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
           <div className="um-metric-details">
             <span className="um-metric-value">{stats.admins}</span>
             <span className="um-metric-label">Active Admins</span>

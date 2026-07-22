@@ -1039,13 +1039,22 @@ function TestManager({ onBack, onPreviewTest }) {
               className={`tm-tab-btn ${editorTab === 'details' ? 'active' : ''}`}
               onClick={() => setEditorTab('details')}
             >
-              📋 General details & assets
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: 6 }}>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              </svg>
+              General details &amp; assets
             </button>
             <button 
               className={`tm-tab-btn ${editorTab === 'questions' ? 'active' : ''}`}
               onClick={() => setEditorTab('questions')}
             >
-              ❓ Manual questions editor ({questions.length})
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: 6 }}>
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              Manual questions editor ({questions.length})
             </button>
           </div>
 

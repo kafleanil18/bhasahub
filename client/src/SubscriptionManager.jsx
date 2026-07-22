@@ -847,7 +847,12 @@ function SubscriptionManager({ onBack }) {
             className="btn-primary"
             onClick={grant}
           >
-            🔑 Grant Course Access
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+              <path d="M21 2l-2 2m-2-2l2 2m2 2l-2 2m7-2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path>
+              <circle cx="7.5" cy="16.5" r="3.5"></circle>
+              <path d="M10.5 13.5L18.5 5.5"></path>
+            </svg>
+            Grant Course Access
           </button>
         </div>
 
