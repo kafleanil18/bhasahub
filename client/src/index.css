@@ -6497,6 +6497,39 @@ h1, h2, h3, h4, h5, h6,
   box-shadow: 0 10px 20px rgba(42, 35, 32, 0.06);
 }
 
+.admin-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--rice);
+  color: var(--seal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+  transition: all 0.2s ease;
+}
+
+.admin-stat-icon svg {
+  width: 24px;
+  height: 24px;
+  stroke: var(--seal);
+  fill: none;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.admin-stat-icon.courses {
+  background: rgba(46, 107, 87, 0.08);
+  border-color: rgba(46, 107, 87, 0.2);
+}
+
+.admin-stat-icon.courses svg {
+  stroke: var(--jade);
+}
+
 .admin-stat-details {
   flex: 1;
   display: flex;
