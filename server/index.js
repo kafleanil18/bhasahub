@@ -29,8 +29,10 @@ const lessonRoutes = require('./routes/lessons');
 const subscriptionRoutes = require('./routes/subscriptions');
 const userRoutes = require('./routes/users');
 const slideRoutes = require('./routes/slides');
+const helmet = require('helmet');
 
 const app = express();
+app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(cors());
 app.use(express.json());
 app.use('/api/upload', uploadRoutes);

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -620,7 +621,7 @@ function BlogPage({ onBack }) {
             <article
               className="blog-reader-body"
               style={{ fontSize: `${fontSize}px` }}
-              dangerouslySetInnerHTML={{ __html: active.body }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(active.body) }}
             />
 
             {/* Interactive End-of-Article Section */}

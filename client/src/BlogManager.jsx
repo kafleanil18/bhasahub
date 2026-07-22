@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import ReactQuill from 'react-quill-new';
+import DOMPurify from 'dompurify';
 import 'react-quill-new/dist/quill.snow.css';
 
 const API = window.API_BASE_URL + '/api';
@@ -1075,7 +1076,7 @@ function BlogManager({ user, onBack }) {
                     </div>
                   )}
 
-                  <div className="bm-sim-body" dangerouslySetInnerHTML={{ __html: body || '<p><i>No content written yet.</i></p>' }} />
+                  <div className="bm-sim-body" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(body || '<p><i>No content written yet.</i></p>') }} />
                 </div>
               ) : (
                 <div className="bm-sim-placeholder">

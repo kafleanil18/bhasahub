@@ -11,7 +11,8 @@ function requireAuth(req, res, next) {
   const token = header.split(' ')[1];
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const secret = process.env.JWT_SECRET || 'bhasahub-secret-key-change-in-production';
+    const payload = jwt.verify(token, secret);
     req.user = payload; // makes { id, role } available to the route
     next(); // all good — proceed to the route
   } catch {
