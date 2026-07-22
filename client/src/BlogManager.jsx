@@ -468,11 +468,19 @@ function BlogManager({ user, onBack }) {
           border: 1px solid var(--line, #e6dcc6);
           background: var(--paper, #faf6ec);
           border-radius: 10px;
-          font-size: 1rem;
+          font-size: 0.95rem;
           color: var(--ink, #2a2320);
           box-sizing: border-box;
           transition: all 0.2s ease;
           font-family: inherit;
+        }
+
+        .bm-input-title {
+          font-family: 'Fraunces', Georgia, serif;
+          font-size: 1.35rem;
+          font-weight: 700;
+          padding: 1rem 1.25rem;
+          background: var(--card, #fffdf8);
         }
 
         .bm-input:focus {
@@ -955,24 +963,24 @@ function BlogManager({ user, onBack }) {
               <div className="bm-form-group">
                 <label className="bm-label">Post Title</label>
                 <input 
-                  className="bm-input" 
+                  className="bm-input bm-input-title" 
                   value={title} 
                   onChange={(e) => setTitle(e.target.value)} 
                   placeholder="e.g. Debunking Tones in Mandarin Chinese" 
                 />
               </div>
 
-              <div className="bm-form-group">
-                <label className="bm-label">Author Name</label>
-                <input 
-                  className="bm-input" 
-                  value={author} 
-                  onChange={(e) => setAuthor(e.target.value)} 
-                  placeholder="e.g. Anil" 
-                />
-              </div>
+              <div className="bm-form-group" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
+                <div>
+                  <label className="bm-label">Author Name</label>
+                  <input 
+                    className="bm-input" 
+                    value={author} 
+                    onChange={(e) => setAuthor(e.target.value)} 
+                    placeholder="e.g. Anil" 
+                  />
+                </div>
 
-              <div className="bm-form-group" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
                   <label className="bm-label">Category</label>
                   <select 
@@ -980,12 +988,12 @@ function BlogManager({ user, onBack }) {
                     value={category} 
                     onChange={(e) => setCategory(e.target.value)}
                   >
-                    <option value="Pronunciation">Pronunciation</option>
-                    <option value="Characters">Characters</option>
-                    <option value="Nepali">Nepali</option>
-                    <option value="HSK Prep">HSK Prep</option>
-                    <option value="Grammar">Grammar</option>
-                    <option value="Culture">Culture</option>
+                    <option value="Pronunciation">Phonetics &amp; Tones</option>
+                    <option value="Characters">Character Mastery</option>
+                    <option value="Nepali">Devanagari &amp; Sound</option>
+                    <option value="HSK Prep">HSK 3.0 Prep</option>
+                    <option value="Grammar">Grammar &amp; Syntax</option>
+                    <option value="Culture">Culture &amp; Idioms</option>
                     <option value="Language Tips">Language Tips</option>
                   </select>
                 </div>
@@ -997,8 +1005,8 @@ function BlogManager({ user, onBack }) {
                     value={published ? 'published' : 'draft'} 
                     onChange={(e) => setPublished(e.target.value === 'published')}
                   >
-                    <option value="published">🟢 Published (Live on Blog)</option>
-                    <option value="draft">🟡 Draft (Hidden from Public)</option>
+                    <option value="published">Live on Blog (Published)</option>
+                    <option value="draft">Draft (Hidden)</option>
                   </select>
                 </div>
               </div>
@@ -1027,7 +1035,7 @@ function BlogManager({ user, onBack }) {
                     </div>
                   ) : (
                     <div className="bm-upload-icon">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                         <circle cx="8.5" cy="8.5" r="1.5"></circle>
                         <polyline points="21 15 16 10 5 21"></polyline>
@@ -1057,14 +1065,27 @@ function BlogManager({ user, onBack }) {
                   </div>
                   {uploading && (
                     <p className="bm-uploading-txt">
-                      <span className="spinner">⏳</span> Resizing and processing asset...
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ animation: 'spin 1s linear infinite' }}>
+                        <line x1="12" y1="2" x2="12" y2="6"></line>
+                        <line x1="12" y1="18" x2="12" y2="22"></line>
+                        <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
+                        <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
+                        <line x1="2" y1="12" x2="6" y2="12"></line>
+                        <line x1="18" y1="12" x2="22" y2="12"></line>
+                        <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
+                        <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
+                      </svg>
+                      Resizing and processing asset...
                     </p>
                   )}
                 </div>
               </div>
 
               <div className="bm-actions">
-                <button className="bm-btn-primary" onClick={save}>
+                <button className="bm-btn-primary" onClick={save} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
                   {editingId ? 'Save Changes' : 'Publish Article'}
                 </button>
                 {editingId && <button className="bm-btn-secondary" onClick={reset}>Cancel Edit</button>}
