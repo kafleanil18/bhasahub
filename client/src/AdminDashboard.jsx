@@ -10,6 +10,7 @@ function AdminDashboard({ onBack, onNavigate }) {
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [videoError, setVideoError] = useState('');
   const [serverStatus, setServerStatus] = useState('checking');
+  
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -80,13 +81,7 @@ function AdminDashboard({ onBack, onNavigate }) {
   if (error) {
     return (
       <section className="container" style={{ padding: '40px 0' }}>
-        <button className="btn-back-pill" onClick={onBack}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-          Back to site
-        </button>
+        <button className="btn-back-pill" onClick={onBack}>← Back to site</button>
         <p className="login-error" style={{ marginTop: 20 }}>{error}</p>
       </section>
     );
@@ -95,13 +90,7 @@ function AdminDashboard({ onBack, onNavigate }) {
   if (!stats) {
     return (
       <section className="container" style={{ padding: '40px 0' }}>
-        <button className="btn-back-pill" onClick={onBack}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-          Back to site
-        </button>
+        <button className="btn-back-pill" onClick={onBack}>← Back to site</button>
         <p className="courses-empty">Loading platform dashboard…</p>
       </section>
     );
@@ -146,11 +135,7 @@ function AdminDashboard({ onBack, onNavigate }) {
       <div className="admin-header-row">
         <div className="admin-header-title-group">
           <button className="btn-back-pill" onClick={onBack}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
-              <line x1="19" y1="12" x2="5" y2="12"></line>
-              <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            Back to site
+            ← Back to site
           </button>
           <div className="admin-title-status-line" style={{ marginTop: 12 }}>
             <h1 className="section-title" style={{ margin: 0 }}>LMS Control Center</h1>
@@ -167,12 +152,7 @@ function AdminDashboard({ onBack, onNavigate }) {
       {totalActionsRequired > 0 && (
         <div className="admin-actions-alert-banner">
           <div className="alert-banner-header">
-            <span className="alert-banner-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-              </svg>
-            </span>
+            <span className="alert-banner-icon">🔔</span>
             <div className="alert-banner-text-group">
               <h4 className="alert-banner-title">Administrative Actions Required</h4>
               <p className="alert-banner-desc">Review pending requests, testimonials, and support tickets.</p>
@@ -189,12 +169,7 @@ function AdminDashboard({ onBack, onNavigate }) {
               >
                 <span className="alert-action-label">Course Access requests</span>
                 <span className="alert-action-count">{pendingAccess} pending</span>
-                <span className="alert-action-arrow">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                  </svg>
-                </span>
+                <span className="alert-action-arrow">→</span>
               </div>
             )}
             {pendingTestimonials > 0 && (
@@ -207,12 +182,7 @@ function AdminDashboard({ onBack, onNavigate }) {
               >
                 <span className="alert-action-label">Student Testimonials</span>
                 <span className="alert-action-count">{pendingTestimonials} pending</span>
-                <span className="alert-action-arrow">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                  </svg>
-                </span>
+                <span className="alert-action-arrow">→</span>
               </div>
             )}
             {unreadFeedback > 0 && (
@@ -225,28 +195,18 @@ function AdminDashboard({ onBack, onNavigate }) {
               >
                 <span className="alert-action-label">Unread Support messages</span>
                 <span className="alert-action-count">{unreadFeedback} new</span>
-                <span className="alert-action-arrow">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                  </svg>
-                </span>
+                <span className="alert-action-arrow">→</span>
               </div>
             )}
           </div>
         </div>
       )}
 
-      {/* Redesigned Metrics Grid with Vector SVG Icons */}
+      {/* Redesigned Metrics Grid */}
       <div className="admin-stats-overview-grid">
         {/* Total Students */}
         <div className="admin-stat-box" onClick={() => onNavigate('subscriptions')}>
-          <div className="admin-stat-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-              <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
-            </svg>
-          </div>
+          <div className="admin-stat-icon active">🎓</div>
           <div className="admin-stat-details">
             <span className="admin-stat-label">Total Students</span>
             <span className="admin-stat-number">{stats.students.total}</span>
@@ -258,12 +218,7 @@ function AdminDashboard({ onBack, onNavigate }) {
 
         {/* Published Courses */}
         <div className="admin-stat-box" onClick={() => onNavigate('courses')}>
-          <div className="admin-stat-icon courses">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"></path>
-              <path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"></path>
-            </svg>
-          </div>
+          <div className="admin-stat-icon courses">📖</div>
           <div className="admin-stat-details">
             <span className="admin-stat-label">Courses Published</span>
             <span className="admin-stat-number">
@@ -277,14 +232,7 @@ function AdminDashboard({ onBack, onNavigate }) {
 
         {/* Total Enrollments */}
         <div className="admin-stat-box" onClick={() => onNavigate('subscriptions')}>
-          <div className="admin-stat-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-              <line x1="16" y1="13" x2="8" y2="13"></line>
-              <line x1="16" y1="17" x2="8" y2="17"></line>
-            </svg>
-          </div>
+          <div className="admin-stat-icon active">📝</div>
           <div className="admin-stat-details">
             <span className="admin-stat-label">Total Enrollments</span>
             <span className="admin-stat-number">{stats.enrollments.total}</span>
@@ -296,12 +244,7 @@ function AdminDashboard({ onBack, onNavigate }) {
 
         {/* Completed Lessons */}
         <div className="admin-stat-box" onClick={() => onNavigate('courses')}>
-          <div className="admin-stat-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-              <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
-          </div>
+          <div className="admin-stat-icon active">✅</div>
           <div className="admin-stat-details">
             <span className="admin-stat-label">Completed Lessons</span>
             <span className="admin-stat-number">{stats.lessons.completed}</span>
@@ -313,14 +256,7 @@ function AdminDashboard({ onBack, onNavigate }) {
 
         {/* Blog Posts */}
         <div className="admin-stat-box" onClick={() => onNavigate('blog')}>
-          <div className="admin-stat-icon courses">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"></path>
-              <path d="M18 14h-8"></path>
-              <path d="M18 18h-8"></path>
-              <path d="M18 10h-8"></path>
-            </svg>
-          </div>
+          <div className="admin-stat-icon courses">🗞️</div>
           <div className="admin-stat-details">
             <span className="admin-stat-label">Blog Articles</span>
             <span className="admin-stat-number">
@@ -334,13 +270,7 @@ function AdminDashboard({ onBack, onNavigate }) {
 
         {/* Mock Tests */}
         <div className="admin-stat-box" onClick={() => onNavigate('tests')}>
-          <div className="admin-stat-icon courses">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-              <path d="m9 14 2 2 4-4"></path>
-            </svg>
-          </div>
+          <div className="admin-stat-icon courses">📋</div>
           <div className="admin-stat-details">
             <span className="admin-stat-label">Mock Tests</span>
             <span className="admin-stat-number">
@@ -354,12 +284,7 @@ function AdminDashboard({ onBack, onNavigate }) {
 
         {/* Active Subscriptions */}
         <div className="admin-stat-box" onClick={() => onNavigate('subscriptions')}>
-          <div className="admin-stat-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
-              <line x1="2" y1="10" x2="22" y2="10"></line>
-            </svg>
-          </div>
+          <div className="admin-stat-icon active">⏳</div>
           <div className="admin-stat-details">
             <span className="admin-stat-label">Active Subscriptions</span>
             <span className="admin-stat-number">{stats.subscriptions.active}</span>
@@ -371,11 +296,7 @@ function AdminDashboard({ onBack, onNavigate }) {
 
         {/* Platform Admins */}
         <div className="admin-stat-box" onClick={() => onNavigate('admins')}>
-          <div className="admin-stat-icon courses">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            </svg>
-          </div>
+          <div className="admin-stat-icon courses">🛡️</div>
           <div className="admin-stat-details">
             <span className="admin-stat-label">Admins &amp; Staff</span>
             <span className="admin-stat-number">{stats.admins.total}</span>
@@ -419,22 +340,9 @@ function AdminDashboard({ onBack, onNavigate }) {
                   <span className="status-spinner"></span> Uploading video…
                 </>
               ) : welcomeVideoUrl ? (
-                <>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
-                    <polyline points="23 4 23 10 17 10"></polyline>
-                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-                  </svg>
-                  Replace Video Clip
-                </>
+                '🔄 Replace Video Clip'
               ) : (
-                <>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                  </svg>
-                  Upload Intro Video
-                </>
+                '📤 Upload Intro Video'
               )}
               <input
                 type="file"
@@ -591,3 +499,4 @@ function AdminDashboard({ onBack, onNavigate }) {
 }
 
 export default AdminDashboard;
+
