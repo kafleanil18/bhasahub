@@ -3496,18 +3496,43 @@ fadeUp .8s ease;
   font-style: italic;
 }
 
+.theme-toggle-btn,
 .theme-toggle {
-  background: none;
-  border: none;
-  font-size: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 8px;
-  transition: background 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(42, 35, 32, 0.05);
 }
 
+.theme-toggle-btn:hover,
 .theme-toggle:hover {
-  background: var(--rice);
+  border-color: var(--seal);
+  color: var(--seal);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(200, 54, 42, 0.12);
+}
+
+.dark .theme-toggle-btn,
+.dark .theme-toggle {
+  background: var(--card);
+  border-color: var(--line);
+  color: var(--gold);
+}
+
+.dark .theme-toggle-btn:hover,
+.dark .theme-toggle:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow: 0 4px 12px rgba(201, 154, 60, 0.18);
 }
 
 /* ---------- Super admin sidebar ---------- */
