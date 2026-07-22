@@ -53,6 +53,15 @@ function HanziClipsPage({ user, onBack, token }) {
     return url.startsWith('/') ? `${SERVER}${url}` : `${SERVER}/${url}`;
   };
 
+  const getYouTubeEmbedUrl = (url) => {
+    if (!url) return null;
+    const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    if (match && match[1]) {
+      return `https://www.youtube.com/embed/${match[1]}?enablejsapi=1&rel=0`;
+    }
+    return null;
+  };
+
   const handleOpenCreateModal = () => {
     setEditingClip(null);
     setFormCharacter('');
@@ -264,6 +273,8 @@ function HanziClipsPage({ user, onBack, token }) {
         <div className="hanzi-clips-grid">
           {filteredClips.map((clip) => {
             const currentSpeed = activePlaybackSpeeds[clip._id] || 1;
+            const ytEmbedUrl = getYouTubeEmbedUrl(clip.videoUrl);
+
             return (
               <div className="hanzi-clip-card" key={clip._id}>
                 {/* Character Emblem Badge */}
@@ -280,33 +291,45 @@ function HanziClipsPage({ user, onBack, token }) {
                   </div>
                 </div>
 
-                {/* Video Player */}
+                {/* Video Player (Supports YouTube URLs and uploaded video files) */}
                 <div className="hanzi-video-wrapper">
-                  <video
-                    id={`video-${clip._id}`}
-                    src={resolveVideoUrl(clip.videoUrl)}
-                    controls
-                    loop
-                    playsInline
-                    preload="metadata"
-                    className="hanzi-video-element"
-                  />
-                  {/* Playback Speed Quick Controls */}
-                  <div className="video-speed-bar">
-                    <span className="speed-label">Speed:</span>
-                    {[0.5, 0.75, 1, 1.25].map((speed) => (
-                      <button
-                        key={speed}
-                        className={`speed-btn ${currentSpeed === speed ? 'active' : ''}`}
-                        onClick={() => {
-                          const el = document.getElementById(`video-${clip._id}`);
-                          handlePlaybackSpeedChange(clip._id, el, speed);
-                        }}
-                      >
-                        {speed === 0.5 ? '🐢 0.5x Slow' : `${speed}x`}
-                      </button>
-                    ))}
-                  </div>
+                  {ytEmbedUrl ? (
+                    <iframe
+                      title={clip.title}
+                      src={ytEmbedUrl}
+                      className="hanzi-video-element hanzi-youtube-iframe"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <>
+                      <video
+                        id={`video-${clip._id}`}
+                        src={resolveVideoUrl(clip.videoUrl)}
+                        controls
+                        loop
+                        playsInline
+                        preload="metadata"
+                        className="hanzi-video-element"
+                      />
+                      {/* Playback Speed Quick Controls */}
+                      <div className="video-speed-bar">
+                        <span className="speed-label">Speed:</span>
+                        {[0.5, 0.75, 1, 1.25].map((speed) => (
+                          <button
+                            key={speed}
+                            className={`speed-btn ${currentSpeed === speed ? 'active' : ''}`}
+                            onClick={() => {
+                              const el = document.getElementById(`video-${clip._id}`);
+                              handlePlaybackSpeedChange(clip._id, el, speed);
+                            }}
+                          >
+                            {speed === 0.5 ? '🐢 0.5x Slow' : `${speed}x`}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Stroke Tips & Rules */}
