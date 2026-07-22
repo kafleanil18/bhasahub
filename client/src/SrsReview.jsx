@@ -37,8 +37,10 @@ function SrsReview({ lessonId, language, token, onExit }) {
 
   const playCurrentCardAudio = useCallback(() => {
     if (!card) return;
-    if (card.audioUrl) {
-      new Audio(`${window.API_BASE_URL}${card.audioUrl}`).play().catch(() => {});
+    const url = card.audioUrl;
+    if (url) {
+      const fullUrl = (url.startsWith('http://') || url.startsWith('https://')) ? url : `${window.API_BASE_URL || ''}${url.startsWith('/') ? '' : '/'}${url}`;
+      new Audio(fullUrl).play().catch(() => {});
     } else if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(card.word);

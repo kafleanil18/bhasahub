@@ -140,8 +140,10 @@ function CoursePage({ course, onBack, user }) {
   const playCurrentWordAudio = useCallback((indexToPlay = flashIndex) => {
     const currentWord = words[indexToPlay];
     if (!currentWord) return;
-    if (currentWord.audioUrl) {
-      new Audio(`${SERVER}${currentWord.audioUrl}`).play().catch(() => {});
+    const url = currentWord.audioUrl;
+    if (url) {
+      const fullUrl = (url.startsWith('http://') || url.startsWith('https://')) ? url : `${SERVER || ''}${url.startsWith('/') ? '' : '/'}${url}`;
+      new Audio(fullUrl).play().catch(() => {});
     } else if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(currentWord.word);
