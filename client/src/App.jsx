@@ -487,7 +487,7 @@ function App() {
         <header>
           <div className="container header-row">
             <span className="logo">
-              Learn Chinese with <span>Anil</span>
+              Learn Chinese with <span>Papu</span>
             </span>
           </div>
         </header>
