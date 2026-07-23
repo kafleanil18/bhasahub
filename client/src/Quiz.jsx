@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { mediaUrl } from './utils/mediaUrl';
 
 const SERVER = window.API_BASE_URL;
 const API = window.API_BASE_URL + '/api';
@@ -67,7 +68,7 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
     if (muted) return;
     const audioUrl = q?.word?.audioUrl;
     if (audioUrl) {
-      new Audio(`${SERVER}${audioUrl}`).play().catch(() => {});
+      new Audio(mediaUrl(audioUrl)).play().catch(() => {});
     }
   }, [q, muted]);
 

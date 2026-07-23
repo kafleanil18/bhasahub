@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { mediaUrl } from './utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
@@ -392,8 +393,8 @@ function TeamManager({ onBack }) {
                     <div className="tmg-avatar-wrap" style={{ borderRadius: '12px', width: '120px', height: '120px', border: '3px solid var(--jade, #2e6b57)', overflow: 'hidden', position: 'relative', margin: 0, background: 'var(--paper, #faf6ec)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {photoUrl ? (
                         <img 
-                          src={`${SERVER}${photoUrl}`} 
-                          alt={slot.name} 
+                          src={mediaUrl(photoUrl)}
+  alt={slot.name} 
                           style={{
                             width: '100%',
                             height: '100%',
@@ -415,8 +416,8 @@ function TeamManager({ onBack }) {
                       <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--mist, #7a7266)' }}>Uploaded Original Photo</span>
                       <div style={{ border: '1px solid var(--line, #e6dcc6)', borderRadius: '12px', padding: '4px', background: 'var(--card, #fffdf8)', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '120px', maxHeight: '120px', overflow: 'hidden' }}>
                         <img 
-                          src={`${SERVER}${photoUrl}`} 
-                          alt="Original uploaded file" 
+                          src={mediaUrl(photoUrl)}
+  alt="Original uploaded file" 
                           style={{
                             maxWidth: '100%',
                             maxHeight: '110px',

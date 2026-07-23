@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { mediaUrl } from './utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
@@ -192,7 +193,7 @@ function TestimonialModal({ user, onClose }) {
               <label className="tm-label">Photo Asset <span style={{ fontWeight: 4, color: '#9ca3af' }}>(Optional)</span></label>
               <div className="tm-upload-box">
                 {photo && (
-                  <img src={`${SERVER}${photo}`} alt="User identity avatar" className="tm-avatar-frame" />
+                  <img src={mediaUrl(photo)} alt="User identity avatar" className="tm-avatar-frame" />
                 )}
                 <input 
                   type="file" 

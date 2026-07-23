@@ -28,7 +28,6 @@ const RESOURCE_LABELS = {
   course: 'Course',
   lesson: 'Lesson',
   test: 'Test',
-  blog: 'Blog post',
   user: 'User',
   subscription: 'Subscription',
   'access-request': 'Access request',

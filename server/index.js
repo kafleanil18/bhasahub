@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const uploadRoutes = require('./routes/upload');
 const path = require('path');
+const fs = require('fs');
 const enrollmentRoutes = require('./routes/enrollments');
 const progressRoutes = require('./routes/progress');
 const feedbackRoutes = require('./routes/feedback');
 const testRoutes = require('./routes/tests');
-const blogRoutes = require('./routes/blogs');
 const testimonialRoutes = require('./routes/testimonials');
 const teamRoutes = require('./routes/team');
 const accessRequestRoutes = require('./routes/accessRequests');
@@ -20,6 +20,7 @@ const srsRoutes = require('./routes/srs');
 const attemptRoutes = require('./routes/attempts');
 const analyticsRoutes = require('./routes/analytics');
 const hanziClipRoutes = require('./routes/hanziClips');
+const { router: hanziTraceRoutes, ensureSeeded: ensureHanziTraceSeeded } = require('./routes/hanziTrace');
 
 require('dotenv').config();
 
@@ -41,7 +42,6 @@ app.use('/api/enrollments', enrollmentRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/tests', testRoutes);
-app.use('/api/blogs', blogRoutes);
 app.use('/api/testimonials', testimonialRoutes);
 app.use('/api/team', teamRoutes);
 app.use('/api/access-requests', accessRequestRoutes);
@@ -57,6 +57,7 @@ app.use('/api/srs', srsRoutes);
 app.use('/api/attempts', attemptRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/hanzi-clips', hanziClipRoutes);
+app.use('/api/hanzi-trace', hanziTraceRoutes);
 
 
 const TeamMember = require('./models/TeamMember');
@@ -96,6 +97,7 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/language-lm
   .then(() => {
     console.log('✅ MongoDB connected');
     seedTeam();
+    ensureHanziTraceSeeded();
   })
   .catch(err => console.error('❌ MongoDB error:', err));
 
@@ -106,6 +108,17 @@ app.use('/api/lessons', lessonRoutes);
 app.get('/api/health', (req, res) => {
   res.json({ message: 'Language LMS API is running!' });
 });
+
+// In production the client is built into client/dist and served by this
+// same process, so the app is reachable at a single origin with no CORS
+// or cross-port setup needed.
+const clientDist = path.join(__dirname, '..', 'client', 'dist');
+if (fs.existsSync(clientDist)) {
+  app.use(express.static(clientDist));
+  app.get(/^\/(?!api|uploads)/, (req, res) => {
+    res.sendFile(path.join(clientDist, 'index.html'));
+  });
+}
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));

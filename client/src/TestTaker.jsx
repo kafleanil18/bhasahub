@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { mediaUrl } from './utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
@@ -213,7 +214,7 @@ function TestTaker({ testId, onBack }) {
         <div className="test-media">
           <h3 className="dialogue-heading">🎧 Listening Audio</h3>
           <AudioPlayer
-            src={`${SERVER}${test.audioUrl}`}
+            src={mediaUrl(test.audioUrl)}
             onPlay={() => setTimerStarted(true)}
             onPlayStateChange={(p) => setAudioPlaying('main', p)}
           />
@@ -225,7 +226,7 @@ function TestTaker({ testId, onBack }) {
           <h3 className="dialogue-heading">📄 Question paper</h3>
           <div className="pdf-iframe-container" onContextMenu={(e) => e.preventDefault()}>
             <iframe
-              src={`${SERVER}${test.pdfUrl}#toolbar=0`}
+              src={`${mediaUrl(test.pdfUrl)}#toolbar=0`}
               title="Question paper"
               className="test-pdf-iframe"
             ></iframe>
@@ -257,7 +258,7 @@ function TestTaker({ testId, onBack }) {
                   {q.audioUrl && (
                     <div className="test-question-audio" style={{ paddingLeft: '32px', marginBottom: '16px' }}>
                       <AudioPlayer
-                        src={`${SERVER}${q.audioUrl}`}
+                        src={mediaUrl(q.audioUrl)}
                         onPlay={() => setTimerStarted(true)}
                         onPlayStateChange={(p) => setAudioPlaying(`q-${qi}`, p)}
                       />
@@ -265,7 +266,7 @@ function TestTaker({ testId, onBack }) {
                   )}
                   {q.image && (
                     <div className="test-question-image" style={{ paddingLeft: '32px', marginBottom: '16px' }}>
-                      <img src={`${SERVER}${q.image}`} alt={`Question ${qi + 1}`} style={{ maxWidth: '100%', width: '320px', borderRadius: '10px', display: 'block' }} />
+                      <img src={mediaUrl(q.image)} alt={`Question ${qi + 1}`} style={{ maxWidth: '100%', width: '320px', borderRadius: '10px', display: 'block' }} />
                     </div>
                   )}
                   <div className="test-options">

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { mediaUrl } from './utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
@@ -244,7 +245,7 @@ function PinyinPage({ onBack, isSuperAdmin }) {
   const handleToneClick = (tone) => {
     const rec = recordings[keyFor(selected, tone)];
     if (rec && audioPlayerRef.current) {
-      audioPlayerRef.current.src = `${SERVER}${rec.audioUrl}`;
+      audioPlayerRef.current.src = mediaUrl(rec.audioUrl);
       audioPlayerRef.current.play();
     } else {
       playTone(selected, tone);

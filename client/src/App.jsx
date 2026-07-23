@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { mediaUrl } from './utils/mediaUrl';
 import Login from './Login';
 import Register from './Register';
 import AdminPanel from './AdminPanel';
@@ -15,8 +16,6 @@ import FeedbackInbox from './FeedbackInbox';
 import TestManager from './TestManager';
 import TestList from './TestList';
 import TestTaker from './TestTaker';
-import BlogManager from './BlogManager';
-import BlogPage from './BlogPage';
 import TestimonialModal from './TestimonialModal';
 import TestimonialManager from './TestimonialManager';
 import SubscriptionManager from './SubscriptionManager';
@@ -25,6 +24,7 @@ import TeamManager from './TeamManager';
 import AdminDashboard from './AdminDashboard';
 import AuditLog from './AuditLog';
 import HanziClipsPage from './HanziClipsPage';
+import HanziTracePage from './HanziTracePage';
 
 
 
@@ -192,10 +192,8 @@ function App() {
   const [showTestManager, setShowTestManager] = useState(false);
   const [activeTestId, setActiveTestId] = useState(null);
   const [testTakerBackToManager, setTestTakerBackToManager] = useState(false);
-  const [showBlog, setShowBlog] = useState(false);
-  const [showBlogManager, setShowBlogManager] = useState(false);
   const [showHanziClips, setShowHanziClips] = useState(false);
-  const [footerBlogs, setFooterBlogs] = useState([]);
+  const [showHanziTrace, setShowHanziTrace] = useState(false);
   const [showTestimonial, setShowTestimonial] = useState(false);
   const [showTestimonialManager, setShowTestimonialManager] = useState(false);
   const [testimonials, setTestimonials] = useState([]);
@@ -253,13 +251,6 @@ function App() {
         setAccess(map);
       })
       .catch(() => {});
-  };
-
-  const loadFooterBlogs = () => {
-    fetch(window.API_BASE_URL + '/api/blogs')
-      .then(res => res.json())
-      .then(data => setFooterBlogs(Array.isArray(data) ? data.slice(0, 3) : []))
-      .catch(() => setFooterBlogs([]));
   };
 
   const loadTestimonials = () => {
@@ -372,7 +363,6 @@ function App() {
       .catch(() => setServerOk(false));
     loadCourses();
     loadAccess();
-    loadFooterBlogs();
     loadTestimonials();
     loadTeamPhotos();
     loadSiteSettings();
@@ -396,9 +386,8 @@ function App() {
     setShowTestManager(false);
     setActiveTestId(null);
     setTestTakerBackToManager(false);
-    setShowBlog(false);
-    setShowBlogManager(false);
     setShowHanziClips(false);
+    setShowHanziTrace(false);
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
     setShowUserManager(false);
@@ -426,9 +415,8 @@ function App() {
     setShowTestManager(false);
     setActiveTestId(null);
     setTestTakerBackToManager(false);
-    setShowBlog(false);
-    setShowBlogManager(false);
     setShowHanziClips(false);
+    setShowHanziTrace(false);
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
     setShowUserManager(false);
@@ -436,7 +424,6 @@ function App() {
     setAdminSidebarOpen(false);
     loadCourses();
     loadAccess();
-    loadFooterBlogs();
     loadTestimonials();
     loadTeamPhotos();
     loadMyAccess();
@@ -464,8 +451,6 @@ function App() {
     setShowTestManager(false);
     setActiveTestId(null);
     setTestTakerBackToManager(false);
-    setShowBlog(false);
-    setShowBlogManager(false);
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
     setShowUserManager(false);
@@ -597,21 +582,21 @@ function App() {
                 Manage tests
               </button>
               {isSuperAdmin && (
-                <button onClick={() => { goHome(); setShowBlogManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
-                  <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 20h9"></path>
-                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-                  </svg>
-                  Manage blog
-                </button>
-              )}
-              {isSuperAdmin && (
                 <button onClick={() => { goHome(); setShowHanziClips(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
                   <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polygon points="23 7 16 12 23 17 23 7"></polygon>
                     <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
                   </svg>
                   Writing clips
+                </button>
+              )}
+              {isSuperAdmin && (
+                <button onClick={() => { goHome(); setShowHanziTrace(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
+                  <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                  </svg>
+                  Trace characters
                 </button>
               )}
               <button onClick={() => { goHome(); setShowTestimonialManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
@@ -717,20 +702,20 @@ function App() {
                 Mock Tests
               </button>
 
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowBlog(true); }}>
-                <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 20h9"></path>
-                  <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-                </svg>
-                Blog
-              </button>
-
               <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowHanziClips(true); }}>
                 <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polygon points="23 7 16 12 23 17 23 7"></polygon>
                   <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
                 </svg>
                 Writing Clips
+              </button>
+
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowHanziTrace(true); }}>
+                <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                </svg>
+                Trace Characters
               </button>
 
               <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowFeedback(true); }}>
@@ -887,12 +872,10 @@ function App() {
         <SubscriptionManager onBack={goAdminDashboard} />
       ) : isSuperAdmin && showTestimonialManager ? (
         <TestimonialManager onBack={goAdminDashboard} />
-      ) : isSuperAdmin && showBlogManager ? (
-        <BlogManager user={user} onBack={goAdminDashboard} />
-      ) : showBlog ? (
-        <BlogPage onBack={goHome} />
       ) : showHanziClips ? (
         <HanziClipsPage user={user} token={localStorage.getItem('token')} onBack={goHome} />
+      ) : showHanziTrace ? (
+        <HanziTracePage user={user} token={localStorage.getItem('token')} onBack={goHome} />
       ) : showPinyinPage ? (
         <PinyinPage onBack={goHome} isSuperAdmin={isSuperAdmin} />
       ) : isSuperAdmin && showTestManager ? (
@@ -933,7 +916,6 @@ function App() {
             if (view === 'courses') setShowAdmin(true);
             else if (view === 'audit') setShowAuditLog(true);
             else if (view === 'tests') setShowTestManager(true);
-            else if (view === 'blog' && isSuperAdmin) setShowBlogManager(true);
             else if (view === 'testimonials') setShowTestimonialManager(true);
             else if (view === 'inbox') setShowInbox(true);
             else if (view === 'admins') setShowUserManager(true);
@@ -1015,7 +997,7 @@ function App() {
                         if (btn) btn.style.display = 'flex';
                       }}
                     >
-                      <source src={welcomeVideoUrl ? `${window.API_BASE_URL}${welcomeVideoUrl}` : '/video/intro.mp4'} type="video/mp4" />
+                      <source src={welcomeVideoUrl ? mediaUrl(welcomeVideoUrl) : '/video/intro.mp4'} type="video/mp4" />
                       Your browser doesn't support the video tag.
                     </video>
                     <button className="big-play" aria-label="Play intro video">
@@ -1094,7 +1076,7 @@ function App() {
                         <p className="testimonial-text">"{t.text}"</p>
                         <div className="testimonial-person">
                           {t.photo ? (
-                            <img className="testimonial-photo" src={`${window.API_BASE_URL}${t.photo}`} alt={t.name} />
+                            <img className="testimonial-photo" src={mediaUrl(t.photo)} alt={t.name} />
                           ) : (
                             <span className="testimonial-photo-placeholder">{t.name.charAt(0)}</span>
                           )}
@@ -1136,7 +1118,7 @@ function App() {
                     name: dbMemberObj.name || '',
                     role: dbMemberObj.role || '',
                     bio: dbMemberObj.bio || '',
-                    photo: dbMemberObj.photo ? `${window.API_BASE_URL}${dbMemberObj.photo}` : '',
+                    photo: dbMemberObj.photo ? mediaUrl(dbMemberObj.photo) : '',
                     offsetX: dbMemberObj.offsetX !== undefined ? dbMemberObj.offsetX : 50,
                     offsetY: dbMemberObj.offsetY !== undefined ? dbMemberObj.offsetY : 50,
                     scale: dbMemberObj.scale !== undefined ? dbMemberObj.scale : 1
@@ -1187,7 +1169,7 @@ function App() {
                         }}
                       >
                         {c.image ? (
-                          <img className="course-card-img" src={`${window.API_BASE_URL}${c.image}`} alt={c.title} />
+                          <img className="course-card-img" src={mediaUrl(c.image)} alt={c.title} />
                         ) : (
                           <div className="course-card-glyph">
                             <span className={c.language === 'chinese' ? 'zh' : 'ne'}>
@@ -1238,23 +1220,6 @@ function App() {
                 </a>
               </div>
 
-              {footerBlogs.length > 0 && (
-                <div className="footer-blog">
-                  <h3>From the blog</h3>
-                  <div className="footer-blog-list">
-                    {footerBlogs.map((b) => (
-                      <button
-                        className="footer-blog-item"
-                        key={b._id}
-                        onClick={() => { goHome(); setShowBlog(true); }}
-                      >
-                        <span className="footer-blog-title">{b.title}</span>
-                        <span className="footer-blog-date">{new Date(b.createdAt).toLocaleDateString()}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               <p className="status">
                 {serverOk === null && <span>Checking server...</span>}

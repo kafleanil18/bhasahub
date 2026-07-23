@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { mediaUrl } from './utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
@@ -50,7 +51,7 @@ function HanziClipsPage({ user, onBack, token }) {
   const resolveVideoUrl = (url) => {
     if (!url) return '';
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    return url.startsWith('/') ? `${SERVER}${url}` : `${SERVER}/${url}`;
+    return url.startsWith('/') ? mediaUrl(url) : mediaUrl(`/${url}`);
   };
 
   const getYouTubeEmbedUrl = (url) => {

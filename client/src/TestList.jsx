@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { mediaUrl } from './utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
 const LEVELS = ['HSK 1', 'HSK 2', 'HSK 3', 'HSK 4'];
@@ -59,7 +60,7 @@ function TestList({ onOpenTest, onBack }) {
         {filteredTests.map((t) => (
           <div className="course-card" key={t._id} onClick={() => onOpenTest(t._id)}>
             {t.image ? (
-              <img className="course-card-img" src={`${window.API_BASE_URL}${t.image}`} alt={t.title} />
+              <img className="course-card-img" src={mediaUrl(t.image)} alt={t.title} />
             ) : (
               <div className="course-card-glyph">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

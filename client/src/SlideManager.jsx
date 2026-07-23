@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { mediaUrl } from './utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
@@ -108,7 +109,7 @@ function SlideManager({ onBack }) {
         </label>
         {pdfUrl && (
           <p className="pdf-ok">
-            ✓ PDF ready {pdfUrl.startsWith('http') ? '' : <a href={`${SERVER}${pdfUrl}`} target="_blank" rel="noreferrer">preview</a>}
+            ✓ PDF ready {pdfUrl.startsWith('http') ? '' : <a href={mediaUrl(pdfUrl)} target="_blank" rel="noreferrer">preview</a>}
           </p>
         )}
         {uploading && <p className="pdf-ok">Uploading PDF...</p>}

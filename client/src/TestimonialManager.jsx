@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { mediaUrl } from './utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
@@ -419,7 +420,7 @@ function TestimonialManager({ onBack }) {
 
                 <div className="tmm-card-head">
                   {t.photo ? (
-                    <img src={`${SERVER}${t.photo}`} alt={t.name} className="tmm-avatar" />
+                    <img src={mediaUrl(t.photo)} alt={t.name} className="tmm-avatar" />
                   ) : (
                     <div className="tmm-avatar-fallback">{initials}</div>
                   )}

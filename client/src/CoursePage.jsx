@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Quiz from './Quiz';
 import SrsReview from './SrsReview';
+import { mediaUrl } from './utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
@@ -300,7 +301,7 @@ function CoursePage({ course, onBack, user }) {
             </h3>
             {activeLesson.grammarImage && (
               <img
-                src={`${SERVER}${activeLesson.grammarImage}`}
+                src={mediaUrl(activeLesson.grammarImage)}
                 alt=""
                 className="dialogue-main-image"
               />
@@ -316,7 +317,7 @@ function CoursePage({ course, onBack, user }) {
             <h3 className="dialogue-heading">💬 Conversation</h3>
             {activeLesson.dialogueImage && (
               <img
-                src={`${SERVER}${activeLesson.dialogueImage}`}
+                src={mediaUrl(activeLesson.dialogueImage)}
                 alt=""
                 className="dialogue-main-image"
               />
@@ -327,7 +328,7 @@ function CoursePage({ course, onBack, user }) {
                   <button
                     type="button"
                     className="play-btn"
-                    onClick={() => new Audio(`${SERVER}${line.audioUrl}`).play()}
+                    onClick={() => new Audio(mediaUrl(line.audioUrl)).play()}
                     title="Play audio"
                   >
                     ▶
@@ -573,7 +574,7 @@ function CoursePage({ course, onBack, user }) {
                 <div className="audio-row">
                   <button
                     className="play-btn"
-                    onClick={() => new Audio(`${SERVER}${w.audioUrl}`).play()}
+                    onClick={() => new Audio(mediaUrl(w.audioUrl)).play()}
                     title="Listen to the teacher"
                   >
                     ▶

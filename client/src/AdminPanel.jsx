@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { mediaUrl } from './utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api/courses';
 
@@ -714,7 +715,7 @@ function AdminPanel({ onBack, onManageLessons }) {
           {image && (
             <div className="admin-img-preview-card">
               <img
-                src={`${window.API_BASE_URL}${image}`}
+                src={mediaUrl(image)}
                 alt="Course preview"
                 className="admin-img-preview"
               />

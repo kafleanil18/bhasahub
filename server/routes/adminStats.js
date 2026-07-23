@@ -6,7 +6,6 @@ const Progress = require('../models/Progress');
 const AccessRequest = require('../models/AccessRequest');
 const Subscription = require('../models/Subscription');
 const Testimonial = require('../models/Testimonial');
-const Blog = require('../models/Blog');
 const Test = require('../models/Test');
 const Feedback = require('../models/Feedback');
 const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
@@ -36,8 +35,6 @@ router.get('/', requireAuth, requireSuperAdmin, async (req, res) => {
       activeSubscriptions,
       expiringSoonSubscriptions,
       pendingTestimonials,
-      publishedBlogPosts,
-      totalBlogPosts,
       publishedTests,
       totalTests,
       unreadFeedback,
@@ -67,8 +64,6 @@ router.get('/', requireAuth, requireSuperAdmin, async (req, res) => {
       Subscription.countDocuments({ expiresAt: { $gt: now } }),
       Subscription.countDocuments({ expiresAt: { $gt: now, $lt: new Date(now.getTime() + 7 * DAY_MS) } }),
       Testimonial.countDocuments({ approved: false }),
-      Blog.countDocuments({ published: true }),
-      Blog.countDocuments(),
       Test.countDocuments({ published: true }),
       Test.countDocuments(),
       Feedback.countDocuments({ read: false }),
@@ -83,7 +78,6 @@ router.get('/', requireAuth, requireSuperAdmin, async (req, res) => {
       accessRequests: { pending: pendingAccessRequests },
       subscriptions: { active: activeSubscriptions, expiringSoon: expiringSoonSubscriptions },
       testimonials: { pending: pendingTestimonials },
-      blog: { published: publishedBlogPosts, total: totalBlogPosts },
       tests: { published: publishedTests, total: totalTests },
       feedback: { unread: unreadFeedback },
     });

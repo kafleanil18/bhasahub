@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { mediaUrl } from './utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -254,20 +255,6 @@ function AdminDashboard({ onBack, onNavigate }) {
           </div>
         </div>
 
-        {/* Blog Posts */}
-        <div className="admin-stat-box" onClick={() => onNavigate('blog')}>
-          <div className="admin-stat-icon courses">🗞️</div>
-          <div className="admin-stat-details">
-            <span className="admin-stat-label">Blog Articles</span>
-            <span className="admin-stat-number">
-              {stats.blog.published}<span className="admin-stat-number-divider">/</span>{stats.blog.total}
-            </span>
-            <span className="admin-stat-badge grey">
-              Published posts
-            </span>
-          </div>
-        </div>
-
         {/* Mock Tests */}
         <div className="admin-stat-box" onClick={() => onNavigate('tests')}>
           <div className="admin-stat-icon courses">📋</div>
@@ -322,7 +309,7 @@ function AdminDashboard({ onBack, onNavigate }) {
               <video
                 key={welcomeVideoUrl}
                 controls
-                src={`${window.API_BASE_URL}${welcomeVideoUrl}`}
+                src={mediaUrl(welcomeVideoUrl)}
                 className="admin-welcome-video-player"
               />
               <span className="admin-welcome-video-status-tag">Live on Site</span>

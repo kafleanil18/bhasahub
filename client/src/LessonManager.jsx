@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { parseCSV, downloadCSV } from './csv';
+import { mediaUrl } from './utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
@@ -545,7 +546,7 @@ function LessonManager({ course, onBack }) {
                 <span>{w.meaning}</span>
               </div>
               <button className="nav-btn" onClick={() => startEditWord(w)}>Edit</button>
-              {w.audioUrl && <audio controls src={`${SERVER}${w.audioUrl}`} className="row-audio" />}
+              {w.audioUrl && <audio controls src={mediaUrl(w.audioUrl)} className="row-audio" />}
               {recordingWordId === w._id ? (
                 <button type="button" className="pill pill-draft recording-pill" onClick={stopRecording}>
                   ⏹ Stop
@@ -638,7 +639,7 @@ function LessonManager({ course, onBack }) {
             </div>
             {grammarImage ? (
               <div className="dialogue-image-preview-wrap">
-                <img src={`${SERVER}${grammarImage}`} alt="grammar" className="dialogue-image-admin" />
+                <img src={mediaUrl(grammarImage)} alt="grammar" className="dialogue-image-admin" />
                 <label className="pill pill-draft upload-label">
                   Change image
                   <input type="file" accept="image/*" hidden
@@ -696,7 +697,7 @@ function LessonManager({ course, onBack }) {
               </div>
               {dialogueImage ? (
                 <div className="dialogue-image-preview-wrap">
-                  <img src={`${SERVER}${dialogueImage}`} alt="dialogue" className="dialogue-image-admin" />
+                  <img src={mediaUrl(dialogueImage)} alt="dialogue" className="dialogue-image-admin" />
                   <label className="pill pill-draft upload-label">
                     Change image
                     <input type="file" accept="image/*" hidden
@@ -753,7 +754,7 @@ function LessonManager({ course, onBack }) {
                   />
                   {line.audioUrl && (
                     <>
-                      <audio ref={(el) => { lineAudioRefs.current[i] = el; }} src={`${SERVER}${line.audioUrl}`} style={{ display: 'none' }} />
+                      <audio ref={(el) => { lineAudioRefs.current[i] = el; }} src={mediaUrl(line.audioUrl)} style={{ display: 'none' }} />
                       <button
                         type="button"
                         className="pill pill-play"

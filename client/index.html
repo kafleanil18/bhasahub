@@ -19,7 +19,13 @@
       rel="stylesheet"
     />
     <script>
-      window.API_BASE_URL = `http://${window.location.hostname}:5001`;
+      // In local dev the Vite dev server (5173) and the API (5001) run on
+      // different ports. In production one Express process serves both the
+      // built client and the API from the same origin, so no prefix is needed.
+      window.API_BASE_URL =
+        window.location.hostname === 'localhost' && window.location.port !== '5001'
+          ? `http://${window.location.hostname}:5001`
+          : '';
     </script>
   </head>
   <body>

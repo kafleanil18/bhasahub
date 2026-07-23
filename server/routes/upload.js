@@ -1,27 +1,17 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Make sure the uploads folder exists
-const uploadDir = path.join(__dirname, '..', 'uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
-}
+// Reads CLOUDINARY_URL (cloudinary://key:secret@cloud_name) from env automatically.
+cloudinary.config({ secure: true });
 
-// Tell multer where to save files and what to name them
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, `${Date.now()}${ext}`);
-  },
-});
+// Keep the file in memory just long enough to stream it to Cloudinary —
+// nothing is written to local disk, so uploads survive restarts/redeploys.
+const storage = multer.memoryStorage();
 
 // Allow audio, image, PDF, and video files, max 200 MB (videos need more room)
 const upload = multer({
@@ -38,15 +28,30 @@ const upload = multer({
   },
 });
 
+function uploadBufferToCloudinary(buffer) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { resource_type: 'auto', folder: 'bhashahub' },
+      (err, result) => (err ? reject(err) : resolve(result))
+    );
+    stream.end(buffer);
+  });
+}
+
 // POST /api/upload — admin only, one file under the field name "file"
-router.post('/', requireAuth, requireAdmin, upload.single('file'), (req, res) => {
+router.post('/', requireAuth, requireAdmin, upload.single('file'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file received' });
   }
-  res.status(201).json({
-    url: `/uploads/${req.file.filename}`,
-    originalName: req.file.originalname,
-  });
+  try {
+    const result = await uploadBufferToCloudinary(req.file.buffer);
+    res.status(201).json({
+      url: result.secure_url,
+      originalName: req.file.originalname,
+    });
+  } catch (err) {
+    res.status(502).json({ error: err.message || 'Upload to storage failed' });
+  }
 });
 
 // Friendly error handler (file too big, wrong type)

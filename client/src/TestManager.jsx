@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { parseCSV, downloadCSV } from './csv';
+import { mediaUrl } from './utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
@@ -1149,7 +1150,7 @@ function TestManager({ onBack, onPreviewTest }) {
                       </div>
 
                     )}
-                    {audioUrl && <audio controls src={`${SERVER}${audioUrl}`} style={{ width: '100%', marginTop: 8 }} />}
+                    {audioUrl && <audio controls src={mediaUrl(audioUrl)} style={{ width: '100%', marginTop: 8 }} />}
                   </div>
                 ) : (
                   <div className="tm-form-group" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(42,35,32,0.02)', border: '1px dashed var(--line)', borderRadius: '12px', padding: '1.25rem' }}>
@@ -1202,7 +1203,7 @@ function TestManager({ onBack, onPreviewTest }) {
                   {image && (
                     <div className="tm-asset-card">
                       <img
-                        src={`${SERVER}${image}`}
+                        src={mediaUrl(image)}
                         alt="Test glyph preview"
                         style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 6 }}
                       />
@@ -1287,7 +1288,7 @@ function TestManager({ onBack, onPreviewTest }) {
                           {uploadingQAudio[qi] && <span style={{ fontSize: '0.75rem', color: 'var(--jade)', fontWeight: 600 }}>Uploading Q-Audio...</span>}
                           {q.audioUrl && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                              <audio controls src={`${SERVER}${q.audioUrl}`} style={{ height: '28px', width: '200px' }} />
+                              <audio controls src={mediaUrl(q.audioUrl)} style={{ height: '28px', width: '200px' }} />
                               <button type="button" className="tm-btn-row-del" style={{ fontSize: '0.75rem' }} onClick={() => updateQuestionAudio(qi, '')}>Delete Q-Audio</button>
                             </div>
                           )}
@@ -1307,7 +1308,7 @@ function TestManager({ onBack, onPreviewTest }) {
                           {uploadingQImage[qi] && <span style={{ fontSize: '0.75rem', color: 'var(--jade)', fontWeight: 600 }}>Uploading Q-Image...</span>}
                           {q.image && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                              <img src={`${SERVER}${q.image}`} alt={`Question ${qi + 1}`} style={{ height: '40px', width: '40px', objectFit: 'cover', borderRadius: '6px' }} />
+                              <img src={mediaUrl(q.image)} alt={`Question ${qi + 1}`} style={{ height: '40px', width: '40px', objectFit: 'cover', borderRadius: '6px' }} />
                               <button type="button" className="tm-btn-row-del" style={{ fontSize: '0.75rem' }} onClick={() => updateQuestionImage(qi, '')}>Delete Q-Image</button>
                             </div>
                           )}
