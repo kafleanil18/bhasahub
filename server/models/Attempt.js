@@ -16,5 +16,6 @@ const attemptSchema = new mongoose.Schema(
 
 attemptSchema.index({ user: 1, createdAt: -1 });
 attemptSchema.index({ user: 1, type: 1 });
+attemptSchema.index({ user: 1, test: 1, createdAt: 1 });
 
 module.exports = mongoose.model('Attempt', attemptSchema);

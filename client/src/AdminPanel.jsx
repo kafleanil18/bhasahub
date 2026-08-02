@@ -763,7 +763,7 @@ function AdminPanel({ onBack, onManageLessons }) {
                 <div className="row-actions-group">
                   <button className="nav-btn-studio" onClick={() => startEdit(c)}>Edit</button>
                   <button className="nav-btn-studio" onClick={() => onManageLessons(c)}>Lessons</button>
-                  
+
                   <button
                     className={c.published ? 'pill pill-live' : 'pill pill-draft'}
                     onClick={() => togglePublished(c)}

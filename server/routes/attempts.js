@@ -50,4 +50,21 @@ router.post('/test', requireAuth, async (req, res) => {
   }
 });
 
+// GET /api/attempts/test/:testId — the current user's past attempts at a test, oldest first
+router.get('/test/:testId', requireAuth, async (req, res) => {
+  try {
+    const attempts = await Attempt.find({
+      user: req.user.id,
+      type: 'test',
+      test: req.params.testId,
+    })
+      .sort({ createdAt: 1 })
+      .select('score total createdAt');
+    res.json(attempts);
+  } catch (err) {
+    console.error('Fetch test attempt history error:', err);
+    res.status(500).json({ error: 'Could not fetch test attempt history' });
+  }
+});
+
 module.exports = router;

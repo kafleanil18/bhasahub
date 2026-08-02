@@ -35,12 +35,9 @@ function FeedbackModal({ user, onClose }) {
       {/* Self-contained styling module using standard BhasaHub theme variables */}
       <style>{`
         .fb-overlay {
-          position: fixed; 
-          top: 0; 
-          left: 0; 
-          width: 100vw; 
-          height: 100vh;
-          background: rgba(42, 35, 32, 0.45); 
+          position: fixed;
+          inset: 0;
+          background: rgba(42, 35, 32, 0.45);
           backdrop-filter: blur(8px);
           -webkit-backdrop-filter: blur(8px);
           display: flex; 

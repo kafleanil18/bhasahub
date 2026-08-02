@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { parseCSV, downloadCSV } from './csv';
 import { mediaUrl } from './utils/mediaUrl';
+import RichTextEditor from './RichTextEditor';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
@@ -54,6 +55,12 @@ function LessonManager({ course, onBack }) {
   const [activeLesson, setActiveLesson] = useState(null);
   const [words, setWords] = useState([]);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!error) return;
+    const timer = setTimeout(() => setError(''), 6000);
+    return () => clearTimeout(timer);
+  }, [error]);
 
   // lesson form (create or edit)
   const [lessonTitle, setLessonTitle] = useState('');
@@ -156,8 +163,8 @@ function LessonManager({ course, onBack }) {
   };
 
   // ---------- images (dialogue + grammar), both resizable on upload ----------
-  const uploadResizableImage = async (file, setter) => {
-    if (!file) return;
+  const uploadImageFile = async (file) => {
+    if (!file) return null;
     setError('');
     let fileToUpload = file;
     if (uploadSize !== 'original') {
@@ -166,7 +173,7 @@ function LessonManager({ course, onBack }) {
         fileToUpload = await resizeImage(file, maxWidth);
       } catch (err) {
         setError(err.message || 'Image resize failed');
-        return;
+        return null;
       }
     }
     const fd = new FormData();
@@ -174,11 +181,20 @@ function LessonManager({ course, onBack }) {
     try {
       const res = await fetch(`${API}/upload`, { method: 'POST', headers: authHeaders, body: fd });
       const data = await res.json();
-      if (!res.ok) return setError(data.error || 'Upload failed');
-      setter(data.url);
+      if (!res.ok) {
+        setError(data.error || 'Upload failed');
+        return null;
+      }
+      return data.url;
     } catch {
       setError('Could not reach the server');
+      return null;
     }
+  };
+
+  const uploadResizableImage = async (file, setter) => {
+    const url = await uploadImageFile(file);
+    if (url) setter(url);
   };
 
   const uploadDialogueImage = (file) => uploadResizableImage(file, setDialogueImage);
@@ -483,7 +499,12 @@ function LessonManager({ course, onBack }) {
         <p className="eyebrow">Lesson {activeLesson.order}</p>
         <h1 className="section-title">{activeLesson.title}</h1>
         <p className="lesson-count">{words.length} words</p>
-        {error && <p className="login-error">{error}</p>}
+        {error && (
+          <div className="toast toast-error" role="alert">
+            <span>{error}</span>
+            <button type="button" className="toast-close" onClick={() => setError('')} aria-label="Dismiss">×</button>
+          </div>
+        )}
 
         <div className="admin-form" style={{ maxWidth: 640, marginBottom: 32 }}>
           <h2>{editingWordId ? 'Edit word' : 'Add a word'}</h2>
@@ -587,7 +608,12 @@ function LessonManager({ course, onBack }) {
         </div>
       </div>
 
-      {error && <p className="login-error">{error}</p>}
+      {error && (
+          <div className="toast toast-error" role="alert">
+            <span>{error}</span>
+            <button type="button" className="toast-close" onClick={() => setError('')} aria-label="Dismiss">×</button>
+          </div>
+        )}
 
       {/* add / edit lesson */}
       <div className="lesson-add-form">
@@ -657,12 +683,12 @@ function LessonManager({ course, onBack }) {
 
             <label style={{ display: 'block', marginTop: 20 }}>
               Grammar explanation
-              <textarea
-                className="dialogue-input"
-                rows="8"
+              <RichTextEditor
                 value={grammarExplanation}
-                onChange={(e) => setGrammarExplanation(e.target.value)}
+                onChange={setGrammarExplanation}
                 placeholder="Explain the grammar point: structure, usage, and example sentences."
+                onUploadImage={uploadImageFile}
+                onError={setError}
               />
             </label>
           </div>

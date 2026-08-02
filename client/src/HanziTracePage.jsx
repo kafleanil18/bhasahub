@@ -366,40 +366,129 @@ function HanziTracePage({ user, onBack, token }) {
   };
 
   return (
-    <div className="hanzi-clips-page container">
-      <div className="hanzi-clips-nav-header">
-        <button className="nav-btn" onClick={activeCharacter ? backToBrowse : onBack}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+    <div className="container py-4">
+      <style>{`
+        /* Custom Bootstrap Enhancements for Hanzi Tracing */
+        .hover-lift {
+          transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+        }
+        .hover-lift:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        .tracing-stage-box {
+          position: relative;
+          width: ${CANVAS_SIZE}px;
+          height: ${CANVAS_SIZE}px;
+          margin: 0 auto;
+          border-radius: 20px;
+          background: var(--card, #fffdf8);
+          border: 2px solid var(--line, #e6dcc6);
+          box-shadow: inset 0 2px 8px rgba(0,0,0,0.03), 0 8px 24px rgba(0,0,0,0.04);
+          overflow: hidden;
+        }
+
+        .tracing-grid {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+        }
+
+        .grid-line {
+          position: absolute;
+        }
+
+        .grid-line-v { top: 0; bottom: 0; left: 50%; width: 1px; border-left: 1px dashed var(--line, #e6dcc6); }
+        .grid-line-h { left: 0; right: 0; top: 50%; height: 1px; border-top: 1px dashed var(--line, #e6dcc6); }
+        .grid-line-d1 { top: 0; left: 0; width: 141.4%; height: 1px; border-top: 1px dotted var(--line, #e6dcc6); transform-origin: 0 0; transform: rotate(45deg); }
+        .grid-line-d2 { bottom: 0; left: 0; width: 141.4%; height: 1px; border-top: 1px dotted var(--line, #e6dcc6); transform-origin: 0 0; transform: rotate(-45deg); }
+
+        .tracing-guide-glyph {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--line, #e6dcc6);
+          opacity: 0.45;
+          user-select: none;
+          pointer-events: none;
+          font-family: 'Noto Serif SC', serif;
+        }
+
+        .tracing-canvas {
+          position: absolute;
+          inset: 0;
+          cursor: crosshair;
+          touch-action: none;
+        }
+
+        .stroke-demo-canvas svg {
+          width: 100%;
+          height: 100%;
+        }
+
+        .stroke-demo-fallback {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 24px;
+          text-align: center;
+          color: var(--mist, #7a7266);
+          font-size: 0.9rem;
+          background: rgba(255, 255, 255, 0.9);
+        }
+      `}</style>
+
+      {/* Top Header Controls Bar */}
+      <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+        <button
+          className="btn btn-outline-secondary rounded-pill d-inline-flex align-items-center gap-2 px-3 py-2 fw-semibold shadow-sm hover-lift"
+          onClick={activeCharacter ? backToBrowse : onBack}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>
           </svg>
-          {activeCharacter ? 'Back to characters' : 'Back to site'}
+          <span>{activeCharacter ? 'Back to Characters' : 'Back to Site'}</span>
         </button>
+
         {canManage && !activeCharacter && (
-          <div className="hanzi-header-actions">
-            <div className="bm-file-input-wrapper">
-              <button type="button" className="nav-btn" disabled={csvUploading}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+          <div className="d-flex align-items-center gap-2">
+            <div className="position-relative d-inline-block">
+              <button
+                type="button"
+                className="btn btn-outline-primary rounded-pill d-inline-flex align-items-center gap-2 px-3 py-2 fw-semibold shadow-sm"
+                disabled={csvUploading}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                   <polyline points="17 8 12 3 7 8"></polyline>
                   <line x1="12" y1="3" x2="12" y2="15"></line>
                 </svg>
-                {csvUploading ? 'Importing...' : 'Upload CSV'}
+                <span>{csvUploading ? 'Importing...' : 'Upload CSV'}</span>
               </button>
               <input
                 type="file"
                 accept=".csv,text/csv"
                 disabled={csvUploading}
+                style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', width: '100%' }}
                 onClick={(e) => { e.target.value = ''; }}
                 onChange={(e) => handleCsvUpload(e.target.files[0])}
               />
             </div>
-            <button className="btn-primary" onClick={handleOpenCreateModal}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
+            <button
+              className="btn btn-primary rounded-pill d-inline-flex align-items-center gap-2 px-4 py-2 fw-bold shadow-sm hover-lift"
+              onClick={handleOpenCreateModal}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
-              Add Character
+              <span>Add Character</span>
             </button>
           </div>
         )}
@@ -407,227 +496,320 @@ function HanziTracePage({ user, onBack, token }) {
 
       {!activeCharacter ? (
         <>
-          <div className="hanzi-clips-hero">
-            <p className="eyebrow" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 20h9"></path>
-                <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-              </svg>
-              WRITING PRACTICE
-            </p>
-            <h1 className="hanzi-hero-title">Trace Chinese Characters</h1>
-            <p className="hanzi-hero-desc">
-              Pick a characto ter below and trace it with your mouse or finger, right over a faint guide in a traditional practice grid.
-            </p>
-
-            <div className="hanzi-controls-bar">
-              <div className="hanzi-search-box">
-                <span className="search-icon">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          {/* Hero Section */}
+          <div className="card border-0 rounded-4 shadow-sm mb-4 p-4 p-md-5 text-center text-md-start" style={{ background: 'var(--card, #ffffff)' }}>
+            <div className="row align-items-center g-4">
+              <div className="col-12 col-md-8">
+                <span className="badge bg-danger-subtle text-danger rounded-pill px-3 py-2 text-uppercase fw-bold letter-spacing-1 mb-2 d-inline-flex align-items-center gap-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
                   </svg>
+                  Writing Practice
                 </span>
-                <input
-                  type="text"
-                  placeholder="Search by character (你), pinyin (nǐ), or meaning (you)..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="hanzi-search-input"
-                />
-                {searchQuery && (
-                  <button className="clear-search-btn" onClick={() => setSearchQuery('')}>
-                    ✕
-                  </button>
-                )}
+                <h1 className="fw-extrabold display-5 mb-2" style={{ color: 'var(--ink, #2a2320)' }}>
+                  Trace Chinese Characters
+                </h1>
+                <p className="lead text-secondary mb-0" style={{ fontSize: '1.05rem' }}>
+                  Pick a character below and trace it stroke-by-stroke over a traditional rice grid guide.
+                </p>
               </div>
 
-              <div className="hanzi-categories-scroll">
-                {CATEGORIES.map((cat) => (
-                  <button
-                    key={cat}
-                    className={`category-pill ${selectedCategory === cat ? 'active' : ''}`}
-                    onClick={() => setSelectedCategory(cat)}
-                  >
-                    {cat}
-                  </button>
-                ))}
+              <div className="col-12 col-md-4 text-center text-md-end">
+                <div className="d-inline-flex p-3 rounded-4 bg-light text-danger display-4 fw-bold zh border shadow-sm">
+                  字
+                </div>
+              </div>
+            </div>
+
+            {/* Filter and Search Bar */}
+            <div className="mt-4 pt-3 border-top">
+              <div className="row g-3">
+                <div className="col-12 col-md-6 col-lg-5">
+                  <div className="input-group input-group-lg rounded-pill shadow-sm overflow-hidden border">
+                    <span className="input-group-text bg-white border-0 ps-3">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                      </svg>
+                    </span>
+                    <input
+                      type="text"
+                      className="form-control border-0 fs-6 ps-2"
+                      placeholder="Search character (你), pinyin (nǐ), or meaning..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    {searchQuery && (
+                      <button className="btn bg-white border-0 text-muted px-3" onClick={() => setSearchQuery('')}>
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="col-12 col-md-6 col-lg-7 d-flex align-items-center">
+                  <div className="d-flex gap-2 overflow-auto pb-1 w-100 scrollbar-none">
+                    {CATEGORIES.map((cat) => (
+                      <button
+                        key={cat}
+                        type="button"
+                        className={`btn btn-sm rounded-pill px-3 py-2 text-nowrap fw-semibold transition-all ${
+                          selectedCategory === cat
+                            ? 'btn-danger shadow-sm'
+                            : 'btn-outline-secondary bg-white'
+                        }`}
+                        onClick={() => setSelectedCategory(cat)}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
+          {/* Character Cards Grid */}
           {loading ? (
-            <div className="hanzi-loading-state">
-              <span className="status-spinner"></span>
-              <p style={{ marginTop: 8 }}>Loading characters...</p>
+            <div className="text-center py-5">
+              <div className="spinner-border text-danger mb-3" role="status" style={{ width: '2.5rem', height: '2.5rem' }}></div>
+              <p className="text-secondary fw-semibold">Loading character catalog...</p>
             </div>
           ) : filteredCharacters.length === 0 ? (
-            <div className="hanzi-empty-state">
-              <span className="empty-icon">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 20h9"></path>
-                  <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-                </svg>
-              </span>
-              <h3>No characters found</h3>
-              <p>Try clearing your search query or selecting a different category filter.</p>
+            <div className="card border-0 rounded-4 shadow-sm text-center py-5 px-3">
+              <div className="display-4 text-muted mb-3">✍️</div>
+              <h4 className="fw-bold mb-1">No characters found</h4>
+              <p className="text-secondary mb-0">Try clearing your search query or selecting another category filter.</p>
             </div>
           ) : (
-            <div className="trace-chars-grid">
+            <div className="row g-3 g-md-4">
               {filteredCharacters.map((c) => (
-                <div className="trace-char-card" key={c._id} onClick={() => selectCharacter(c)}>
-                  <div className="trace-char-card-top">
-                    <div className="hanzi-char-badge zh">{c.character}</div>
-                    <div className="trace-char-meta">
-                      <span className="hanzi-category-pill">{c.category || 'General'}</span>
-                      {c.pinyin && <span className="hanzi-pinyin">{c.pinyin}</span>}
-                      {c.meaning && <span className="hanzi-meaning">"{c.meaning}"</span>}
+                <div key={c._id} className="col-6 col-sm-4 col-md-3 col-lg-2">
+                  <div
+                    className="card h-100 border-0 rounded-4 shadow-sm hover-lift cursor-pointer text-center p-3 transition-all bg-white"
+                    onClick={() => selectCharacter(c)}
+                  >
+                    <div className="display-4 fw-bold zh text-dark my-1">{c.character}</div>
+                    <div className="mt-auto">
+                      <span className="badge bg-secondary-subtle text-secondary rounded-pill px-2 py-1 small mb-1">
+                        {c.category || 'General'}
+                      </span>
+                      {c.pinyin && <div className="fw-semibold text-danger small">{c.pinyin}</div>}
+                      {c.meaning && <div className="text-muted small text-truncate">"{c.meaning}"</div>}
                     </div>
+
+                    {canManage && (
+                      <div className="d-flex justify-content-center gap-1 mt-3 pt-2 border-top" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-secondary rounded-pill px-2 py-0"
+                          style={{ fontSize: '0.75rem' }}
+                          onClick={() => handleOpenEditModal(c)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-danger rounded-pill px-2 py-0"
+                          style={{ fontSize: '0.75rem' }}
+                          onClick={() => handleDeleteCharacter(c._id, c.character)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
                   </div>
-                  {canManage && (
-                    <div className="hanzi-admin-actions" onClick={(e) => e.stopPropagation()}>
-                      <button className="nav-btn" onClick={() => handleOpenEditModal(c)}>Edit</button>
-                      <button className="nav-btn bm-remove-img-btn" onClick={() => handleDeleteCharacter(c._id, c.character)}>Delete</button>
-                    </div>
-                  )}
                 </div>
               ))}
             </div>
           )}
         </>
       ) : (
-        <div className="trace-view">
-          <div className="trace-view-header">
-            <div className="hanzi-char-badge zh">{activeCharacter.character}</div>
-            <div>
-              {activeCharacter.pinyin && <span className="hanzi-pinyin">{activeCharacter.pinyin}</span>}
-              {activeCharacter.meaning && <span className="hanzi-meaning">"{activeCharacter.meaning}"</span>}
+        /* Tracing View Mode */
+        <div>
+          {/* Header Card */}
+          <div className="card border-0 rounded-4 shadow-sm p-4 mb-4 text-center bg-white">
+            <div className="display-2 fw-bold zh text-danger mb-1">{activeCharacter.character}</div>
+            <div className="d-flex align-items-center justify-content-center gap-2 flex-wrap">
+              {activeCharacter.pinyin && <span className="fs-5 fw-bold text-dark">{activeCharacter.pinyin}</span>}
+              {activeCharacter.meaning && <span className="fs-6 text-muted">"{activeCharacter.meaning}"</span>}
+              {activeCharacter.category && (
+                <span className="badge bg-danger-subtle text-danger rounded-pill px-3 py-1 ms-2">
+                  {activeCharacter.category}
+                </span>
+              )}
             </div>
           </div>
 
-          <span className="trace-step-label">Step 1 · Watch the stroke order</span>
-          <div className="stroke-demo-panel" style={{ width: CANVAS_SIZE, height: CANVAS_SIZE }}>
-            <div className="tracing-grid">
-              <span className="grid-line grid-line-v" />
-              <span className="grid-line grid-line-h" />
-              <span className="grid-line grid-line-d1" />
-              <span className="grid-line grid-line-d2" />
-            </div>
-            <div ref={demoContainerRef} className="stroke-demo-canvas" />
-            {demoUnavailable && (
-              <div className="stroke-demo-fallback">
-                Stroke order demo isn't available for this character.
+          {/* Tracing Steps side-by-side grid */}
+          <div className="row g-4 justify-content-center">
+            {/* Step 1: Stroke Order Animation */}
+            <div className="col-12 col-md-6 col-lg-5 text-center">
+              <div className="card border-0 rounded-4 shadow-sm p-4 h-100 bg-white">
+                <span className="badge bg-secondary-subtle text-secondary rounded-pill px-3 py-2 text-uppercase fw-bold mb-3 d-inline-block">
+                  Step 1 · Watch stroke order
+                </span>
+
+                <div className="tracing-stage-box">
+                  <div className="tracing-grid">
+                    <span className="grid-line grid-line-v" />
+                    <span className="grid-line grid-line-h" />
+                    <span className="grid-line grid-line-d1" />
+                    <span className="grid-line grid-line-d2" />
+                  </div>
+                  <div ref={demoContainerRef} className="stroke-demo-canvas" />
+                  {demoUnavailable && (
+                    <div className="stroke-demo-fallback">
+                      Stroke order demo isn't available for this character.
+                    </div>
+                  )}
+                </div>
+
+                {!demoUnavailable && (
+                  <div className="mt-3">
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary rounded-pill px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm"
+                      onClick={handleReplayDemo}
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                      </svg>
+                      Replay Demo
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          {!demoUnavailable && (
-            <button className="nav-btn" onClick={handleReplayDemo}>↻ Replay</button>
-          )}
-
-          <span className="trace-step-label">Step 2 · Trace it yourself</span>
-          <div className="tracing-stage" style={{ width: CANVAS_SIZE, height: CANVAS_SIZE }}>
-            <div className="tracing-grid">
-              <span className="grid-line grid-line-v" />
-              <span className="grid-line grid-line-h" />
-              <span className="grid-line grid-line-d1" />
-              <span className="grid-line grid-line-d2" />
             </div>
-            <div className="tracing-guide-glyph zh" style={{ fontSize: 'clamp(120px, 60vw, 220px)' }}>
-              {activeCharacter.character}
+
+            {/* Step 2: Practice Canvas */}
+            <div className="col-12 col-md-6 col-lg-5 text-center">
+              <div className="card border-0 rounded-4 shadow-sm p-4 h-100 bg-white">
+                <span className="badge bg-danger-subtle text-danger rounded-pill px-3 py-2 text-uppercase fw-bold mb-3 d-inline-block">
+                  Step 2 · Trace it yourself
+                </span>
+
+                <div className="tracing-stage-box">
+                  <div className="tracing-grid">
+                    <span className="grid-line grid-line-v" />
+                    <span className="grid-line grid-line-h" />
+                    <span className="grid-line grid-line-d1" />
+                    <span className="grid-line grid-line-d2" />
+                  </div>
+                  <div className="tracing-guide-glyph zh" style={{ fontSize: 'clamp(140px, 40vw, 220px)' }}>
+                    {activeCharacter.character}
+                  </div>
+                  <canvas
+                    ref={canvasRef}
+                    width={CANVAS_SIZE}
+                    height={CANVAS_SIZE}
+                    className="tracing-canvas"
+                    onMouseDown={startDraw}
+                    onMouseMove={moveDraw}
+                    onMouseUp={endDraw}
+                    onMouseLeave={endDraw}
+                    onTouchStart={startDraw}
+                    onTouchMove={moveDraw}
+                    onTouchEnd={endDraw}
+                  />
+                </div>
+
+                <p className="small text-muted mt-3 mb-0">Use your mouse or finger to draw strokes over the guide lines.</p>
+              </div>
             </div>
-            <canvas
-              ref={canvasRef}
-              width={CANVAS_SIZE}
-              height={CANVAS_SIZE}
-              className="tracing-canvas"
-              onMouseDown={startDraw}
-              onMouseMove={moveDraw}
-              onMouseUp={endDraw}
-              onMouseLeave={endDraw}
-              onTouchStart={startDraw}
-              onTouchMove={moveDraw}
-              onTouchEnd={endDraw}
-            />
           </div>
 
-          <div className="trace-controls">
-            <button className="nav-btn" onClick={() => goToOffset(-1)}>← Previous</button>
-            <button className="nav-btn" onClick={handleUndo} disabled={strokes.length === 0}>Undo</button>
-            <button className="nav-btn" onClick={handleClear} disabled={strokes.length === 0}>Clear</button>
-            <button className="nav-btn" onClick={() => goToOffset(1)}>Next →</button>
+          {/* Tracing Controls Toolbar */}
+          <div className="d-flex flex-wrap justify-content-center align-items-center gap-2 mt-4 p-3 bg-white rounded-pill shadow-sm border border-light mx-auto" style={{ maxWidth: '540px' }}>
+            <button type="button" className="btn btn-outline-secondary rounded-pill px-3 py-2 fw-semibold" onClick={() => goToOffset(-1)}>
+              ← Previous
+            </button>
+            <button type="button" className="btn btn-outline-primary rounded-pill px-3 py-2 fw-semibold" onClick={handleUndo} disabled={strokes.length === 0}>
+              Undo
+            </button>
+            <button type="button" className="btn btn-outline-danger rounded-pill px-3 py-2 fw-semibold" onClick={handleClear} disabled={strokes.length === 0}>
+              Clear
+            </button>
+            <button type="button" className="btn btn-outline-secondary rounded-pill px-3 py-2 fw-semibold" onClick={() => goToOffset(1)}>
+              Next →
+            </button>
           </div>
         </div>
       )}
 
+      {/* Admin Modal for Create/Edit */}
       {modalOpen && (
-        <div className="modal-overlay" onClick={() => setModalOpen(false)}>
-          <div className="hanzi-modal-card" onClick={(e) => e.stopPropagation()}>
-            <div className="hanzi-modal-header">
-              <h2>{editingCharacter ? 'Edit Character' : 'Add Character'}</h2>
-              <button className="hanzi-modal-close" onClick={() => setModalOpen(false)}>✕</button>
+        <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }} tabIndex="-1">
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content border-0 rounded-4 shadow-lg">
+              <div className="modal-header border-0 pb-0">
+                <h5 className="modal-title fw-bold">{editingCharacter ? 'Edit Character' : 'Add Character'}</h5>
+                <button type="button" className="btn-close" onClick={() => setModalOpen(false)}></button>
+              </div>
+
+              <form onSubmit={handleSaveCharacter}>
+                <div className="modal-body py-4">
+                  <div className="row g-3">
+                    <div className="col-12 col-md-6">
+                      <label className="form-label fw-bold small text-uppercase">Character</label>
+                      <input
+                        type="text"
+                        className="form-control form-control-lg zh"
+                        placeholder="你"
+                        value={formCharacter}
+                        onChange={(e) => setFormCharacter(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="col-12 col-md-6">
+                      <label className="form-label fw-bold small text-uppercase">Pinyin</label>
+                      <input
+                        type="text"
+                        className="form-control form-control-lg"
+                        placeholder="nǐ"
+                        value={formPinyin}
+                        onChange={(e) => setFormPinyin(e.target.value)}
+                      />
+                    </div>
+                    <div className="col-12 col-md-6">
+                      <label className="form-label fw-bold small text-uppercase">Meaning (English)</label>
+                      <input
+                        type="text"
+                        className="form-control form-control-lg"
+                        placeholder="you"
+                        value={formMeaning}
+                        onChange={(e) => setFormMeaning(e.target.value)}
+                      />
+                    </div>
+                    <div className="col-12 col-md-6">
+                      <label className="form-label fw-bold small text-uppercase">Category</label>
+                      <select
+                        className="form-select form-select-lg"
+                        value={formCategory}
+                        onChange={(e) => setFormCategory(e.target.value)}
+                      >
+                        <option value="Basic Strokes">Basic Strokes</option>
+                        <option value="HSK 1">HSK 1</option>
+                        <option value="HSK 2">HSK 2</option>
+                        <option value="Radicals">Radicals</option>
+                        <option value="Common Hanzi">Common Hanzi</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="modal-footer border-0 pt-0">
+                  <button type="button" className="btn btn-light rounded-pill px-4" onClick={() => setModalOpen(false)}>
+                    Cancel
+                  </button>
+                  <button type="submit" className="btn btn-primary rounded-pill px-4 fw-bold" disabled={submitting}>
+                    {submitting ? 'Saving...' : editingCharacter ? 'Save Changes' : 'Add Character'}
+                  </button>
+                </div>
+              </form>
             </div>
-
-            <form onSubmit={handleSaveCharacter} className="hanzi-modal-form">
-              <div className="form-row-2">
-                <div className="form-group">
-                  <label className="bm-label">Character (e.g. 你, 好, 水)</label>
-                  <input
-                    type="text"
-                    className="bm-input zh"
-                    placeholder="你"
-                    value={formCharacter}
-                    onChange={(e) => setFormCharacter(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="bm-label">Pinyin (e.g. nǐ)</label>
-                  <input
-                    type="text"
-                    className="bm-input"
-                    placeholder="nǐ"
-                    value={formPinyin}
-                    onChange={(e) => setFormPinyin(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="form-row-2">
-                <div className="form-group">
-                  <label className="bm-label">Meaning (English)</label>
-                  <input
-                    type="text"
-                    className="bm-input"
-                    placeholder="you"
-                    value={formMeaning}
-                    onChange={(e) => setFormMeaning(e.target.value)}
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="bm-label">Category</label>
-                  <select
-                    className="bm-input"
-                    value={formCategory}
-                    onChange={(e) => setFormCategory(e.target.value)}
-                  >
-                    <option value="Basic Strokes">Basic Strokes</option>
-                    <option value="HSK 1">HSK 1</option>
-                    <option value="HSK 2">HSK 2</option>
-                    <option value="Radicals">Radicals</option>
-                    <option value="Common Hanzi">Common Hanzi</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="bm-actions">
-                <button type="submit" className="btn-primary" disabled={submitting}>
-                  {submitting ? 'Saving...' : editingCharacter ? 'Save Changes' : 'Add Character'}
-                </button>
-                <button type="button" className="nav-btn" onClick={() => setModalOpen(false)}>
-                  Cancel
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       )}

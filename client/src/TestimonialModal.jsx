@@ -56,7 +56,7 @@ function TestimonialModal({ user, onClose }) {
       {/* Self-contained styling module */}
       <style>{`
         .tm-overlay {
-          position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+          position: fixed; inset: 0;
           background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(8px);
           display: flex; align-items: center; justify-content: center; z-index: 1000;
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

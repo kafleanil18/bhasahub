@@ -47,9 +47,13 @@ function TestTaker({ testId, onBack }) {
   const [playingAudios, setPlayingAudios] = useState(() => new Set());
   const [leaveWarning, setLeaveWarning] = useState(null);
   const [mobileTab, setMobileTab] = useState('pdf');
+  const [history, setHistory] = useState([]);
+  const [progressDelta, setProgressDelta] = useState(null);
+  const [hoveredHistoryBar, setHoveredHistoryBar] = useState(null);
   const containerRef = useRef(null);
   const bypassNextClick = useRef(false);
   const audioPlaying = playingAudios.size > 0;
+  const isLoggedIn = !!localStorage.getItem('token');
 
   const setAudioPlaying = (key, isPlaying) => {
     setPlayingAudios((prev) => {
@@ -64,6 +68,15 @@ function TestTaker({ testId, onBack }) {
       .then(res => res.json())
       .then(data => { setTest(data); setLoading(false); })
       .catch(() => setLoading(false));
+  }, [testId]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    fetch(`${API}/attempts/test/${testId}`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => (res.ok ? res.json() : []))
+      .then(setHistory)
+      .catch(() => {});
   }, [testId]);
 
   useEffect(() => {
@@ -142,6 +155,21 @@ function TestTaker({ testId, onBack }) {
     test.questions.forEach((q, qi) => {
       if (answers[qi] === q.correctIndex) correct++;
     });
+    const totalQuestions = test.questions.length;
+    const newPercent = totalQuestions ? Math.round((correct / totalQuestions) * 100) : 0;
+
+    if (history.length > 0) {
+      const percents = history.map((a) => (a.total ? Math.round((a.score / a.total) * 100) : 0));
+      const lastPercent = percents[percents.length - 1];
+      const bestPercent = Math.max(...percents);
+      setProgressDelta({
+        deltaFromLast: newPercent - lastPercent,
+        isNewBest: newPercent > bestPercent,
+      });
+    } else {
+      setProgressDelta({ deltaFromLast: null, isNewBest: true });
+    }
+
     setScore(correct);
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -151,8 +179,11 @@ function TestTaker({ testId, onBack }) {
       fetch(`${API}/attempts/test`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ testId: test._id, score: correct, total: test.questions.length }),
-      }).catch(() => {});
+        body: JSON.stringify({ testId: test._id, score: correct, total: totalQuestions }),
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((attempt) => { if (attempt) setHistory((prev) => [...prev, attempt]); })
+        .catch(() => {});
     }
   };
 
@@ -160,6 +191,7 @@ function TestTaker({ testId, onBack }) {
     setAnswers({});
     setSubmitted(false);
     setScore(0);
+    setProgressDelta(null);
   };
 
   if (loading) {
@@ -182,6 +214,20 @@ function TestTaker({ testId, onBack }) {
 
   const total = test.questions.length;
   const percent = total ? Math.round((score / total) * 100) : 0;
+
+  const MAX_HISTORY_SHOWN = 3;
+  const shownHistory = history.slice(-MAX_HISTORY_SHOWN);
+  const hiddenHistoryCount = history.length - shownHistory.length;
+  const chartWidth = 320;
+  const chartHeight = 190;
+  const chartPaddingLeft = 34;
+  const chartPaddingRight = 16;
+  const chartPaddingTop = 28;
+  const chartPaddingBottom = 34;
+  const chartGraphWidth = chartWidth - chartPaddingLeft - chartPaddingRight;
+  const chartGraphHeight = chartHeight - chartPaddingTop - chartPaddingBottom;
+  const historyBarCount = shownHistory.length;
+  const historyBarWidth = historyBarCount > 0 ? Math.min(24, (chartGraphWidth / historyBarCount) * 0.45) : 0;
 
   return (
     <section className={`course-page container ${test.pdfUrl ? 'test-pdf-layout' : ''}`} ref={containerRef}>
@@ -206,7 +252,152 @@ function TestTaker({ testId, onBack }) {
           </span>
           <h2>You scored {score} / {total}</h2>
           <p className="quiz-result-percent">{percent}%</p>
+          {isLoggedIn && progressDelta && (
+            <p
+              className="quiz-result-progress"
+              style={{
+                fontWeight: 600,
+                marginTop: '-6px',
+                marginBottom: '18px',
+                color: progressDelta.deltaFromLast == null
+                  ? 'var(--mist)'
+                  : progressDelta.deltaFromLast >= 0
+                    ? 'var(--jade, #2e6b57)'
+                    : 'var(--seal)',
+              }}
+            >
+              {progressDelta.deltaFromLast == null
+                ? 'First attempt on record — keep it up!'
+                : progressDelta.isNewBest
+                  ? `🎉 New best! ${progressDelta.deltaFromLast >= 0 ? '+' : ''}${progressDelta.deltaFromLast}% vs your last attempt`
+                  : progressDelta.deltaFromLast >= 0
+                    ? `▲ +${progressDelta.deltaFromLast}% vs your last attempt`
+                    : `▼ ${progressDelta.deltaFromLast}% vs your last attempt`}
+            </p>
+          )}
           <button className="nav-btn" onClick={retake}>Retake test</button>
+        </div>
+      )}
+
+      {isLoggedIn && shownHistory.length > 0 && (
+        <div className="chart-card">
+          <div className="chart-header">
+            <h3 className="chart-title">Your recent attempts</h3>
+            <span className="analytics-subtitle" style={{ margin: 0 }}>Hover a bar for details</span>
+          </div>
+          <div className="chart-container-relative">
+            <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="chart-svg-main">
+              {[0, 50, 100].map((value) => {
+                const yVal = chartPaddingTop + chartGraphHeight - (value / 100) * chartGraphHeight;
+                return (
+                  <g key={`hist-grid-${value}`}>
+                    <line
+                      x1={chartPaddingLeft}
+                      y1={yVal}
+                      x2={chartWidth - chartPaddingRight}
+                      y2={yVal}
+                      className="chart-grid-line"
+                    />
+                    <text x={chartPaddingLeft - 8} y={yVal + 4} textAnchor="end" className="chart-axis-text">
+                      {value}%
+                    </text>
+                  </g>
+                );
+              })}
+
+              {shownHistory.map((a, i) => {
+                const overallAttemptNumber = history.length - shownHistory.length + i + 1;
+                const p = a.total ? Math.round((a.score / a.total) * 100) : 0;
+                const barHeightVal = (Math.max(p, 2) / 100) * chartGraphHeight;
+                const slotWidth = chartGraphWidth / historyBarCount;
+                const xVal = chartPaddingLeft + i * slotWidth + (slotWidth - historyBarWidth) / 2;
+                const yVal = chartPaddingTop + chartGraphHeight - barHeightVal;
+                const isLatest = i === shownHistory.length - 1;
+                const isActive = hoveredHistoryBar === i;
+
+                let fill = 'var(--jade)';
+                if (p < 50) fill = 'var(--seal)';
+                else if (p < 75) fill = 'var(--gold)';
+
+                return (
+                  <g key={a._id || i}>
+                    <text
+                      x={xVal + historyBarWidth / 2}
+                      y={yVal - 8}
+                      textAnchor="middle"
+                      className="chart-axis-text"
+                      style={{ fontWeight: 600, fill: 'var(--ink)' }}
+                    >
+                      {p}%
+                    </text>
+                    <rect
+                      x={xVal}
+                      y={yVal}
+                      width={historyBarWidth}
+                      height={barHeightVal}
+                      rx="4"
+                      fill={fill}
+                      opacity={isActive ? 1 : 0.85}
+                      className={`chart-bar-rect ${isActive ? 'active' : ''}`}
+                    />
+                    <text
+                      x={xVal + historyBarWidth / 2}
+                      y={chartHeight - chartPaddingBottom + 18}
+                      textAnchor="middle"
+                      className="chart-axis-text"
+                    >
+                      {isLatest ? 'Latest' : `#${overallAttemptNumber}`}
+                    </text>
+                    <rect
+                      x={chartPaddingLeft + i * slotWidth}
+                      y={chartPaddingTop}
+                      width={slotWidth}
+                      height={chartGraphHeight}
+                      className="chart-bar-hover-zone"
+                      onMouseEnter={() => setHoveredHistoryBar(i)}
+                      onMouseLeave={() => setHoveredHistoryBar(null)}
+                    />
+                  </g>
+                );
+              })}
+            </svg>
+
+            {hoveredHistoryBar !== null && shownHistory[hoveredHistoryBar] && (() => {
+              const a = shownHistory[hoveredHistoryBar];
+              const i = hoveredHistoryBar;
+              const p = a.total ? Math.round((a.score / a.total) * 100) : 0;
+              const slotWidth = chartGraphWidth / historyBarCount;
+              const xVal = chartPaddingLeft + i * slotWidth + slotWidth / 2;
+              const barHeightVal = (Math.max(p, 2) / 100) * chartGraphHeight;
+              const yVal = chartPaddingTop + chartGraphHeight - barHeightVal;
+              return (
+                <div
+                  className="chart-tooltip-portal"
+                  style={{ left: `${(xVal / chartWidth) * 100}%`, top: `${(yVal / chartHeight) * 100}%` }}
+                >
+                  <div className="chart-tooltip-title">
+                    <span>Attempt #{history.length - shownHistory.length + i + 1}</span>
+                    <span>{p}%</span>
+                  </div>
+                  <div className="chart-tooltip-row">
+                    <span>Score:</span>
+                    <strong>{a.score}/{a.total}</strong>
+                  </div>
+                  {a.createdAt && (
+                    <div className="chart-tooltip-row">
+                      <span>Date:</span>
+                      <span>{new Date(a.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+          </div>
+          {hiddenHistoryCount > 0 && (
+            <p style={{ marginTop: 8, marginBottom: 0, fontSize: '0.8rem', color: 'var(--mist)' }}>
+              Showing your {MAX_HISTORY_SHOWN} most recent attempts ({hiddenHistoryCount} earlier {hiddenHistoryCount === 1 ? 'attempt' : 'attempts'} not shown).
+            </p>
+          )}
         </div>
       )}
 

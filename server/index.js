@@ -19,7 +19,6 @@ const settingsRoutes = require('./routes/settings');
 const srsRoutes = require('./routes/srs');
 const attemptRoutes = require('./routes/attempts');
 const analyticsRoutes = require('./routes/analytics');
-const hanziClipRoutes = require('./routes/hanziClips');
 const { router: hanziTraceRoutes, ensureSeeded: ensureHanziTraceSeeded } = require('./routes/hanziTrace');
 
 require('dotenv').config();
@@ -30,7 +29,11 @@ const lessonRoutes = require('./routes/lessons');
 const subscriptionRoutes = require('./routes/subscriptions');
 const userRoutes = require('./routes/users');
 const slideRoutes = require('./routes/slides');
+const conversationPracticeRoutes = require('./routes/conversationPractice');
+const calendarRoutes = require('./routes/calendar');
 const helmet = require('helmet');
+
+const aiToneRoutes = require('./routes/aiTone');
 
 const app = express();
 app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: 'cross-origin' } }));
@@ -56,8 +59,8 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/srs', srsRoutes);
 app.use('/api/attempts', attemptRoutes);
 app.use('/api/analytics', analyticsRoutes);
-app.use('/api/hanzi-clips', hanziClipRoutes);
 app.use('/api/hanzi-trace', hanziTraceRoutes);
+app.use('/api/ai', aiToneRoutes);
 
 
 const TeamMember = require('./models/TeamMember');
@@ -104,6 +107,8 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/language-lm
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/lessons', lessonRoutes);
+app.use('/api/conversation-practice', conversationPracticeRoutes);
+app.use('/api/calendar', calendarRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ message: 'Language LMS API is running!' });

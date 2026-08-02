@@ -464,6 +464,7 @@ function TeamManager({ onBack }) {
                   </div>
                 </div>
 
+
                 <button
                   type="button"
                   onClick={() => saveDetails(slot.key)}
@@ -585,6 +586,7 @@ function TeamManager({ onBack }) {
                 </button>
 
                 <p className="tmg-hint">Images display inside a consistent frame. Adjust zoom & position above to fit it perfectly.</p>
+                
               </div>
             );
           })}

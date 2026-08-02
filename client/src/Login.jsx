@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Login.css';
 
-function Login({ onLogin, onBack, onSwitch }) {
+function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -165,7 +165,7 @@ function Login({ onLogin, onBack, onSwitch }) {
                 />
                 <span>Remember me</span>
               </label>
-              <a href="#forgot" className="forgot-password-link" onClick={(e) => { e.preventDefault(); alert("Please contact your instructor or admin to reset password."); }}>
+              <a href="#forgot" className="forgot-password-link" onClick={(e) => { e.preventDefault(); onForgotPassword && onForgotPassword(); }}>
                 Forgot password?
               </a>
             </div>

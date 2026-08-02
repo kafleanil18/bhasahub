@@ -2,9 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import { mediaUrl } from './utils/mediaUrl';
 import Login from './Login';
 import Register from './Register';
+import ForgotPassword from './ForgotPassword';
+import ResetPassword from './ResetPassword';
 import AdminPanel from './AdminPanel';
 import CoursePage from './CoursePage';
 import LessonManager from './LessonManager';
+import ClassCalendarPage from './ClassCalendar';
 import Dashboard from './Dashboard';
 import ProgressAnalytics from './ProgressAnalytics';
 import LanguageChoice from './LanguageChoice';
@@ -23,8 +26,9 @@ import UserManager from './UserManager';
 import TeamManager from './TeamManager';
 import AdminDashboard from './AdminDashboard';
 import AuditLog from './AuditLog';
-import HanziClipsPage from './HanziClipsPage';
 import HanziTracePage from './HanziTracePage';
+import ConversationPracticePage from './ConversationPractice';
+import ToneScorer from './ToneScorer';
 
 
 
@@ -161,6 +165,18 @@ function App() {
     { zh: '恭喜发财', zhP: 'gōng xǐ fā cái', ne: 'शुभकामना र समृद्धि', neP: 'śubha·kāmnā ra sam·riddhi', meaning: 'wishing you prosperity' },
     { zh: '新年快乐', zhP: 'xīn nián kuài lè', ne: 'नयाँ वर्षको शुभकामना', neP: 'nayā̃ varṣ·ko śubha·kāmnā', meaning: 'happy new year' },
     { zh: '万事如意', zhP: 'wàn shì rú yì', ne: 'सबै कुरा इच्छाअनुसार होस्', neP: 'sabāī kurā ichchhā·anusar hoṣ', meaning: 'may allyour wishes come true' },
+    {zh: '加油', zhP: 'jiā yóu', ne: 'हिम्मत राख', neP: 'him·mat rākh', meaning: 'keep going / you can do it' },
+    {zh: '努力', zhP: 'nǔ lì', ne: 'मेहनत गर्नुहोस्', neP: 'mehanat gar·nu·hoṣ', meaning: 'work hard / put in effort' },
+    {zh: '坚持', zhP: 'jiān chí', ne: 'अडिग रहनुहोस्', neP: 'aḍig rah·nu·hoṣ', meaning: 'persevere / persist' },
+    {zh: '勇敢', zhP: 'yǒng gǎn', ne: 'साहसी हुनुहोस्', neP: 'sāhasī hunu·hoṣ', meaning: 'be brave / courageous' },
+    {zh: '梦想', zhP: 'mèng xiǎng', ne: 'सपना', neP: 'sapnā', meaning: 'dream / aspiration' },
+    {zh: '希望', zhP: 'xī wàng', ne: 'आशा', neP: 'āśā', meaning: 'hope / wish' },
+    {zh: '幸福', zhP: 'xìng fú', ne: 'खुसी', neP: 'khu·si', meaning: 'happiness / well-being' },
+    {zh: '健康', zhP: 'jiàn kāng', ne: 'स्वास्थ्य', neP: 'swasthya', meaning: 'health / well-being' },
+    {zh: '平安', zhP: 'píng ān', ne: 'सुरक्षित', neP: 'surakṣit', meaning: 'peace / safety' },
+    {zh: '友谊', zhP: 'yǒu yì', ne: 'मित्रता', neP: 'mitratā', meaning: 'friendship' },
+    {zh: '家庭', zhP: 'jiā tíng', ne: 'परिवार', neP: 'parivār', meaning: 'family' },
+    {zh: '爱情', zhP: 'ài qíng', ne: 'प्रेम', neP: 'prem', meaning: 'love / romance' },
   ];
   const dayOfYear = Math.floor(
     (Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000
@@ -192,8 +208,9 @@ function App() {
   const [showTestManager, setShowTestManager] = useState(false);
   const [activeTestId, setActiveTestId] = useState(null);
   const [testTakerBackToManager, setTestTakerBackToManager] = useState(false);
-  const [showHanziClips, setShowHanziClips] = useState(false);
   const [showHanziTrace, setShowHanziTrace] = useState(false);
+  const [showConversationPractice, setShowConversationPractice] = useState(false);
+  const [showClassCalendar, setShowClassCalendar] = useState(false);
   const [showTestimonial, setShowTestimonial] = useState(false);
   const [showTestimonialManager, setShowTestimonialManager] = useState(false);
   const [testimonials, setTestimonials] = useState([]);
@@ -216,6 +233,10 @@ function App() {
   const [welcomeVideoUrl, setWelcomeVideoUrl] = useState('');
   const [adminSidebarOpen, setAdminSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
+  const [resetToken, setResetToken] = useState(() => new URLSearchParams(window.location.search).get('reset'));
+  const [showPracticeMenu, setShowPracticeMenu] = useState(false);
+  const [lockedNotice, setLockedNotice] = useState(null);
+  const [showToneScorer, setShowToneScorer] = useState(false);
 
   useEffect(() => {
     if (darkMode) {
@@ -386,8 +407,9 @@ function App() {
     setShowTestManager(false);
     setActiveTestId(null);
     setTestTakerBackToManager(false);
-    setShowHanziClips(false);
     setShowHanziTrace(false);
+    setShowConversationPractice(false);
+    setShowClassCalendar(false);
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
     setShowUserManager(false);
@@ -415,13 +437,16 @@ function App() {
     setShowTestManager(false);
     setActiveTestId(null);
     setTestTakerBackToManager(false);
-    setShowHanziClips(false);
     setShowHanziTrace(false);
+    setShowConversationPractice(false);
+    setShowClassCalendar(false);
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
     setShowUserManager(false);
     setShowTeamManager(false);
     setAdminSidebarOpen(false);
+    setShowPracticeMenu(false);
+    setShowToneScorer(false);
     loadCourses();
     loadAccess();
     loadTestimonials();
@@ -475,6 +500,22 @@ function App() {
     ? courses
     : courses.filter((c) => getHskLevel(c) === levelFilter);
 
+  // ---------- Password reset (reached via emailed link, before language/login) ----------
+  if (resetToken) {
+    return (
+      <ResetPassword
+        token={resetToken}
+        onDone={() => {
+          window.history.replaceState({}, '', window.location.pathname);
+          setResetToken(null);
+          setLanguage('chinese');
+          setAuthView('login');
+          setShowLogin(true);
+        }}
+      />
+    );
+  }
+
   // ---------- Language choice screen ----------
   if (!language) {
     return <LanguageChoice onChoose={(lang) => setLanguage(lang)} />;
@@ -502,6 +543,16 @@ function App() {
       {showChangePassword && <ChangePassword onClose={() => setShowChangePassword(false)} />}
       {showFeedback && <FeedbackModal user={user} onClose={() => setShowFeedback(false)} />}
       {showTestimonial && <TestimonialModal user={user} onClose={() => { setShowTestimonial(false); loadTestimonials(); }} />}
+
+      {lockedNotice && (
+        <div className="locked-course-toast" role="alert">
+          <div className="toast-content">
+            <span className="toast-icon">🔒</span>
+            <span>{lockedNotice}</span>
+          </div>
+          <button className="toast-close" onClick={() => setLockedNotice(null)} aria-label="Dismiss notice">✕</button>
+        </div>
+      )}
 
       {activeTeamMember && (
         <div className="modal-overlay" onClick={() => setActiveTeamMember(null)}>
@@ -581,15 +632,6 @@ function App() {
                 </svg>
                 Manage tests
               </button>
-              {isSuperAdmin && (
-                <button onClick={() => { goHome(); setShowHanziClips(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
-                  <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polygon points="23 7 16 12 23 17 23 7"></polygon>
-                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-                  </svg>
-                  Writing clips
-                </button>
-              )}
               {isSuperAdmin && (
                 <button onClick={() => { goHome(); setShowHanziTrace(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
                   <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -677,7 +719,7 @@ function App() {
 
           <nav className={`main-nav ${mobileMenuOpen ? 'open' : ''}`}>
             <div className="nav-links">
-              <a className="nav-link" href="#courses" onClick={() => { setMobileMenuOpen(false); goHome(); }}>
+              <a className="nav-link" href="#courses" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); }}>
                 <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"></path>
                   <path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"></path>
@@ -685,40 +727,73 @@ function App() {
                 Courses
               </a>
 
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowPinyinPage(true); }}>
-                <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="4 7 4 4 20 4 20 7"></polyline>
-                  <line x1="9" y1="20" x2="15" y2="20"></line>
-                  <line x1="12" y1="4" x2="12" y2="20"></line>
-                </svg>
-                Pinyin
-              </button>
+              <div className="nav-dropdown-wrapper">
+                <button
+                  className="nav-link nav-dropdown-trigger"
+                  onClick={() => setShowPracticeMenu(!showPracticeMenu)}
+                  aria-expanded={showPracticeMenu}
+                >
+                  <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                  </svg>
+                  Practice Tools <span className="caret">▾</span>
+                </button>
 
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowTests(true); }}>
-                <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
-                  <path d="m9 12 2 2 4-4"></path>
-                </svg>
-                Mock Tests
-              </button>
+                {showPracticeMenu && (
+                  <div className="nav-dropdown-menu">
+                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowPinyinPage(true); }}>
+                      <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                        <line x1="12" y1="4" x2="12" y2="20"></line>
+                      </svg>
+                      Pinyin Chart
+                    </button>
+                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowToneScorer(true); }}>
+                      <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                      </svg>
+                      Tone Scorer AI
+                    </button>
+                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowTests(true); }}>
+                      <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                        <path d="m9 12 2 2 4-4"></path>
+                      </svg>
+                      Mock Tests
+                    </button>
+                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowHanziTrace(true); }}>
+                      <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M12 20h9"></path>
+                        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                      </svg>
+                      Trace Characters
+                    </button>
+                    {user && (
+                      <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowConversationPractice(true); }}>
+                        <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                        </svg>
+                        Speaking Practice
+                      </button>
+                    )}
+                    {user && (
+                      <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowClassCalendar(true); }}>
+                        <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                          <line x1="16" y1="2" x2="16" y2="6"></line>
+                          <line x1="8" y1="2" x2="8" y2="6"></line>
+                          <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Class Calendar
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
 
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowHanziClips(true); }}>
-                <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polygon points="23 7 16 12 23 17 23 7"></polygon>
-                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-                </svg>
-                Writing Clips
-              </button>
-
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowHanziTrace(true); }}>
-                <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 20h9"></path>
-                  <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-                </svg>
-                Trace Characters
-              </button>
-
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowFeedback(true); }}>
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); setShowFeedback(true); }}>
                 <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                 </svg>
@@ -750,7 +825,7 @@ function App() {
                 </button>
               )}
 
-              {user && user.role === 'student' && (
+              {user && (
                 <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowAnalytics(true); }}>
                   <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
@@ -832,14 +907,14 @@ function App() {
                       <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
                       <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
                     </svg>
-                    <span>Light Mode</span>
+                    Light Mode
                   </>
                 ) : (
                   <>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                     </svg>
-                    <span>Dark Mode</span>
+                    Dark Mode
                   </>
                 )}
               </button>
@@ -855,6 +930,12 @@ function App() {
               onLogin={(u) => { setUser(u); setShowLogin(false); loadAccess(); loadMyAccess(); }}
               onBack={goHome}
               onSwitch={() => setAuthView('register')}
+              onForgotPassword={() => setAuthView('forgot')}
+            />
+          ) : authView === 'forgot' ? (
+            <ForgotPassword
+              onBack={goHome}
+              onSwitch={() => setAuthView('login')}
             />
           ) : (
             <Register
@@ -872,12 +953,16 @@ function App() {
         <SubscriptionManager onBack={goAdminDashboard} />
       ) : isSuperAdmin && showTestimonialManager ? (
         <TestimonialManager onBack={goAdminDashboard} />
-      ) : showHanziClips ? (
-        <HanziClipsPage user={user} token={localStorage.getItem('token')} onBack={goHome} />
       ) : showHanziTrace ? (
         <HanziTracePage user={user} token={localStorage.getItem('token')} onBack={goHome} />
+      ) : showToneScorer ? (
+        <ToneScorer onBack={goHome} />
       ) : showPinyinPage ? (
         <PinyinPage onBack={goHome} isSuperAdmin={isSuperAdmin} />
+      ) : showConversationPractice ? (
+        <ConversationPracticePage onBack={goHome} />
+      ) : showClassCalendar ? (
+        <ClassCalendarPage onBack={goHome} user={user} />
       ) : isSuperAdmin && showTestManager ? (
         <TestManager 
           onBack={goAdminDashboard} 
@@ -907,7 +992,10 @@ function App() {
       ) : isSuperAdmin && showInbox ? (
         <FeedbackInbox onBack={goAdminDashboard} />
       ) : isSuperAdmin && showAdmin ? (
-        <AdminPanel onBack={goAdminDashboard} onManageLessons={(c) => setManageCourse(c)} />
+        <AdminPanel
+          onBack={goAdminDashboard}
+          onManageLessons={(c) => setManageCourse(c)}
+        />
       ) : isSuperAdmin && showAdminDashboard ? (
         <AdminDashboard 
           onBack={goHome} 
@@ -956,7 +1044,7 @@ function App() {
                       Start learning free
                     </button>
                   )}
-                  <a className="btn-primary" href="#courses">Browse courses</a>
+                  <a className="btn-secondary" href="#courses">Browse courses</a>
                 </div>
               </div>
 
@@ -1012,28 +1100,44 @@ function App() {
 
           <section className="features">
             <div className="container">
-              <div className="feature">
-                <span className="feature-glyph">SPEAK</span>
-                <h3>Read the script</h3>
+              <div className="feature-card">
+                <div className="feature-icon-wrapper speak-bg">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                    <line x1="12" y1="19" x2="12" y2="22"></line>
+                  </svg>
+                </div>
+                <h3>Pronunciation & Script</h3>
                 <p>
                   Start from zero with Pinyin and Devanagari — every character
-                  introduced with pronunciation you can actually say.
+                  introduced with clear audio pronunciation you can actually say.
                 </p>
               </div>
-              <div className="feature">
-                <span className="feature-glyph">LISTEN</span>
-                <h3>Hear it spoken</h3>
+              <div className="feature-card">
+                <div className="feature-icon-wrapper listen-bg">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                    <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                  </svg>
+                </div>
+                <h3>Hear it Spoken</h3>
                 <p>
                   Native audio on every word and phrase, recorded clearly —
                   listen, repeat, and compare until it sticks.
                 </p>
               </div>
-              <div className="feature">
-                <span className="feature-glyph">READ</span>
-                <h3>Progress step by step</h3>
+              <div className="feature-card">
+                <div className="feature-icon-wrapper read-bg">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                  </svg>
+                </div>
+                <h3>Step-by-Step Mastery</h3>
                 <p>
-                  Lessons build on each other like a real course — track what
-                  you've mastered and what comes next.
+                  Lessons build logically like a structured academy course — track what
+                  you've mastered and unlock what comes next.
                 </p>
               </div>
             </div>
@@ -1042,13 +1146,30 @@ function App() {
 
 
           <section className="wotd">
-            <div className="container wotd-inner">
-              <span className="wotd-label">Word of the day</span>
-              <span className="wotd-word zh">{wotd.zh}</span>
-              <span className="wotd-detail">{wotd.zhP} — {wotd.meaning}</span>
-              <span className="wotd-sep">·</span>
-              <span className="wotd-word ne">{wotd.ne}</span>
-              <span className="wotd-detail">{wotd.neP} — {wotd.meaning}</span>
+            <div className="container">
+              <div className="wotd-header">
+                <span className="wotd-badge">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                  Word of the Day
+                </span>
+              </div>
+              <div className="wotd-cards-container">
+                <div className="wotd-card">
+                  <span className="wotd-lang-tag">Mandarin Chinese</span>
+                  <span className="wotd-word zh">{wotd.zh}</span>
+                  <div className="wotd-pinyin">{wotd.zhP}</div>
+                  <div className="wotd-meaning">"{wotd.meaning}"</div>
+                </div>
+                <div className="wotd-card-divider">⇄</div>
+                <div className="wotd-card">
+                  <span className="wotd-lang-tag">Nepali Translation</span>
+                  <span className="wotd-word ne">{wotd.ne}</span>
+                  <div className="wotd-pinyin">{wotd.neP}</div>
+                  <div className="wotd-meaning">"{wotd.meaning}"</div>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -1124,10 +1245,11 @@ function App() {
                     scale: dbMemberObj.scale !== undefined ? dbMemberObj.scale : 1
                   };
                   return (
-                    <div className="team-card" key={displayMember.key} onClick={() => setActiveTeamMember(displayMember)}>
+                    <div className="team-card" key={displayMember.key} onClick={() => setActiveTeamMember(displayMember)} role="button" tabIndex={0} title="Click to view full bio">
                       {renderTeamAvatar(displayMember)}
                       <h3 className="team-name">{displayMember.name}</h3>
                       <p className="team-role">{displayMember.role}</p>
+                      <span className="team-bio-hint">View Bio ➔</span>
                     </div>
                   );
                 })}
@@ -1163,7 +1285,11 @@ function App() {
                         className={`course-card ${locked ? 'card-locked' : ''}`}
                         key={c._id}
                         onClick={() => {
-                          if (locked) return;
+                          if (locked) {
+                            setLockedNotice(`"${c.title}" is locked. Complete the prerequisite course to unlock it!`);
+                            setTimeout(() => setLockedNotice(null), 5000);
+                            return;
+                          }
                           if (!user) { openLogin(); return; }
                           setActiveCourse(c);
                         }}
@@ -1206,30 +1332,31 @@ function App() {
               <p className="footer-tag">Speak Chinese ASAP!</p>
 
               <div className="footer-social">
-                <a href="https://facebook.com/YOURPAGE" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="social-link">
+                <a href="#facebook" aria-label="Facebook" className="social-link">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.99 3.66 9.13 8.44 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99C18.34 21.13 22 16.99 22 12z"/></svg>
                 </a>
-                <a href="https://youtube.com/@YOURCHANNEL" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="social-link">
+                <a href="#youtube" aria-label="YouTube" className="social-link">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2C0 8.09 0 12 0 12s0 3.91.5 5.8a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.91 24 12 24 12s0-3.91-.5-5.8zM9.55 15.57V8.43L15.82 12l-6.27 3.57z"/></svg>
                 </a>
-                <a href="https://instagram.com/YOURPROFILE" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="social-link">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41 1.27-.06 1.65-.07 4.85-.07M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.31-1.46.72-2.13 1.38C1.35 2.68.94 3.35.63 4.14.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13.67.66 1.34 1.07 2.13 1.38.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56.79-.31 1.46-.72 2.13-1.38.66-.67 1.07-1.34 1.38-2.13.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91-.31-.79-.72-1.46-1.38-2.13C21.32 1.35 20.65.94 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.41-11.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/></svg>
+                <a href="#instagram" aria-label="Instagram" className="social-link">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16-1.06-.36 2.23-.41 1.27-.06 1.65-.07 4.85-.07M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.31-1.46.72-2.13 1.38C1.35 2.68.94 3.35.63 4.14.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13.67.66 1.34 1.07 2.13 1.38.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56.79-.31 1.46-.72 2.13-1.38.66-.67 1.07-1.34 1.38-2.13.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91-.31-.79-.72-1.46-1.38-2.13C21.32 1.35 20.65.94 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.41-11.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/></svg>
                 </a>
-                <a href="https://linkedin.com/in/YOURPROFILE" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="social-link">
+                <a href="#linkedin" aria-label="LinkedIn" className="social-link">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zm1.78 13.02H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
                 </a>
               </div>
 
-
-              <p className="status">
-                {serverOk === null && <span>Checking server...</span>}
-                {serverOk === true && (
-                  <span><span className="dot"></span>Server connected</span>
-                )}
-                {serverOk === false && (
-                  <span><span className="dot offline"></span>Server offline</span>
-                )}
-              </p>
+              {isSuperAdmin && (
+                <p className="status">
+                  {serverOk === null && <span>Checking server...</span>}
+                  {serverOk === true && (
+                    <span><span className="dot"></span>Server connected</span>
+                  )}
+                  {serverOk === false && (
+                    <span><span className="dot offline"></span>Server offline</span>
+                  )}
+                </p>
+              )}
             </div>
           </footer>
         </main>

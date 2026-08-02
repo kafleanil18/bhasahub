@@ -112,10 +112,25 @@ function ProgressAnalytics({ user, onBack }) {
     }));
   };
 
+  const playWordAudio = (e, wordObj) => {
+    e.stopPropagation();
+    if (wordObj.audioUrl) {
+      const fullUrl = (wordObj.audioUrl.startsWith('http://') || wordObj.audioUrl.startsWith('https://'))
+        ? wordObj.audioUrl
+        : `${window.API_BASE_URL || ''}${wordObj.audioUrl.startsWith('/') ? '' : '/'}${wordObj.audioUrl}`;
+      new Audio(fullUrl).play().catch(() => {});
+    } else if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const ut = new SpeechSynthesisUtterance(wordObj.word);
+      ut.lang = isChineseWord(wordObj.word) ? 'zh-CN' : 'ne-NP';
+      window.speechSynthesis.speak(ut);
+    }
+  };
+
   if (!data) {
     return (
       <section className="course-page container">
-        <p className="courses-empty">Loading your progress...</p>
+        <p className="courses-empty">Loading your progress analytics...</p>
       </section>
     );
   }
@@ -145,24 +160,32 @@ function ProgressAnalytics({ user, onBack }) {
   const hasTestData = data.accuracyByTest && data.accuracyByTest.length > 0;
   const showTabs = hasCourseData || hasLessonData || hasTestData;
 
+  // Proficiency Rating calculation
+  const accuracy = data.overallAccuracy || 0;
+  let skillRating = 'Beginner';
+  if (accuracy >= 90) skillRating = 'Mastered 🎯';
+  else if (accuracy >= 75) skillRating = 'Proficient ⭐️';
+  else if (accuracy >= 50) skillRating = 'Developing 📈';
+  else skillRating = 'Needs Focus 💡';
+
   return (
-    <section className="course-page container">
-      {/* Header and navigation */}
-      <div className="analytics-header-section">
-        <div className="analytics-title-group">
+    <section className="course-page container" style={{ paddingTop: 32, paddingBottom: 64 }}>
+      {/* Header Banner */}
+      <div className="analytics-hero">
+        <div className="analytics-hero-header">
           <button className="btn-back-pill" onClick={onBack}>
-            ← Back to dashboard
+            ← Back to Dashboard
           </button>
-          <p className="eyebrow" style={{ marginTop: 12 }}>My learning progress</p>
-          <h1 className="section-title" style={{ margin: 0 }}>Your Learning Journey, {user.name}</h1>
-          <p className="analytics-subtitle">Track your performance and master vocabulary through smart analytics.</p>
-        </div>
-        <div className="analytics-actions">
           {data.scoreTrend.length > 0 && (
             <button className="btn-export-csv" onClick={exportCsv}>
               ⬇ Export CSV Report
             </button>
           )}
+        </div>
+        <div className="analytics-hero-body">
+          <span className="dash-eyebrow">Learning Analytics</span>
+          <h1 className="analytics-hero-title">Your Learning Journey, {user ? user.name : 'Learner'} 🏆</h1>
+          <p className="analytics-hero-subtext">Track your accuracy, study streak, performance trends, and master your vocabulary focus deck.</p>
         </div>
       </div>
 
@@ -215,7 +238,7 @@ function ProgressAnalytics({ user, onBack }) {
             <div className="metric-number-wrap">
               <span className="metric-number">{data.overallAccuracy}%</span>
             </div>
-            <span className="metric-label">Average accuracy score across quizzes and tests.</span>
+            <span className="metric-label">Average accuracy score — <strong>{skillRating}</strong></span>
           </div>
         </div>
 
@@ -227,9 +250,9 @@ function ProgressAnalytics({ user, onBack }) {
           <div className="analytics-metric-content">
             <div className="metric-number-wrap">
               <span className="metric-number">{data.totalAttempts}</span>
-              <span className="metric-unit">completed</span>
+              <span className="metric-unit">quizzes</span>
             </div>
-            <span className="metric-label">Total vocabulary quizzes and mock tests attempts.</span>
+            <span className="metric-label">Total vocabulary quizzes and mock test attempts completed.</span>
           </div>
         </div>
       </div>
@@ -269,7 +292,7 @@ function ProgressAnalytics({ user, onBack }) {
 
               {/* Chart Bars */}
               {data.scoreTrend.map((a, i) => {
-                const percent = Math.max(a.percent, 3); // min height of 3% for visibility
+                const percent = Math.max(a.percent, 3);
                 const barHeightVal = (percent / 100) * graphHeight;
                 const xVal =
                   paddingLeft +
@@ -277,7 +300,6 @@ function ProgressAnalytics({ user, onBack }) {
                   (graphWidth / N - barWidth) / 2;
                 const yVal = paddingTop + graphHeight - barHeightVal;
                 
-                // Color based on performance
                 let fill = 'var(--jade)';
                 if (a.percent < 50) fill = 'var(--seal)';
                 else if (a.percent < 75) fill = 'var(--gold)';
@@ -286,7 +308,6 @@ function ProgressAnalytics({ user, onBack }) {
 
                 return (
                   <g key={a.id || i}>
-                    {/* The visible bar */}
                     <rect
                       x={xVal}
                       y={yVal}
@@ -294,11 +315,9 @@ function ProgressAnalytics({ user, onBack }) {
                       height={barHeightVal}
                       rx="4"
                       fill={fill}
-                      opacity={isActive ? 1 : 0.8}
+                      opacity={isActive ? 1 : 0.85}
                       className={`chart-bar-rect ${isActive ? 'active' : ''}`}
                     />
-                    
-                    {/* The interactive invisible overlay for easy hovering */}
                     <rect
                       x={paddingLeft + i * (graphWidth / N)}
                       y={paddingTop}
@@ -404,10 +423,10 @@ function ProgressAnalytics({ user, onBack }) {
       {data.weakestWords.length > 0 && (
         <div className="analytics-section" style={{ marginTop: 44 }}>
           <h3 className="analytics-heading" style={{ fontSize: '20px', fontFamily: 'Fraunces, serif', marginBottom: 6 }}>
-            Vocabulary Focus Deck
+            Vocabulary Focus Deck 🎴
           </h3>
           <p className="review-cards-intro">
-            These words were missed during quizzes. Tap a card to test yourself and reveal its definition.
+            These words were missed during recent quizzes. Tap a card to reveal its translation, or click the speaker button to hear native pronunciation.
           </p>
 
           <div className="vocab-deck-grid">
@@ -434,9 +453,19 @@ function ProgressAnalytics({ user, onBack }) {
                     <span className={`vocab-word-text ${isZh ? 'zh' : 'ne'}`}>
                       {w.word}
                     </span>
-                    <span className="vocab-misses-tag">
-                      Missed {w.misses}×
-                    </span>
+                    <div className="vocab-action-group" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <button
+                        type="button"
+                        className="vocab-audio-btn"
+                        onClick={(e) => playWordAudio(e, w)}
+                        title="Listen to native audio pronunciation"
+                      >
+                        🔊
+                      </button>
+                      <span className="vocab-misses-tag">
+                        Missed {w.misses}×
+                      </span>
+                    </div>
                   </div>
 
                   <span className="vocab-pron-badge">
@@ -450,7 +479,7 @@ function ProgressAnalytics({ user, onBack }) {
                       </span>
                     ) : (
                       <span className="vocab-reveal-btn">
-                        Tap to reveal
+                        Tap to reveal definition
                       </span>
                     )}
                   </div>
@@ -476,4 +505,3 @@ function ProgressAnalytics({ user, onBack }) {
 }
 
 export default ProgressAnalytics;
-
