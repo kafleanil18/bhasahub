@@ -1,40 +1,22 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import Quiz from './Quiz';
-import SrsReview from './SrsReview';
-import { mediaUrl } from './utils/mediaUrl';
+import { useState, useEffect, useCallback } from 'react';
+import CourseOverview from './CourseOverview';
+import LessonDetail from './LessonDetail';
+import { useLessons } from './hooks/useLessons';
+import { useCourseAccess } from './hooks/useCourseAccess';
 
 const API = window.API_BASE_URL + '/api';
-const SERVER = window.API_BASE_URL;
 
 function CoursePage({ course, onBack, user }) {
-  const [lessons, setLessons] = useState([]);
   const [activeLesson, setActiveLesson] = useState(null);
-  const [words, setWords] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [enrolled, setEnrolled] = useState(false);
   const token = localStorage.getItem('token');
 
-  const [completedIds, setCompletedIds] = useState([]);
-  const [flashMode, setFlashMode] = useState(false);
-  const [flashIndex, setFlashIndex] = useState(0);
-  const [flipped, setFlipped] = useState(false);
-  const [flashMuted, setFlashMuted] = useState(() => localStorage.getItem('flashMuted') === 'true');
-  const studyAreaRef = useRef(null);
-  const [quizMode, setQuizMode] = useState(false);
-  const [srsMode, setSrsMode] = useState(false);
-  const [catFilter, setCatFilter] = useState('all');
+  const { lessons, loading } = useLessons(course._id);
+  const { hasAccess, accessExpiry, accessChecked } = useCourseAccess(course._id, token);
 
-  // subscription access
-  const [hasAccess, setHasAccess] = useState(false);
-  const [accessExpiry, setAccessExpiry] = useState(null);
-  const [accessChecked, setAccessChecked] = useState(false);
+  const [completedIds, setCompletedIds] = useState([]);
   const [showAccessMsg, setShowAccessMsg] = useState(false);
 
-  // access request (student asking admin for access)
-  const [requestStatus, setRequestStatus] = useState(null); // null | 'pending' | 'denied'
-  const [requestingAccess, setRequestingAccess] = useState(false);
-
- const isAdmin = user && (user.role === 'admin' || user.role === 'superadmin');
+  const isAdmin = user && (user.role === 'admin' || user.role === 'superadmin');
 
   const loadProgress = useCallback(() => {
     if (!token) return;
@@ -49,56 +31,6 @@ function CoursePage({ course, onBack, user }) {
   useEffect(() => {
     loadProgress();
   }, [loadProgress]);
-
-  // check subscription access for this course
-  useEffect(() => {
-    if (!token) { setAccessChecked(true); return; }
-    fetch(`${API}/subscriptions/check/${course._id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(res => res.json())
-      .then(data => {
-        setHasAccess(!!data.hasAccess);
-        setAccessExpiry(data.expiresAt || null);
-        setAccessChecked(true);
-      })
-      .catch(() => setAccessChecked(true));
-  }, [course._id, token]);
-
-  const loadRequestStatus = useCallback(() => {
-    if (!token) return;
-    fetch(`${API}/access-requests/my`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(res => res.json())
-      .then(data => {
-        const mine = (Array.isArray(data) ? data : []).filter(r => r.course && r.course._id === course._id);
-        const pending = mine.find(r => r.status === 'pending');
-        if (pending) { setRequestStatus('pending'); return; }
-        const latest = mine.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
-        setRequestStatus(latest && latest.status === 'denied' ? 'denied' : null);
-      })
-      .catch(() => {});
-  }, [course._id, token]);
-
-  useEffect(() => { loadRequestStatus(); }, [loadRequestStatus]);
-
-  const requestAccess = async () => {
-    if (!token) return;
-    setRequestingAccess(true);
-    try {
-      const res = await fetch(`${API}/access-requests`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ courseId: course._id }),
-      });
-      if (res.ok) setRequestStatus('pending');
-    } catch {
-      // ignore
-    } finally {
-      setRequestingAccess(false);
-    }
-  };
 
   const toggleComplete = async (lessonId) => {
     if (!token) return;
@@ -118,132 +50,6 @@ function CoursePage({ course, onBack, user }) {
     }
   };
 
-  useEffect(() => {
-    fetch(`${API}/lessons/course/${course._id}`)
-      .then(res => res.json())
-      .then(data => {
-        setLessons(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [course._id]);
-
-  useEffect(() => {
-    if (!token) return;
-    fetch(`${API}/enrollments/status/${course._id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(res => res.json())
-      .then(data => setEnrolled(data.enrolled))
-      .catch(() => {});
-  }, [course._id, token]);
-
-  const playCurrentWordAudio = useCallback((indexToPlay = flashIndex) => {
-    const currentWord = words[indexToPlay];
-    if (!currentWord) return;
-    const url = currentWord.audioUrl;
-    if (url) {
-      const fullUrl = (url.startsWith('http://') || url.startsWith('https://')) ? url : `${SERVER || ''}${url.startsWith('/') ? '' : '/'}${url}`;
-      new Audio(fullUrl).play().catch(() => {});
-    } else if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(currentWord.word);
-      if (course?.language === 'chinese') {
-        utterance.lang = 'zh-CN';
-      } else if (course?.language === 'nepali') {
-        utterance.lang = 'ne-NP';
-      }
-      window.speechSynthesis.speak(utterance);
-    }
-  }, [words, flashIndex, course?.language]);
-
-  useEffect(() => {
-    if (!flashMode || words.length === 0) return;
-    const handleKeyDown = (e) => {
-      if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'ArrowDown') {
-        e.preventDefault();
-        setFlipped(prev => !prev);
-      } else if (e.code === 'ArrowLeft') {
-        e.preventDefault();
-        setFlashIndex((i) => (i - 1 + words.length) % words.length);
-        setFlipped(false);
-      } else if (e.code === 'ArrowRight') {
-        e.preventDefault();
-        setFlashIndex((i) => (i + 1) % words.length);
-        setFlipped(false);
-      } else if (e.code === 'KeyR') {
-        e.preventDefault();
-        playCurrentWordAudio();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [flashMode, words.length, playCurrentWordAudio]);
-
-  useEffect(() => {
-    if (!flashMode || words.length === 0 || flashMuted) return;
-    playCurrentWordAudio(flashIndex);
-  }, [flashMode, flashIndex, words, flashMuted, playCurrentWordAudio]);
-
-  useEffect(() => {
-    if (!flashMode && !quizMode) return;
-    // Quiz builds its questions in its own effect, so it renders empty on the
-    // first pass — wait a tick so the section has real content before scrolling.
-    const id = setTimeout(() => {
-      studyAreaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 50);
-    return () => clearTimeout(id);
-  }, [flashMode, quizMode]);
-
-  const toggleFlashMuted = () => {
-    setFlashMuted((prev) => {
-      const next = !prev;
-      localStorage.setItem('flashMuted', String(next));
-      return next;
-    });
-  };
-
-  const toggleEnroll = async () => {
-    if (!token) return;
-    try {
-      const res = await fetch(`${API}/enrollments/${course._id}`, {
-        method: enrolled ? 'DELETE' : 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.ok) setEnrolled(!enrolled);
-    } catch {
-      // silently ignore
-    }
-  };
-
-  const recordAndCompare = async (button) => {
-    let stream;
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    } catch {
-      alert('Microphone access is needed to record. Please allow it and try again.');
-      return;
-    }
-
-    const recorder = new MediaRecorder(stream);
-    const chunks = [];
-    recorder.ondataavailable = (e) => chunks.push(e.data);
-
-    recorder.onstop = () => {
-      stream.getTracks().forEach((t) => t.stop());
-      const blob = new Blob(chunks, { type: 'audio/webm' });
-      const url = URL.createObjectURL(blob);
-      new Audio(url).play();
-      button.textContent = '🎤 Record';
-      button.disabled = false;
-    };
-
-    recorder.start();
-    button.textContent = '● Recording...';
-    button.disabled = true;
-    setTimeout(() => recorder.stop(), 2000);
-  };
-
   // gate: admins always allowed; students need active access
   const canOpenLessons = isAdmin || hasAccess;
 
@@ -252,538 +58,48 @@ function CoursePage({ course, onBack, user }) {
 
   const handleLessonClick = (lesson) => {
     if (canOpenLessons) {
-      openLesson(lesson);
+      setActiveLesson(lesson);
     } else {
       setShowAccessMsg(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  const openLesson = (lesson) => {
-    setActiveLesson(lesson);
-    setWords([]);
-    setFlashMode(false);
-    setFlashIndex(0);
-    setFlipped(false);
-    setQuizMode(false);
-    setSrsMode(false);
-    fetch(`${API}/lessons/${lesson._id}/vocabulary`)
-      .then(res => res.json())
-      .then(data => setWords(data))
-      .catch(() => setWords([]));
-  };
-
-  // ---------- Lesson view ----------
   if (activeLesson) {
     return (
-      <section className="course-page container">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <button className="back-btn" style={{ margin: 0 }} onClick={() => setActiveLesson(null)}>
-            ← Back to {course.title}
-          </button>
-          {nextLesson && (
-            <button className="back-btn" style={{ margin: 0 }} onClick={() => handleLessonClick(nextLesson)}>
-              Next Lesson →
-            </button>
-          )}
-        </div>
-        <p className="eyebrow">Lesson {activeLesson.order}</p>
-        <h1 className="section-title">{activeLesson.title}</h1>
-
-        {activeLesson.category === 'grammar' && (activeLesson.grammarExplanation || activeLesson.grammarImage) && (
-          <div className="lesson-dialogue">
-            <h3 className="dialogue-heading">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8, verticalAlign: '-2px' }}>
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-              </svg>
-              Grammar
-            </h3>
-            {activeLesson.grammarImage && (
-              <img
-                src={mediaUrl(activeLesson.grammarImage)}
-                alt=""
-                className="dialogue-main-image"
-              />
-            )}
-            {activeLesson.grammarExplanation && (
-              <p className="grammar-explanation-text">{activeLesson.grammarExplanation}</p>
-            )}
-          </div>
-        )}
-
-        {(activeLesson.dialogueImage || (activeLesson.dialogueLines && activeLesson.dialogueLines.length > 0)) && (
-          <div className="lesson-dialogue">
-            <h3 className="dialogue-heading">💬 Conversation</h3>
-            {activeLesson.dialogueImage && (
-              <img
-                src={mediaUrl(activeLesson.dialogueImage)}
-                alt=""
-                className="dialogue-main-image"
-              />
-            )}
-            {activeLesson.dialogueLines && activeLesson.dialogueLines.map((line, i) => (
-              <div className="dialogue-line-block" key={i}>
-                {line.audioUrl && (
-                  <button
-                    type="button"
-                    className="play-btn"
-                    onClick={() => new Audio(mediaUrl(line.audioUrl)).play()}
-                    title="Play audio"
-                  >
-                    ▶
-                  </button>
-                )}
-                {line.text && (
-                  <p className="dialogue-line-caption">
-                    {line.speaker && <strong>{line.speaker}: </strong>}
-                    {line.text}
-                    {line.pinyin && <span className="dialogue-line-pinyin"> ({line.pinyin})</span>}
-                  </p>
-                )}
-                {line.meaning && <p className="dialogue-line-meaning">{line.meaning}</p>}
-              </div>
-            ))}
-          </div>
-        )}
-
-        <p className="lesson-count">{words.length} words</p>
-
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap' }}>
-          {user && (
-            <button
-              className={completedIds.includes(activeLesson._id) ? 'nav-btn' : 'btn-primary'}
-              onClick={() => toggleComplete(activeLesson._id)}
-              style={{ margin: 0 }}
-            >
-              {completedIds.includes(activeLesson._id) ? '✓ Completed' : 'Mark as complete'}
-            </button>
-          )}
-          {nextLesson && (
-            <button
-              className="btn-primary"
-              onClick={() => handleLessonClick(nextLesson)}
-              style={{ margin: 0, background: 'var(--jade)', borderColor: 'var(--jade)', boxShadow: '0 4px 12px rgba(46, 204, 113, 0.2)' }}
-            >
-              Next Lesson →
-            </button>
-          )}
-        </div>
-
-        {words.length >= 4 && (
-          <div className="flash-toggle">
-            <button
-              className="nav-btn flash-toggle-btn flash-toggle-flashcards"
-              onClick={() => {
-                setFlashMode(!flashMode);
-                setQuizMode(false);
-                setSrsMode(false);
-                setFlashIndex(0);
-                setFlipped(false);
-              }}
-            >
-              {flashMode ? '← Back to word list' : (
-                <>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
-                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                    <path d="M16 3H4a2 2 0 0 0-2 2v10"></path>
-                  </svg>
-                  Study flashcards
-                </>
-              )}
-            </button>
-            <button
-              className="nav-btn flash-toggle-btn flash-toggle-quiz"
-              onClick={() => {
-                setQuizMode(!quizMode);
-                setFlashMode(false);
-                setSrsMode(false);
-              }}
-            >
-              {quizMode ? '← Back to word list' : (
-                <>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
-                    <path d="M12 20h9"></path>
-                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-                  </svg>
-                  Take quiz
-                </>
-              )}
-            </button>
-            {token && (
-              <button
-                className="nav-btn flash-toggle-btn flash-toggle-srs"
-                onClick={() => {
-                  setSrsMode(!srsMode);
-                  setFlashMode(false);
-                  setQuizMode(false);
-                }}
-              >
-                {srsMode ? '← Back to word list' : (
-                  <>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
-                      <polyline points="23 4 23 10 17 10"></polyline>
-                      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-                    </svg>
-                    Review due cards
-                  </>
-                )}
-              </button>
-            )}
-          </div>
-        )}
-
-        <div ref={studyAreaRef}>
-        {srsMode ? (
-          <SrsReview lessonId={activeLesson._id} language={course.language} token={token} onExit={() => setSrsMode(false)} />
-        ) : quizMode && words.length >= 4 ? (
-          <Quiz words={words} language={course.language} lessonId={activeLesson._id} token={token} onExit={() => setQuizMode(false)} muted={flashMuted} onToggleMute={toggleFlashMuted} />
-        ) : flashMode && words.length > 0 ? (
-          <div className="flashcard-area">
-            {/* Progress indicators */}
-            <div className="flash-progress-bar">
-              <div className="flash-progress-fill" style={{ width: `${((flashIndex + 1) / words.length) * 100}%` }}></div>
-            </div>
-
-            <button
-              type="button"
-              className="nav-btn flash-mute-btn"
-              onClick={toggleFlashMuted}
-              title={flashMuted ? 'Unmute audio' : 'Mute audio'}
-            >
-              {flashMuted ? (
-                <>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
-                    <line x1="1" y1="1" x2="23" y2="23"></line>
-                    <path d="M9 9v6a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
-                  </svg>
-                  Unmute
-                </>
-              ) : (
-                <>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                  </svg>
-                  Mute
-                </>
-              )}
-            </button>
-
-            <div
-              className={`flashcard ${flipped ? 'flipped' : ''}`}
-              onClick={() => setFlipped(!flipped)}
-            >
-              <div className="flash-front">
-                <span className={`flash-word ${course.language === 'chinese' ? 'zh' : 'ne'}`}>
-                  {words[flashIndex].word}
-                </span>
-                <button
-                  type="button"
-                  className="flash-repeat-icon-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    playCurrentWordAudio();
-                  }}
-                  title="Repeat word audio (Key: R)"
-                >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4 }}>
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                  </svg>
-                  Listen again
-                </button>
-                <span className="flash-hint">tap or press Space to flip</span>
-              </div>
-              <div className="flash-back">
-                <span className="flash-pron">{words[flashIndex].pronunciation}</span>
-                <span className="flash-meaning">{words[flashIndex].meaning}</span>
-                <button
-                  type="button"
-                  className="flash-repeat-icon-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    playCurrentWordAudio();
-                  }}
-                  title="Repeat word audio (Key: R)"
-                >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4 }}>
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                  </svg>
-                  Listen again
-                </button>
-              </div>
-            </div>
-
-            <div className="flash-controls">
-              <button
-                className="nav-btn"
-                onClick={() => {
-                  setFlashIndex((i) => (i - 1 + words.length) % words.length);
-                  setFlipped(false);
-                }}
-              >
-                ← Prev
-              </button>
-
-              <button
-                className="nav-btn flash-repeat-word-btn"
-                onClick={() => playCurrentWordAudio()}
-                title="Repeat audio pronunciation for this word (Key: R)"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
-                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                </svg>
-                Repeat Word
-              </button>
-
-              <span className="flash-count">{flashIndex + 1} / {words.length}</span>
-
-              <button
-                className="nav-btn"
-                onClick={() => {
-                  setFlashIndex((i) => (i + 1) % words.length);
-                  setFlipped(false);
-                }}
-              >
-                Next →
-              </button>
-            </div>
-
-            <p className="keyboard-shortcut-hint">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6, verticalAlign: '-2px' }}>
-                <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
-                <path d="M9 18h6"></path>
-                <path d="M10 22h4"></path>
-              </svg>
-              Keyboard controls: Use <strong>Left / Right Arrows</strong> to navigate, <strong>Spacebar</strong> to flip, <strong>R</strong> to repeat audio.
-            </p>
-          </div>
-        ) : (
-        <div className="vocab-grid">
-          {words.map((w) => (
-            <div className="vocab-card" key={w._id}>
-              <span className="annotation">{w.pronunciation}</span>
-              <span className={`word ${course.language === 'chinese' ? 'zh' : 'ne'}`}>
-                {w.word}
-              </span>
-              <span className="meaning">{w.meaning}</span>
-              {w.audioUrl && (
-                <div className="audio-row">
-                  <button
-                    className="play-btn"
-                    onClick={() => new Audio(mediaUrl(w.audioUrl)).play()}
-                    title="Listen to the teacher"
-                  >
-                    ▶
-                  </button>
-                  <button
-                    className="record-btn"
-                    onClick={(e) => recordAndCompare(e.currentTarget)}
-                    title="Record yourself and hear it back"
-                  >
-                    🎤 Record
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-        )}
-        </div>
-      </section>
+      <LessonDetail
+        key={activeLesson._id}
+        course={course}
+        lesson={activeLesson}
+        nextLesson={nextLesson}
+        user={user}
+        token={token}
+        isCompleted={completedIds.includes(activeLesson._id)}
+        onBack={() => setActiveLesson(null)}
+        onToggleComplete={() => toggleComplete(activeLesson._id)}
+        onNextLesson={nextLesson ? () => handleLessonClick(nextLesson) : undefined}
+      />
     );
   }
 
-  // ---------- Course overview ----------
-  const visibleLessons = lessons.filter(
-    (l) => catFilter === 'all' || (l.category || 'vocabulary') === catFilter
-  );
-
-  const currentCourseCompleted = completedIds.filter(id => lessons.some(l => l._id === id)).length;
-  const progressPercent = lessons.length ? Math.round((currentCourseCompleted / lessons.length) * 100) : 0;
-  const isBeginner = course.level && (course.level.toLowerCase().includes('hsk 1') || course.level.toLowerCase().includes('beginner'));
-
   return (
-    <section className="course-page container">
-
-      <button className="back-btn" onClick={onBack}>← Back to courses</button>
-      
-      <div className="course-head" style={{ marginTop: 16 }}>
-        <div>
-          {isBeginner && (
-            <div className="course-welcome-badge">
-              👋 你好 (Nǐ hǎo) — Start Learning Chinese!
-            </div>
-          )}
-          <h1 className="section-title">{course.title}</h1>
-          <p className="course-desc">{course.description}</p>
-          <span className="tag" style={{ background: 'var(--jade)', color: '#fff', border: 'none' }}>
-            {course.level}
-          </span>
-          {user && (
-            <div className="enroll-wrap" style={{ marginTop: 14 }}>
-              <button
-                className={enrolled ? 'nav-btn' : 'btn-primary'}
-                onClick={toggleEnroll}
-              >
-                {enrolled ? '✓ Enrolled' : 'Enroll in this course'}
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Access banner */}
-      {user && !isAdmin && accessChecked && (
-        hasAccess ? (
-          <div className="access-banner access-ok" style={{ margin: '16px 0 0' }}>
-            ✓ Active Subscription Access {accessExpiry && `until ${new Date(accessExpiry).toLocaleDateString()}`}
-          </div>
-        ) : (
-          <div className="access-banner access-locked" style={{ margin: '16px 0 0', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-            {requestStatus === 'pending' ? (
-              <span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-                Access request sent — waiting for an admin to grant it.
-              </span>
-            ) : (
-              <>
-                <span>
-                  🔒 You don't have access to this course yet.
-                  {requestStatus === 'denied' && ' Your previous request was denied.'}
-                </span>
-                <button className="nav-btn" onClick={requestAccess} disabled={requestingAccess}>
-                  {requestingAccess ? 'Sending...' : 'Request access'}
-                </button>
-              </>
-            )}
-          </div>
-        )
-      )}
-
-      {/* Message shown when a locked lesson is clicked */}
-      {showAccessMsg && !canOpenLessons && (
-        <div className="access-msg" style={{ margin: '20px 0 0' }}>
-          <p>
-            🔒 This lesson is locked. You need active access to open lessons.
-            Scroll up and click <strong>Request access</strong> to ask an admin to grant it.
-          </p>
-          <button className="nav-btn" onClick={() => setShowAccessMsg(false)}>Got it</button>
-        </div>
-      )}
-
-      {/* Progress Dashboard */}
-      {user && (
-        <div className="course-progress-block">
-          <div className="course-progress-header">
-            <span className="course-progress-title">Your Course Progress</span>
-            <span className="course-progress-value">{progressPercent}%</span>
-          </div>
-          <div className="course-progress-bar-bg">
-            <div className="course-progress-bar-fill" style={{ width: `${progressPercent}%` }}></div>
-          </div>
-          <div className="course-meta-grid">
-            <div className="course-meta-item">
-              <span className="course-meta-val">{currentCourseCompleted} of {lessons.length}</span>
-              <span className="course-meta-lbl">Lessons Completed</span>
-            </div>
-            <div className="course-meta-item">
-              <span className="course-meta-val">{(lessons.length * 15)} mins</span>
-              <span className="course-meta-lbl">Estimated Study Time</span>
-            </div>
-            <div className="course-meta-item">
-              <span className="course-meta-val">{enrolled ? 'Active Student' : 'Not Enrolled'}</span>
-              <span className="course-meta-lbl">Enrolment Status</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <h2 className="lessons-heading" style={{ marginTop: 32 }}>Lessons</h2>
-
-      <div className="category-tabs" style={{ marginBottom: 8 }}>
-        <button className={`cat-tab ${catFilter === 'all' ? 'active' : ''}`} onClick={() => setCatFilter('all')}>All</button>
-        <button className={`cat-tab ${catFilter === 'vocabulary' ? 'active' : ''}`} onClick={() => setCatFilter('vocabulary')}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-          </svg>
-          Vocabulary
-        </button>
-        <button className={`cat-tab ${catFilter === 'conversation' ? 'active' : ''}`} onClick={() => setCatFilter('conversation')}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-          </svg>
-          Conversation
-        </button>
-        <button className={`cat-tab ${catFilter === 'grammar' ? 'active' : ''}`} onClick={() => setCatFilter('grammar')}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
-            <path d="M12 20h9"></path>
-            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-          </svg>
-          Grammar
-        </button>
-      </div>
-
-      {loading && <p className="courses-empty">Loading lessons...</p>}
-      {!loading && visibleLessons.length === 0 && (
-        <p className="courses-empty">No lessons in this category yet.</p>
-      )}
-
-      <div className="lesson-cards-grid">
-        {visibleLessons.map((l) => {
-          const isDone = completedIds.includes(l._id);
-          const categoryLabel = l.category ? l.category : 'vocabulary';
-          const categoryVectorIcon = categoryLabel === 'grammar' ? (
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
-              <path d="M12 20h9"></path>
-              <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-            </svg>
-          ) : categoryLabel === 'conversation' ? (
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-          ) : (
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-            </svg>
-          );
-
-          return (
-            <button
-              className={`lesson-card-btn ${isDone ? 'completed-card' : ''} ${!canOpenLessons ? 'lesson-locked' : ''}`}
-              key={l._id}
-              onClick={() => handleLessonClick(l)}
-            >
-              <div className="lesson-card-top">
-                <span className="lesson-card-badge" style={{ display: 'inline-flex', alignItems: 'center' }}>
-                  {categoryVectorIcon} {categoryLabel}
-                </span>
-                <div className="lesson-card-order-circle">
-                  {l.order}
-                </div>
-              </div>
-              <h3 className="lesson-card-title">{l.title}</h3>
-              <div className="lesson-card-footer">
-                <span className="lesson-card-status-text">
-                  {!canOpenLessons ? 'Locked' : isDone ? '✓ Completed' : 'Start Lesson'}
-                </span>
-                <span className="lesson-card-arrow">
-                  {!canOpenLessons ? '🔒' : isDone ? '✓' : '→'}
-                </span>
-              </div>
-            </button>
-          );
-        })}
-      </div>
-    </section>
+    <CourseOverview
+      course={course}
+      user={user}
+      token={token}
+      isAdmin={isAdmin}
+      lessons={lessons}
+      loading={loading}
+      completedIds={completedIds}
+      hasAccess={hasAccess}
+      accessExpiry={accessExpiry}
+      accessChecked={accessChecked}
+      canOpenLessons={canOpenLessons}
+      showAccessMsg={showAccessMsg}
+      onDismissAccessMsg={() => setShowAccessMsg(false)}
+      onBack={onBack}
+      onLessonClick={handleLessonClick}
+    />
   );
 }
 
