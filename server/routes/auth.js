@@ -43,7 +43,7 @@ router.post('/register', authLimiter, async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const role = adminCode === process.env.ADMIN_CODE ? 'admin' : 'student';
+    const role = adminCode && process.env.ADMIN_CODE && adminCode === process.env.ADMIN_CODE ? 'admin' : 'student';
 
     const user = await User.create({ name, email, password: hashedPassword, role });
 
