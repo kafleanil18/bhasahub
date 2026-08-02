@@ -9,10 +9,13 @@ function CourseOverview({
   isAdmin,
   lessons,
   loading,
+  lessonsError,
   completedIds,
+  progressError,
   hasAccess,
   accessExpiry,
   accessChecked,
+  accessError,
   canOpenLessons,
   showAccessMsg,
   onDismissAccessMsg,
@@ -22,8 +25,10 @@ function CourseOverview({
   const [catFilter, setCatFilter] = useState('all');
 
   const [enrolled, setEnrolled] = useState(false);
+  const [enrollError, setEnrollError] = useState(null);
   const [requestStatus, setRequestStatus] = useState(null); // null | 'pending' | 'denied'
   const [requestingAccess, setRequestingAccess] = useState(false);
+  const [accessRequestError, setAccessRequestError] = useState(null);
 
   useEffect(() => {
     if (!token) return;
@@ -32,7 +37,7 @@ function CourseOverview({
     })
       .then(res => res.json())
       .then(data => setEnrolled(data.enrolled))
-      .catch(() => {});
+      .catch(() => setEnrollError('Could not load your enrollment status.'));
   }, [course._id, token]);
 
   const loadRequestStatus = useCallback(() => {
@@ -48,7 +53,7 @@ function CourseOverview({
         const latest = mine.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
         setRequestStatus(latest && latest.status === 'denied' ? 'denied' : null);
       })
-      .catch(() => {});
+      .catch(() => setAccessRequestError('Could not load your access request status.'));
   }, [course._id, token]);
 
   useEffect(() => { loadRequestStatus(); }, [loadRequestStatus]);
@@ -56,15 +61,20 @@ function CourseOverview({
   const requestAccess = async () => {
     if (!token) return;
     setRequestingAccess(true);
+    setAccessRequestError(null);
     try {
       const res = await fetch(`${API}/access-requests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ courseId: course._id }),
       });
-      if (res.ok) setRequestStatus('pending');
+      if (res.ok) {
+        setRequestStatus('pending');
+      } else {
+        setAccessRequestError('Could not send your access request.');
+      }
     } catch {
-      // ignore
+      setAccessRequestError('Could not send your access request.');
     } finally {
       setRequestingAccess(false);
     }
@@ -72,14 +82,19 @@ function CourseOverview({
 
   const toggleEnroll = async () => {
     if (!token) return;
+    setEnrollError(null);
     try {
       const res = await fetch(`${API}/enrollments/${course._id}`, {
         method: enrolled ? 'DELETE' : 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.ok) setEnrolled(!enrolled);
+      if (res.ok) {
+        setEnrolled(!enrolled);
+      } else {
+        setEnrollError('Could not update your enrollment.');
+      }
     } catch {
-      // silently ignore
+      setEnrollError('Could not update your enrollment.');
     }
   };
 
@@ -116,6 +131,7 @@ function CourseOverview({
               >
                 {enrolled ? '✓ Enrolled' : 'Enroll in this course'}
               </button>
+              {enrollError && <p className="login-error" style={{ marginTop: 8, marginBottom: 0 }}>{enrollError}</p>}
             </div>
           )}
         </div>
@@ -123,7 +139,11 @@ function CourseOverview({
 
       {/* Access banner */}
       {user && !isAdmin && accessChecked && (
-        hasAccess ? (
+        accessError ? (
+          <div className="access-banner access-locked" style={{ margin: '16px 0 0' }}>
+            ⚠ {accessError} Refresh the page to try again.
+          </div>
+        ) : hasAccess ? (
           <div className="access-banner access-ok" style={{ margin: '16px 0 0' }}>
             ✓ Active Subscription Access {accessExpiry && `until ${new Date(accessExpiry).toLocaleDateString()}`}
           </div>
@@ -148,6 +168,7 @@ function CourseOverview({
                 </button>
               </>
             )}
+            {accessRequestError && <p className="login-error" style={{ margin: 0, width: '100%' }}>{accessRequestError}</p>}
           </div>
         )
       )}
@@ -166,6 +187,7 @@ function CourseOverview({
       {/* Progress Dashboard */}
       {user && (
         <div className="course-progress-block">
+          {progressError && <p className="login-error">{progressError}</p>}
           <div className="course-progress-header">
             <span className="course-progress-title">Your Course Progress</span>
             <span className="course-progress-value">{progressPercent}%</span>
@@ -217,7 +239,8 @@ function CourseOverview({
       </div>
 
       {loading && <p className="courses-empty">Loading lessons...</p>}
-      {!loading && visibleLessons.length === 0 && (
+      {lessonsError && <p className="login-error">{lessonsError}</p>}
+      {!loading && !lessonsError && visibleLessons.length === 0 && (
         <p className="courses-empty">No lessons in this category yet.</p>
       )}
 

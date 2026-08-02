@@ -7,8 +7,9 @@ import { mediaUrl } from './utils/mediaUrl';
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
 
-function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, onBack, onToggleComplete, onNextLesson }) {
+function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, completeError, onBack, onToggleComplete, onNextLesson }) {
   const [words, setWords] = useState([]);
+  const [wordsError, setWordsError] = useState(null);
   const [mode, setMode] = useState('list'); // 'list' | 'flashcards' | 'quiz' | 'srs'
   const [flashIndex, setFlashIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
@@ -19,7 +20,10 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, on
     fetch(`${API}/lessons/${lesson._id}/vocabulary`)
       .then(res => res.json())
       .then(data => setWords(data))
-      .catch(() => setWords([]));
+      .catch(() => {
+        setWords([]);
+        setWordsError('Could not load vocabulary for this lesson.');
+      });
   }, [lesson._id]);
 
   const playCurrentWordAudio = useCallback((indexToPlay = flashIndex) => {
@@ -197,6 +201,7 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, on
       )}
 
       <p className="lesson-count">{words.length} words</p>
+      {wordsError && <p className="login-error">{wordsError}</p>}
 
       <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap' }}>
         {user && (
@@ -208,6 +213,7 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, on
             {isCompleted ? '✓ Completed' : 'Mark as complete'}
           </button>
         )}
+        {completeError && <p className="login-error" style={{ margin: 0, width: '100%' }}>{completeError}</p>}
         {nextLesson && (
           <button
             className="btn-primary"

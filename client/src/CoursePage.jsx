@@ -10,22 +10,25 @@ function CoursePage({ course, onBack, user }) {
   const [activeLesson, setActiveLesson] = useState(null);
   const token = localStorage.getItem('token');
 
-  const { lessons, loading } = useLessons(course._id);
-  const { hasAccess, accessExpiry, accessChecked } = useCourseAccess(course._id, token);
+  const { lessons, loading, error: lessonsError } = useLessons(course._id);
+  const { hasAccess, accessExpiry, accessChecked, error: accessError } = useCourseAccess(course._id, token);
 
   const [completedIds, setCompletedIds] = useState([]);
+  const [progressError, setProgressError] = useState(null);
+  const [completeError, setCompleteError] = useState(null);
   const [showAccessMsg, setShowAccessMsg] = useState(false);
 
   const isAdmin = user && (user.role === 'admin' || user.role === 'superadmin');
 
   const loadProgress = useCallback(() => {
     if (!token) return;
+    setProgressError(null);
     fetch(`${API}/progress/course/${course._id}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => res.json())
       .then(data => setCompletedIds(data.completedLessonIds || []))
-      .catch(() => {});
+      .catch(() => setProgressError('Could not load your progress.'));
   }, [course._id, token]);
 
   useEffect(() => {
@@ -35,6 +38,7 @@ function CoursePage({ course, onBack, user }) {
   const toggleComplete = async (lessonId) => {
     if (!token) return;
     const isDone = completedIds.includes(lessonId);
+    setCompleteError(null);
     try {
       const res = await fetch(`${API}/progress/lesson/${lessonId}`, {
         method: isDone ? 'DELETE' : 'POST',
@@ -44,9 +48,11 @@ function CoursePage({ course, onBack, user }) {
         setCompletedIds((prev) =>
           isDone ? prev.filter((id) => id !== lessonId) : [...prev, lessonId]
         );
+      } else {
+        setCompleteError('Could not update lesson progress.');
       }
     } catch {
-      // ignore
+      setCompleteError('Could not update lesson progress.');
     }
   };
 
@@ -75,6 +81,7 @@ function CoursePage({ course, onBack, user }) {
         user={user}
         token={token}
         isCompleted={completedIds.includes(activeLesson._id)}
+        completeError={completeError}
         onBack={() => setActiveLesson(null)}
         onToggleComplete={() => toggleComplete(activeLesson._id)}
         onNextLesson={nextLesson ? () => handleLessonClick(nextLesson) : undefined}
@@ -90,10 +97,13 @@ function CoursePage({ course, onBack, user }) {
       isAdmin={isAdmin}
       lessons={lessons}
       loading={loading}
+      lessonsError={lessonsError}
       completedIds={completedIds}
+      progressError={progressError}
       hasAccess={hasAccess}
       accessExpiry={accessExpiry}
       accessChecked={accessChecked}
+      accessError={accessError}
       canOpenLessons={canOpenLessons}
       showAccessMsg={showAccessMsg}
       onDismissAccessMsg={() => setShowAccessMsg(false)}
