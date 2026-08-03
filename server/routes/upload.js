@@ -32,7 +32,8 @@ router.post('/', requireAuth, requireAdmin, upload.single('file'), async (req, r
       url: result.secure_url,
       originalName: req.file.originalname,
     });
-  } catch {
+  } catch (err) {
+    console.error('Upload error:', err);
     res.status(500).json({ error: 'Upload failed' });
   }
 });
