@@ -57,6 +57,7 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
   const [missedIds, setMissedIds] = useState([]);
+  const [skipped, setSkipped] = useState(0);
 
   useEffect(() => {
     setQuestions(buildQuestions(words));
@@ -93,6 +94,12 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
     }
   }, [current, questions.length]);
 
+  const skipQuestion = useCallback(() => {
+    if (selected) return; // already answered, nothing to skip
+    setSkipped((s) => s + 1);
+    next();
+  }, [selected, next]);
+
   useEffect(() => {
     if (!finished || !lessonId || !token) return;
     fetch(`${API}/attempts/quiz`, {
@@ -105,6 +112,7 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
 
   const restart = () => {
     setMissedIds([]);
+    setSkipped(0);
     setQuestions(buildQuestions(words));
     setCurrent(0);
     setSelected(null);
@@ -126,6 +134,13 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
         return;
       }
 
+      // 'r' skips the question without revealing the answer
+      if (e.key.toLowerCase() === 'r') {
+        e.preventDefault();
+        skipQuestion();
+        return;
+      }
+
       // Map keyboard inputs to choices A, B, C, D (or numbers 1, 2, 3, 4)
       const key = e.key.toLowerCase();
       let index = -1;
@@ -142,22 +157,24 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [current, selected, finished, questions, q, next, handleAnswer]);
+  }, [current, selected, finished, questions, q, next, handleAnswer, skipQuestion]);
 
   if (questions.length === 0) return null;
 
   if (finished) {
     const percent = Math.round((score / questions.length) * 100);
-    const incorrect = questions.length - score;
+    const incorrect = questions.length - score - skipped;
 
     // SVG donut chart calculations
     const radius = 36;
     const strokeWidth = 8;
     const circumference = 2 * Math.PI * radius; // ~226.19
     const correctShare = score / questions.length;
-    const incorrectShare = 1 - correctShare;
+    const incorrectShare = incorrect / questions.length;
+    const skippedShare = skipped / questions.length;
     const correctStroke = circumference * correctShare;
     const incorrectStroke = circumference * incorrectShare;
+    const skippedStroke = circumference * skippedShare;
 
     return (
       <div className="quiz-area">
@@ -226,6 +243,21 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
                     className="quiz-chart-segment"
                   />
                 )}
+                {/* Skipped segment */}
+                {skipped > 0 && (
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r={radius}
+                    fill="transparent"
+                    stroke="var(--gold)"
+                    strokeWidth={strokeWidth}
+                    strokeDasharray={`${skippedStroke} ${circumference}`}
+                    strokeDashoffset={-(correctStroke + incorrectStroke)}
+                    strokeLinecap={score > 0 || incorrect > 0 ? 'butt' : 'round'}
+                    className="quiz-chart-segment"
+                  />
+                )}
               </svg>
               {/* Inner score label */}
               <div className="quiz-chart-label">
@@ -250,6 +282,15 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
                   <span className="quiz-legend-value incorrect-color">{incorrect}</span>
                 </div>
               </div>
+              {skipped > 0 && (
+                <div className="quiz-legend-item">
+                  <span className="quiz-legend-dot skipped-dot"></span>
+                  <div className="quiz-legend-text">
+                    <span className="quiz-legend-label">Skipped</span>
+                    <span className="quiz-legend-value skipped-color">{skipped}</span>
+                  </div>
+                </div>
+              )}
               <div className="quiz-legend-item">
                 <span className="quiz-legend-dot total-dot"></span>
                 <div className="quiz-legend-text">
@@ -337,7 +378,7 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
             <path d="M9 18h6"></path>
             <path d="M10 22h4"></path>
           </svg>
-          Keyboard controls: Press <strong>A, B, C, D</strong> (or <strong>1, 2, 3, 4</strong>) to select your answer.
+          Keyboard controls: Press <strong>A, B, C, D</strong> (or <strong>1, 2, 3, 4</strong>) to select your answer, or <strong>R</strong> to skip.
         </p>
       )}
     </div>

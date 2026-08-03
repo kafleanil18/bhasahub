@@ -1838,6 +1838,11 @@ header .container {
   background-color: var(--mist);
 }
 
+.skipped-dot {
+  background-color: var(--gold);
+  box-shadow: 0 0 8px rgba(201, 154, 60, 0.4);
+}
+
 .quiz-legend-text {
   display: flex;
   flex-direction: column;
@@ -1862,6 +1867,10 @@ header .container {
 
 .incorrect-color {
   color: var(--seal) !important;
+}
+
+.skipped-color {
+  color: var(--gold) !important;
 }
 
 
