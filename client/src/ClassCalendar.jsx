@@ -582,7 +582,7 @@ function ClassCalendarPage({ onBack, user }) {
           padding: 14px 18px;
           font-size: 0.9rem;
           font-weight: 500;
-          margin-bottom: 24px;
+          margin-bottom: 24px;  
         }
 
         /* Admin Creator Panel */

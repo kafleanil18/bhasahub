@@ -177,6 +177,32 @@ function App() {
     {zh: '友谊', zhP: 'yǒu yì', ne: 'मित्रता', neP: 'mitratā', meaning: 'friendship' },
     {zh: '家庭', zhP: 'jiā tíng', ne: 'परिवार', neP: 'parivār', meaning: 'family' },
     {zh: '爱情', zhP: 'ài qíng', ne: 'प्रेम', neP: 'prem', meaning: 'love / romance' },
+    {zh: '成功', zhP: 'chéng gōng', ne: 'सफलता', neP: 'safaltā', meaning: 'success / achievement' },
+    {zh: '智慧', zhP: 'zhì huì', ne: 'बुद्धि', neP: 'buddhi', meaning: 'wisdom / intelligence' },
+    {zh: '勇气', zhP: 'yǒng qì', ne: 'साहस', neP: 'sāhas', meaning: 'courage / bravery' },
+    {zh: '自由', zhP: 'zì yóu', ne: 'स्वतन्त्रता', neP: 'svatantratā', meaning: 'freedom / liberty' },
+    {zh: '和平', zhP: 'hé píng', ne: 'शान्ति', neP: 'śānti', meaning: 'peace / harmony' },
+    {zh: '团结', zhP: 'tuán jié', ne: 'एकता', neP: 'ekatā', meaning: 'unity / solidarity' },
+    {zh: '善良', zhP: 'shàn liáng', ne: 'दयालु', neP: 'dayālu', meaning: 'kindness / goodness' },
+    {zh: '诚信', zhP: 'chéng xìn', ne: 'ईमानदारी', neP: 'īmāndārī', meaning: 'honesty / integrity' },
+    {zh: '责任', zhP: 'zé rèn', ne: 'जिम्मेवारी', neP: 'jimmevārī', meaning: 'responsibility / duty' },
+    {zh: '尊重', zhP: 'zūn zhòng', ne: 'सम्मान', neP: 'sammān', meaning: 'respect / esteem' },
+    {zh: '努力学习', zhP: 'nǔ lì xué xí', ne: 'मेहनत गरेर पढ्नुहोस्', neP: 'mehanat gar·era paḍh·nu·hoṣ', meaning: 'study hard / put effort into learning' },
+    {zh: '坚持不懈', zhP: 'jiān chí bù xiè', ne: 'अडिग रहनुहोस्', neP: 'aḍig rah·nu·hoṣ', meaning: 'persevere / never give up' },
+    {zh: '勇往直前', zhP: 'yǒng wǎng zhí qián', ne: 'साहसपूर्वक अगाडि बढ्नुहोस्', neP: 'sāhasapūrvak agāḍī baḍh·nu·hoṣ', meaning: 'forge ahead bravely / move forward with courage' },
+    {zh: '追求梦想', zhP: 'zhuī qiú mèng xiǎng', ne: 'सपना पछ्याउनुहोस्', neP: 'sapnā pach·yāu·nu·hoṣ', meaning: 'pursue your dreams / chase your aspirations' },
+    {zh: '保持希望', zhP: 'bǎo chí xī wàng', ne: 'आशा राख्नुहोस्', neP: 'āśā rākh·nu·hoṣ', meaning: 'keep hope alive / maintain hope' },
+    {zh: '珍惜幸福', zhP: 'zhēn xī xìng fú', ne: 'खुसीको कदर गर्नुहोस्', neP: 'khu·sī·ko kadar gar·nu·hoṣ', meaning: 'cherish happiness / value your well-being' },
+    {zh: '关注健康', zhP: 'guān zhù jiàn kāng', ne: 'स्वास्थ्यमा ध्यान दिनुहोस्', neP: 'swasthya·mā dhyān din·u·hoṣ', meaning: 'pay attention to health / focus on well-being' },
+    {zh: '保持平安', zhP: 'bǎo chí píng ān', ne: 'सुरक्षित रहनुहोस्', neP: 'surakṣit rah·nu·hoṣ', meaning: 'stay safe / maintain peace' },
+    {zh: '珍惜友谊', zhP: 'zhēn xī yǒu yì', ne: 'मित्रताको कदर गर्नुहोस्', neP: 'mitratā·ko kadar gar·nu·hoṣ', meaning: 'cherish friendship / value your friends' },
+    {zh: '珍惜家庭', zhP: 'zhēn xī jiā tíng', ne: 'परिवारको कदर गर्नुहोस्', neP: 'parivār·ko kadar gar·nu·hoṣ', meaning: 'cherish family / value your family' },
+    {zh: '珍惜爱情', zhP: 'zhēn xī ài qíng', ne: 'प्रेमको कदर गर्नुहोस्', neP: 'prem·ko kadar gar·nu·hoṣ', meaning: 'cherish love / value your romantic relationships' },
+    {zh: '珍惜成功', zhP: 'zhēn xī chéng gōng', ne: 'सफलताको कदर गर्नुहोस्', neP: 'safaltā·ko kadar gar·nu·hoṣ', meaning: 'cherish success / value your achievements' },
+    {zh: '珍惜智慧', zhP: 'zhēn xī zhì huì', ne: 'बुद्धिको कदर गर्नुहोस्', neP: 'buddhi·ko kadar gar·nu·hoṣ', meaning: 'cherish wisdom / value intelligence' },
+    {zh: '珍惜勇气', zhP: 'zhēn xī yǒng qì', ne: 'साहसको कदर गर्नुहोस्', neP: 'sāhas·ko kadar gar·nu·hoṣ', meaning: 'cherish courage / value bravery' },
+
+    
   ];
   const dayOfYear = Math.floor(
     (Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000
@@ -528,7 +554,7 @@ function App() {
         <header>
           <div className="container header-row">
             <span className="logo">
-              Learn Chinese with <span>Papu</span>
+              Learn Chinese with <span>Anil</span>
             </span>
           </div>
         </header>
