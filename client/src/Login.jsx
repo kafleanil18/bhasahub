@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Login.css';
+import GoogleAuthButton from './GoogleAuthButton';
 
 function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
   const [email, setEmail] = useState('');
@@ -94,6 +95,17 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
           <div className="login-form-header">
             <h3>Sign In</h3>
             <p>Access your courses and track your progress</p>
+          </div>
+
+          <GoogleAuthButton
+            mode="signin"
+            onSuccess={onLogin}
+            onError={(msg) => setError(msg)}
+            setLoading={setLoading}
+          />
+
+          <div className="auth-divider">
+            <span>or sign in with email</span>
           </div>
 
           <form onSubmit={handleSubmit} className="login-form" noValidate>

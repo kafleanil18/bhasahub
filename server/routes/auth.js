@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const rateLimit = require('express-rate-limit');
 const User = require('../models/User');
 const { requireAuth } = require('../middleware/auth');
-const { sendPasswordResetEmail } = require('../utils/email');
+const { sendPasswordResetEmail, sendPasswordResetOtpEmail } = require('../utils/email');
 
 const router = express.Router();
 
@@ -81,6 +81,85 @@ router.post('/login', authLimiter, async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: 'Something went wrong' });
+  }
+});
+
+// POST /api/auth/google
+router.post('/google', authLimiter, async (req, res) => {
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).json({ error: 'Google credential token is required' });
+    }
+
+    // Verify token with Google's tokeninfo API
+    const googleRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`);
+    if (!googleRes.ok) {
+      return res.status(401).json({ error: 'Invalid Google token' });
+    }
+
+    const payload = await googleRes.json();
+    const { sub: googleId, email, name, picture, email_verified } = payload;
+
+    if (!email || email_verified === 'false' || email_verified === false) {
+      return res.status(400).json({ error: 'Google account email is not verified' });
+    }
+
+    if (process.env.GOOGLE_CLIENT_ID && payload.aud !== process.env.GOOGLE_CLIENT_ID) {
+      return res.status(401).json({ error: 'Google token audience mismatch' });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check if user exists by googleId or email
+    let user = await User.findOne({
+      $or: [{ googleId }, { email: normalizedEmail }]
+    });
+
+    if (user) {
+      let updated = false;
+      if (!user.googleId) {
+        user.googleId = googleId;
+        updated = true;
+      }
+      if (!user.avatar && picture) {
+        user.avatar = picture;
+        updated = true;
+      }
+      if (updated) {
+        await user.save();
+      }
+    } else {
+      user = await User.create({
+        name: name || normalizedEmail.split('@')[0],
+        email: normalizedEmail,
+        googleId,
+        avatar: picture,
+        role: 'student',
+        authProvider: 'google',
+      });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      message: 'Logged in with Google',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar,
+      },
+    });
+  } catch (err) {
+    console.error('Google auth error:', err);
+    res.status(500).json({ error: 'Failed to authenticate with Google' });
   }
 });
 
@@ -168,6 +247,115 @@ router.post('/reset-password', authLimiter, async (req, res) => {
     res.json({ message: 'Password reset successfully. You can now log in.' });
   } catch (err) {
     res.status(500).json({ error: 'Something went wrong' });
+  }
+});
+
+// POST /api/auth/send-otp — send a 6-digit OTP to the user's email
+router.post('/send-otp', forgotPasswordLimiter, async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'Email is required' });
+
+    const normalizedEmail = email.toLowerCase().trim();
+    const user = await User.findOne({ email: normalizedEmail });
+
+    // Protect against account enumeration, but inform frontend properly
+    if (!user) {
+      return res.json({ 
+        message: 'If an account with that email exists, an OTP code has been sent.',
+        success: true
+      });
+    }
+
+    // Generate secure 6-digit numeric OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
+
+    user.resetPasswordOtpHash = otpHash;
+    user.resetPasswordOtpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    await user.save();
+
+    await sendPasswordResetOtpEmail(user.email, otp);
+
+    const response = {
+      message: 'A 6-digit verification code has been sent to your email.',
+      success: true
+    };
+
+    // If Resend API key is not configured, provide devOtp for seamless local development
+    if (!process.env.RESEND_API_KEY) {
+      response.devOtp = otp;
+    }
+
+    res.json(response);
+  } catch (err) {
+    console.error('Error sending OTP:', err);
+    res.status(500).json({ error: 'Failed to send verification code. Please try again.' });
+  }
+});
+
+// POST /api/auth/verify-otp — check if an OTP code is valid before resetting
+router.post('/verify-otp', authLimiter, async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ error: 'Email and verification code are required' });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    const otpHash = crypto.createHash('sha256').update(String(otp).trim()).digest('hex');
+
+    const user = await User.findOne({
+      email: normalizedEmail,
+      resetPasswordOtpHash: otpHash,
+      resetPasswordOtpExpires: { $gt: new Date() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid or expired verification code' });
+    }
+
+    res.json({ message: 'Code verified successfully', valid: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Something went wrong while verifying code' });
+  }
+});
+
+// POST /api/auth/reset-password-otp — reset password using verified OTP
+router.post('/reset-password-otp', authLimiter, async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({ error: 'Email, verification code, and new password are required' });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'New password must be at least 6 characters' });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+    const otpHash = crypto.createHash('sha256').update(String(otp).trim()).digest('hex');
+
+    const user = await User.findOne({
+      email: normalizedEmail,
+      resetPasswordOtpHash: otpHash,
+      resetPasswordOtpExpires: { $gt: new Date() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid or expired verification code' });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.resetPasswordOtpHash = undefined;
+    user.resetPasswordOtpExpires = undefined;
+    user.resetPasswordTokenHash = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.json({ message: 'Password reset successfully! You can now sign in with your new password.' });
+  } catch (err) {
+    console.error('Error resetting password with OTP:', err);
+    res.status(500).json({ error: 'Failed to reset password. Please try again.' });
   }
 });
 

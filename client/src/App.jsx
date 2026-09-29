@@ -966,6 +966,7 @@ function App() {
           ) : (
             <Register
               onRegistered={() => setAuthView('login')}
+              onLogin={(u) => { setUser(u); setShowLogin(false); loadAccess(); loadMyAccess(); }}
               onBack={goHome}
               onSwitch={() => setAuthView('login')}
             />

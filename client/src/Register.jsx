@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Register.css';
+import GoogleAuthButton from './GoogleAuthButton';
 
 const WIDGET_WORDS = {
   zh: [
@@ -31,7 +32,7 @@ const WIDGET_WORDS = {
   ]
 };
 
-function Register({ onRegistered, onBack, onSwitch }) {
+function Register({ onRegistered, onBack, onSwitch, onLogin }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -202,6 +203,17 @@ function Register({ onRegistered, onBack, onSwitch }) {
           <div className="register-form-header">
             <h3>Sign Up</h3>
             <p>Start your language adventure today</p>
+          </div>
+
+          <GoogleAuthButton
+            mode="signup"
+            onSuccess={(u) => (onLogin ? onLogin(u) : onRegistered())}
+            onError={(msg) => setError(msg)}
+            setLoading={setLoading}
+          />
+
+          <div className="auth-divider">
+            <span>or sign up with email</span>
           </div>
 
           <form onSubmit={handleSubmit} className="register-form" noValidate>
