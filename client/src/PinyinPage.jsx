@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { mediaUrl } from './utils/mediaUrl';
 
-const API = window.API_BASE_URL + '/api';
-const SERVER = window.API_BASE_URL;
+const API = (window.API_BASE_URL || '') + '/api';
+const SERVER = window.API_BASE_URL || '';
 
 const DEFAULT_INITIALS = ['', 'b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'zh', 'ch', 'sh', 'r', 'z', 'c', 's'];
 const DEFAULT_FINALS = [
@@ -102,17 +102,21 @@ function getSupportedMimeType() {
 }
 
 function extForMimeType(mimeType) {
-  if (mimeType.includes('mp4')) return 'm4a';
+  if (!mimeType) return 'webm';
+  if (mimeType.includes('mp4') || mimeType.includes('aac')) return 'm4a';
   if (mimeType.includes('ogg')) return 'ogg';
+  if (mimeType.includes('wav')) return 'wav';
   return 'webm';
 }
 
-function PinyinPage({ onBack, isSuperAdmin }) {
+function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
   const [selected, setSelected] = useState(null);
   const [recordings, setRecordings] = useState({});
   const [recordingTone, setRecordingTone] = useState(null);
   const [uploadingTone, setUploadingTone] = useState(null);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [micError, setMicError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
 
   const [initials, setInitials] = useState(DEFAULT_INITIALS);
   const [finals, setFinals] = useState(DEFAULT_FINALS);
@@ -122,6 +126,21 @@ function PinyinPage({ onBack, isSuperAdmin }) {
   const [newFinal, setNewFinal] = useState('');
   const [tableError, setTableError] = useState('');
   const [savingTable, setSavingTable] = useState(false);
+
+  useEffect(() => {
+    let interval = null;
+    if (recordingTone !== null) {
+      setRecordingSeconds(0);
+      interval = setInterval(() => {
+        setRecordingSeconds((prev) => prev + 1);
+      }, 1000);
+    } else {
+      setRecordingSeconds(0);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [recordingTone]);
 
   const audioPlayerRef = useRef(null);
   const mediaRecorderRef = useRef(null);
@@ -245,8 +264,21 @@ function PinyinPage({ onBack, isSuperAdmin }) {
   const handleToneClick = (tone) => {
     const rec = recordings[keyFor(selected, tone)];
     if (rec && audioPlayerRef.current) {
-      audioPlayerRef.current.src = mediaUrl(rec.audioUrl);
-      audioPlayerRef.current.play();
+      try {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current.currentTime = 0;
+        audioPlayerRef.current.src = mediaUrl(rec.audioUrl);
+        audioPlayerRef.current.load();
+        const playPromise = audioPlayerRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((err) => {
+            console.warn('Audio play error, falling back to synth tone:', err);
+            playTone(selected, tone);
+          });
+        }
+      } catch {
+        playTone(selected, tone);
+      }
     } else {
       playTone(selected, tone);
     }
@@ -254,6 +286,11 @@ function PinyinPage({ onBack, isSuperAdmin }) {
 
   const startRecording = async (tone) => {
     setMicError('');
+    setSuccessMsg('');
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setMicError('Your browser does not support audio recording. Please use Chrome, Safari, or Firefox.');
+      return;
+    }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
@@ -283,15 +320,19 @@ function PinyinPage({ onBack, isSuperAdmin }) {
 
   const uploadRecording = async (tone, blob, mimeType) => {
     setUploadingTone(tone);
+    setMicError('');
     try {
       const activeToken = localStorage.getItem('token');
+      if (!activeToken) {
+        throw new Error('Please sign in with admin privileges to save recordings.');
+      }
       const headers = { Authorization: `Bearer ${activeToken}` };
       const ext = extForMimeType(mimeType);
       const fd = new FormData();
       fd.append('file', blob, `${selected}-${tone}-${Date.now()}.${ext}`);
       const uploadRes = await fetch(`${API}/upload`, { method: 'POST', headers, body: fd });
       const uploadData = await uploadRes.json();
-      if (!uploadRes.ok) throw new Error(uploadData.error || 'Upload failed');
+      if (!uploadRes.ok) throw new Error(uploadData.error || uploadData.details || 'Upload failed');
 
       const saveRes = await fetch(`${API}/pinyin-recordings`, {
         method: 'POST',
@@ -302,6 +343,8 @@ function PinyinPage({ onBack, isSuperAdmin }) {
       if (!saveRes.ok) throw new Error(saveData.error || 'Could not save recording');
 
       setRecordings((prev) => ({ ...prev, [keyFor(selected, tone)]: saveData }));
+      setSuccessMsg(`Tone ${tone} voice recording saved for "${selected}"!`);
+      setTimeout(() => setSuccessMsg(''), 4000);
     } catch (err) {
       setMicError(err.message || 'Could not save the recording');
     } finally {
@@ -310,6 +353,9 @@ function PinyinPage({ onBack, isSuperAdmin }) {
   };
 
   const deleteRecording = async (tone, id) => {
+    if (!window.confirm(`Delete teacher voice for tone ${tone} of "${selected}" and revert to default tone?`)) {
+      return;
+    }
     try {
       const activeToken = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${activeToken}` };
@@ -319,6 +365,8 @@ function PinyinPage({ onBack, isSuperAdmin }) {
         delete next[keyFor(selected, tone)];
         return next;
       });
+      setSuccessMsg(`Recording removed for tone ${tone}.`);
+      setTimeout(() => setSuccessMsg(''), 3000);
     } catch {
       setMicError('Could not delete the recording');
     }
@@ -328,8 +376,9 @@ function PinyinPage({ onBack, isSuperAdmin }) {
     <section className="pinyin-table-page">
       <style>{`
         .pinyin-table-page {
+          position: relative;
+          z-index: 1;
           padding: 24px 0 60px;
-          background: var(--paper);
           color: var(--ink);
           transition: background 0.2s ease, color 0.2s ease;
         }
@@ -519,6 +568,14 @@ function PinyinPage({ onBack, isSuperAdmin }) {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.6; }
         }
+        .pinyin-record-btn.has-recording {
+          border-color: var(--gold);
+          color: var(--gold);
+        }
+        .pinyin-record-btn.has-recording:hover:not(:disabled) {
+          background: var(--gold);
+          color: #fff;
+        }
         .pinyin-record-delete {
           background: none;
           border: 1px solid var(--line);
@@ -537,6 +594,26 @@ function PinyinPage({ onBack, isSuperAdmin }) {
           font-size: 0.85rem;
           margin-top: 10px;
           text-align: center;
+          font-weight: 600;
+        }
+        .pinyin-mic-success {
+          color: var(--jade);
+          font-size: 0.85rem;
+          margin-top: 10px;
+          text-align: center;
+          font-weight: 600;
+        }
+        .pinyin-admin-mode-pill {
+          display: inline-block;
+          font-size: 0.72rem;
+          font-weight: 600;
+          color: var(--seal);
+          background: rgba(200, 54, 42, 0.08);
+          border: 1px solid rgba(200, 54, 42, 0.25);
+          padding: 2px 8px;
+          border-radius: 999px;
+          margin-left: 10px;
+          vertical-align: middle;
         }
         .pinyin-admin-bar {
           display: flex;
@@ -682,14 +759,43 @@ function PinyinPage({ onBack, isSuperAdmin }) {
         .pinyin-highlight-toggle.is-on {
           color: var(--gold);
         }
+        @media (max-width: 640px) {
+          .pinyin-card {
+            padding: 18px 12px;
+            border-radius: 12px;
+          }
+          .pinyin-h1 {
+            font-size: 1.45rem;
+          }
+          .pinyin-subtitle {
+            font-size: 0.85rem;
+            margin-bottom: 18px;
+          }
+          .pinyin-dashboard {
+            padding: 10px;
+            margin-bottom: 16px;
+            min-height: 64px;
+          }
+          .pinyin-selected-syllable {
+            font-size: 1.2rem;
+            margin-bottom: 6px;
+          }
+          .pinyin-tone-buttons {
+            gap: 8px;
+          }
+          .pinyin-tone-btn {
+            padding: 6px 12px;
+            font-size: 1.1rem;
+          }
+        }
       `}</style>
 
       <div className="container">
-        <button className="back-btn" onClick={onBack} style={{ marginBottom: 16 }}>← Back to home</button>
+        <button className="back-btn" onClick={onBack} style={{ marginBottom: 16 }}>{backLabel}</button>
 
         <div className="pinyin-card">
-          <h1 className="pinyin-h1"> (Mandarin Pinyin Table)</h1>
-          <p className="pinyin-subtitle">Click and  listen to all four tones.</p>
+          <h1 className="pinyin-h1">汉语拼音 · Mandarin Pinyin Chart</h1>
+          <p className="pinyin-subtitle">Click any syllable below to listen to all four tones (ā, á, ǎ, à).</p>
 
           {isSuperAdmin && (
             <div className="pinyin-admin-bar">
@@ -764,7 +870,12 @@ function PinyinPage({ onBack, isSuperAdmin }) {
               <div className="pinyin-dashboard-placeholder">Select a syllable below to practice tones</div>
             ) : (
               <div className="pinyin-tone-container">
-                <div className="pinyin-selected-syllable">Syllable: {selected}</div>
+                <div className="pinyin-selected-syllable">
+                  Syllable: <span style={{ textDecoration: 'underline' }}>{selected}</span>
+                  {isSuperAdmin && (
+                    <span className="pinyin-admin-mode-pill">🎙️ Admin Voice Studio</span>
+                  )}
+                </div>
                 <div className="pinyin-tone-buttons">
                   {[1, 2, 3, 4].map((tone) => {
                     const rec = recordings[keyFor(selected, tone)];
@@ -776,26 +887,33 @@ function PinyinPage({ onBack, isSuperAdmin }) {
                           type="button"
                           className="pinyin-tone-btn"
                           onClick={() => handleToneClick(tone)}
+                          title={rec ? 'Click to play teacher recording' : 'Click to play tone'}
                         >
                           {applyTone(selected, tone)}
                           {rec && (
-                            <span className="pinyin-tone-recorded-badge" title="Play the recording" />
+                            <span className="pinyin-tone-recorded-badge" title="Teacher voice recorded (click to play)" />
                           )}
                         </button>
                         {isSuperAdmin && (
                           <div className="pinyin-record-controls">
                             {isRecordingThis ? (
-                              <button type="button" className="pinyin-record-btn recording" onClick={stopRecording}>
-                                ⏹ Stop
+                              <button
+                                type="button"
+                                className="pinyin-record-btn recording"
+                                onClick={stopRecording}
+                                title="Click to stop and save recording"
+                              >
+                                ⏹ Stop {recordingSeconds > 0 ? `(${recordingSeconds}s)` : ''}
                               </button>
                             ) : (
                               <button
                                 type="button"
-                                className="pinyin-record-btn"
+                                className={`pinyin-record-btn ${rec ? 'has-recording' : ''}`}
                                 onClick={() => startRecording(tone)}
                                 disabled={recordingTone !== null || uploadingTone !== null}
+                                title={rec ? 'Record again to replace this sound' : 'Record teacher voice for this tone'}
                               >
-                                {isUploadingThis ? 'Saving…' : rec ? ' Re-record' : ' Record'}
+                                {isUploadingThis ? 'Saving…' : rec ? '🔄 Replace' : '🎙️ Record'}
                               </button>
                             )}
                             {rec && !isRecordingThis && !isUploadingThis && (
@@ -803,7 +921,7 @@ function PinyinPage({ onBack, isSuperAdmin }) {
                                 type="button"
                                 className="pinyin-record-delete"
                                 onClick={() => deleteRecording(tone, rec._id)}
-                                title="Remove recording"
+                                title="Delete recording and revert to default tone"
                               >
                                 🗑
                               </button>
@@ -814,7 +932,8 @@ function PinyinPage({ onBack, isSuperAdmin }) {
                     );
                   })}
                 </div>
-                {micError && <p className="pinyin-mic-error">{micError}</p>}
+                {micError && <p className="pinyin-mic-error">⚠️ {micError}</p>}
+                {successMsg && <p className="pinyin-mic-success">✓ {successMsg}</p>}
                 <audio ref={audioPlayerRef} style={{ display: 'none' }} />
               </div>
             )}

@@ -29,6 +29,7 @@ import AuditLog from './AuditLog';
 import HanziTracePage from './HanziTracePage';
 import ConversationPracticePage from './ConversationPractice';
 import ToneScorer from './ToneScorer';
+import MouseAura from './MouseAura';
 
 
 
@@ -209,7 +210,15 @@ function App() {
   );
   const wotd = wotdList[dayOfYear % wotdList.length];
 
-  const [language, setLanguage] = useState(null);
+  const [language, setLanguage] = useState(() => localStorage.getItem('bhasha_language') || 'chinese');
+  const [showLangMenu, setShowLangMenu] = useState(false);
+
+  const changeLanguage = (lang) => {
+    setLanguage(lang);
+    if (lang) {
+      localStorage.setItem('bhasha_language', lang);
+    }
+  };
   const [serverOk, setServerOk] = useState(null);
   const [user, setUser] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
@@ -227,6 +236,7 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [levelFilter, setLevelFilter] = useState('all');
   const [showPinyinPage, setShowPinyinPage] = useState(false);
+  const [pinyinBackToAdmin, setPinyinBackToAdmin] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [showInbox, setShowInbox] = useState(false);
@@ -263,6 +273,105 @@ function App() {
   const [showPracticeMenu, setShowPracticeMenu] = useState(false);
   const [lockedNotice, setLockedNotice] = useState(null);
   const [showToneScorer, setShowToneScorer] = useState(false);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const heroVideoRef = useRef(null);
+
+  const handleVideoToggle = () => {
+    const video = heroVideoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      video.play().catch(() => {});
+    } else {
+      video.pause();
+    }
+  };
+
+  const playNihaoAudio = () => {
+    try {
+      setIsPlayingAudio(true);
+      const audio = new Audio('/nihao.m4a');
+      audio.onended = () => setIsPlayingAudio(false);
+      audio.onerror = () => {
+        const backup = new Audio('/nihao.webm');
+        backup.onended = () => setIsPlayingAudio(false);
+        backup.onerror = () => {
+          if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance('你好');
+            u.lang = 'zh-CN';
+            u.rate = 0.85;
+            u.onend = () => setIsPlayingAudio(false);
+            u.onerror = () => setIsPlayingAudio(false);
+            window.speechSynthesis.speak(u);
+          } else {
+            setIsPlayingAudio(false);
+          }
+        };
+        backup.play().catch(() => setIsPlayingAudio(false));
+      };
+      audio.play().catch(() => {
+        const backup = new Audio('/nihao.webm');
+        backup.onended = () => setIsPlayingAudio(false);
+        backup.onerror = () => setIsPlayingAudio(false);
+        backup.play().catch(() => setIsPlayingAudio(false));
+      });
+    } catch {
+      setIsPlayingAudio(false);
+    }
+  };
+
+  const [isPlayingWotd, setIsPlayingWotd] = useState(false);
+  const [isPlayingFeatureAudio, setIsPlayingFeatureAudio] = useState(false);
+
+  const fallbackSpeech = (text) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'zh-CN';
+      utterance.rate = 0.85;
+      utterance.onend = () => setIsPlayingWotd(false);
+      utterance.onerror = () => setIsPlayingWotd(false);
+      window.speechSynthesis.speak(utterance);
+    } else {
+      setIsPlayingWotd(false);
+    }
+  };
+
+  const playWotdAudio = (word) => {
+    try {
+      setIsPlayingWotd(true);
+      const audioMap = {
+        '你好': '/nihao.m4a',
+        '谢谢': '/xiexie.m4a',
+        '再见': '/zaijian.m4a',
+        '不客气': '/bukeqi.m4a'
+      };
+
+      if (audioMap[word]) {
+        const audio = new Audio(audioMap[word]);
+        audio.onended = () => setIsPlayingWotd(false);
+        audio.onerror = () => fallbackSpeech(word);
+        audio.play().catch(() => fallbackSpeech(word));
+      } else {
+        fallbackSpeech(word);
+      }
+    } catch {
+      setIsPlayingWotd(false);
+    }
+  };
+
+  const playFeatureSample = () => {
+    try {
+      setIsPlayingFeatureAudio(true);
+      const audio = new Audio('/xiexie.m4a');
+      audio.onended = () => setIsPlayingFeatureAudio(false);
+      audio.onerror = () => setIsPlayingFeatureAudio(false);
+      audio.play().catch(() => setIsPlayingFeatureAudio(false));
+    } catch {
+      setIsPlayingFeatureAudio(false);
+    }
+  };
 
   useEffect(() => {
     if (darkMode) {
@@ -273,6 +382,20 @@ function App() {
       localStorage.setItem('theme', 'light');
     }
   }, [darkMode]);
+
+  useEffect(() => {
+    const handleGlobalClick = (e) => {
+      if (!e.target.closest('.nav-dropdown-wrapper')) {
+        setShowPracticeMenu(false);
+        setShowLangMenu(false);
+      }
+      if (!e.target.closest('.user-menu')) {
+        setShowUserMenu(false);
+      }
+    };
+    document.addEventListener('click', handleGlobalClick);
+    return () => document.removeEventListener('click', handleGlobalClick);
+  }, []);
 
   // role helpers
   const isSuperAdmin = user && user.role === 'superadmin';
@@ -454,6 +577,7 @@ function App() {
     setShowAdminDashboard(false);
     setShowAuditLog(false);
     setShowPinyinPage(false);
+    setPinyinBackToAdmin(false);
     setActiveCourse(null);
     setManageCourse(null);
     setShowDashboard(false);
@@ -472,6 +596,7 @@ function App() {
     setShowTeamManager(false);
     setAdminSidebarOpen(false);
     setShowPracticeMenu(false);
+    setShowLangMenu(false);
     setShowToneScorer(false);
     loadCourses();
     loadAccess();
@@ -542,23 +667,42 @@ function App() {
     );
   }
 
-  // ---------- Language choice screen ----------
-  if (!language) {
-    return <LanguageChoice onChoose={(lang) => setLanguage(lang)} />;
+  // ---------- Optional Language choice screen (if explicitly chosen) ----------
+  if (language === 'choice') {
+    return <LanguageChoice onChoose={(lang) => { changeLanguage(lang); goHome(); }} />;
   }
 
   // ---------- Nepali placeholder ----------
   if (language === 'nepali') {
     return (
       <>
+        <div className="ambient-background" aria-hidden="true">
+          <div className="ambient-orb orb-1"></div>
+          <div className="ambient-orb orb-2"></div>
+          <div className="ambient-orb orb-3"></div>
+          <div className="ambient-orb orb-4"></div>
+          <div className="ambient-mesh-grid"></div>
+          <div className="ambient-glyphs">
+            <span className="ambient-glyph g-1 ne">नमस्ते</span>
+            <span className="ambient-glyph g-2 ne">ज्ञान</span>
+            <span className="ambient-glyph g-3 zh">语</span>
+            <span className="ambient-glyph g-4 zh">和</span>
+          </div>
+        </div>
+        <MouseAura />
         <header>
           <div className="container header-row">
-            <span className="logo">
+            <button className="logo" onClick={() => { changeLanguage('chinese'); goHome(); }}>
               Learn Chinese with <span>Anil</span>
-            </span>
+            </button>
+            <div className="nav-actions">
+              <button className="nav-btn" onClick={() => { changeLanguage('chinese'); goHome(); }}>
+                ← Switch to Chinese Courses
+              </button>
+            </div>
           </div>
         </header>
-        <NepaliPage onBack={() => setLanguage(null)} />
+        <NepaliPage onBack={() => { changeLanguage('chinese'); goHome(); }} />
       </>
     );
   }
@@ -566,6 +710,25 @@ function App() {
   // ---------- Chinese app ----------
   return (
     <>
+      <div className="ambient-background" aria-hidden="true">
+        <div className="ambient-orb orb-1"></div>
+        <div className="ambient-orb orb-2"></div>
+        <div className="ambient-orb orb-3"></div>
+        <div className="ambient-orb orb-4"></div>
+        <div className="ambient-mesh-grid"></div>
+        <div className="ambient-glyphs">
+          <span className="ambient-glyph g-1 zh">语</span>
+          <span className="ambient-glyph g-2 ne">नमस्ते</span>
+          <span className="ambient-glyph g-3 zh">学</span>
+          <span className="ambient-glyph g-4 zh">和</span>
+          <span className="ambient-glyph g-5 ne">ज्ञान</span>
+          <span className="ambient-glyph g-6 zh">春</span>
+          <span className="ambient-glyph g-7 zh">福</span>
+          <span className="ambient-glyph g-8 zh">道</span>
+        </div>
+      </div>
+      <MouseAura />
+
       {showChangePassword && <ChangePassword onClose={() => setShowChangePassword(false)} />}
       {showFeedback && <FeedbackModal user={user} onClose={() => setShowFeedback(false)} />}
       {showTestimonial && <TestimonialModal user={user} onClose={() => { setShowTestimonial(false); loadTestimonials(); }} />}
@@ -667,6 +830,15 @@ function App() {
                   Trace characters
                 </button>
               )}
+              <button onClick={() => { goHome(); setShowPinyinPage(true); setPinyinBackToAdmin(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                  <line x1="12" y1="19" x2="12" y2="23"></line>
+                  <line x1="8" y1="23" x2="16" y2="23"></line>
+                </svg>
+                Pinyin voice studio
+              </button>
               <button onClick={() => { goHome(); setShowTestimonialManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
                 <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -825,6 +997,59 @@ function App() {
                 </svg>
                 Message us
               </button>
+
+              <div className="nav-dropdown-wrapper">
+                <button
+                  type="button"
+                  className="nav-link nav-dropdown-trigger lang-picker-trigger"
+                  onClick={() => { setShowLangMenu(!showLangMenu); setShowPracticeMenu(false); }}
+                  aria-expanded={showLangMenu}
+                  title="Choose Language Track"
+                >
+                  <span className="lang-icon" aria-hidden="true">{language === 'chinese' ? '🇨🇳' : '🇳🇵'}</span>
+                  <span>{language === 'chinese' ? 'Chinese' : 'Nepali'}</span>
+                  <span className="caret">▾</span>
+                </button>
+
+                {showLangMenu && (
+                  <div className="nav-dropdown-menu lang-dropdown-menu">
+                    <button
+                      type="button"
+                      className={`nav-dropdown-item ${language === 'chinese' ? 'is-active-lang' : ''}`}
+                      onClick={() => {
+                        changeLanguage('chinese');
+                        setShowLangMenu(false);
+                        setMobileMenuOpen(false);
+                        goHome();
+                      }}
+                    >
+                      <span className="lang-dropdown-flag" aria-hidden="true">🇨🇳</span>
+                      <div className="lang-dropdown-col">
+                        <span className="lang-dropdown-name">Learn Chinese</span>
+                        <span className="lang-dropdown-sub">HSK 1–4 · PinYin & Audio</span>
+                      </div>
+                      {language === 'chinese' && <span className="lang-active-check" aria-hidden="true">✓</span>}
+                    </button>
+
+                    <button
+                      type="button"
+                      className={`nav-dropdown-item ${language === 'nepali' ? 'is-active-lang' : ''}`}
+                      onClick={() => {
+                        changeLanguage('nepali');
+                        setShowLangMenu(false);
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      <span className="lang-dropdown-flag" aria-hidden="true">🇳🇵</span>
+                      <div className="lang-dropdown-col">
+                        <span className="lang-dropdown-name">Learn Nepali</span>
+                        <span className="lang-dropdown-tag">Coming Soon</span>
+                      </div>
+                      {language === 'nepali' && <span className="lang-active-check" aria-hidden="true">✓</span>}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="nav-divider" aria-hidden="true"></div>
@@ -985,7 +1210,11 @@ function App() {
       ) : showToneScorer ? (
         <ToneScorer onBack={goHome} />
       ) : showPinyinPage ? (
-        <PinyinPage onBack={goHome} isSuperAdmin={isSuperAdmin} />
+        <PinyinPage 
+          onBack={pinyinBackToAdmin ? () => { setPinyinBackToAdmin(false); goAdminDashboard(); } : goHome} 
+          isSuperAdmin={isSuperAdmin || isAdmin}
+          backLabel={pinyinBackToAdmin ? '← Back to Admin Dashboard' : '← Back to home'}
+        />
       ) : showConversationPractice ? (
         <ConversationPracticePage onBack={goHome} />
       ) : showClassCalendar ? (
@@ -1036,6 +1265,10 @@ function App() {
             else if (view === 'admins') setShowUserManager(true);
             else if (view === 'subscriptions') setShowSubscriptions(true);
             else if (view === 'team') setShowTeamManager(true);
+            else if (view === 'pinyin') {
+              setShowPinyinPage(true);
+              setPinyinBackToAdmin(true);
+            }
           }} 
         />
       ) : isSuperAdmin && showAuditLog ? (
@@ -1055,71 +1288,162 @@ function App() {
           <section className="hero">
             <div className="container hero-grid">
               <div className="hero-text">
-                <p className="eyebrow">Learn Mandarin Chinese!</p>
-                <h1>
-                  {user
-                    ? `Welcome back, ${user.name}`
-                    : 'चिनियाँ भाषा सिक्न सुरु गर्नुहोस्।'}
+                <div className="hero-badge">
+                  <span className="hero-badge-dot" aria-hidden="true"></span>
+                  <span className="hero-badge-text">नेपालीहरूको लागि विशेष चिनियाँ कक्षा · HSK 1–4</span>
+                </div>
+                <h1 className="hero-title">
+                  {user ? (
+                    <>Welcome back, <span className="hero-highlight">{user.name}</span>!</>
+                  ) : (
+                    <>
+                      चिनियाँ भाषा सिक्नुहोस्,{' '}
+                      <span className="hero-highlight">सजिलै र प्रभावकारी रूपमा।</span>
+                    </>
+                  )}
                 </h1>
-                <p className="hero-lead">
-                  Learn structured lessons, PinYin, Tones, Vocabulary, and Spoken Chinese! One
-                  small step at a time.
+                <p className="hero-subtitle">
+                  Master Mandarin Chinese with step-by-step video lessons, Pinyin chart, interactive AI tone practice, and HSK mock tests — tailored specifically for Nepali speakers.
                 </p>
                 <div className="hero-actions">
                   {!user && (
-                    <button className="btn-primary" onClick={() => { setAuthView('register'); setShowLogin(true); }}>
-                      Start learning free
+                    <button className="btn-primary hero-btn-main" onClick={() => { setAuthView('register'); setShowLogin(true); }}>
+                      <span>Start Learning Free</span>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                      </svg>
                     </button>
                   )}
-                  <a className="btn-secondary" href="#courses">Browse courses</a>
+                  <a className="btn-secondary hero-btn-secondary" href="#courses">
+                    <span>Explore Courses</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                  </a>
+                </div>
+
+                <div className="hero-stats">
+                  <div className="hero-stat-item">
+                    <div className="stat-icon-wrap" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                      </svg>
+                    </div>
+                    <div className="stat-text-wrap">
+                      <strong>100% Free</strong>
+                      <span>To start learning</span>
+                    </div>
+                  </div>
+
+                  <div className="hero-stat-divider" aria-hidden="true"></div>
+
+                  <div className="hero-stat-item">
+                    <div className="stat-icon-wrap" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                      </svg>
+                    </div>
+                    <div className="stat-text-wrap">
+                      <strong>HSK 1 to 4</strong>
+                      <span>Structured syllabus</span>
+                    </div>
+                  </div>
+
+                  <div className="hero-stat-divider" aria-hidden="true"></div>
+
+                  <div className="hero-stat-item">
+                    <div className="stat-icon-wrap" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                        <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                      </svg>
+                    </div>
+                    <div className="stat-text-wrap">
+                      <strong>Native Audio</strong>
+                      <span>Real spoken practice</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="hero-media">
-                <div className="hero-cards">
-                  <div className="script-card tilt-left">
-                    <span className="annotation">nǐ&nbsp;hǎo</span>
-                    <span className="word zh">你好</span>
-                    <span className="meaning">hello · Chinese</span>
+              <div className="hero-showcase">
+                <div className="hero-video-card">
+                  <div className="video-card-header">
+                    <div className="video-card-badge">
+                      <span className="live-pulse" aria-hidden="true"></span>
+                      <span>Teacher Intro Video</span>
+                    </div>
+                    <span className="video-card-duration">1-min overview</span>
                   </div>
-                  <div className="script-card tilt-right">
-                    <span className="annotation">na·mas·te</span>
-                    <span className="word ne">नमस्ते</span>
-                    <span className="meaning">hello · Nepali</span>
-                  </div>
-                </div>
 
-                <div className="hero-video">
                   <div
-                    className="video-wrap"
-                    onClick={(e) => {
-                      const v = e.currentTarget.querySelector('video');
-                      const btn = e.currentTarget.querySelector('.big-play');
-                      if (v.paused) { v.play(); btn.style.display = 'none'; }
-                    }}
+                    className={`video-wrap ${isVideoPlaying ? 'is-playing' : ''}`}
+                    onClick={handleVideoToggle}
                   >
                     <video
+                      ref={heroVideoRef}
                       key={welcomeVideoUrl || 'default'}
                       preload="metadata"
                       poster={dailyImages[new Date().getDay()]}
-                      controls
-                      onPlay={(e) => {
-                        const btn = e.currentTarget.parentElement.querySelector('.big-play');
-                        if (btn) btn.style.display = 'none';
-                      }}
-                      onPause={(e) => {
-                        const btn = e.currentTarget.parentElement.querySelector('.big-play');
-                        if (btn) btn.style.display = 'flex';
-                      }}
+                      playsInline
+                      controls={isVideoPlaying}
+                      onPlay={() => setIsVideoPlaying(true)}
+                      onPause={() => setIsVideoPlaying(false)}
+                      onEnded={() => setIsVideoPlaying(false)}
                     >
                       <source src={welcomeVideoUrl ? mediaUrl(welcomeVideoUrl) : '/video/intro.mp4'} type="video/mp4" />
                       Your browser doesn't support the video tag.
                     </video>
-                    <button className="big-play" aria-label="Play intro video">
-                      <span className="play-triangle">▶</span>
-                    </button>
+
+                    {!isVideoPlaying && (
+                      <button className="big-play-btn" aria-label="Play welcome video">
+                        <div className="play-btn-circle" aria-hidden="true">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z"/>
+                          </svg>
+                        </div>
+                        <span className="play-btn-label">Watch Introduction</span>
+                      </button>
+                    )}
                   </div>
-                  <p className="hero-video-caption">A quick welcome from your teacher</p>
+                </div>
+
+                <div className="hero-interactive-card">
+                  <div className="interactive-card-left">
+                    <div className="card-pinyin-tag">
+                      <span>nǐ hǎo</span>
+                      <span className="tone-indicator">3rd tone ˇ</span>
+                    </div>
+                    <div className="card-characters zh">你好</div>
+                    <div className="card-meaning-line">
+                      <span className="card-nepali ne">नमस्ते</span>
+                      <span className="card-dot">•</span>
+                      <span className="card-english">hello · greeting</span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    className={`hero-audio-btn ${isPlayingAudio ? 'is-playing' : ''}`}
+                    onClick={playNihaoAudio}
+                    title="Click to hear native audio"
+                    aria-label="Listen to Chinese pronunciation"
+                  >
+                    <div className="audio-icon-box" aria-hidden="true">
+                      {isPlayingAudio ? (
+                        <span className="sound-wave">
+                          <span></span><span></span><span></span>
+                        </span>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                      )}
+                    </div>
+                    <span className="audio-btn-text">{isPlayingAudio ? 'Playing audio...' : 'Hear Pronunciation'}</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -1127,74 +1451,164 @@ function App() {
 
           <section className="features">
             <div className="container">
-              <div className="feature-card">
-                <div className="feature-icon-wrapper speak-bg">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
-                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                    <line x1="12" y1="19" x2="12" y2="22"></line>
-                  </svg>
-                </div>
-                <h3>Pronunciation & Script</h3>
-                <p>
-                  Start from zero with Pinyin and Devanagari — every character
-                  introduced with clear audio pronunciation you can actually say.
+              <div className="features-intro">
+                <span className="section-kicker">Built for Real Fluency</span>
+                <h2 className="section-title">Everything you need to master Chinese</h2>
+                <p className="section-sublead">
+                  Designed specifically for Nepali learners with native audio, phonetic clarity, and logical step-by-step milestones.
                 </p>
               </div>
-              <div className="feature-card">
-                <div className="feature-icon-wrapper listen-bg">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-                    <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
-                  </svg>
+
+              <div className="features-grid">
+                {/* Feature 1 */}
+                <div className="feature-card">
+                  <div className="feature-header">
+                    <div className="feature-icon-wrapper speak-bg" aria-hidden="true">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="22"></line>
+                      </svg>
+                    </div>
+                    <span className="feature-pill-badge">Phonetics First</span>
+                  </div>
+                  <h3>Pronunciation & Script</h3>
+                  <p>
+                    Start from zero with Pinyin and Devanagari — every character introduced with tone pitch contours you can replicate accurately.
+                  </p>
+                  <div className="feature-visual tone-visual" aria-label="Chinese 4 tones pitch guide">
+                    <div className="tone-pill"><span className="tone-mark">—</span> 1st: High</div>
+                    <div className="tone-pill"><span className="tone-mark">/</span> 2nd: Rise</div>
+                    <div className="tone-pill"><span className="tone-mark">∨</span> 3rd: Dip</div>
+                    <div className="tone-pill"><span className="tone-mark">\</span> 4th: Fall</div>
+                  </div>
                 </div>
-                <h3>Hear it Spoken</h3>
-                <p>
-                  Native audio on every word and phrase, recorded clearly —
-                  listen, repeat, and compare until it sticks.
-                </p>
-              </div>
-              <div className="feature-card">
-                <div className="feature-icon-wrapper read-bg">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                  </svg>
+
+                {/* Feature 2 */}
+                <div className="feature-card">
+                  <div className="feature-header">
+                    <div className="feature-icon-wrapper listen-bg" aria-hidden="true">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                        <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                      </svg>
+                    </div>
+                    <span className="feature-pill-badge">Native Audio</span>
+                  </div>
+                  <h3>Hear it Spoken</h3>
+                  <p>
+                    Clear studio audio on every single word and dialogue line — listen, repeat, and compare until it sticks naturally.
+                  </p>
+                  <div className="feature-visual audio-sample-visual">
+                    <button
+                      type="button"
+                      className={`feature-audio-sample-btn ${isPlayingFeatureAudio ? 'is-playing' : ''}`}
+                      onClick={playFeatureSample}
+                      title="Click to test sample audio"
+                      aria-label="Listen to sample audio"
+                    >
+                      {isPlayingFeatureAudio ? (
+                        <span className="sound-wave">
+                          <span></span><span></span><span></span>
+                        </span>
+                      ) : (
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <path d="M8 5v14l11-7z"/>
+                        </svg>
+                      )}
+                      <span>{isPlayingFeatureAudio ? 'Playing "xiè xie"...' : 'Hear Sample: 谢谢 (xièxie)'}</span>
+                    </button>
+                  </div>
                 </div>
-                <h3>Step-by-Step Mastery</h3>
-                <p>
-                  Lessons build logically like a structured academy course — track what
-                  you've mastered and unlock what comes next.
-                </p>
+
+                {/* Feature 3 */}
+                <div className="feature-card">
+                  <div className="feature-header">
+                    <div className="feature-icon-wrapper read-bg" aria-hidden="true">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                      </svg>
+                    </div>
+                    <span className="feature-pill-badge">HSK Aligned</span>
+                  </div>
+                  <h3>Step-by-Step Mastery</h3>
+                  <p>
+                    Lessons build logically like a structured academy course — track what you've mastered and unlock what comes next.
+                  </p>
+                  <div className="feature-visual pathway-visual" aria-label="HSK progression milestone steps">
+                    <div className="hsk-step active">HSK 1</div>
+                    <span className="hsk-arrow" aria-hidden="true">➔</span>
+                    <div className="hsk-step">HSK 2</div>
+                    <span className="hsk-arrow" aria-hidden="true">➔</span>
+                    <div className="hsk-step">HSK 3</div>
+                    <span className="hsk-arrow" aria-hidden="true">➔</span>
+                    <div className="hsk-step">HSK 4</div>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
 
-
-
           <section className="wotd">
             <div className="container">
-              <div className="wotd-header">
-                <span className="wotd-badge">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                  </svg>
-                  Word of the Day
-                </span>
-              </div>
-              <div className="wotd-cards-container">
-                <div className="wotd-card">
-                  <span className="wotd-lang-tag">Mandarin Chinese</span>
-                  <span className="wotd-word zh">{wotd.zh}</span>
-                  <div className="wotd-pinyin">{wotd.zhP}</div>
-                  <div className="wotd-meaning">"{wotd.meaning}"</div>
+              <div className="wotd-container-inner">
+                <div className="wotd-header">
+                  <div className="wotd-badge">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    <span>Daily Vocabulary Spotlight · दिनको शब्द</span>
+                  </div>
+                  <p className="wotd-subheading">One essential word every single day to expand your vocabulary effortlessly.</p>
                 </div>
-                <div className="wotd-card-divider">⇄</div>
-                <div className="wotd-card">
-                  <span className="wotd-lang-tag">Nepali Translation</span>
-                  <span className="wotd-word ne">{wotd.ne}</span>
-                  <div className="wotd-pinyin">{wotd.neP}</div>
-                  <div className="wotd-meaning">"{wotd.meaning}"</div>
+
+                <div className="wotd-cards-container">
+                  <div className="wotd-card zh-card">
+                    <div className="wotd-card-top">
+                      <span className="wotd-lang-tag">Mandarin Chinese</span>
+                      <button
+                        type="button"
+                        className={`wotd-audio-trigger ${isPlayingWotd ? 'is-playing' : ''}`}
+                        onClick={() => playWotdAudio(wotd.zh)}
+                        title="Click to hear native pronunciation"
+                        aria-label="Listen to Chinese pronunciation"
+                      >
+                        {isPlayingWotd ? (
+                          <span className="sound-wave">
+                            <span></span><span></span><span></span>
+                          </span>
+                        ) : (
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                          </svg>
+                        )}
+                        <span>{isPlayingWotd ? 'Speaking...' : 'Listen'}</span>
+                      </button>
+                    </div>
+
+                    <span className="wotd-word zh">{wotd.zh}</span>
+                    <div className="wotd-pinyin">{wotd.zhP}</div>
+                    <div className="wotd-meaning">"{wotd.meaning}"</div>
+                  </div>
+
+                  <div className="wotd-card-divider" aria-hidden="true">
+                    <div className="divider-line"></div>
+                    <div className="divider-icon">⇄</div>
+                    <div className="divider-line"></div>
+                  </div>
+
+                  <div className="wotd-card ne-card">
+                    <div className="wotd-card-top">
+                      <span className="wotd-lang-tag">Nepali Translation</span>
+                      <span className="wotd-nepali-badge">नेपाली अर्थ</span>
+                    </div>
+
+                    <span className="wotd-word ne">{wotd.ne}</span>
+                    <div className="wotd-pinyin">{wotd.neP}</div>
+                    <div className="wotd-meaning">"{wotd.meaning}"</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1202,7 +1616,11 @@ function App() {
 
           <section className="worlds">
             <div className="container">
-              <h2 className="section-title">Real results from real learners</h2>
+              <div className="section-header-center">
+                <span className="section-kicker">Student Reviews</span>
+                <h2 className="section-title">Real Results from Real Learners</h2>
+                <p className="section-sublead">Hear how Nepali learners are achieving conversational fluency and confidence in Chinese.</p>
+              </div>
               {testimonials.length === 0 ? (
                 <p className="courses-empty">Be the first to share your experience!</p>
               ) : (
@@ -1286,7 +1704,11 @@ function App() {
 
           <section className="courses-section" id="courses">
             <div className="container">
-              <h2 className="section-title">Courses</h2>
+              <div className="section-header-center">
+                <span className="section-kicker">Structured Academy</span>
+                <h2 className="section-title">Explore Courses</h2>
+                <p className="section-sublead">Step-by-step curriculum aligned with official HSK standards and native audio.</p>
+              </div>
 
               <div className="level-pills">
                 {hskLevels.map((lvl, i) => (

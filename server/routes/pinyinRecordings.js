@@ -1,6 +1,6 @@
 const express = require('express');
 const PinyinRecording = require('../models/PinyinRecording');
-const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
+const { requireAuth, requireAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', requireAuth, requireSuperAdmin, async (req, res) => {
+router.post('/', requireAuth, requireAdmin, async (req, res) => {
   try {
     const { syllable, tone, audioUrl } = req.body;
     if (!syllable || !tone || !audioUrl) {
@@ -31,7 +31,7 @@ router.post('/', requireAuth, requireSuperAdmin, async (req, res) => {
   }
 });
 
-router.delete('/:id', requireAuth, requireSuperAdmin, async (req, res) => {
+router.delete('/:id', requireAuth, requireAdmin, async (req, res) => {
   try {
     await PinyinRecording.findByIdAndDelete(req.params.id);
     res.json({ message: 'Recording deleted' });

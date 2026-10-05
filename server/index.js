@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -20,8 +21,6 @@ const srsRoutes = require('./routes/srs');
 const attemptRoutes = require('./routes/attempts');
 const analyticsRoutes = require('./routes/analytics');
 const { router: hanziTraceRoutes, ensureSeeded: ensureHanziTraceSeeded } = require('./routes/hanziTrace');
-
-require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const courseRoutes = require('./routes/courses');

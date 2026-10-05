@@ -292,6 +292,18 @@ function AdminDashboard({ onBack, onNavigate }) {
             </span>
           </div>
         </div>
+
+        {/* Pinyin Voice Studio */}
+        <div className="admin-stat-box" onClick={() => onNavigate('pinyin')}>
+          <div className="admin-stat-icon active">🎙️</div>
+          <div className="admin-stat-details">
+            <span className="admin-stat-label">Pinyin Voice Studio</span>
+            <span className="admin-stat-number">Pinyin Chart</span>
+            <span className="admin-stat-badge gold">
+              Record &amp; replace tones
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* Redesigned Welcome Video Card */}

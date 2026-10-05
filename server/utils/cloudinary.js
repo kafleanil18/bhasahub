@@ -1,3 +1,4 @@
+require('dotenv').config();
 const cloudinary = require('cloudinary').v2;
 
 // Reads CLOUDINARY_URL (cloudinary://key:secret@cloud_name) from env automatically.

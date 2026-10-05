@@ -1,6 +1,6 @@
 const express = require('express');
 const PinyinTable = require('../models/PinyinTable');
-const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
+const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { logActivity } = require('../utils/auditLog');
 
 const router = express.Router();
@@ -95,7 +95,7 @@ router.get('/', async (req, res) => {
 // changes because each save PUT the entire arrays from whatever stale copy
 // the tab had loaded.
 
-router.post('/initials', requireAuth, requireSuperAdmin, async (req, res) => {
+router.post('/initials', requireAuth, requireAdmin, async (req, res) => {
   try {
     const value = (req.body.value || '').trim().toLowerCase();
     if (!value) return res.status(400).json({ error: 'value is required' });
@@ -110,7 +110,7 @@ router.post('/initials', requireAuth, requireSuperAdmin, async (req, res) => {
   }
 });
 
-router.delete('/initials/:value', requireAuth, requireSuperAdmin, async (req, res) => {
+router.delete('/initials/:value', requireAuth, requireAdmin, async (req, res) => {
   try {
     const table = await getOrCreateTable();
     await PinyinTable.updateOne(
@@ -125,7 +125,7 @@ router.delete('/initials/:value', requireAuth, requireSuperAdmin, async (req, re
   }
 });
 
-router.post('/finals', requireAuth, requireSuperAdmin, async (req, res) => {
+router.post('/finals', requireAuth, requireAdmin, async (req, res) => {
   try {
     const value = (req.body.value || '').trim().toLowerCase();
     if (!value) return res.status(400).json({ error: 'value is required' });
@@ -140,7 +140,7 @@ router.post('/finals', requireAuth, requireSuperAdmin, async (req, res) => {
   }
 });
 
-router.delete('/finals/:value', requireAuth, requireSuperAdmin, async (req, res) => {
+router.delete('/finals/:value', requireAuth, requireAdmin, async (req, res) => {
   try {
     const table = await getOrCreateTable();
     await PinyinTable.updateOne(
@@ -155,7 +155,7 @@ router.delete('/finals/:value', requireAuth, requireSuperAdmin, async (req, res)
   }
 });
 
-router.put('/syllable', requireAuth, requireSuperAdmin, async (req, res) => {
+router.put('/syllable', requireAuth, requireAdmin, async (req, res) => {
   try {
     const { initial, final } = req.body;
     const syllable = (req.body.syllable || '').trim();
@@ -178,7 +178,7 @@ router.put('/syllable', requireAuth, requireSuperAdmin, async (req, res) => {
   }
 });
 
-router.put('/syllable/highlight', requireAuth, requireSuperAdmin, async (req, res) => {
+router.put('/syllable/highlight', requireAuth, requireAdmin, async (req, res) => {
   try {
     const { initial, final, highlighted } = req.body;
     if (initial === undefined || final === undefined) {
