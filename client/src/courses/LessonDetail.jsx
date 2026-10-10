@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import DOMPurify from 'dompurify';
 import Quiz from './Quiz';
 import SrsReview from './SrsReview';
-import { mediaUrl } from './utils/mediaUrl';
+import { mediaUrl } from '../utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;

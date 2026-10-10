@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import CourseOverview from './CourseOverview';
 import LessonDetail from './LessonDetail';
-import { useLessons } from './hooks/useLessons';
-import { useCourseAccess } from './hooks/useCourseAccess';
+import { useLessons } from '../hooks/useLessons';
+import { useCourseAccess } from '../hooks/useCourseAccess';
 
 const API = window.API_BASE_URL + '/api';
 

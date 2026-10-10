@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { mediaUrl } from './utils/mediaUrl';
+import { mediaUrl } from '../utils/mediaUrl';
 
 const SERVER = window.API_BASE_URL;
 const API = window.API_BASE_URL + '/api';

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { mediaUrl } from './utils/mediaUrl';
+import { mediaUrl } from '../utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api/courses';
 

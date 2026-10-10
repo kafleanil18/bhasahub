@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
-import { mediaUrl } from './utils/mediaUrl';
+import { mediaUrl } from '../utils/mediaUrl';
 
 const FONT_SIZES = [
   { label: 'Small', value: '2' },

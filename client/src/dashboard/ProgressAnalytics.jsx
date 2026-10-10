@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { downloadCSV } from './csv';
+import { downloadCSV } from '../utils/csv';
 
 const API = window.API_BASE_URL + '/api';
 

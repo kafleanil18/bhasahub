@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { mediaUrl } from './utils/mediaUrl';
+import { mediaUrl } from '../utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
 const LEVELS = ['HSK 1', 'HSK 2', 'HSK 3', 'HSK 4'];

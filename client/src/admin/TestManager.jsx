@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { parseCSV, downloadCSV } from './csv';
-import { mediaUrl } from './utils/mediaUrl';
+import { parseCSV, downloadCSV } from '../utils/csv';
+import { mediaUrl } from '../utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { parseCSV, downloadCSV } from './csv';
-import { mediaUrl } from './utils/mediaUrl';
-import RichTextEditor from './RichTextEditor';
+import { parseCSV, downloadCSV } from '../utils/csv';
+import { mediaUrl } from '../utils/mediaUrl';
+import RichTextEditor from '../components/RichTextEditor';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
