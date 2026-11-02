@@ -377,3 +377,214 @@
     margin-top: 0;
   }
 }
+
+
+/* Sign-in overrides are scoped because password recovery shares this stylesheet. */
+.signin-page {
+  width: 100%;
+  padding: 40px 24px;
+}
+
+.signin-page .login-layout {
+  width: 100%;
+  max-width: 1040px;
+  min-height: 640px;
+  margin: 0 auto;
+  border-radius: 16px;
+  box-shadow: none;
+}
+
+.signin-page .login-welcome-panel {
+  flex: 1;
+  justify-content: flex-end;
+  padding: 40px;
+  background-image: linear-gradient(180deg, rgba(20, 16, 15, 0.08) 20%, rgba(20, 16, 15, 0.92) 100%), url('/images/teacher_portrait.jpg');
+}
+
+.signin-page .login-welcome-content {
+  gap: 16px;
+  text-shadow: none;
+}
+
+.signin-welcome-note {
+  margin: 0;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.signin-welcome-title {
+  margin: 0;
+  color: #fff;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.signin-welcome-description {
+  max-width: 320px;
+  margin: 0;
+  color: #eee8e2;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.signin-page .login-form-panel {
+  flex: 1;
+  min-width: 0;
+  padding: 40px 48px;
+  justify-content: flex-start;
+}
+
+.signin-page .back-btn-container {
+  position: static;
+  margin-bottom: 32px;
+}
+
+.signin-page .login-back-link {
+  min-height: 32px;
+}
+
+.signin-page .login-form-header {
+  margin: 0 0 24px;
+}
+
+.signin-page .login-form-header h1 {
+  margin: 0 0 8px;
+  color: var(--ink);
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 36px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
+.signin-page .login-form-header p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.signin-page .google-auth-container {
+  margin-bottom: 0;
+}
+
+.signin-page .google-btn-slot {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.signin-page .auth-divider {
+  margin: 24px 0;
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.signin-page .login-form {
+  gap: 20px;
+}
+
+.signin-page .login-form input:not([type='checkbox']) {
+  min-height: 48px;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.signin-page .input-wrapper:focus-within .input-icon {
+  color: var(--seal);
+}
+
+.signin-page .password-toggle-btn {
+  right: 4px;
+  width: 44px;
+  height: 44px;
+}
+
+.signin-page .password-field {
+  padding-right: 48px !important;
+}
+
+.signin-page .login-actions {
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.signin-page .remember-me,
+.signin-page .forgot-password-link {
+  min-height: 32px;
+  align-content: center;
+}
+
+.signin-page .remember-me {
+  color: var(--mist);
+}
+
+.signin-page .submit-login-btn {
+  min-height: 48px;
+  margin-top: 0;
+  border-radius: 8px;
+  background: var(--seal);
+  color: var(--paper) !important;
+  box-shadow: none;
+}
+
+.signin-page .submit-login-btn:hover:not(:disabled) {
+  background: var(--seal);
+  filter: brightness(0.9);
+  box-shadow: none;
+}
+
+.signin-page .login-switch-view {
+  margin-top: 4px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  line-height: 1.8;
+}
+
+.signin-page .login-error-banner {
+  align-items: flex-start;
+  line-height: 1.5;
+  animation: none;
+  overflow-wrap: anywhere;
+}
+
+.signin-page .login-error-banner svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.signin-page :is(button, a, input):focus-visible {
+  outline: 2px solid var(--seal);
+  outline-offset: 4px;
+}
+
+@media (max-width: 900px) {
+  .signin-page .login-layout { flex-direction: row; }
+  .signin-page .login-welcome-panel { padding: 32px; }
+  .signin-page .login-form-panel { padding: 32px; }
+}
+
+@media (max-width: 700px) {
+  .signin-page { padding: 24px 16px; }
+  .signin-page .login-layout { flex-direction: column; min-height: auto; }
+  .signin-page .login-welcome-panel {
+    flex: auto;
+    min-height: 200px;
+    padding: 24px;
+    background-position: center 35%;
+  }
+  .signin-welcome-title { font-size: 28px; }
+  .signin-welcome-description { display: none; }
+  .signin-page .login-form-panel { padding: 24px; }
+  .signin-page .back-btn-container { margin-bottom: 20px; }
+  .signin-page .login-form-header h1 { font-size: 32px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .signin-page *, .signin-page *::before, .signin-page *::after {
+    transition: none !important;
+    animation-duration: 0.01ms !important;
+  }
+}

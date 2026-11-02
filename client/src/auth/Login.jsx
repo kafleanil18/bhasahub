@@ -65,13 +65,15 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
   }, []);
 
   return (
-    <section className="login" style={{ padding: '40px 16px' }}>
+    <section className="login signin-page" aria-labelledby="signin-title">
       <div className="login-layout">
         
         {/* Left Column: Portrait & Heading */}
         <div className="login-welcome-panel">
           <div className="login-welcome-content">
-            <h1 className="hsk-mock-title">Learn Chinese with <span style={{ color: 'var(--seal)' }}>Anil</span> now</h1>
+            <p className="signin-welcome-note">Learn Chinese with Anil</p>
+            <h2 className="signin-welcome-title">A little practice.<br />A world of possibility.</h2>
+            <p className="signin-welcome-description">Pick up where you left off, one word and one conversation at a time.</p>
           
             
           </div>
@@ -93,8 +95,8 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
           </div>
 
           <div className="login-form-header">
-            <h3>Sign In</h3>
-            <p>Access your courses and track your progress</p>
+            <h1 id="signin-title">Welcome back</h1>
+            <p>Sign in to continue your learning journey.</p>
           </div>
 
           <GoogleAuthButton
@@ -108,7 +110,7 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
             <span>or sign in with email</span>
           </div>
 
-          <form onSubmit={handleSubmit} className="login-form" noValidate>
+          <form onSubmit={handleSubmit} className="login-form" aria-busy={loading}>
             
             {/* Email Address */}
             <div className="form-group">
@@ -121,6 +123,7 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
                 <input
                   id="login-email"
                   type="email"
+                  autoComplete="username"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
@@ -140,6 +143,7 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
                 <input
                   id="login-password"
                   type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
                   className="password-field"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -151,6 +155,7 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
                   className="password-toggle-btn"
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-pressed={showPassword}
                 >
                   {showPassword ? (
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
