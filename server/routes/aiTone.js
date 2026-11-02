@@ -18,14 +18,7 @@ router.post('/evaluate-tone', upload.single('audio'), async (req, res) => {
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      // Smart signal-based fallback if GEMINI_API_KEY is not set in env yet
-      return res.json({
-        overallScore: Math.round(84 + Math.random() * 10),
-        pitchMatch: Math.round(82 + Math.random() * 12),
-        rhythmScore: Math.round(85 + Math.random() * 10),
-        aiUsed: false,
-        feedbackText: `Audio received! Add GEMINI_API_KEY to server/.env to unlock live Google Gemini 1.5 Flash AI tone analysis.`,
-      });
+      return res.status(503).json({ error: 'Tone evaluation is currently unavailable. Please try again later.' });
     }
 
     const base64Audio = req.file.buffer.toString('base64');
@@ -68,38 +61,27 @@ Respond ONLY with a valid JSON object matching this exact schema:
     );
 
     if (!geminiRes.ok) {
-      const errText = await geminiRes.text();
-      console.error('Gemini API Error:', errText);
-      return res.json({
-        overallScore: 85,
-        pitchMatch: 84,
-        rhythmScore: 88,
-        aiUsed: false,
-        feedbackText: 'Audio processed successfully! Practice listening and repeating with the native audio model.',
-      });
+      return res.status(502).json({ error: 'Tone evaluation failed. Please try again.' });
     }
 
     const geminiData = await geminiRes.json();
     const textOutput = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
     const parsedJSON = JSON.parse(textOutput);
 
+    if (!['overallScore', 'pitchMatch', 'rhythmScore'].every(key => Number.isInteger(parsedJSON[key]) && parsedJSON[key] >= 0 && parsedJSON[key] <= 100)) {
+      throw new Error('Invalid evaluation response');
+    }
     res.json({
-      overallScore: parsedJSON.overallScore || 88,
-      pitchMatch: parsedJSON.pitchMatch || 85,
-      rhythmScore: parsedJSON.rhythmScore || 88,
+      overallScore: parsedJSON.overallScore,
+      pitchMatch: parsedJSON.pitchMatch,
+      rhythmScore: parsedJSON.rhythmScore,
       detectedTone: parsedJSON.detectedTone || parseInt(targetTone || 1),
       feedbackText: parsedJSON.feedbackText || 'Great pronunciation practice!',
       aiUsed: true,
     });
   } catch (err) {
     console.error('AI Tone Evaluation Error:', err);
-    res.json({
-      overallScore: 85,
-      pitchMatch: 82,
-      rhythmScore: 86,
-      aiUsed: false,
-      feedbackText: 'Audio analyzed! Keep practicing your pitch contour.',
-    });
+    res.status(502).json({ error: 'Tone evaluation failed. Please try again.' });
   }
 });
 

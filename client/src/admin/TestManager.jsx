@@ -3,7 +3,6 @@ import { parseCSV, downloadCSV } from '../utils/csv';
 import { mediaUrl } from '../utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
-const SERVER = window.API_BASE_URL;
 
 function TestManager({ onBack, onPreviewTest }) {
   const [tests, setTests] = useState([]);

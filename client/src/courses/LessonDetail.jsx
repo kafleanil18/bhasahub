@@ -17,14 +17,14 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, co
   const studyAreaRef = useRef(null);
 
   useEffect(() => {
-    fetch(`${API}/lessons/${lesson._id}/vocabulary`)
-      .then(res => res.json())
+    fetch(`${API}/lessons/${lesson._id}/vocabulary`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(res => { if (!res.ok) throw new Error(); return res.json(); })
       .then(data => setWords(data))
       .catch(() => {
         setWords([]);
         setWordsError('Could not load vocabulary for this lesson.');
       });
-  }, [lesson._id]);
+  }, [lesson._id, token]);
 
   const playCurrentWordAudio = useCallback((indexToPlay = flashIndex) => {
     const currentWord = words[indexToPlay];

@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
-const SERVER = window.API_BASE_URL;
 
 function formatElapsed(totalSeconds) {
   const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
@@ -14,8 +13,11 @@ function formatElapsed(totalSeconds) {
 function AudioPlayer({ src, style, onPlay, onPlayStateChange }) {
   const audioRef = useRef(null);
 
+  const playStateCallback = useRef(onPlayStateChange);
+  useEffect(() => { playStateCallback.current = onPlayStateChange; }, [onPlayStateChange]);
+
   // If the component unmounts mid-playback (e.g. user confirmed leaving the exam), clear the guard.
-  useEffect(() => () => { if (onPlayStateChange) onPlayStateChange(false); }, []);
+  useEffect(() => () => { playStateCallback.current?.(false); }, []);
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', ...style }}>
@@ -39,6 +41,8 @@ function TestTaker({ testId, onBack }) {
   const [test, setTest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [answers, setAnswers] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -46,7 +50,6 @@ function TestTaker({ testId, onBack }) {
   const [timerStarted, setTimerStarted] = useState(false);
   const [playingAudios, setPlayingAudios] = useState(() => new Set());
   const [leaveWarning, setLeaveWarning] = useState(null);
-  const [mobileTab, setMobileTab] = useState('pdf');
   const [history, setHistory] = useState([]);
   const [progressDelta, setProgressDelta] = useState(null);
   const [hoveredHistoryBar, setHoveredHistoryBar] = useState(null);
@@ -64,8 +67,8 @@ function TestTaker({ testId, onBack }) {
   };
 
   useEffect(() => {
-    fetch(`${API}/tests/${testId}`)
-      .then(res => res.json())
+    fetch(`${API}/tests/${testId}`, { headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {} })
+      .then(res => { if (!res.ok) throw new Error(); return res.json(); })
       .then(data => { setTest(data); setLoading(false); })
       .catch(() => setLoading(false));
   }, [testId]);
@@ -146,44 +149,49 @@ function TestTaker({ testId, onBack }) {
   };
 
   const selectAnswer = (qi, oi) => {
-    if (submitted) return;
+    if (submitted || submitting) return;
     setAnswers((prev) => ({ ...prev, [qi]: oi }));
   };
 
-  const submit = () => {
-    let correct = 0;
-    test.questions.forEach((q, qi) => {
-      if (answers[qi] === q.correctIndex) correct++;
-    });
-    const totalQuestions = test.questions.length;
-    const newPercent = totalQuestions ? Math.round((correct / totalQuestions) * 100) : 0;
-
-    if (history.length > 0) {
-      const percents = history.map((a) => (a.total ? Math.round((a.score / a.total) * 100) : 0));
-      const lastPercent = percents[percents.length - 1];
-      const bestPercent = Math.max(...percents);
-      setProgressDelta({
-        deltaFromLast: newPercent - lastPercent,
-        isNewBest: newPercent > bestPercent,
-      });
-    } else {
-      setProgressDelta({ deltaFromLast: null, isNewBest: true });
-    }
-
-    setScore(correct);
-    setSubmitted(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    const token = localStorage.getItem('token');
-    if (token) {
-      fetch(`${API}/attempts/test`, {
+  const submit = async () => {
+    if (submitting) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API}/attempts/test`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ testId: test._id, score: correct, total: totalQuestions }),
-      })
-        .then((res) => (res.ok ? res.json() : null))
-        .then((attempt) => { if (attempt) setHistory((prev) => [...prev, attempt]); })
-        .catch(() => {});
+        headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        body: JSON.stringify({ testId: test._id, answers: test.questions.map((_, i) => answers[i] ?? null) }),
+      });
+      const attempt = await res.json();
+      if (!res.ok) throw new Error(attempt.error || 'Could not submit test');
+      const correct = attempt.score;
+      setTest(prev => ({ ...prev, questions: prev.questions.map((q, i) => ({ ...q, correctIndex: attempt.correctIndices[i] })) }));
+      const totalQuestions = test.questions.length;
+      const newPercent = totalQuestions ? Math.round((correct / totalQuestions) * 100) : 0;
+
+      if (history.length > 0) {
+        const percents = history.map((a) => (a.total ? Math.round((a.score / a.total) * 100) : 0));
+        const lastPercent = percents[percents.length - 1];
+        const bestPercent = Math.max(...percents);
+        setProgressDelta({
+          deltaFromLast: newPercent - lastPercent,
+          isNewBest: newPercent > bestPercent,
+        });
+      } else {
+        setProgressDelta({ deltaFromLast: null, isNewBest: true });
+      }
+
+      setScore(correct);
+      setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (token) setHistory(prev => [...prev, attempt]);
+    } catch (err) {
+      setSubmitError(err.message || 'Could not submit test. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -498,8 +506,9 @@ function TestTaker({ testId, onBack }) {
               );
             })}
           </div>
+          {submitError && <p role="alert">{submitError}</p>}
           {!submitted && total > 0 && (
-            <button className="btn-primary" onClick={submit} style={{ marginTop: 24 }}>
+            <button disabled={submitting} className="btn-primary" onClick={submit} style={{ marginTop: 24 }}>
               Submit test
             </button>
           )}

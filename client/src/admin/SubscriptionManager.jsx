@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 const API = window.API_BASE_URL + '/api';
 
 function SubscriptionManager({ onBack }) {
   const token = localStorage.getItem('token');
-  const authHeaders = { Authorization: `Bearer ${token}` };
+  const authHeaders = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const jsonHeaders = { 'Content-Type': 'application/json', ...authHeaders };
 
   const [students, setStudents] = useState([]);
@@ -26,7 +26,7 @@ function SubscriptionManager({ onBack }) {
   const [listSearch, setListSearch] = useState('');
   const [listStatus, setListStatus] = useState('all'); // all, active, expired
 
-  const loadStudents = async () => {
+  const loadStudents = useCallback(async () => {
     try {
       const res = await fetch(`${API}/subscriptions/students`, { headers: authHeaders });
       const data = await res.json();
@@ -35,9 +35,9 @@ function SubscriptionManager({ onBack }) {
     } catch {
       setError('Could not reach the server');
     }
-  };
+  }, [authHeaders]);
 
-  const loadCourses = async () => {
+  const loadCourses = useCallback(async () => {
     try {
       const res = await fetch(`${API}/courses`);
       const data = await res.json();
@@ -45,9 +45,9 @@ function SubscriptionManager({ onBack }) {
     } catch {
       // ignore
     }
-  };
+  }, []);
 
-  const loadSubs = async () => {
+  const loadSubs = useCallback(async () => {
     try {
       const res = await fetch(`${API}/subscriptions/all`, { headers: authHeaders });
       const data = await res.json();
@@ -55,9 +55,9 @@ function SubscriptionManager({ onBack }) {
     } catch {
       // ignore
     }
-  };
+  }, [authHeaders]);
 
-  const loadRequests = async () => {
+  const loadRequests = useCallback(async () => {
     try {
       const res = await fetch(`${API}/access-requests`, { headers: authHeaders });
       const data = await res.json();
@@ -65,14 +65,14 @@ function SubscriptionManager({ onBack }) {
     } catch {
       // ignore
     }
-  };
+  }, [authHeaders]);
 
   useEffect(() => {
     loadStudents();
     loadCourses();
     loadSubs();
     loadRequests();
-  }, []);
+  }, [loadStudents, loadCourses, loadSubs, loadRequests]);
 
   const pendingRequests = requests.filter((r) => r.status === 'pending');
 

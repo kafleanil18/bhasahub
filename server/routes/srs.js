@@ -2,8 +2,11 @@ const express = require('express');
 const VocabSchedule = require('../models/VocabSchedule');
 const Vocabulary = require('../models/Vocabulary');
 const Lesson = require('../models/Lesson');
+const Course = require('../models/Course');
+const Subscription = require('../models/Subscription');
 const { requireAuth } = require('../middleware/auth');
 
+const { canAccessCourse, isAdmin } = require('../middleware/courseAccess');
 const router = express.Router();
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -49,8 +52,32 @@ function toCard(schedule, vocab) {
 // GET /api/srs/due?lessonId=&limit= — cards due (plus new cards to fill the queue)
 router.get('/due', requireAuth, async (req, res) => {
   try {
-    const limit = Math.min(parseInt(req.query.limit, 10) || 20, MAX_LIMIT);
-    const lessonFilter = req.query.lessonId ? { lesson: req.query.lessonId } : {};
+    if (req.query.lessonId) {
+      const lesson = await Lesson.findById(req.query.lessonId);
+      if (!lesson || (!lesson.published && !isAdmin(req.user))) return res.status(404).json({ error: 'Lesson not found' });
+      if (!await canAccessCourse(req.user, lesson.course)) return res.status(403).json({ error: 'Active course access required' });
+    }
+    const limit = Math.max(1, Math.min(parseInt(req.query.limit, 10) || 20, MAX_LIMIT));
+    let lessonFilter;
+    if (req.query.lessonId) {
+      lessonFilter = { lesson: req.query.lessonId };
+    } else {
+      // Filter access before limiting so expired courses cannot crowd out due cards.
+      const lessonQuery = {};
+      if (!isAdmin(req.user)) {
+        const subscribedCourses = await Subscription.find({
+          user: req.user.id,
+          expiresAt: { $gt: new Date() },
+        }).distinct('course');
+        const publishedCourses = await Course.find({
+          _id: { $in: subscribedCourses }, published: true,
+        }).distinct('_id');
+        lessonQuery.course = { $in: publishedCourses };
+        lessonQuery.published = true;
+      }
+      const accessibleLessons = await Lesson.find(lessonQuery).distinct('_id');
+      lessonFilter = { lesson: { $in: accessibleLessons } };
+    }
 
     const dueSchedules = await VocabSchedule.find({
       user: req.user.id,
@@ -102,6 +129,11 @@ router.post('/review', requireAuth, async (req, res) => {
     if (![0, 3, 4, 5].includes(quality)) {
       return res.status(400).json({ error: 'Invalid quality grade' });
     }
+
+    const word = await Vocabulary.findById(vocabularyId);
+    const sourceLesson = word && await Lesson.findById(word.lesson);
+    if (!sourceLesson || (!sourceLesson.published && !isAdmin(req.user))) return res.status(404).json({ error: 'Lesson not found' });
+    if (!await canAccessCourse(req.user, sourceLesson.course)) return res.status(403).json({ error: 'Active course access required' });
 
     let schedule = await VocabSchedule.findOne({ user: req.user.id, vocabulary: vocabularyId });
 

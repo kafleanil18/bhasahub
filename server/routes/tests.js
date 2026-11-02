@@ -1,13 +1,13 @@
 const express = require('express');
 const Test = require('../models/Test');
-const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { requireAuth, requireAdmin, optionalAuth } = require('../middleware/auth');
 const { logActivity } = require('../utils/auditLog');
 
 const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const tests = await Test.find({ published: true }).sort({ createdAt: -1 });
+    const tests = await Test.find({ published: true }).select('-questions.correctIndex').sort({ createdAt: -1 });
     res.json(tests);
   } catch {
     res.status(500).json({ error: 'Could not load tests' });
@@ -23,11 +23,14 @@ router.get('/all', requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', optionalAuth, async (req, res) => {
   try {
     const test = await Test.findById(req.params.id);
-    if (!test) return res.status(404).json({ error: 'Test not found' });
-    res.json(test);
+    const admin = req.user && ['admin', 'superadmin'].includes(req.user.role);
+    if (!test || (!test.published && !admin)) return res.status(404).json({ error: 'Test not found' });
+    const result = test.toObject();
+    result.questions.forEach(q => delete q.correctIndex);
+    res.json(result);
   } catch {
     res.status(500).json({ error: 'Could not load test' });
   }

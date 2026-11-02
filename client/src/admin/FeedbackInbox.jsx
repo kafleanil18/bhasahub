@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const API = window.API_BASE_URL + '/api/feedback';
 
@@ -7,14 +7,14 @@ function FeedbackInbox({ onBack }) {
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem('token');
 
-  const load = () => {
+  const load = useCallback(() => {
     fetch(API, { headers: { Authorization: `Bearer ${token}` } })
       .then(res => res.json())
       .then(data => { setItems(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(() => setLoading(false));
-  };
+  }, [token]);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
 
   const markRead = async (id) => {
     await fetch(`${API}/${id}/read`, { method: 'PUT', headers: { Authorization: `Bearer ${token}` } });

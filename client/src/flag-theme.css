@@ -1,0 +1,165 @@
+/* Chinese flag palette, with neutral surfaces for long-form reading. */
+:root {
+  --flag-red: #de2910;
+  --flag-yellow: #ffde00;
+  --ink: #161616;
+  --paper: #ffffff;
+  --rice: #f5f5f5;
+  --card: #ffffff;
+  --line: #dedede;
+  --mist: #595959;
+  --seal: #bd210d;
+  --gold: #ffde00;
+  --jade: #bd210d;
+}
+:root.dark {
+  --ink: #ffffff;
+  --paper: #111111;
+  --rice: #202020;
+  --card: #181818;
+  --line: #414141;
+  --mist: #bdbdbd;
+  --seal: #ff7968;
+  --gold: #ffde00;
+  --jade: #ff7968;
+}
+.ambient-background { display: none; }
+:root .site-header {
+  background: #161616;
+  border-bottom: 3px solid var(--flag-red);
+  box-shadow: none;
+}
+:root .brand-seal { background: var(--flag-red); color: var(--flag-yellow); box-shadow: none; }
+:root .brand-accent { color: var(--flag-yellow); }
+:root .site-header .nav-link { color: #ffffff; }
+:root .site-header .nav-link:hover,
+:root .site-header .nav-link.active { color: var(--flag-yellow); background: #292929; }
+:root .site-header .nav-btn-primary { background: var(--flag-red); border-color: var(--flag-red); color: #ffffff; box-shadow: none; }
+:root .home-page .hero {
+  background: var(--flag-red);
+  border-bottom: 5px solid var(--flag-yellow);
+  color: #ffffff;
+}
+:root .home-page .hero-title,
+:root .home-page .hero-subtitle,
+:root .home-page .hero-access-note,
+:root .home-page .hero-stats { color: #ffffff; opacity: 1; }
+:root .home-page .hero-highlight,
+:root .home-page .hero-badge-text { color: var(--flag-yellow); }
+:root .home-page .hero-badge { background: none; box-shadow: none; }
+:root .home-page .hero-badge-dot { background: var(--flag-yellow); }
+:root .home-page .hero-stats { border-color: #ffffff60; }
+:root .home-page .hero-stats strong { color: #ffffff; }
+:root .home-page .hero-stats .stat-text-wrap span { color: #ffffff; }
+:root .home-page .hero-btn-main { background: var(--flag-yellow); border: 1px solid var(--flag-yellow); color: #161616; }
+:root .home-page .hero-btn-main:hover { background: #ffffff; border-color: #ffffff; color: #161616; }
+:root .home-page .hero-btn-secondary { background: transparent; border: 1px solid #ffffff; color: #ffffff; }
+:root .home-page .hero-btn-secondary:hover { background: #ffffff; color: #161616; }
+:root .home-page .hero-video-card { background: #ffffff; border-color: #ffffff; box-shadow: 0 16px 40px -24px #00000080; }
+:root .home-page .video-card-badge { color: #161616; }
+:root .home-page .video-card-duration { background: #f5f5f5; color: #595959; }
+:root .home-page .live-pulse { background: var(--flag-red); }
+:root .home-page .hero-interactive-card {
+  --ink: #161616;
+  --mist: #595959;
+  --paper: #ffffff;
+  --card: #ffffff;
+  --line: #dedede;
+  --jade: #bd210d;
+  --seal: #bd210d;
+  background: #ffffff;
+  color: #161616;
+  border-color: #ffffff;
+}
+:root .home-page .card-characters { color: #bd210d; }
+:root .home-page .card-pinyin-tag,
+:root .home-page .card-meaning-line,
+:root .home-page .card-nepali,
+:root .home-page .card-english { color: #161616; }
+:root .home-page .tone-indicator { background: var(--flag-yellow); color: #161616; }
+:root .home-page .hero-audio-btn { color: #bd210d; background: #ffffff; border-color: #bd210d; }
+:root .home-page .hero-audio-btn:hover,
+:root .home-page .hero-audio-btn.is-playing { background: #bd210d; color: #ffffff; }
+:root .home-page .audio-icon-box { background: transparent; color: inherit; }
+:root .home-page .section-kicker { color: var(--seal); }
+:root .home-page .level-pill.active { background: var(--flag-red); border-color: var(--flag-red); color: #ffffff; }
+:root .home-page .level-pill:hover { border-color: var(--seal); }
+:root .home-page .course-card-glyph { background: var(--flag-red); color: var(--flag-yellow); }
+:root .home-page .course-card:hover { border-color: var(--seal); }
+:root .home-page .course-card .tag { background: var(--flag-yellow); color: #161616; border-color: var(--flag-yellow); }
+:root .home-page .course-card.card-locked .tag { background: var(--rice); color: var(--ink); border-color: var(--line); }
+:root .home-page .features,
+:root .home-page .worlds { background: var(--rice); }
+:root .home-page .feature-card { border: 1px solid var(--line); }
+:root .home-page .feature-icon-wrapper { background: var(--flag-red); color: #ffffff; }
+:root .home-page .read-bg { background: var(--flag-yellow); color: #161616; }
+:root .home-page .feature-pill-badge,
+:root .home-page .tone-pill { background: var(--rice); color: var(--ink); border-color: var(--line); }
+:root .home-page .hsk-step.active { background: var(--flag-yellow); color: #161616; border-color: var(--flag-yellow); }
+:root .home-page .feature-audio-sample-btn { background: var(--card); color: var(--seal); border-color: var(--seal); }
+:root .home-page .feature-audio-sample-btn:hover,
+:root .home-page .feature-audio-sample-btn.is-playing { background: var(--flag-red); color: #ffffff; }
+:root .home-page .wotd { background: var(--paper); background-image: none; }
+:root .home-page .wotd-badge { background: var(--flag-yellow); color: #161616; border-color: var(--flag-yellow); box-shadow: none; }
+:root .home-page .wotd-card { background: var(--card); border: 1px solid var(--line); box-shadow: none; }
+:root .home-page .wotd-card.zh-card { border-top: 4px solid var(--flag-red); }
+:root .home-page .wotd-card.ne-card { border-top: 4px solid var(--flag-yellow); }
+:root .home-page .wotd-nepali-badge { background: var(--flag-yellow); color: #161616; }
+:root .home-page .wotd-word { color: var(--seal); }
+:root .home-page .testimonial-stars { color: var(--seal); }
+:root .home-page .testimonial-photo-placeholder { background: var(--flag-red); color: #ffffff; }
+:root .home-page .team-section { background: var(--paper); }
+:root .home-page .team-card { background: var(--card); border: 1px solid var(--line); box-shadow: none; }
+:root .home-page .team-role,
+:root .home-page .team-bio-hint { color: var(--seal); }
+:root .home-page .site-footer { background: #161616; color: #ffffff; border-top: 4px solid var(--flag-red); }
+:root .home-page .site-footer .logo { color: #ffffff; }
+:root .home-page .site-footer .logo span { color: var(--flag-yellow); }
+:root .home-page .site-footer p { color: #d6d6d6; }
+:root .home-page .social-link { background: #292929; border-color: #595959; color: #ffffff; }
+:root .home-page .social-link:hover { background: var(--flag-yellow); color: #161616; border-color: var(--flag-yellow); }
+:root .home-page .btn-primary { background: var(--flag-red); color: #ffffff; border-color: var(--flag-red); }
+:root .home-page .hero .hero-btn-main { background: var(--flag-yellow); color: #161616; border-color: var(--flag-yellow); }
+:root .home-page .hero .hero-btn-main:hover { background: #ffffff; border-color: #ffffff; }
+:root .home-page :is(button, a, [role='button']):focus-visible { outline: 3px solid var(--seal); outline-offset: 4px; }
+:root .home-page .hero :is(button, a):focus-visible,
+:root .site-header :is(button, a):focus-visible,
+:root .home-page .site-footer :is(button, a):focus-visible { outline: 3px solid var(--flag-yellow); outline-offset: 4px; }
+
+/* Keep the introduction calm against the red and gold accents below. */
+:root .home-page .hero {
+  background: #faf6ec;
+  color: #2a2320;
+  border-bottom: 1px solid #e6dcc6;
+}
+:root.dark .home-page .hero {
+  background: var(--paper);
+  color: var(--ink);
+  border-bottom-color: var(--line);
+}
+:root .home-page .hero-title,
+:root .home-page .hero-subtitle,
+:root .home-page .hero-access-note,
+:root .home-page .hero-stats,
+:root .home-page .hero-stats strong,
+:root .home-page .hero-stats .stat-text-wrap span { color: inherit; }
+:root .home-page .hero-subtitle { opacity: .8; }
+:root .home-page .hero-access-note,
+:root .home-page .hero-stats .stat-text-wrap span { opacity: .75; }
+:root .home-page .hero-highlight,
+:root .home-page .hero-badge-text { color: var(--seal); }
+:root .home-page .hero-badge-dot { background: var(--seal); }
+:root .home-page .hero-stats { border-color: #e6dcc6; }
+:root.dark .home-page .hero-stats { border-color: var(--line); }
+:root .home-page .hero-btn-secondary { color: inherit; border-color: currentColor; }
+:root .home-page .hero-btn-secondary:hover { background: #161616; border-color: #161616; color: #ffffff; }
+:root .home-page .hero .hero-btn-main:hover { background: #161616; border-color: #161616; color: #ffffff; }
+:root .home-page .hero :is(button, a):focus-visible { outline-color: var(--seal); }
+
+ :root .home-page .hero .continue-learning-btn,
+:root .home-page .hero .continue-learning-btn:hover {
+  background: var(--flag-red);
+  border-color: var(--flag-red);
+  color: #000000;
+}
+:root .home-page .continue-learning-icon { color: inherit; }

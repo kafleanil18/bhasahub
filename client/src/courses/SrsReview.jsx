@@ -14,6 +14,7 @@ function SrsReview({ lessonId, language, token, onExit }) {
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [reviewedCount, setReviewedCount] = useState(0);
+  const [saveError, setSaveError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
   const loadDue = useCallback(() => {
@@ -56,18 +57,20 @@ function SrsReview({ lessonId, language, token, onExit }) {
   const grade = (quality) => {
     if (!card || submitting) return;
     setSubmitting(true);
+    setSaveError(null);
     fetch(`${API}/srs/review`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ vocabularyId: card.vocabularyId, quality }),
     })
-      .catch(() => {})
-      .finally(() => {
-        setSubmitting(false);
+      .then(res => {
+        if (!res.ok) throw new Error();
         setReviewedCount((c) => c + 1);
         setFlipped(false);
         setIndex((i) => i + 1);
-      });
+      })
+      .catch(() => setSaveError('Could not save your review. Please try again.'))
+      .finally(() => setSubmitting(false));
   };
 
   useEffect(() => {
@@ -96,12 +99,12 @@ function SrsReview({ lessonId, language, token, onExit }) {
   }, [card, flipped, submitting, playCurrentCardAudio]);
 
   if (cards === null) {
-    return <div className="srs-review-area"><p>Loading review queue…</p></div>;
+    return <div className="srs-review-area">{saveError && <p role="alert">{saveError}</p>}<p>Loading review queue…</p></div>;
   }
 
   if (cards.length === 0) {
     return (
-      <div className="srs-review-area">
+      <div className="srs-review-area">{saveError && <p role="alert">{saveError}</p>}
         <p className="srs-empty">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
             <polyline points="20 6 9 17 4 12"></polyline>
@@ -115,7 +118,7 @@ function SrsReview({ lessonId, language, token, onExit }) {
 
   if (index >= cards.length) {
     return (
-      <div className="srs-review-area">
+      <div className="srs-review-area">{saveError && <p role="alert">{saveError}</p>}
         <p className="srs-empty">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -132,7 +135,7 @@ function SrsReview({ lessonId, language, token, onExit }) {
   }
 
   return (
-    <div className="srs-review-area">
+    <div className="srs-review-area">{saveError && <p role="alert">{saveError}</p>}
       <div className="flash-progress-bar">
         <div className="flash-progress-fill" style={{ width: `${((index + 1) / cards.length) * 100}%` }}></div>
       </div>

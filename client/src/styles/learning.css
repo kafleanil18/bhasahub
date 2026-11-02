@@ -1,0 +1,637 @@
+/* ---------- Login & Register ---------- */
+.login {
+  display: flex;
+  justify-content: center;
+  padding: 80px 24px 24px;
+}
+
+.login-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-card h1 {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.login-sub {
+  color: var(--mist);
+  font-size: 15px;
+  margin-bottom: 28px;
+}
+
+.login-card label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.login-card input {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  border: 1px solid #d8d2c4;
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.login-card input:focus {
+  outline: 2px solid var(--seal);
+  border-color: transparent;
+}
+
+.login-card button:not(.back-btn) {
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  color: #fff;
+  background: var(--jade);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.login-card button:not(.back-btn):hover:not(:disabled) {
+  background: #256e4e;
+}
+
+.login-card button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.login-error {
+  color: var(--seal);
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 360px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.4;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  animation: toast-in 0.2s ease-out;
+}
+
+.toast-error {
+  background: var(--seal);
+  color: #fff;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+  opacity: 0.8;
+}
+
+.toast-close:hover {
+  opacity: 1;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: var(--mist);
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.back-btn:hover {
+  color: var(--seal);
+}
+
+.auth-switch {
+  text-align: center;
+  font-size: 14px;
+  color: var(--mist);
+  padding-bottom: 40px;
+}
+
+.auth-switch button {
+  background: none;
+  border: none;
+  color: var(--seal);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+/* ---------- Admin panel ---------- */
+.admin {
+  padding: 48px 24px 80px;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.admin-form,
+.admin-list {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 28px;
+}
+
+.admin-form h2,
+.admin-list h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.admin-form label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+
+.admin-form input,
+.admin-form select,
+.admin-form textarea {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  border: 1px solid #d8d2c4;
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  resize: vertical;
+}
+
+.admin-form input:focus,
+.admin-form select:focus,
+.admin-form textarea:focus {
+  outline: 2px solid var(--seal);
+  border-color: transparent;
+}
+
+.check-label {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+}
+
+.check-label input {
+  width: auto !important;
+  margin-top: 0 !important;
+}
+
+.admin-empty {
+  color: var(--mist);
+  font-size: 15px;
+}
+
+.admin-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-row:last-child {
+  border-bottom: none;
+}
+
+.row-glyph {
+  font-size: 28px;
+  min-width: 48px;
+  text-align: center;
+}
+
+.row-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.row-info span {
+  font-size: 13px;
+  color: var(--mist);
+}
+
+.pill {
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  background: none;
+}
+
+.pill-live {
+  color: var(--jade);
+  border-color: var(--jade);
+}
+
+.pill-draft {
+  color: var(--mist);
+}
+
+.pill-play {
+  color: var(--jade);
+  border-color: var(--jade);
+}
+
+.recording-pill {
+  color: #fff;
+  background: var(--seal);
+  border-color: var(--seal);
+  animation: pill-recording-pulse 1s ease-in-out infinite;
+}
+
+@keyframes pill-recording-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.row-delete {
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  color: var(--seal);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.row-delete:hover {
+  text-decoration: underline;
+}
+
+.courses-empty {
+  color: var(--mist);
+  font-size: 15px;
+}
+
+@media (max-width: 860px) {
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Course & lesson pages ---------- */
+.course-page {
+  padding: 48px 24px 80px;
+}
+
+.course-head {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 40px;
+}
+
+.course-head .glyph {
+  font-size: 64px;
+  line-height: 1.1;
+}
+
+.course-desc {
+  color: var(--mist);
+  max-width: 560px;
+  margin: 8px 0 14px;
+}
+
+.lessons-heading {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  margin-bottom: 16px;
+}
+
+.lesson-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 640px;
+}
+
+.lesson-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.lesson-row:hover {
+  transform: translateX(4px);
+  border-color: var(--seal);
+}
+
+.lesson-num {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  color: var(--seal);
+  min-width: 24px;
+}
+
+.lesson-title {
+  flex: 1;
+}
+
+.lesson-arrow {
+  color: var(--mist);
+}
+
+.lesson-count {
+  color: var(--mist);
+  font-size: 14px;
+  margin: -18px 0 28px;
+}
+
+.vocab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.vocab-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 22px 16px 16px;
+  text-align: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.vocab-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(28, 36, 49, 0.07);
+}
+
+.vocab-card .annotation {
+  display: block;
+  font-size: 13px;
+  color: var(--seal);
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+
+.vocab-card .word {
+  display: block;
+  font-size: 38px;
+  line-height: 1.25;
+}
+
+.vocab-card .meaning {
+  display: block;
+  font-size: 13px;
+  color: var(--mist);
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--line);
+}
+
+/* ---------- Testimonials / Two worlds ---------- */
+.worlds {
+  padding: 80px 0;
+  background: rgba(243, 235, 216, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  z-index: 1;
+}
+
+.section-header-center {
+  text-align: center;
+  max-width: 660px;
+  margin: 0 auto 40px;
+}
+
+.section-header-center .section-title {
+  font-family: 'Fraunces', serif;
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 10px;
+  letter-spacing: -0.02em;
+}
+
+.section-header-center .section-sublead {
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--mist);
+  margin: 0;
+}
+
+.worlds-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.world-photo {
+  margin: 0;
+}
+
+.world-photo img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 24px rgba(28, 36, 49, 0.08);
+  transition: transform 0.2s ease;
+}
+
+.world-photo:hover img {
+  transform: translateY(-4px) rotate(-0.5deg);
+}
+
+.world-photo figcaption {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.cap-word {
+  display: block;
+  font-size: 22px;
+}
+
+.cap-detail {
+  display: block;
+  font-size: 12.5px;
+  color: var(--mist);
+  letter-spacing: 0.03em;
+}
+
+/* ---------- Lesson manager ---------- */
+.row-audio {
+  height: 32px;
+  max-width: 220px;
+}
+
+.upload-label {
+  cursor: pointer;
+}
+
+/* ---------- Vocab audio ---------- */
+.play-btn {
+  margin-top: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--seal);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.play-btn:hover {
+  background: var(--seal);
+  color: #fff;
+  transform: scale(1.08);
+}
+
+.cancel-edit {
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* ---------- Admin lesson rows ---------- */
+.lesson-add-bar {
+  display: flex;
+  gap: 10px;
+  max-width: 640px;
+  margin-bottom: 28px;
+}
+
+.lesson-add-bar input {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  border: 1px solid #d8d2c4;
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.lesson-add-bar input:focus {
+  outline: 2px solid var(--seal);
+  border-color: transparent;
+}
+
+.admin-lesson-row {
+  gap: 12px;
+  cursor: default;
+}
+
+.admin-lesson-row:hover {
+  transform: none;
+  border-color: var(--line);
+}
+
+/* ---------- Enrollment & dashboard ---------- */
+.enroll-wrap {
+  margin-top: 18px;
+}
+
+.dash-empty {
+  color: var(--mist);
+  font-size: 16px;
+}
+
+.dash-empty p {
+  margin-bottom: 16px;
+}
+
+/* ---------- Progress ---------- */
+.lesson-done {
+  color: var(--jade);
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+.progress-wrap {
+  margin-top: 8px;
+}
+
+.progress-bar {
+  height: 8px;
+  background: var(--rice);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--jade);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.progress-label {
+  font-size: 13px;
+  color: var(--mist);
+}
+

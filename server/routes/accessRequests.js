@@ -1,4 +1,5 @@
 const express = require('express');
+const { Types } = require('mongoose');
 const AccessRequest = require('../models/AccessRequest');
 const Subscription = require('../models/Subscription');
 const Course = require('../models/Course');
@@ -62,21 +63,31 @@ router.put('/:id/approve', requireAuth, requireAdmin, async (req, res) => {
     const request = await AccessRequest.findById(req.params.id);
     if (!request) return res.status(404).json({ error: 'Request not found' });
 
-    const days = Number(req.body.days) || 30;
-    const now = new Date();
+    if (request.status !== 'pending') return res.status(409).json({ error: 'Request has already been processed' });
+    const days = req.body.days === undefined ? 30 : Number(req.body.days);
+    if (!Number.isInteger(days) || days <= 0 || days > 3650) return res.status(400).json({ error: 'Days must be an integer between 1 and 3650' });
+    // Create a stable subscription first; the guarded update applies each request only once.
     let sub = await Subscription.findOne({ user: request.user, course: request.course });
-    const base = sub && sub.expiresAt > now ? sub.expiresAt : now;
-    const expiresAt = new Date(base.getTime() + days * 24 * 60 * 60 * 1000);
-
-    if (sub) {
-      sub.expiresAt = expiresAt;
-      sub.grantedBy = req.user.id;
-      await sub.save();
-    } else {
-      sub = await Subscription.create({
-        user: request.user, course: request.course, expiresAt, grantedBy: req.user.id,
+    if (!sub) {
+      sub = await Subscription.findOneAndUpdate(
+        { user: request.user, course: request.course },
+        { $setOnInsert: { user: request.user, course: request.course, expiresAt: new Date(0) } },
+        { upsert: true, new: true }
+      ).catch(async err => {
+        if (err.code !== 11000) throw err;
+        return Subscription.findOne({ user: request.user, course: request.course });
       });
     }
+    const granted = await Subscription.findOneAndUpdate(
+      { _id: sub._id, appliedRequests: { $ne: request._id } },
+      [{ $set: {
+        expiresAt: { $add: [{ $max: ['$expiresAt', '$$NOW'] }, days * 86400000] },
+        grantedBy: new Types.ObjectId(req.user.id),
+        appliedRequests: { $concatArrays: [{ $ifNull: ['$appliedRequests', []] }, [request._id]] },
+      } }],
+      { new: true, updatePipeline: true }
+    );
+    sub = granted || await Subscription.findById(sub._id);
 
     request.status = 'approved';
     await request.save();

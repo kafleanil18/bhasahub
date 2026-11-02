@@ -1,210 +1,52 @@
-import { useState, useEffect, useRef } from 'react';
-import { mediaUrl } from './utils/mediaUrl';
-import Login from './auth/Login';
-import Register from './auth/Register';
-import ForgotPassword from './auth/ForgotPassword';
-import ResetPassword from './auth/ResetPassword';
-import AdminPanel from './admin/AdminPanel';
-import CoursePage from './courses/CoursePage';
-import LessonManager from './admin/LessonManager';
-import ClassCalendarPage from './dashboard/ClassCalendar';
-import Dashboard from './dashboard/Dashboard';
-import ProgressAnalytics from './dashboard/ProgressAnalytics';
-import LanguageChoice from './practice/LanguageChoice';
-import NepaliPage from './practice/NepaliPage';
-import PinyinPage from './practice/PinyinPage';
-import ChangePassword from './auth/ChangePassword';
-import FeedbackModal from './components/FeedbackModal';
-import FeedbackInbox from './admin/FeedbackInbox';
-import TestManager from './admin/TestManager';
-import TestList from './tests/TestList';
-import TestTaker from './tests/TestTaker';
-import TestimonialModal from './components/TestimonialModal';
-import TestimonialManager from './admin/TestimonialManager';
-import SubscriptionManager from './admin/SubscriptionManager';
-import UserManager from './admin/UserManager';
-import TeamManager from './admin/TeamManager';
-import AdminDashboard from './admin/AdminDashboard';
-import AuditLog from './admin/AuditLog';
-import HanziTracePage from './practice/HanziTracePage';
-import ConversationPracticePage from './practice/ConversationPractice';
-import ToneScorer from './practice/ToneScorer';
-import MouseAura from './components/MouseAura';
+import AdminSidebar from './components/AdminSidebar';
+import SiteHeader from './components/SiteHeader';
+import HomeFooter from './home/HomeFooter';
+import HomeTeam from './home/HomeTeam';
+import HomeTestimonials from './home/HomeTestimonials';
+import WordOfTheDay from './home/WordOfTheDay';
+import HomeFeatures from './home/HomeFeatures';
+import HomeCourses from './home/HomeCourses';
+import HomeHero from './home/HomeHero';
+import wotdList from './data/wordsOfTheDay';
+import renderTeamAvatar from './components/TeamAvatar';
+import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
+import './home.css';
+import './flag-theme.css';
+
+const Login = lazy(() => import('./auth/Login'));
+const Register = lazy(() => import('./auth/Register'));
+const ForgotPassword = lazy(() => import('./auth/ForgotPassword'));
+const ResetPassword = lazy(() => import('./auth/ResetPassword'));
+const AdminPanel = lazy(() => import('./admin/AdminPanel'));
+const CoursePage = lazy(() => import('./courses/CoursePage'));
+const LessonManager = lazy(() => import('./admin/LessonManager'));
+const ClassCalendarPage = lazy(() => import('./dashboard/ClassCalendar'));
+const Dashboard = lazy(() => import('./dashboard/Dashboard'));
+const ProgressAnalytics = lazy(() => import('./dashboard/ProgressAnalytics'));
+const LanguageChoice = lazy(() => import('./practice/LanguageChoice'));
+const NepaliPage = lazy(() => import('./practice/NepaliPage'));
+const PinyinPage = lazy(() => import('./practice/PinyinPage'));
+const ChangePassword = lazy(() => import('./auth/ChangePassword'));
+const FeedbackModal = lazy(() => import('./components/FeedbackModal'));
+const FeedbackInbox = lazy(() => import('./admin/FeedbackInbox'));
+const TestManager = lazy(() => import('./admin/TestManager'));
+const TestList = lazy(() => import('./tests/TestList'));
+const TestTaker = lazy(() => import('./tests/TestTaker'));
+const TestimonialModal = lazy(() => import('./components/TestimonialModal'));
+const TestimonialManager = lazy(() => import('./admin/TestimonialManager'));
+const SubscriptionManager = lazy(() => import('./admin/SubscriptionManager'));
+const UserManager = lazy(() => import('./admin/UserManager'));
+const TeamManager = lazy(() => import('./admin/TeamManager'));
+const AdminDashboard = lazy(() => import('./admin/AdminDashboard'));
+const AuditLog = lazy(() => import('./admin/AuditLog'));
+const HanziTracePage = lazy(() => import('./practice/HanziTracePage'));
+const ConversationPracticePage = lazy(() => import('./practice/ConversationPractice'));
+const ToneScorer = lazy(() => import('./practice/ToneScorer'));
 
 
 
-const renderTeamAvatar = (member, isModal = false) => {
-  // If custom photo is uploaded and is not placeholder, render it
-  if (member.photo && member.photo !== '/image.jpg' && member.photo !== 'image.jpg') {
-    const frameSize = isModal ? '130px' : '120px';
-    return (
-      <div 
-        className={isModal ? 'team-modal-photo-svg-wrapper' : 'team-photo-svg-wrapper'}
-        style={{ borderRadius: '12px', width: frameSize, height: frameSize, overflow: 'hidden', background: 'var(--paper, #faf6ec)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-      >
-        <img
-          src={member.photo}
-          alt={member.name}
-          className={isModal ? 'team-modal-photo' : 'team-photo'}
-          style={{ 
-            width: '100%', 
-            height: '100%', 
-            borderRadius: '12px', 
-            objectFit: 'contain',
-            transform: `translate(${(member.offsetX !== undefined ? member.offsetX : 50) - 50}%, ${(member.offsetY !== undefined ? member.offsetY : 50) - 50}%) scale(${member.scale !== undefined ? member.scale : 1})`,
-            transformOrigin: 'center center'
-          }}
-        />
-      </div>
-    );
-  }
+function AppContent() {
 
-  // Otherwise, render dynamic role-based SVG
-  const isTeacher = member.role.toLowerCase().includes('teacher') || member.role.toLowerCase().includes('founder');
-  const isDev = member.role.toLowerCase().includes('developer') || member.role.toLowerCase().includes('engineer');
-  
-  const gradientId = member.name.replace(/\s+/g, '-').toLowerCase() + (isModal ? '-modal' : '') + '-grad';
-  let startColor = '#c99a3c';
-  let endColor = '#c8362a';
-  let iconContent = null;
-
-  if (isTeacher) {
-    startColor = '#c99a3c'; // gold
-    endColor = '#c8362a';   // red stamp
-    iconContent = (
-      <>
-        {/* Books & glasses */}
-        <rect x="60" y="80" width="80" height="60" rx="4" fill="rgba(255,255,255,0.15)" stroke="#fff" strokeWidth="3"/>
-        <line x1="75" y1="98" x2="125" y2="98" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/>
-        <line x1="75" y1="112" x2="115" y2="112" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/>
-        {/* Glasses */}
-        <circle cx="85" cy="55" r="12" stroke="#fff" strokeWidth="3" fill="none"/>
-        <circle cx="115" cy="55" r="12" stroke="#fff" strokeWidth="3" fill="none"/>
-        <line x1="97" y1="55" x2="103" y2="55" stroke="#fff" strokeWidth="3"/>
-        <line x1="73" y1="55" x2="65" y2="51" stroke="#fff" strokeWidth="3"/>
-        <line x1="127" y1="55" x2="135" y2="51" stroke="#fff" strokeWidth="3"/>
-      </>
-    );
-  } else if (isDev) {
-    startColor = '#2e6b57'; // jade green
-    endColor = '#1a4f3e';
-    iconContent = (
-      <>
-        {/* Code braces </ > */}
-        <rect x="50" y="70" width="100" height="60" rx="8" fill="rgba(255,255,255,0.15)" stroke="#fff" strokeWidth="3"/>
-        <path d="M70 90l-10 10 10 10M130 90l10 10-10 10M105 85l-10 30" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-      </>
-    );
-  } else {
-    // Project Manager / generic admin
-    startColor = '#3a506b'; // deep steel blue
-    endColor = '#1c2541';
-    iconContent = (
-      <>
-        {/* Checklist and target star */}
-        <rect x="55" y="70" width="90" height="65" rx="6" fill="rgba(255,255,255,0.15)" stroke="#fff" strokeWidth="3"/>
-        <path d="M70 92l6 6 14-14" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-        <line x1="98" y1="88" x2="130" y2="88" stroke="#fff" strokeWidth="3" strokeLinecap="round"/>
-        <line x1="70" y1="112" x2="130" y2="112" stroke="#fff" strokeWidth="3" strokeLinecap="round"/>
-      </>
-    );
-  }
-
-  return (
-    <div className={isModal ? 'team-modal-photo-svg-wrapper' : 'team-photo-svg-wrapper'}>
-      <svg width="100%" height="100%" viewBox="0 0 200 200" className={isModal ? 'team-modal-photo-svg' : 'team-photo-svg'}>
-        <defs>
-          <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={startColor} />
-            <stop offset="100%" stopColor={endColor} />
-          </linearGradient>
-        </defs>
-        <circle cx="100" cy="100" r="94" fill={`url(#${gradientId})`} stroke="var(--line)" strokeWidth="3"/>
-        <circle cx="100" cy="100" r="82" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="4" strokeDasharray="8 12"/>
-        {iconContent}
-      </svg>
-    </div>
-  );
-};
-
-const dailyImages = [
-  '/images/daily/china_1_great_wall.jpg',
-  '/images/daily/china_2_temple.jpg',
-  '/images/daily/china_3_calligraphy.jpg',
-  '/images/daily/china_4_lanterns.jpg',
-  '/images/daily/china_5_landscape.jpg',
-  '/images/daily/china_6_tea.jpg',
-  '/images/daily/china_7_panda.jpg'
-];
-
-function App() {
-  const wotdList = [
-    { zh: '谢谢', zhP: 'xiè xie', ne: 'धन्यवाद', neP: 'dhan·ya·bād', meaning: 'thank you' },
-    { zh: '你好', zhP: 'nǐ hǎo', ne: 'नमस्ते', neP: 'na·mas·te', meaning: 'hello' },
-    { zh: '再见', zhP: 'zài jiàn', ne: 'बिदा', neP: 'bi·dā', meaning: 'goodbye' },
-    { zh: '朋友', zhP: 'péng you', ne: 'साथी', neP: 'sā·thi', meaning: 'friend' },
-    { zh: '水', zhP: 'shuǐ', ne: 'पानी', neP: 'pā·ni', meaning: 'water' },
-    { zh: '爱', zhP: 'ài', ne: 'माया', neP: 'mā·yā', meaning: 'love' },
-    { zh: '家', zhP: 'jiā', ne: 'घर', neP: 'ghar', meaning: 'home' },
-    { zh: '吃', zhP: 'chī', ne: 'खानु', neP: 'khā·nu', meaning: 'to eat' },
-    { zh: '好', zhP: 'hǎo', ne: 'राम्रो', neP: 'rām·ro', meaning: 'good' },
-    { zh: '学习', zhP: 'xué xí', ne: 'सिक्नु', neP: 'sik·nu', meaning: 'to learn' },
-    { zh: '工作', zhP: 'gōng zuò', ne: 'काम', neP: 'kām', meaning: 'work' },
-    { zh: '快乐', zhP: 'kuài lè', ne: 'खुसी', neP: 'khu·si', meaning: 'happy' },
-    { zh: '谢谢你', zhP: 'xiè xiè nǐ', ne: 'तिमीलाई धन्यवाद', neP: 'timī·lā·ī dhan·ya·bād', meaning: 'thank you (to you)' },
-    { zh: '对不起', zhP: 'duì bù qǐ', ne: 'माफ गर्नुहोस्', neP: 'māf gar·nu·hoṣ', meaning: 'sorry' },
-    { zh: '请', zhP: 'qǐng', ne: 'कृपया', neP: 'kṛ·payā', meaning: 'please' },
-    { zh: '是', zhP: 'shì', ne: 'हो', neP: 'ho', meaning: 'yes' },
-    { zh: '不是', zhP: 'bù shì', ne: 'होइन', neP: 'ho·in', meaning: 'no' },
-    { zh: '早上好', zhP: 'zǎo shàng hǎo', ne: 'शुभ प्रभात', neP: 'śubha prabhāt', meaning: 'good morning' },
-    { zh: '晚上好', zhP: 'wǎn shàng hǎo', ne: 'शुभ साँझ', neP: 'śubha sā̃jha', meaning: 'good evening' },
-    { zh: '晚安', zhP: 'wǎn ān', ne: 'शुभ रात्री', neP: 'śubha rātrī', meaning: 'good night' },
-    { zh: '再见', zhP: 'zài jiàn', ne: 'फेरि भेटौंला', neP: 'pherī bheṭau·lā', meaning: 'see you again' },
-    { zh: '我爱你', zhP: 'wǒ ài nǐ', ne: 'म तिमीलाई माया गर्छु', neP: 'ma timī·lā·ī māyā gar·chu', meaning: 'I love you' },
-    { zh: '祝你好运', zhP: 'zhù nǐ hǎo yùn', ne: 'तिमीलाई शुभकामना', neP: 'timī·lā·ī śubha·kāmnā', meaning: 'good luck' },
-    { zh: '生日快乐', zhP: 'shēng rì kuài lè', ne: 'जन्मदिनको शुभकामना', neP: 'janma·din·ko śubha·kāmnā', meaning: 'happy birthday' },
-    { zh: '恭喜发财', zhP: 'gōng xǐ fā cái', ne: 'शुभकामना र समृद्धि', neP: 'śubha·kāmnā ra sam·riddhi', meaning: 'wishing you prosperity' },
-    { zh: '新年快乐', zhP: 'xīn nián kuài lè', ne: 'नयाँ वर्षको शुभकामना', neP: 'nayā̃ varṣ·ko śubha·kāmnā', meaning: 'happy new year' },
-    { zh: '万事如意', zhP: 'wàn shì rú yì', ne: 'सबै कुरा इच्छाअनुसार होस्', neP: 'sabāī kurā ichchhā·anusar hoṣ', meaning: 'may allyour wishes come true' },
-    {zh: '加油', zhP: 'jiā yóu', ne: 'हिम्मत राख', neP: 'him·mat rākh', meaning: 'keep going / you can do it' },
-    {zh: '努力', zhP: 'nǔ lì', ne: 'मेहनत गर्नुहोस्', neP: 'mehanat gar·nu·hoṣ', meaning: 'work hard / put in effort' },
-    {zh: '坚持', zhP: 'jiān chí', ne: 'अडिग रहनुहोस्', neP: 'aḍig rah·nu·hoṣ', meaning: 'persevere / persist' },
-    {zh: '勇敢', zhP: 'yǒng gǎn', ne: 'साहसी हुनुहोस्', neP: 'sāhasī hunu·hoṣ', meaning: 'be brave / courageous' },
-    {zh: '梦想', zhP: 'mèng xiǎng', ne: 'सपना', neP: 'sapnā', meaning: 'dream / aspiration' },
-    {zh: '希望', zhP: 'xī wàng', ne: 'आशा', neP: 'āśā', meaning: 'hope / wish' },
-    {zh: '幸福', zhP: 'xìng fú', ne: 'खुसी', neP: 'khu·si', meaning: 'happiness / well-being' },
-    {zh: '健康', zhP: 'jiàn kāng', ne: 'स्वास्थ्य', neP: 'swasthya', meaning: 'health / well-being' },
-    {zh: '平安', zhP: 'píng ān', ne: 'सुरक्षित', neP: 'surakṣit', meaning: 'peace / safety' },
-    {zh: '友谊', zhP: 'yǒu yì', ne: 'मित्रता', neP: 'mitratā', meaning: 'friendship' },
-    {zh: '家庭', zhP: 'jiā tíng', ne: 'परिवार', neP: 'parivār', meaning: 'family' },
-    {zh: '爱情', zhP: 'ài qíng', ne: 'प्रेम', neP: 'prem', meaning: 'love / romance' },
-    {zh: '成功', zhP: 'chéng gōng', ne: 'सफलता', neP: 'safaltā', meaning: 'success / achievement' },
-    {zh: '智慧', zhP: 'zhì huì', ne: 'बुद्धि', neP: 'buddhi', meaning: 'wisdom / intelligence' },
-    {zh: '勇气', zhP: 'yǒng qì', ne: 'साहस', neP: 'sāhas', meaning: 'courage / bravery' },
-    {zh: '自由', zhP: 'zì yóu', ne: 'स्वतन्त्रता', neP: 'svatantratā', meaning: 'freedom / liberty' },
-    {zh: '和平', zhP: 'hé píng', ne: 'शान्ति', neP: 'śānti', meaning: 'peace / harmony' },
-    {zh: '团结', zhP: 'tuán jié', ne: 'एकता', neP: 'ekatā', meaning: 'unity / solidarity' },
-    {zh: '善良', zhP: 'shàn liáng', ne: 'दयालु', neP: 'dayālu', meaning: 'kindness / goodness' },
-    {zh: '诚信', zhP: 'chéng xìn', ne: 'ईमानदारी', neP: 'īmāndārī', meaning: 'honesty / integrity' },
-    {zh: '责任', zhP: 'zé rèn', ne: 'जिम्मेवारी', neP: 'jimmevārī', meaning: 'responsibility / duty' },
-    {zh: '尊重', zhP: 'zūn zhòng', ne: 'सम्मान', neP: 'sammān', meaning: 'respect / esteem' },
-    {zh: '努力学习', zhP: 'nǔ lì xué xí', ne: 'मेहनत गरेर पढ्नुहोस्', neP: 'mehanat gar·era paḍh·nu·hoṣ', meaning: 'study hard / put effort into learning' },
-    {zh: '坚持不懈', zhP: 'jiān chí bù xiè', ne: 'अडिग रहनुहोस्', neP: 'aḍig rah·nu·hoṣ', meaning: 'persevere / never give up' },
-    {zh: '勇往直前', zhP: 'yǒng wǎng zhí qián', ne: 'साहसपूर्वक अगाडि बढ्नुहोस्', neP: 'sāhasapūrvak agāḍī baḍh·nu·hoṣ', meaning: 'forge ahead bravely / move forward with courage' },
-    {zh: '追求梦想', zhP: 'zhuī qiú mèng xiǎng', ne: 'सपना पछ्याउनुहोस्', neP: 'sapnā pach·yāu·nu·hoṣ', meaning: 'pursue your dreams / chase your aspirations' },
-    {zh: '保持希望', zhP: 'bǎo chí xī wàng', ne: 'आशा राख्नुहोस्', neP: 'āśā rākh·nu·hoṣ', meaning: 'keep hope alive / maintain hope' },
-    {zh: '珍惜幸福', zhP: 'zhēn xī xìng fú', ne: 'खुसीको कदर गर्नुहोस्', neP: 'khu·sī·ko kadar gar·nu·hoṣ', meaning: 'cherish happiness / value your well-being' },
-    {zh: '关注健康', zhP: 'guān zhù jiàn kāng', ne: 'स्वास्थ्यमा ध्यान दिनुहोस्', neP: 'swasthya·mā dhyān din·u·hoṣ', meaning: 'pay attention to health / focus on well-being' },
-    {zh: '保持平安', zhP: 'bǎo chí píng ān', ne: 'सुरक्षित रहनुहोस्', neP: 'surakṣit rah·nu·hoṣ', meaning: 'stay safe / maintain peace' },
-    {zh: '珍惜友谊', zhP: 'zhēn xī yǒu yì', ne: 'मित्रताको कदर गर्नुहोस्', neP: 'mitratā·ko kadar gar·nu·hoṣ', meaning: 'cherish friendship / value your friends' },
-    {zh: '珍惜家庭', zhP: 'zhēn xī jiā tíng', ne: 'परिवारको कदर गर्नुहोस्', neP: 'parivār·ko kadar gar·nu·hoṣ', meaning: 'cherish family / value your family' },
-    {zh: '珍惜爱情', zhP: 'zhēn xī ài qíng', ne: 'प्रेमको कदर गर्नुहोस्', neP: 'prem·ko kadar gar·nu·hoṣ', meaning: 'cherish love / value your romantic relationships' },
-    {zh: '珍惜成功', zhP: 'zhēn xī chéng gōng', ne: 'सफलताको कदर गर्नुहोस्', neP: 'safaltā·ko kadar gar·nu·hoṣ', meaning: 'cherish success / value your achievements' },
-    {zh: '珍惜智慧', zhP: 'zhēn xī zhì huì', ne: 'बुद्धिको कदर गर्नुहोस्', neP: 'buddhi·ko kadar gar·nu·hoṣ', meaning: 'cherish wisdom / value intelligence' },
-    {zh: '珍惜勇气', zhP: 'zhēn xī yǒng qì', ne: 'साहसको कदर गर्नुहोस्', neP: 'sāhas·ko kadar gar·nu·hoṣ', meaning: 'cherish courage / value bravery' },
-
-    
-  ];
   const dayOfYear = Math.floor(
     (Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000
   );
@@ -466,7 +308,7 @@ function App() {
       .catch(() => setMyAccessDays(null));
   };
 
-  const loadAdminNotificationCounts = () => {
+  const loadAdminNotificationCounts = useCallback(() => {
     const token = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
     const currentUser = user || (savedUser ? JSON.parse(savedUser) : null);
@@ -510,7 +352,7 @@ function App() {
         }
       })
       .catch(() => {});
-  };
+  }, [user]);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
@@ -524,7 +366,7 @@ function App() {
       setPendingTestimonialsCount(0);
       setPendingAccessRequestsCount(0);
     }
-  }, [user]);
+  }, [user, loadAdminNotificationCounts]);
 
   useEffect(() => {
     fetch(window.API_BASE_URL + '/api/health')
@@ -682,14 +524,9 @@ function App() {
           <div className="ambient-orb orb-3"></div>
           <div className="ambient-orb orb-4"></div>
           <div className="ambient-mesh-grid"></div>
-          <div className="ambient-glyphs">
-            <span className="ambient-glyph g-1 ne">नमस्ते</span>
-            <span className="ambient-glyph g-2 ne">ज्ञान</span>
-            <span className="ambient-glyph g-3 zh">语</span>
-            <span className="ambient-glyph g-4 zh">和</span>
-          </div>
+
         </div>
-        <MouseAura />
+
         <header className="site-header">
           <div className="container header-row">
             <div className="header-left">
@@ -721,18 +558,9 @@ function App() {
         <div className="ambient-orb orb-3"></div>
         <div className="ambient-orb orb-4"></div>
         <div className="ambient-mesh-grid"></div>
-        <div className="ambient-glyphs">
-          <span className="ambient-glyph g-1 zh">语</span>
-          <span className="ambient-glyph g-2 ne">नमस्ते</span>
-          <span className="ambient-glyph g-3 zh">学</span>
-          <span className="ambient-glyph g-4 zh">和</span>
-          <span className="ambient-glyph g-5 ne">ज्ञान</span>
-          <span className="ambient-glyph g-6 zh">春</span>
-          <span className="ambient-glyph g-7 zh">福</span>
-          <span className="ambient-glyph g-8 zh">道</span>
-        </div>
+
       </div>
-      <MouseAura />
+
 
       {showChangePassword && <ChangePassword onClose={() => setShowChangePassword(false)} />}
       {showFeedback && <FeedbackModal user={user} onClose={() => setShowFeedback(false)} />}
@@ -767,503 +595,11 @@ function App() {
             onClick={() => setAdminSidebarOpen(false)}
             aria-hidden="true"
           />
-          <aside
-            id="super-admin-navigation"
-            className={`admin-sidebar ${adminSidebarOpen ? 'is-open' : ''}`}
-            aria-label="Super admin navigation"
-            aria-hidden={!adminSidebarOpen}
-          >
-            <div className="admin-sidebar-head">
-              <div>
-                <p className="admin-sidebar-kicker">LMS Control Center</p>
-                <h2>Super Admin</h2>
-              </div>
-              <button className="admin-sidebar-close" onClick={() => setAdminSidebarOpen(false)} aria-label="Close admin navigation">×</button>
-            </div>
-
-            {/* Profile info block */}
-            <div className="admin-sidebar-profile">
-              <div className="admin-profile-avatar">
-                SA
-              </div>
-              <div className="admin-profile-details">
-                <span className="admin-profile-name">{user ? user.name : 'Administrator'}</span>
-                <span className="admin-profile-status">
-                  <span className="status-dot-blink"></span>
-                  Active Session
-                </span>
-              </div>
-            </div>
-
-            <nav className="admin-sidebar-nav">
-              <button onClick={() => { goHome(); setShowAdminDashboard(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="7" height="9"></rect>
-                  <rect x="14" y="3" width="7" height="5"></rect>
-                  <rect x="14" y="12" width="7" height="9"></rect>
-                  <rect x="3" y="16" width="7" height="5"></rect>
-                </svg>
-                Dashboard
-              </button>
-              <button onClick={() => { goHome(); setShowAuditLog(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-                Activity log
-              </button>
-              <button onClick={() => { goHome(); setShowAdmin(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                  <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
-                </svg>
-                Manage courses
-              </button>
-              <button onClick={() => { goHome(); setShowTestManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
-                  <path d="m9 12 2 2 4-4"></path>
-                </svg>
-                Manage tests
-              </button>
-              {isSuperAdmin && (
-                <button onClick={() => { goHome(); setShowHanziTrace(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
-                  <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 20h9"></path>
-                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-                  </svg>
-                  Trace characters
-                </button>
-              )}
-              <button onClick={() => { goHome(); setShowPinyinPage(true); setPinyinBackToAdmin(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
-                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                  <line x1="12" y1="19" x2="12" y2="23"></line>
-                  <line x1="8" y1="23" x2="16" y2="23"></line>
-                </svg>
-                Pinyin voice studio
-              </button>
-              <button onClick={() => { goHome(); setShowTestimonialManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-                Testimonials
-                {pendingTestimonialsCount > 0 && (
-                  <span className="sidebar-badge">{pendingTestimonialsCount}</span>
-                )}
-              </button>
-              <button onClick={() => { setShowInbox(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
-                  <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
-                </svg>
-                Feedback inbox
-                {unreadFeedbackCount > 0 && (
-                  <span className="sidebar-badge">{unreadFeedbackCount}</span>
-                )}
-              </button>
-              <button onClick={() => { goHome(); setShowUserManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-                Manage admins
-              </button>
-              <button onClick={() => { goHome(); setShowSubscriptions(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
-                  <line x1="2" y1="10" x2="22" y2="10"></line>
-                </svg>
-                Subscriptions
-                {pendingAccessRequestsCount > 0 && (
-                  <span className="sidebar-badge">{pendingAccessRequestsCount}</span>
-                )}
-              </button>
-              <button onClick={() => { goHome(); setShowTeamManager(true); setShowUserMenu(false); setAdminSidebarOpen(false); }}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                  <circle cx="8.5" cy="10" r="2.5"></circle>
-                  <path d="m21 16-3.5-3.5a2 2 0 0 0-2.83 0L11 16"></path>
-                </svg>
-                Team photos
-              </button>
-            </nav>
-
-            <button className="admin-sidebar-home" onClick={() => { goHome(); setAdminSidebarOpen(false); }}>
-              <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-              </svg>
-              Back to site
-            </button>
-          </aside>
+      <AdminSidebar adminSidebarOpen={adminSidebarOpen} goHome={goHome} isSuperAdmin={isSuperAdmin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setPinyinBackToAdmin={setPinyinBackToAdmin} setShowAdmin={setShowAdmin} setShowAdminDashboard={setShowAdminDashboard} setShowAuditLog={setShowAuditLog} setShowHanziTrace={setShowHanziTrace} setShowInbox={setShowInbox} setShowPinyinPage={setShowPinyinPage} setShowSubscriptions={setShowSubscriptions} setShowTeamManager={setShowTeamManager} setShowTestManager={setShowTestManager} setShowTestimonialManager={setShowTestimonialManager} setShowUserManager={setShowUserManager} setShowUserMenu={setShowUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
         </>
       )}
 
-      <header className="site-header">
-        <div className="container header-row">
-          <div className="header-left">
-            <button className="logo brand-logo" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); setShowLangMenu(false); setShowUserMenu(false); goHome(); }}>
-              <span className="brand-seal" aria-hidden="true">汉</span>
-              <span className="brand-title">
-                Learn Chinese with <span className="brand-accent">Anil</span>
-              </span>
-            </button>
-          </div>
-
-          <nav className={`main-nav ${mobileMenuOpen ? 'open' : ''}`}>
-            <div className="nav-links">
-              {user ? (
-                <>
-                  <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); setShowLangMenu(false); goHome(); setShowDashboard(true); }}>
-                    <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                      <polyline points="2 17 12 22 22 17"></polyline>
-                      <polyline points="2 12 12 17 22 12"></polyline>
-                    </svg>
-                    <span>My Courses</span>
-                  </button>
-
-                  <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); setShowLangMenu(false); goHome(); setShowAnalytics(true); }}>
-                    <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                    </svg>
-                    <span>My Progress</span>
-                  </button>
-
-                  <a className="nav-link" href="#courses" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); setShowLangMenu(false); goHome(); }}>
-                    <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"></path>
-                      <path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"></path>
-                    </svg>
-                    <span>All Courses</span>
-                  </a>
-                </>
-              ) : (
-                <a className="nav-link" href="#courses" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); setShowLangMenu(false); goHome(); }}>
-                  <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"></path>
-                    <path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"></path>
-                  </svg>
-                  <span>Courses</span>
-                </a>
-              )}
-
-              <div className="nav-dropdown-wrapper">
-                <button
-                  className={`nav-link nav-dropdown-trigger ${showPracticeMenu ? 'active' : ''}`}
-                  onClick={() => { setShowPracticeMenu(!showPracticeMenu); setShowLangMenu(false); }}
-                  aria-expanded={showPracticeMenu}
-                >
-                  <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 20h9"></path>
-                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-                  </svg>
-                  <span>Practice Tools</span>
-                  <span className={`caret ${showPracticeMenu ? 'open' : ''}`}>▾</span>
-                </button>
-
-                {showPracticeMenu && (
-                  <div className="nav-dropdown-menu">
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowPinyinPage(true); }}>
-                      <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="4 7 4 4 20 4 20 7"></polyline>
-                        <line x1="12" y1="4" x2="12" y2="20"></line>
-                      </svg>
-                      <span>Pinyin Chart</span>
-                    </button>
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowToneScorer(true); }}>
-                      <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
-                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                      </svg>
-                      <span>Tone Scorer AI</span>
-                    </button>
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowTests(true); }}>
-                      <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
-                        <path d="m9 12 2 2 4-4"></path>
-                      </svg>
-                      <span>Mock Tests</span>
-                    </button>
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowHanziTrace(true); }}>
-                      <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M12 20h9"></path>
-                        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-                      </svg>
-                      <span>Trace Characters</span>
-                    </button>
-                    {user && (
-                      <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowConversationPractice(true); }}>
-                        <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                        </svg>
-                        <span>Speaking Practice</span>
-                      </button>
-                    )}
-                    {user && (
-                      <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowClassCalendar(true); }}>
-                        <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                          <line x1="16" y1="2" x2="16" y2="6"></line>
-                          <line x1="8" y1="2" x2="8" y2="6"></line>
-                          <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        <span>Class Calendar</span>
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); setShowLangMenu(false); setShowFeedback(true); }}>
-                <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                </svg>
-                <span>Message us</span>
-              </button>
-
-              <div className="nav-dropdown-wrapper">
-                <button
-                  type="button"
-                  className={`nav-link nav-dropdown-trigger lang-picker-trigger ${showLangMenu ? 'active' : ''}`}
-                  onClick={() => { setShowLangMenu(!showLangMenu); setShowPracticeMenu(false); }}
-                  aria-expanded={showLangMenu}
-                  title="Choose Language Track"
-                >
-                  <span className="lang-icon" aria-hidden="true">{language === 'chinese' ? '🇨🇳' : '🇳🇵'}</span>
-                  <span>{language === 'chinese' ? 'Chinese' : 'Nepali'}</span>
-                  <span className={`caret ${showLangMenu ? 'open' : ''}`}>▾</span>
-                </button>
-
-                {showLangMenu && (
-                  <div className="nav-dropdown-menu lang-dropdown-menu">
-                    <button
-                      type="button"
-                      className={`nav-dropdown-item ${language === 'chinese' ? 'is-active-lang' : ''}`}
-                      onClick={() => {
-                        changeLanguage('chinese');
-                        setShowLangMenu(false);
-                        setMobileMenuOpen(false);
-                        goHome();
-                      }}
-                    >
-                      <span className="lang-dropdown-flag" aria-hidden="true">🇨🇳</span>
-                      <div className="lang-dropdown-col">
-                        <span className="lang-dropdown-name">Learn Chinese</span>
-                        <span className="lang-dropdown-sub">HSK 1–4 · PinYin & Audio</span>
-                      </div>
-                      {language === 'chinese' && <span className="lang-active-check" aria-hidden="true">✓</span>}
-                    </button>
-
-                    <button
-                      type="button"
-                      className={`nav-dropdown-item ${language === 'nepali' ? 'is-active-lang' : ''}`}
-                      onClick={() => {
-                        changeLanguage('nepali');
-                        setShowLangMenu(false);
-                        setMobileMenuOpen(false);
-                      }}
-                    >
-                      <span className="lang-dropdown-flag" aria-hidden="true">🇳🇵</span>
-                      <div className="lang-dropdown-col">
-                        <span className="lang-dropdown-name">Learn Nepali</span>
-                        <span className="lang-dropdown-tag">Coming Soon</span>
-                      </div>
-                      {language === 'nepali' && <span className="lang-active-check" aria-hidden="true">✓</span>}
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Mobile Drawer Actions (shown inside mobile drawer) */}
-            <div className="mobile-drawer-actions">
-              {user && user.role === 'student' && myAccessDays !== null && (
-                <div className="mobile-drawer-badge">
-                  <span className="access-badge" title="Time left on your course access">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                    {myAccessDays} {myAccessDays === 1 ? 'day' : 'days'} left
-                  </span>
-                </div>
-              )}
-              {isSuperAdmin && (
-                <button
-                  className="admin-nav-toggle mobile-admin-btn"
-                  onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); setAdminSidebarOpen(true); }}
-                >
-                  <span aria-hidden="true">☰</span> Admin Dashboard
-                  {(unreadFeedbackCount + pendingTestimonialsCount + pendingAccessRequestsCount) > 0 && (
-                    <span className="admin-nav-badge">
-                      {unreadFeedbackCount + pendingTestimonialsCount + pendingAccessRequestsCount}
-                    </span>
-                  )}
-                </button>
-              )}
-              {isAdmin && !isSuperAdmin && (
-                <button className="nav-link mobile-admin-btn" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowSubscriptions(true); }}>
-                  <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
-                    <line x1="2" y1="10" x2="22" y2="10"></line>
-                  </svg>
-                  Subscriptions
-                  {pendingAccessRequestsCount > 0 && (
-                    <span className="sidebar-badge">{pendingAccessRequestsCount}</span>
-                  )}
-                </button>
-              )}
-              <div className="mobile-drawer-theme-row">
-                <span>Dark Mode</span>
-                <button
-                  className="theme-toggle-compact"
-                  onClick={() => setDarkMode(!darkMode)}
-                  aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-                >
-                  {darkMode ? (
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="5"></circle>
-                      <line x1="12" y1="1" x2="12" y2="3"></line>
-                      <line x1="12" y1="21" x2="12" y2="23"></line>
-                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                      <line x1="1" y1="12" x2="3" y2="12"></line>
-                      <line x1="21" y1="12" x2="23" y2="12"></line>
-                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                  ) : (
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                  )}
-                </button>
-              </div>
-            </div>
-          </nav>
-
-          <div className="header-right nav-actions">
-            {user && user.role === 'student' && myAccessDays !== null && (
-              <span className="access-badge nav-desktop-only" title="Time left on your course access">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-                <span>{myAccessDays} {myAccessDays === 1 ? 'day' : 'days'} left</span>
-              </span>
-            )}
-
-            {isSuperAdmin && (
-              <button
-                className="admin-nav-toggle nav-desktop-only"
-                onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); setAdminSidebarOpen(true); }}
-                aria-expanded={adminSidebarOpen}
-                aria-controls="super-admin-navigation"
-                style={{ position: 'relative' }}
-              >
-                <span aria-hidden="true">☰</span> Admin
-                {(unreadFeedbackCount + pendingTestimonialsCount + pendingAccessRequestsCount) > 0 && (
-                  <span className="admin-nav-badge">
-                    {unreadFeedbackCount + pendingTestimonialsCount + pendingAccessRequestsCount}
-                  </span>
-                )}
-              </button>
-            )}
-
-            {isAdmin && !isSuperAdmin && (
-              <button className="nav-link nav-desktop-only" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowSubscriptions(true); }} style={{ position: 'relative' }}>
-                <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
-                  <line x1="2" y1="10" x2="22" y2="10"></line>
-                </svg>
-                <span>Subscriptions</span>
-                {pendingAccessRequestsCount > 0 && (
-                  <span className="sidebar-badge">{pendingAccessRequestsCount}</span>
-                )}
-              </button>
-            )}
-
-            <button
-              className="theme-toggle-compact nav-desktop-only"
-              onClick={() => setDarkMode(!darkMode)}
-              aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-              title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-            >
-              {darkMode ? (
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="5"></circle>
-                  <line x1="12" y1="1" x2="12" y2="3"></line>
-                  <line x1="12" y1="21" x2="12" y2="23"></line>
-                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                  <line x1="1" y1="12" x2="3" y2="12"></line>
-                  <line x1="21" y1="12" x2="23" y2="12"></line>
-                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                </svg>
-              ) : (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                </svg>
-              )}
-            </button>
-
-            {user ? (
-              <div className="user-menu">
-                <button className="user-menu-trigger" onClick={() => setShowUserMenu(!showUserMenu)} aria-expanded={showUserMenu}>
-                  <span className="user-menu-avatar" aria-hidden="true">{user.name.charAt(0).toUpperCase()}</span>
-                  <span className="user-menu-name">{user.name}</span>
-                  {user.role === 'admin' && <span className="user-role-badge">admin</span>}
-                  {user.role === 'superadmin' && <span className="user-role-badge super">super</span>}
-                  <span className={`caret ${showUserMenu ? 'open' : ''}`}>▾</span>
-                </button>
-                {showUserMenu && (
-                  <div className="user-menu-dropdown">
-                    <div className="user-menu-header">
-                      <span className="user-menu-header-name">{user.name}</span>
-                      <span className="user-menu-header-role">{user.role}</span>
-                    </div>
-                    <div className="user-menu-divider"></div>
-                    <button onClick={() => { setShowUserMenu(false); setMobileMenuOpen(false); setShowChangePassword(true); }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                      </svg>
-                      Change password
-                    </button>
-                    <button className="logout-item" onClick={() => { setShowUserMenu(false); setMobileMenuOpen(false); handleLogout(); }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="16 17 21 12 16 7"></polyline>
-                        <line x1="21" y1="12" x2="9" y2="12"></line>
-                      </svg>
-                      Log out
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <button className="nav-btn-primary" onClick={openLogin}>Sign in</button>
-            )}
-
-            <button
-              className={`hamburger ${mobileMenuOpen ? 'is-open' : ''}`}
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle navigation menu"
-              aria-expanded={mobileMenuOpen}
-            >
-              <span></span>
-              <span></span>
-              <span></span>
-            </button>
-          </div>
-        </div>
-      </header>
+      <SiteHeader adminSidebarOpen={adminSidebarOpen} changeLanguage={changeLanguage} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} language={language} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowClassCalendar={setShowClassCalendar} setShowConversationPractice={setShowConversationPractice} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowHanziTrace={setShowHanziTrace} setShowLangMenu={setShowLangMenu} setShowPinyinPage={setShowPinyinPage} setShowPracticeMenu={setShowPracticeMenu} setShowSubscriptions={setShowSubscriptions} setShowTests={setShowTests} setShowToneScorer={setShowToneScorer} setShowUserMenu={setShowUserMenu} showLangMenu={showLangMenu} showPracticeMenu={showPracticeMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
 
       {!user && showLogin ? (
         <div>
@@ -1301,8 +637,8 @@ function App() {
       ) : showToneScorer ? (
         <ToneScorer onBack={goHome} />
       ) : showPinyinPage ? (
-        <PinyinPage 
-          onBack={pinyinBackToAdmin ? () => { setPinyinBackToAdmin(false); goAdminDashboard(); } : goHome} 
+        <PinyinPage
+          onBack={pinyinBackToAdmin ? () => { setPinyinBackToAdmin(false); goAdminDashboard(); } : goHome}
           isSuperAdmin={isSuperAdmin || isAdmin}
           backLabel={pinyinBackToAdmin ? '← Back to Admin Dashboard' : '← Back to home'}
         />
@@ -1311,8 +647,8 @@ function App() {
       ) : showClassCalendar ? (
         <ClassCalendarPage onBack={goHome} user={user} />
       ) : isSuperAdmin && showTestManager ? (
-        <TestManager 
-          onBack={goAdminDashboard} 
+        <TestManager
+          onBack={goAdminDashboard}
           onPreviewTest={(testId) => {
             setActiveTestId(testId);
             setTestTakerBackToManager(true);
@@ -1320,17 +656,17 @@ function App() {
           }}
         />
       ) : activeTestId ? (
-        <TestTaker 
-          testId={activeTestId} 
-          onBack={() => { 
-            setActiveTestId(null); 
+        <TestTaker
+          testId={activeTestId}
+          onBack={() => {
+            setActiveTestId(null);
             if (testTakerBackToManager) {
               setShowTestManager(true);
               setTestTakerBackToManager(false);
             } else {
-              setShowTests(true); 
+              setShowTests(true);
             }
-          }} 
+          }}
         />
       ) : showTests ? (
         <TestList onOpenTest={(id) => { setShowTests(false); setActiveTestId(id); }} onBack={goHome} />
@@ -1344,8 +680,8 @@ function App() {
           onManageLessons={(c) => setManageCourse(c)}
         />
       ) : isSuperAdmin && showAdminDashboard ? (
-        <AdminDashboard 
-          onBack={goHome} 
+        <AdminDashboard
+          onBack={goHome}
           onNavigate={(view) => {
             goHome();
             if (view === 'courses') setShowAdmin(true);
@@ -1360,7 +696,7 @@ function App() {
               setShowPinyinPage(true);
               setPinyinBackToAdmin(true);
             }
-          }} 
+          }}
         />
       ) : isSuperAdmin && showAuditLog ? (
         <AuditLog onBack={goAdminDashboard} />
@@ -1375,534 +711,32 @@ function App() {
       ) : activeCourse ? (
         <CoursePage course={activeCourse} onBack={() => setActiveCourse(null)} user={user} />
       ) : (
-        <main>
-          <section className="hero">
-            <div className="container hero-grid">
-              <div className="hero-text">
-                <div className="hero-badge">
-                  <span className="hero-badge-dot" aria-hidden="true"></span>
-                  <span className="hero-badge-text">नेपालीहरूको लागि विशेष चिनियाँ कक्षा · HSK 1–4</span>
-                </div>
-                <h1 className="hero-title">
-                  {user ? (
-                    <>Welcome back, <span className="hero-highlight">{user.name}</span>!</>
-                  ) : (
-                    <>
-                      चिनियाँ भाषा सिक्नुहोस्,{' '}
-                      <span className="hero-highlight">सजिलै र प्रभावकारी रूपमा।</span>
-                    </>
-                  )}
-                </h1>
-                <p className="hero-subtitle">
-                  Master Mandarin Chinese with step-by-step video lessons, Pinyin chart, interactive AI tone practice, and HSK mock tests — tailored specifically for Nepali speakers.
-                </p>
-                <div className="hero-actions">
-                  {!user && (
-                    <button className="btn-primary hero-btn-main" onClick={() => { setAuthView('register'); setShowLogin(true); }}>
-                      <span>Start Learning Free</span>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                      </svg>
-                    </button>
-                  )}
-                  <a className="btn-secondary hero-btn-secondary" href="#courses">
-                    <span>Explore Courses</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M6 9l6 6 6-6"/>
-                    </svg>
-                  </a>
-                </div>
+        <main className="home-page">
+          <HomeHero goHome={goHome} handleVideoToggle={handleVideoToggle} heroVideoRef={heroVideoRef} isPlayingAudio={isPlayingAudio} isVideoPlaying={isVideoPlaying} playNihaoAudio={playNihaoAudio} setIsVideoPlaying={setIsVideoPlaying} setShowDashboard={setShowDashboard} setShowPinyinPage={setShowPinyinPage} user={user} welcomeVideoUrl={welcomeVideoUrl} />
 
-                <div className="hero-stats">
-                  <div className="hero-stat-item">
-                    <div className="stat-icon-wrap" aria-hidden="true">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                      </svg>
-                    </div>
-                    <div className="stat-text-wrap">
-                      <strong>100% Free</strong>
-                      <span>To start learning</span>
-                    </div>
-                  </div>
+          <HomeCourses access={access} filteredCourses={filteredCourses} hskLevels={hskLevels} levelFilter={levelFilter} openLogin={openLogin} setActiveCourse={setActiveCourse} setLevelFilter={setLevelFilter} setLockedNotice={setLockedNotice} user={user} />
 
-                  <div className="hero-stat-divider" aria-hidden="true"></div>
+          <HomeFeatures isPlayingFeatureAudio={isPlayingFeatureAudio} playFeatureSample={playFeatureSample} />
 
-                  <div className="hero-stat-item">
-                    <div className="stat-icon-wrap" aria-hidden="true">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                      </svg>
-                    </div>
-                    <div className="stat-text-wrap">
-                      <strong>HSK 1 to 4</strong>
-                      <span>Structured syllabus</span>
-                    </div>
-                  </div>
+          <WordOfTheDay isPlayingWotd={isPlayingWotd} playWotdAudio={playWotdAudio} wotd={wotd} />
 
-                  <div className="hero-stat-divider" aria-hidden="true"></div>
+          <HomeTestimonials scrollTestimonials={scrollTestimonials} setShowTestimonial={setShowTestimonial} testimonials={testimonials} testimonialsScrollRef={testimonialsScrollRef} user={user} />
 
-                  <div className="hero-stat-item">
-                    <div className="stat-icon-wrap" aria-hidden="true">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-                        <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
-                      </svg>
-                    </div>
-                    <div className="stat-text-wrap">
-                      <strong>Native Audio</strong>
-                      <span>Real spoken practice</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <HomeTeam setActiveTeamMember={setActiveTeamMember} teamPhotos={teamPhotos} />
 
-              <div className="hero-showcase">
-                <div className="hero-video-card">
-                  <div className="video-card-header">
-                    <div className="video-card-badge">
-                      <span className="live-pulse" aria-hidden="true"></span>
-                      <span>Teacher Intro Video</span>
-                    </div>
-                    <span className="video-card-duration">1-min overview</span>
-                  </div>
 
-                  <div
-                    className={`video-wrap ${isVideoPlaying ? 'is-playing' : ''}`}
-                    onClick={handleVideoToggle}
-                  >
-                    <video
-                      ref={heroVideoRef}
-                      key={welcomeVideoUrl || 'default'}
-                      preload="metadata"
-                      poster={dailyImages[new Date().getDay()]}
-                      playsInline
-                      controls={isVideoPlaying}
-                      onPlay={() => setIsVideoPlaying(true)}
-                      onPause={() => setIsVideoPlaying(false)}
-                      onEnded={() => setIsVideoPlaying(false)}
-                    >
-                      <source src={welcomeVideoUrl ? mediaUrl(welcomeVideoUrl) : '/video/intro.mp4'} type="video/mp4" />
-                      Your browser doesn't support the video tag.
-                    </video>
 
-                    {!isVideoPlaying && (
-                      <button className="big-play-btn" aria-label="Play welcome video">
-                        <div className="play-btn-circle" aria-hidden="true">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M8 5v14l11-7z"/>
-                          </svg>
-                        </div>
-                        <span className="play-btn-label">Watch Introduction</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                <div className="hero-interactive-card">
-                  <div className="interactive-card-left">
-                    <div className="card-pinyin-tag">
-                      <span>nǐ hǎo</span>
-                      <span className="tone-indicator">3rd tone ˇ</span>
-                    </div>
-                    <div className="card-characters zh">你好</div>
-                    <div className="card-meaning-line">
-                      <span className="card-nepali ne">नमस्ते</span>
-                      <span className="card-dot">•</span>
-                      <span className="card-english">hello · greeting</span>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    className={`hero-audio-btn ${isPlayingAudio ? 'is-playing' : ''}`}
-                    onClick={playNihaoAudio}
-                    title="Click to hear native audio"
-                    aria-label="Listen to Chinese pronunciation"
-                  >
-                    <div className="audio-icon-box" aria-hidden="true">
-                      {isPlayingAudio ? (
-                        <span className="sound-wave">
-                          <span></span><span></span><span></span>
-                        </span>
-                      ) : (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                        </svg>
-                      )}
-                    </div>
-                    <span className="audio-btn-text">{isPlayingAudio ? 'Playing audio...' : 'Hear Pronunciation'}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="features">
-            <div className="container">
-              <div className="features-intro">
-                <span className="section-kicker">Built for Real Fluency</span>
-                <h2 className="section-title">Everything you need to master Chinese</h2>
-                <p className="section-sublead">
-                  Designed specifically for Nepali learners with native audio, phonetic clarity, and logical step-by-step milestones.
-                </p>
-              </div>
-
-              <div className="features-grid">
-                {/* Feature 1 */}
-                <div className="feature-card">
-                  <div className="feature-header">
-                    <div className="feature-icon-wrapper speak-bg" aria-hidden="true">
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
-                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                        <line x1="12" y1="19" x2="12" y2="22"></line>
-                      </svg>
-                    </div>
-                    <span className="feature-pill-badge">Phonetics First</span>
-                  </div>
-                  <h3>Pronunciation & Script</h3>
-                  <p>
-                    Start from zero with Pinyin and Devanagari — every character introduced with tone pitch contours you can replicate accurately.
-                  </p>
-                  <div className="feature-visual tone-visual" aria-label="Chinese 4 tones pitch guide">
-                    <div className="tone-pill"><span className="tone-mark">—</span> 1st: High</div>
-                    <div className="tone-pill"><span className="tone-mark">/</span> 2nd: Rise</div>
-                    <div className="tone-pill"><span className="tone-mark">∨</span> 3rd: Dip</div>
-                    <div className="tone-pill"><span className="tone-mark">\</span> 4th: Fall</div>
-                  </div>
-                </div>
-
-                {/* Feature 2 */}
-                <div className="feature-card">
-                  <div className="feature-header">
-                    <div className="feature-icon-wrapper listen-bg" aria-hidden="true">
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-                        <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
-                      </svg>
-                    </div>
-                    <span className="feature-pill-badge">Native Audio</span>
-                  </div>
-                  <h3>Hear it Spoken</h3>
-                  <p>
-                    Clear studio audio on every single word and dialogue line — listen, repeat, and compare until it sticks naturally.
-                  </p>
-                  <div className="feature-visual audio-sample-visual">
-                    <button
-                      type="button"
-                      className={`feature-audio-sample-btn ${isPlayingFeatureAudio ? 'is-playing' : ''}`}
-                      onClick={playFeatureSample}
-                      title="Click to test sample audio"
-                      aria-label="Listen to sample audio"
-                    >
-                      {isPlayingFeatureAudio ? (
-                        <span className="sound-wave">
-                          <span></span><span></span><span></span>
-                        </span>
-                      ) : (
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                          <path d="M8 5v14l11-7z"/>
-                        </svg>
-                      )}
-                      <span>{isPlayingFeatureAudio ? 'Playing "xiè xie"...' : 'Hear Sample: 谢谢 (xièxie)'}</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Feature 3 */}
-                <div className="feature-card">
-                  <div className="feature-header">
-                    <div className="feature-icon-wrapper read-bg" aria-hidden="true">
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                      </svg>
-                    </div>
-                    <span className="feature-pill-badge">HSK Aligned</span>
-                  </div>
-                  <h3>Step-by-Step Mastery</h3>
-                  <p>
-                    Lessons build logically like a structured academy course — track what you've mastered and unlock what comes next.
-                  </p>
-                  <div className="feature-visual pathway-visual" aria-label="HSK progression milestone steps">
-                    <div className="hsk-step active">HSK 1</div>
-                    <span className="hsk-arrow" aria-hidden="true">➔</span>
-                    <div className="hsk-step">HSK 2</div>
-                    <span className="hsk-arrow" aria-hidden="true">➔</span>
-                    <div className="hsk-step">HSK 3</div>
-                    <span className="hsk-arrow" aria-hidden="true">➔</span>
-                    <div className="hsk-step">HSK 4</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="wotd">
-            <div className="container">
-              <div className="wotd-container-inner">
-                <div className="wotd-header">
-                  <div className="wotd-badge">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                    </svg>
-                    <span>Daily Vocabulary Spotlight · दिनको शब्द</span>
-                  </div>
-                  <p className="wotd-subheading">One essential word every single day to expand your vocabulary effortlessly.</p>
-                </div>
-
-                <div className="wotd-cards-container">
-                  <div className="wotd-card zh-card">
-                    <div className="wotd-card-top">
-                      <span className="wotd-lang-tag">Mandarin Chinese</span>
-                      <button
-                        type="button"
-                        className={`wotd-audio-trigger ${isPlayingWotd ? 'is-playing' : ''}`}
-                        onClick={() => playWotdAudio(wotd.zh)}
-                        title="Click to hear native pronunciation"
-                        aria-label="Listen to Chinese pronunciation"
-                      >
-                        {isPlayingWotd ? (
-                          <span className="sound-wave">
-                            <span></span><span></span><span></span>
-                          </span>
-                        ) : (
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                          </svg>
-                        )}
-                        <span>{isPlayingWotd ? 'Speaking...' : 'Listen'}</span>
-                      </button>
-                    </div>
-
-                    <span className="wotd-word zh">{wotd.zh}</span>
-                    <div className="wotd-pinyin">{wotd.zhP}</div>
-                    <div className="wotd-meaning">"{wotd.meaning}"</div>
-                  </div>
-
-                  <div className="wotd-card-divider" aria-hidden="true">
-                    <div className="divider-line"></div>
-                    <div className="divider-icon">⇄</div>
-                    <div className="divider-line"></div>
-                  </div>
-
-                  <div className="wotd-card ne-card">
-                    <div className="wotd-card-top">
-                      <span className="wotd-lang-tag">Nepali Translation</span>
-                      <span className="wotd-nepali-badge">नेपाली अर्थ</span>
-                    </div>
-
-                    <span className="wotd-word ne">{wotd.ne}</span>
-                    <div className="wotd-pinyin">{wotd.neP}</div>
-                    <div className="wotd-meaning">"{wotd.meaning}"</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="worlds">
-            <div className="container">
-              <div className="section-header-center">
-                <span className="section-kicker">Student Reviews</span>
-                <h2 className="section-title">Real Results from Real Learners</h2>
-                <p className="section-sublead">Hear how Nepali learners are achieving conversational fluency and confidence in Chinese.</p>
-              </div>
-              {testimonials.length === 0 ? (
-                <p className="courses-empty">Be the first to share your experience!</p>
-              ) : (
-                <div className="testimonials-slider">
-                  {testimonials.length > 1 && (
-                    <button
-                      type="button"
-                      className="testimonials-arrow testimonials-arrow-left"
-                      onClick={() => scrollTestimonials(-1)}
-                      aria-label="Scroll testimonials left"
-                    >
-                      ‹
-                    </button>
-                  )}
-                  <div className="testimonials-grid" ref={testimonialsScrollRef}>
-                    {testimonials.map((t) => (
-                      <div className="testimonial-card" key={t._id}>
-                        <span className="testimonial-stars">{'★'.repeat(t.rating)}</span>
-                        <p className="testimonial-text">"{t.text}"</p>
-                        <div className="testimonial-person">
-                          {t.photo ? (
-                            <img className="testimonial-photo" src={mediaUrl(t.photo)} alt={t.name} />
-                          ) : (
-                            <span className="testimonial-photo-placeholder">{t.name.charAt(0)}</span>
-                          )}
-                          <span className="testimonial-name">{t.name}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  {testimonials.length > 1 && (
-                    <button
-                      type="button"
-                      className="testimonials-arrow testimonials-arrow-right"
-                      onClick={() => scrollTestimonials(1)}
-                      aria-label="Scroll testimonials right"
-                    >
-                      ›
-                    </button>
-                  )}
-                </div>
-              )}
-              {user && (
-                <div className="testimonials-cta">
-                  <button className="btn-primary" onClick={() => setShowTestimonial(true)}>
-                    Share your experience
-                  </button>
-                </div>
-              )}
-            </div>
-          </section>
-
-          <section className="team-section">
-            <div className="container">
-              <h2 className="section-title team-title">Meet Our Team</h2>
-              <p className="team-intro">This platform is brought to you by a team of passion and expertise.</p>
-              <div className="team-grid">
-                {(Array.isArray(teamPhotos) ? teamPhotos : []).map((dbMemberObj) => {
-                  const displayMember = {
-                    key: dbMemberObj.key,
-                    name: dbMemberObj.name || '',
-                    role: dbMemberObj.role || '',
-                    bio: dbMemberObj.bio || '',
-                    photo: dbMemberObj.photo ? mediaUrl(dbMemberObj.photo) : '',
-                    offsetX: dbMemberObj.offsetX !== undefined ? dbMemberObj.offsetX : 50,
-                    offsetY: dbMemberObj.offsetY !== undefined ? dbMemberObj.offsetY : 50,
-                    scale: dbMemberObj.scale !== undefined ? dbMemberObj.scale : 1
-                  };
-                  return (
-                    <div className="team-card" key={displayMember.key} onClick={() => setActiveTeamMember(displayMember)} role="button" tabIndex={0} title="Click to view full bio">
-                      {renderTeamAvatar(displayMember)}
-                      <h3 className="team-name">{displayMember.name}</h3>
-                      <p className="team-role">{displayMember.role}</p>
-                      <span className="team-bio-hint">View Bio ➔</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-
-          <section className="courses-section" id="courses">
-            <div className="container">
-              <div className="section-header-center">
-                <span className="section-kicker">Structured Academy</span>
-                <h2 className="section-title">Explore Courses</h2>
-                <p className="section-sublead">Step-by-step curriculum aligned with official HSK standards and native audio.</p>
-              </div>
-
-              <div className="level-pills">
-                {hskLevels.map((lvl, i) => (
-                  <button
-                    key={lvl}
-                    className={`level-pill pill-color-${i % 4} ${levelFilter === lvl ? 'active' : ''}`}
-                    onClick={() => setLevelFilter(lvl)}
-                  >
-                    {lvl === 'all' ? 'All Courses' : lvl}
-                  </button>
-                ))}
-              </div>
-
-              {filteredCourses.length === 0 ? (
-                <p className="courses-empty">No courses in this level yet.</p>
-              ) : (
-                <div className="course-cards">
-                  {filteredCourses.map((c) => {
-                    const a = access[c._id];
-                    const locked = user && a && !a.unlocked;
-                    return (
-                      <div
-                        className={`course-card ${locked ? 'card-locked' : ''}`}
-                        key={c._id}
-                        onClick={() => {
-                          if (locked) {
-                            setLockedNotice(`"${c.title}" is locked. Complete the prerequisite course to unlock it!`);
-                            setTimeout(() => setLockedNotice(null), 5000);
-                            return;
-                          }
-                          if (!user) { openLogin(); return; }
-                          setActiveCourse(c);
-                        }}
-                      >
-                        {c.image ? (
-                          <img className="course-card-img" src={mediaUrl(c.image)} alt={c.title} />
-                        ) : (
-                          <div className="course-card-glyph">
-                            <span className={c.language === 'chinese' ? 'zh' : 'ne'}>
-                              {c.glyph && c.glyph.trim().length > 0 && c.glyph.trim().length <= 2 
-                                ? c.glyph 
-                                : (c.language === 'chinese' ? '中' : 'ने')}
-                            </span>
-                          </div>
-                        )}
-                        <div className="course-card-body">
-                          <h3 className="course-card-title">{c.title}</h3>
-                          <p className="course-card-desc">{c.description}</p>
-                          {locked ? (
-                            <span className="tag tag-locked">🔒 Finish previous course</span>
-                          ) : (
-                            <span className="tag">{c.level}</span>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </section>
-
-          <footer className="site-footer">
-            <div className="container footer-inner">
-
-              <button className="logo" onClick={goHome}>
-                Learn Chinese with <span>Anil</span>
-              </button>
-
-              <p className="footer-tag">Speak Chinese ASAP!</p>
-
-              <div className="footer-social">
-                <a href="#facebook" aria-label="Facebook" className="social-link">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.99 3.66 9.13 8.44 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99C18.34 21.13 22 16.99 22 12z"/></svg>
-                </a>
-                <a href="#youtube" aria-label="YouTube" className="social-link">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2C0 8.09 0 12 0 12s0 3.91.5 5.8a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.91 24 12 24 12s0-3.91-.5-5.8zM9.55 15.57V8.43L15.82 12l-6.27 3.57z"/></svg>
-                </a>
-                <a href="#instagram" aria-label="Instagram" className="social-link">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16-1.06-.36 2.23-.41 1.27-.06 1.65-.07 4.85-.07M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.31-1.46.72-2.13 1.38C1.35 2.68.94 3.35.63 4.14.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13.67.66 1.34 1.07 2.13 1.38.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56.79-.31 1.46-.72 2.13-1.38.66-.67 1.07-1.34 1.38-2.13.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91-.31-.79-.72-1.46-1.38-2.13C21.32 1.35 20.65.94 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.41-11.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/></svg>
-                </a>
-                <a href="#linkedin" aria-label="LinkedIn" className="social-link">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zm1.78 13.02H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
-                </a>
-              </div>
-
-              {isSuperAdmin && (
-                <p className="status">
-                  {serverOk === null && <span>Checking server...</span>}
-                  {serverOk === true && (
-                    <span><span className="dot"></span>Server connected</span>
-                  )}
-                  {serverOk === false && (
-                    <span><span className="dot offline"></span>Server offline</span>
-                  )}
-                </p>
-              )}
-            </div>
-          </footer>
+          <HomeFooter goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} />
         </main>
       )}
     </>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <Suspense fallback={<div className="container" role="status">Loading...</div>}>
+      <AppContent />
+    </Suspense>
+  );
+}

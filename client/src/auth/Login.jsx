@@ -177,7 +177,7 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
                 />
                 <span>Remember me</span>
               </label>
-              <a href="#forgot" className="forgot-password-link" onClick={(e) => { e.preventDefault(); onForgotPassword && onForgotPassword(); }}>
+              <a href="#forgot" className="forgot-password-link" onClick={(e) => { e.preventDefault(); onForgotPassword?.(); }}>
                 Forgot password?
               </a>
             </div>

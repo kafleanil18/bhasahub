@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 
-const SERVER = window.API_BASE_URL;
 const API = window.API_BASE_URL + '/api';
 
 function shuffle(array) {
@@ -56,7 +55,8 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
   const [selected, setSelected] = useState(null);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
-  const [missedIds, setMissedIds] = useState([]);
+  const [answers, setAnswers] = useState({});
+  const [saveError, setSaveError] = useState(null);
   const [skipped, setSkipped] = useState(0);
 
   useEffect(() => {
@@ -76,11 +76,11 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
   const handleAnswer = useCallback((choice) => {
     if (selected) return; // already answered
     setSelected(choice);
+    setAnswers(prev => ({ ...prev, [q.word._id]: choice }));
     if (choice === q.answer) {
       setScore((s) => s + 1);
       playCorrectTone();
     } else {
-      setMissedIds((ids) => [...ids, q.word._id]);
       playIncorrectTone();
     }
   }, [selected, q]);
@@ -105,13 +105,14 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
     fetch(`${API}/attempts/quiz`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ lessonId, score, total: questions.length, missedVocabularyIds: missedIds }),
-    }).catch(() => {});
+      body: JSON.stringify({ lessonId, answers: questions.map(q => ({ vocabularyId: q.word._id, answer: answers[q.word._id] ?? null })) }),
+    }).then(res => { if (!res.ok) throw new Error(); }).catch(() => setSaveError('Could not save your quiz result.'));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finished]);
 
   const restart = () => {
-    setMissedIds([]);
+    setAnswers({});
+    setSaveError(null);
     setSkipped(0);
     setQuestions(buildQuestions(words));
     setCurrent(0);
@@ -179,6 +180,7 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
     return (
       <div className="quiz-area">
         <div className="quiz-result">
+          {saveError && <p role="alert">{saveError}</p>}
           <span className="quiz-result-emoji">
             {percent >= 80 ? (
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">

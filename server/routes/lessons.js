@@ -1,16 +1,18 @@
 const express = require('express');
 const Lesson = require('../models/Lesson');
 const Vocabulary = require('../models/Vocabulary');
-const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { requireAuth, requireAdmin, optionalAuth } = require('../middleware/auth');
 const { logActivity } = require('../utils/auditLog');
 
+const { canAccessCourse, isAdmin } = require('../middleware/courseAccess');
 const router = express.Router();
 
 // GET /api/lessons/course/:courseId — public: published lessons of a course
-router.get('/course/:courseId', async (req, res) => {
+router.get('/course/:courseId', optionalAuth, async (req, res) => {
   try {
     const lessons = await Lesson.find({ course: req.params.courseId, published: true }).sort({ order: 1 });
-    res.json(lessons);
+    const allowed = await canAccessCourse(req.user, req.params.courseId);
+    res.json(allowed ? lessons : lessons.map(l => ({ _id: l._id, title: l.title, category: l.category, order: l.order })));
   } catch {
     res.status(500).json({ error: 'Could not load lessons' });
   }
@@ -78,8 +80,11 @@ router.delete('/:id', requireAuth, requireAdmin, async (req, res) => {
 });
 
 // GET /api/lessons/:id/vocabulary — public: words in a lesson
-router.get('/:id/vocabulary', async (req, res) => {
+router.get('/:id/vocabulary', requireAuth, async (req, res) => {
   try {
+    const lesson = await Lesson.findById(req.params.id);
+    if (!lesson || (!lesson.published && !isAdmin(req.user))) return res.status(404).json({ error: 'Lesson not found' });
+    if (!await canAccessCourse(req.user, lesson.course)) return res.status(403).json({ error: 'Active course access required' });
     const words = await Vocabulary.find({ lesson: req.params.id }).sort({ order: 1 });
     res.json(words);
   } catch {

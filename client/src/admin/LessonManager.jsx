@@ -4,7 +4,6 @@ import { mediaUrl } from '../utils/mediaUrl';
 import RichTextEditor from '../components/RichTextEditor';
 
 const API = window.API_BASE_URL + '/api';
-const SERVER = window.API_BASE_URL;
 
 const resizeImage = (file, maxWidth) =>
   new Promise((resolve, reject) => {
@@ -302,7 +301,7 @@ function LessonManager({ course, onBack }) {
     setActiveLesson(lesson);
     setWords([]);
     resetWordForm();
-    const res = await fetch(`${API}/lessons/${lesson._id}/vocabulary`);
+    const res = await fetch(`${API}/lessons/${lesson._id}/vocabulary`, { headers: authHeaders });
     const data = await res.json();
     if (res.ok) setWords(data);
   };

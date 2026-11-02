@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
-const SERVER = window.API_BASE_URL;
 
 function TestimonialModal({ user, onClose }) {
   const token = localStorage.getItem('token');

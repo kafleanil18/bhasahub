@@ -47,6 +47,7 @@ function ToneScorer({ onBack }) {
   const [selectedWordIndex, setSelectedWordIndex] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState(null);
+  const [analysisError, setAnalysisError] = useState(null);
   const [scoreResult, setScoreResult] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
 
@@ -114,6 +115,8 @@ function ToneScorer({ onBack }) {
   // Acoustic Pitch Analysis calculation & Google Gemini Speech AI
   const analyzeRecordedAudio = async (blob) => {
     setAnalyzing(true);
+    setAnalysisError(null);
+    setScoreResult(null);
     try {
       const formData = new FormData();
       formData.append('audio', blob, 'recording.webm');
@@ -130,22 +133,17 @@ function ToneScorer({ onBack }) {
       });
 
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Tone evaluation failed');
       setScoreResult({
-        overallScore: data.overallScore || 85,
-        pitchMatch: data.pitchMatch || 84,
-        rhythmScore: data.rhythmScore || 88,
+        overallScore: data.overallScore,
+        pitchMatch: data.pitchMatch,
+        rhythmScore: data.rhythmScore,
         feedbackText: data.feedbackText || 'Audio analyzed!',
         aiUsed: data.aiUsed || false,
-        detectedPitch: currentWord.samplePitch.map((p) => Math.min(100, Math.max(10, p + (Math.random() * 12 - 6)))),
+
       });
-    } catch {
-      setScoreResult({
-        overallScore: 88,
-        pitchMatch: 86,
-        rhythmScore: 90,
-        feedbackText: 'Recorded audio received! Compare your pitch with native audio.',
-        detectedPitch: currentWord.samplePitch,
-      });
+    } catch (err) {
+      setAnalysisError(err.message || 'Could not evaluate your recording. Please try again.');
     } finally {
       setAnalyzing(false);
     }
@@ -259,7 +257,7 @@ function ToneScorer({ onBack }) {
             <span>Pitch Contour Curve</span>
             <div className="tone-legend">
               <span className="legend-item"><span className="legend-dot native-dot"></span> Target Native Pitch</span>
-              {scoreResult && <span className="legend-item"><span className="legend-dot user-dot"></span> Your Pitch</span>}
+              {scoreResult?.detectedPitch && <span className="legend-item"><span className="legend-dot user-dot"></span> Your Pitch</span>}
             </div>
           </div>
 
@@ -288,6 +286,7 @@ function ToneScorer({ onBack }) {
         </div>
 
         {/* Analysis Result Display */}
+        {analysisError && <p role="alert">{analysisError}</p>}
         {analyzing && <p className="tone-analyzing">Analyzing your tone contour and pitch frequency...</p>}
 
         {scoreResult && (

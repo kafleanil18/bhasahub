@@ -10,7 +10,7 @@ function CoursePage({ course, onBack, user }) {
   const [activeLesson, setActiveLesson] = useState(null);
   const token = localStorage.getItem('token');
 
-  const { lessons, loading, error: lessonsError } = useLessons(course._id);
+  const { lessons, loading, error: lessonsError } = useLessons(course._id, token);
   const { hasAccess, accessExpiry, accessChecked, error: accessError } = useCourseAccess(course._id, token);
 
   const [completedIds, setCompletedIds] = useState([]);

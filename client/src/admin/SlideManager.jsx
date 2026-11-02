@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
-const SERVER = window.API_BASE_URL;
 
 function SlideManager({ onBack }) {
   const token = localStorage.getItem('token');
-  const authHeaders = { Authorization: `Bearer ${token}` };
+  const authHeaders = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const jsonHeaders = { 'Content-Type': 'application/json', ...authHeaders };
 
   const [slides, setSlides] = useState([]);
@@ -18,7 +17,7 @@ function SlideManager({ onBack }) {
   const [description, setDescription] = useState('');
   const [pdfUrl, setPdfUrl] = useState('');
 
-  const load = async () => {
+  const load = useCallback(async () => {
     try {
       const res = await fetch(`${API}/slides/all`, { headers: authHeaders });
       const data = await res.json();
@@ -27,9 +26,9 @@ function SlideManager({ onBack }) {
     } catch {
       setError('Could not reach the server');
     }
-  };
+  }, [authHeaders]);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
 
   const reset = () => {
     setEditingId(null);

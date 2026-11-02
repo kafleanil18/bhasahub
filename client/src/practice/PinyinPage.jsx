@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 
 const API = (window.API_BASE_URL || '') + '/api';
-const SERVER = window.API_BASE_URL || '';
 
 const DEFAULT_INITIALS = ['', 'b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'k', 'h', 'j', 'q', 'x', 'zh', 'ch', 'sh', 'r', 'z', 'c', 's'];
 const DEFAULT_FINALS = [

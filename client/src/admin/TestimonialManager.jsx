@@ -1,24 +1,23 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 
 const API = window.API_BASE_URL + '/api';
-const SERVER = window.API_BASE_URL;
 
 function TestimonialManager({ onBack }) {
   const token = localStorage.getItem('token');
-  const authHeaders = { Authorization: `Bearer ${token}` };
+  const authHeaders = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const load = () => {
+  const load = useCallback(() => {
     fetch(`${API}/testimonials/all`, { headers: authHeaders })
       .then(res => res.json())
       .then(data => { setItems(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(() => setLoading(false));
-  };
+  }, [authHeaders]);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
 
   const approve = async (id) => {
     await fetch(`${API}/testimonials/${id}/approve`, { method: 'PUT', headers: authHeaders });

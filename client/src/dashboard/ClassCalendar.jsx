@@ -300,7 +300,7 @@ function EntryCard({ u, isAdmin, onEdit, onDelete, showDate }) {
 
 function ClassCalendarPage({ onBack, user }) {
   const token = localStorage.getItem('token');
-  const authHeaders = { Authorization: `Bearer ${token}` };
+  const authHeaders = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
   const jsonHeaders = { 'Content-Type': 'application/json', ...authHeaders };
   const isAdmin = user && (user.role === 'admin' || user.role === 'superadmin');
 
@@ -334,7 +334,7 @@ function ClassCalendarPage({ onBack, user }) {
       setError('Could not reach the server');
     }
     setLoading(false);
-  }, [token]);
+  }, [authHeaders]);
 
   useEffect(() => { load(); }, [load]);
 

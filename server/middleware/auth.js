@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
 // Checks: is there a valid token?
-function requireAuth(req, res, next) {
+async function requireAuth(req, res, next) {
   const header = req.headers.authorization;
 
   if (!header || !header.startsWith('Bearer ')) {
@@ -11,9 +12,11 @@ function requireAuth(req, res, next) {
   const token = header.split(' ')[1];
 
   try {
-    const secret = process.env.JWT_SECRET || 'bhasahub-secret-key-change-in-production';
+    const secret = process.env.JWT_SECRET;
     const payload = jwt.verify(token, secret);
-    req.user = payload; // makes { id, role } available to the route
+    const user = await User.findById(payload.id).select('role');
+    if (!user) return res.status(401).json({ error: 'Account no longer exists' });
+    req.user = { id: String(user._id), role: user.role };
     next(); // all good — proceed to the route
   } catch {
     return res.status(401).json({ error: 'Session expired — please log in again' });
@@ -37,3 +40,7 @@ function requireSuperAdmin(req, res, next) {
 }
 
 module.exports = { requireAuth, requireAdmin, requireSuperAdmin };
+function optionalAuth(req, res, next) {
+  return req.headers.authorization ? requireAuth(req, res, next) : next();
+}
+module.exports.optionalAuth = optionalAuth;

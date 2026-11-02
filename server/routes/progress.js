@@ -3,6 +3,7 @@ const Progress = require('../models/Progress');
 const Lesson = require('../models/Lesson');
 const { requireAuth } = require('../middleware/auth');
 
+const { canAccessCourse, isAdmin } = require('../middleware/courseAccess');
 const router = express.Router();
 
 // GET /api/progress/course/:courseId — my progress for a course
@@ -34,7 +35,8 @@ router.get('/course/:courseId', requireAuth, async (req, res) => {
 router.post('/lesson/:lessonId', requireAuth, async (req, res) => {
   try {
     const lesson = await Lesson.findById(req.params.lessonId);
-    if (!lesson) return res.status(404).json({ error: 'Lesson not found' });
+    if (!lesson || (!lesson.published && !isAdmin(req.user))) return res.status(404).json({ error: 'Lesson not found' });
+    if (!await canAccessCourse(req.user, lesson.course)) return res.status(403).json({ error: 'Active course access required' });
 
     try {
       await Progress.create({
