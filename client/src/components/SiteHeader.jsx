@@ -11,7 +11,7 @@ export default function SiteHeader({ adminSidebarOpen, changeLanguage, darkMode,
             </button>
           </div>
 
-          <nav className={`main-nav ${mobileMenuOpen ? 'open' : ''}`}>
+          <nav id="site-navigation" aria-label="Main navigation" className={`main-nav ${mobileMenuOpen ? 'open' : ''}`}>
             <div className="nav-links">
               {user ? (
                 <>
@@ -312,7 +312,7 @@ export default function SiteHeader({ adminSidebarOpen, changeLanguage, darkMode,
 
             {user ? (
               <div className="user-menu">
-                <button className="user-menu-trigger" onClick={() => setShowUserMenu(!showUserMenu)} aria-expanded={showUserMenu}>
+                <button className="user-menu-trigger" aria-label={`Account menu for ${user.name}`} onClick={() => setShowUserMenu(!showUserMenu)} aria-expanded={showUserMenu}>
                   <span className="user-menu-avatar" aria-hidden="true">{user.name.charAt(0).toUpperCase()}</span>
                   <span className="user-menu-name">{user.name}</span>
                   {user.role === 'admin' && <span className="user-role-badge">admin</span>}
@@ -353,6 +353,7 @@ export default function SiteHeader({ adminSidebarOpen, changeLanguage, darkMode,
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle navigation menu"
               aria-expanded={mobileMenuOpen}
+              aria-controls="site-navigation"
             >
               <span></span>
               <span></span>

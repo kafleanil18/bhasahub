@@ -627,6 +627,55 @@ header .container {
 
   .hamburger {
     display: flex;
+    width: 44px;
+    height: 44px;
+  }
+
+  .site-header .header-row {
+    gap: 12px;
+  }
+
+  .site-header .header-left {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .site-header .brand-logo {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .site-header .brand-title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .site-header .brand-seal {
+    flex-shrink: 0;
+  }
+
+  .site-header .header-right {
+    flex: 0 0 auto;
+  }
+
+  .site-header .user-menu {
+    width: auto;
+  }
+
+  .site-header .user-menu-dropdown {
+    position: absolute;
+    width: min(280px, calc(100vw - 32px));
+    max-height: calc(100dvh - 96px);
+    overflow-y: auto;
+    overflow-wrap: anywhere;
+    background: #1c1815;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .site-header .hamburger:focus-visible {
+    outline: 2px solid #faf6ec;
+    outline-offset: 3px;
   }
 
   .main-nav {
@@ -645,12 +694,14 @@ header .container {
     align-items: stretch;
     padding: 0;
     max-height: 0;
+    visibility: hidden;
     overflow: hidden;
     transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1), padding 0.25s ease;
     z-index: 100;
   }
 
   .main-nav.open {
+    visibility: visible;
     max-height: 85vh;
     overflow-y: auto;
     padding: 16px 18px 20px;
@@ -719,6 +770,34 @@ header .container {
     font-size: 13.5px;
     font-weight: 500;
     color: #faf6ec;
+  }
+}
+
+@media (max-width: 600px) {
+  .site-header .brand-logo {
+    gap: 8px;
+    padding-inline: 0;
+  }
+
+  .site-header .brand-title {
+    font-size: 16px;
+  }
+
+  .site-header .header-right {
+    gap: 8px;
+  }
+
+  .site-header .user-menu-name,
+  .site-header .user-role-badge,
+  .site-header .user-menu-trigger > .caret {
+    display: none;
+  }
+
+  .site-header .user-menu-trigger {
+    width: 44px;
+    height: 44px;
+    justify-content: center;
+    padding: 0;
   }
 }
 

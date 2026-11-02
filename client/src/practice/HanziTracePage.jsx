@@ -366,7 +366,7 @@ function HanziTracePage({ user, onBack, token }) {
   };
 
   return (
-    <div className="container py-4">
+    <div className={`container py-4 hanzi-page${activeCharacter ? ' hanzi-page-active' : ''}`}>
       <style>{`
         /* Custom Bootstrap Enhancements for Hanzi Tracing */
         .hover-lift {
@@ -444,7 +444,7 @@ function HanziTracePage({ user, onBack, token }) {
       `}</style>
 
       {/* Top Header Controls Bar */}
-      <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+      <div className="hanzi-top-controls d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
         <button
           className="btn btn-outline-secondary rounded-pill d-inline-flex align-items-center gap-2 px-3 py-2 fw-semibold shadow-sm hover-lift"
           onClick={activeCharacter ? backToBrowse : onBack}
@@ -629,7 +629,7 @@ function HanziTracePage({ user, onBack, token }) {
         /* Tracing View Mode */
         <div>
           {/* Header Card */}
-          <div className="card border-0 rounded-4 shadow-sm p-4 mb-4 text-center bg-white">
+          <div className="hanzi-character-summary card border-0 rounded-4 shadow-sm p-4 mb-4 text-center bg-white">
             <div className="display-2 fw-bold zh text-danger mb-1">{activeCharacter.character}</div>
             <div className="d-flex align-items-center justify-content-center gap-2 flex-wrap">
               {activeCharacter.pinyin && <span className="fs-5 fw-bold text-dark">{activeCharacter.pinyin}</span>}
@@ -643,9 +643,9 @@ function HanziTracePage({ user, onBack, token }) {
           </div>
 
           {/* Tracing Steps side-by-side grid */}
-          <div className="row g-4 justify-content-center">
+          <div className="hanzi-practice-panels row g-4 justify-content-center">
             {/* Step 1: Stroke Order Animation */}
-            <div className="col-12 col-md-6 col-lg-5 text-center">
+            <div className="hanzi-demo-panel col-12 col-md-6 col-lg-5 text-center">
               <div className="card border-0 rounded-4 shadow-sm p-4 h-100 bg-white">
                 <span className="badge bg-secondary-subtle text-secondary rounded-pill px-3 py-2 text-uppercase fw-bold mb-3 d-inline-block">
                   Step 1 · Watch stroke order
@@ -667,7 +667,7 @@ function HanziTracePage({ user, onBack, token }) {
                 </div>
 
                 {!demoUnavailable && (
-                  <div className="mt-3">
+                  <div className="hanzi-replay mt-3">
                     <button
                       type="button"
                       className="btn btn-outline-secondary rounded-pill px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm"
@@ -685,7 +685,7 @@ function HanziTracePage({ user, onBack, token }) {
             </div>
 
             {/* Step 2: Practice Canvas */}
-            <div className="col-12 col-md-6 col-lg-5 text-center">
+            <div className="hanzi-drawing-panel col-12 col-md-6 col-lg-5 text-center">
               <div className="card border-0 rounded-4 shadow-sm p-4 h-100 bg-white">
                 <span className="badge bg-danger-subtle text-danger rounded-pill px-3 py-2 text-uppercase fw-bold mb-3 d-inline-block">
                   Step 2 · Trace it yourself
@@ -722,7 +722,7 @@ function HanziTracePage({ user, onBack, token }) {
           </div>
 
           {/* Tracing Controls Toolbar */}
-          <div className="d-flex flex-wrap justify-content-center align-items-center gap-2 mt-4 p-3 bg-white rounded-pill shadow-sm border border-light mx-auto" style={{ maxWidth: '540px' }}>
+          <div className="hanzi-trace-toolbar d-flex flex-wrap justify-content-center align-items-center gap-2 mt-4 p-3 bg-white rounded-pill shadow-sm border border-light mx-auto" style={{ maxWidth: '540px' }}>
             <button type="button" className="btn btn-outline-secondary rounded-pill px-3 py-2 fw-semibold" onClick={() => goToOffset(-1)}>
               ← Previous
             </button>
