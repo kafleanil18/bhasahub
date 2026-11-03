@@ -4,6 +4,8 @@ const User = require('../models/User');
 const Course = require('../models/Course');
 const Subscription = require('../models/Subscription');
 const AccessRequest = require('../models/AccessRequest');
+const Enrollment = require('../models/Enrollment');
+const AuditLog = require('../models/AuditLog');
 const { requireAuth } = require('../middleware/auth');
 
 const restorations = [];
@@ -20,7 +22,7 @@ function route(module, path, method) {
   return require(module).stack.find(layer => layer.route?.path === path && layer.route.methods[method]).route.stack;
 }
 
-test('a new Google student can request a subscription visible to the super admin', async () => {
+test('a Google student requests access and receives it only after super admin approval', async () => {
   mock(process.env, 'JWT_SECRET', 'google-subscription-test-secret');
   mock(process.env, 'GOOGLE_CLIENT_ID', 'test-client');
   const student = { _id: '507f1f77bcf86cd799439011', name: 'Google Student', email: 'student@example.com', role: 'student' };
@@ -66,7 +68,7 @@ test('a new Google student can request a subscription visible to the super admin
   const denied = response();
   list[1].handle(req, denied, () => assert.fail('students cannot list everyone’s requests'));
   assert.equal(denied.code, 403);
-  const adminReq = { user: { id: 'superadmin', role: 'superadmin' } };
+  const adminReq = { user: { id: '507f1f77bcf86cd799439013', role: 'superadmin' } };
   let authorized = false;
   list[1].handle(adminReq, response(), () => { authorized = true; });
   assert.equal(authorized, true);
@@ -80,4 +82,45 @@ test('a new Google student can request a subscription visible to the super admin
   assert.equal(visible.body[0].user.email, student.email);
   assert.equal(visible.body[0].course.title, course.title);
   assert.equal(visible.body[0].status, 'pending');
+
+  const check = route('../routes/subscriptions', '/check/:courseId', 'get').at(-1).handle;
+  req.params = { courseId: course._id };
+  const locked = response();
+  await check(req, locked);
+  assert.equal(locked.body.hasAccess, false);
+
+  mock(AccessRequest, 'findById', async () => ({ ...saved, save: async function () { saved.status = this.status; } }));
+  let subscription;
+  mock(Subscription, 'findOneAndUpdate', async (filter, update) => {
+    if (update.$setOnInsert) return { _id: 'subscription', ...update.$setOnInsert };
+    assert.equal(String(update[0].$set.grantedBy), adminReq.user.id);
+    assert.equal(update[0].$set.expiresAt.$add[1], 30 * 86400000);
+    subscription = { user: student._id, course: course._id, expiresAt: new Date(Date.now() + 30 * 86400000) };
+    return subscription;
+  });
+  mock(Enrollment, 'updateOne', async (filter, update) => {
+    assert.equal(filter.user, student._id);
+    assert.equal(update.$setOnInsert.course, course._id);
+    return { upsertedCount: 1 };
+  });
+  mock(User, 'findById', () => ({ select: async () => student }));
+  mock(Course, 'findById', () => ({ select: async () => course }));
+  mock(AuditLog, 'create', async () => ({}));
+  const approve = route('../routes/accessRequests', '/:id/approve', 'put');
+  let canApprove = false;
+  approve[1].handle(adminReq, response(), () => { canApprove = true; });
+  assert.equal(canApprove, true);
+  const approved = response();
+  await approve.at(-1).handle({ ...adminReq, params: { id: saved._id }, body: { days: 30 } }, approved);
+  assert.equal(approved.code, 200);
+  assert.equal(saved.status, 'approved');
+  mock(Subscription, 'findOne', async filter => {
+    assert.equal(filter.user, student._id);
+    assert.equal(filter.course, course._id);
+    return subscription;
+  });
+  const unlocked = response();
+  await check(req, unlocked);
+  assert.equal(unlocked.body.hasAccess, true);
+  assert.ok(unlocked.body.expiresAt > new Date());
 });

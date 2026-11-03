@@ -57,7 +57,16 @@ function CourseOverview({
       .catch(() => setAccessRequestError('Could not load your access request status.'));
   }, [course._id, token]);
 
-  useEffect(() => { loadRequestStatus(); }, [loadRequestStatus]);
+  useEffect(() => {
+    loadRequestStatus();
+    if (!token || hasAccess) return;
+    const interval = window.setInterval(loadRequestStatus, 15000);
+    window.addEventListener('focus', loadRequestStatus);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener('focus', loadRequestStatus);
+    };
+  }, [loadRequestStatus, token, hasAccess]);
 
   const requestAccess = async () => {
     if (!token) return;
