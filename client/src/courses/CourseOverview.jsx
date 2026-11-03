@@ -157,7 +157,7 @@ function CourseOverview({
                   <circle cx="12" cy="12" r="10"></circle>
                   <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
-                Pending approval — your subscription request is waiting for review.
+                Subscription request sent. Your request is waiting for admin approval.
               </span>
             ) : (
               <>

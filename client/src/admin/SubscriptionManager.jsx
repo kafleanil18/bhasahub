@@ -77,8 +77,9 @@ function SubscriptionManager({ onBack }) {
       const res = await fetch(`${API}/access-requests`, { headers: authHeaders });
       const data = await res.json();
       if (res.ok) setRequests(data);
+      else setError(data.error || 'Could not load subscription requests');
     } catch {
-      // ignore
+      setError('Could not load subscription requests. Please try again.');
     }
   }, [authHeaders]);
 
@@ -88,6 +89,16 @@ function SubscriptionManager({ onBack }) {
     loadSubs();
     loadRequests();
   }, [loadStudents, loadCourses, loadSubs, loadRequests]);
+
+  useEffect(() => {
+    const refresh = () => { void loadRequests(); };
+    const interval = window.setInterval(refresh, 15000);
+    window.addEventListener('focus', refresh);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener('focus', refresh);
+    };
+  }, [loadRequests]);
 
   const pendingRequests = requests.filter((r) => r.status === 'pending');
 
