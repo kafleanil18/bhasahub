@@ -1,5 +1,6 @@
+import { supportsConversation } from '../utils/courseFeatures';
 import { useState, useEffect, useCallback, useRef } from 'react';
-import DOMPurify from 'dompurify';
+import GrammarLesson from './GrammarLesson';
 import Quiz from './Quiz';
 import SrsReview from './SrsReview';
 import { mediaUrl } from '../utils/mediaUrl';
@@ -15,6 +16,8 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, co
   const [flipped, setFlipped] = useState(false);
   const [flashMuted, setFlashMuted] = useState(() => localStorage.getItem('flashMuted') === 'true');
   const studyAreaRef = useRef(null);
+
+  useEffect(() => { window.scrollTo(0, 0); }, [lesson._id]);
 
   useEffect(() => {
     fetch(`${API}/lessons/${lesson._id}/vocabulary`, { headers: { Authorization: `Bearer ${token}` } })
@@ -126,7 +129,7 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, co
   };
 
   return (
-    <section className="course-page container">
+    <section className={`course-page container${lesson.category === 'grammar' ? ' grammar-course-page' : ''}`}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <button className="back-btn" style={{ margin: 0 }} onClick={onBack}>
           ← Back to {course.title}
@@ -137,35 +140,17 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, co
           </button>
         )}
       </div>
-      <p className="eyebrow">Lesson {lesson.order}</p>
+      <p className="eyebrow">{lesson.category === 'grammar' ? 'Grammar studio' : `Lesson ${lesson.order}`}</p>
       <h1 className="section-title">{lesson.title}</h1>
 
       {lesson.category === 'grammar' && (lesson.grammarExplanation || lesson.grammarImage) && (
-        <div className="lesson-dialogue">
-          <h3 className="dialogue-heading">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8, verticalAlign: '-2px' }}>
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-            </svg>
-            Grammar
-          </h3>
-          {lesson.grammarImage && (
-            <img
-              src={mediaUrl(lesson.grammarImage)}
-              alt=""
-              className="dialogue-main-image"
-            />
-          )}
-          {lesson.grammarExplanation && (
-            <div
-              className="grammar-explanation-text"
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(lesson.grammarExplanation) }}
-            />
-          )}
+        <div className="grammar-lesson-wrapper">
+          {lesson.grammarImage && <img src={mediaUrl(lesson.grammarImage)} alt="Grammar reference" className="dialogue-main-image" />}
+          {lesson.grammarExplanation && <GrammarLesson html={lesson.grammarExplanation} lessonId={lesson._id} userId={user?.id || user?._id} />}
         </div>
       )}
 
-      {(lesson.dialogueImage || (lesson.dialogueLines && lesson.dialogueLines.length > 0)) && (
+      {supportsConversation(course) && (lesson.dialogueImage || (lesson.dialogueLines && lesson.dialogueLines.length > 0)) && (
         <div className="lesson-dialogue">
           <h3 className="dialogue-heading">💬 Conversation</h3>
           {lesson.dialogueImage && (
@@ -200,7 +185,7 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, co
         </div>
       )}
 
-      <p className="lesson-count">{words.length} words</p>
+      {(lesson.category !== 'grammar' || words.length > 0) && <p className="lesson-count">{words.length} words</p>}
       {wordsError && <p className="login-error">{wordsError}</p>}
 
       <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap' }}>

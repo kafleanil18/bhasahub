@@ -1,3 +1,4 @@
+import { supportsConversation } from '../utils/courseFeatures';
 import { useState, useEffect, useCallback } from 'react';
 
 const API = window.API_BASE_URL + '/api';
@@ -100,7 +101,7 @@ function CourseOverview({
   };
 
   const visibleLessons = lessons.filter(
-    (l) => catFilter === 'all' || (l.category || 'vocabulary') === catFilter
+    (l) => (supportsConversation(course) || l.category !== 'conversation') && (catFilter === 'all' || (l.category || 'vocabulary') === catFilter)
   );
 
   const currentCourseCompleted = completedIds.filter(id => lessons.some(l => l._id === id)).length;
@@ -224,12 +225,14 @@ function CourseOverview({
           </svg>
           Vocabulary
         </button>
+        {supportsConversation(course) && (
         <button className={`cat-tab ${catFilter === 'conversation' ? 'active' : ''}`} onClick={() => setCatFilter('conversation')}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
           </svg>
           Conversation
         </button>
+        )}
         <button className={`cat-tab ${catFilter === 'grammar' ? 'active' : ''}`} onClick={() => setCatFilter('grammar')}>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
             <path d="M12 20h9"></path>

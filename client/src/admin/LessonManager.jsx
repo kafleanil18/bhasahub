@@ -1,3 +1,4 @@
+import { supportsConversation } from '../utils/courseFeatures';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { parseCSV, downloadCSV } from '../utils/csv';
 import { mediaUrl } from '../utils/mediaUrl';
@@ -628,7 +629,7 @@ function LessonManager({ course, onBack }) {
             className="category-select"
           >
             <option value="vocabulary">Vocabulary</option>
-            <option value="conversation">Conversation</option>
+            {supportsConversation(course) && <option value="conversation">Conversation</option>}
             <option value="grammar">Grammar</option>
           </select>
           <button className="btn-primary" onClick={saveLesson}>
@@ -693,7 +694,7 @@ function LessonManager({ course, onBack }) {
           </div>
         )}
 
-        {lessonCategory === 'conversation' && (
+        {supportsConversation(course) && lessonCategory === 'conversation' && (
           <>
             <textarea
               className="dialogue-input"

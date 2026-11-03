@@ -1,3 +1,4 @@
+import { supportsConversation } from '../utils/courseFeatures';
 import { useState, useEffect, useCallback } from 'react';
 import CourseOverview from './CourseOverview';
 import LessonDetail from './LessonDetail';
@@ -10,7 +11,8 @@ function CoursePage({ course, onBack, user }) {
   const [activeLesson, setActiveLesson] = useState(null);
   const token = localStorage.getItem('token');
 
-  const { lessons, loading, error: lessonsError } = useLessons(course._id, token);
+  const { lessons: allLessons, loading, error: lessonsError } = useLessons(course._id, token);
+  const lessons = allLessons.filter(lesson => supportsConversation(course) || lesson.category !== 'conversation');
   const { hasAccess, accessExpiry, accessChecked, error: accessError } = useCourseAccess(course._id, token);
 
   const [completedIds, setCompletedIds] = useState([]);

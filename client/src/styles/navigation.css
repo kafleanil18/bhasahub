@@ -616,7 +616,7 @@ header .container {
 /* ==========================================================================
    RESPONSIVE NAVIGATION (Tablet & Mobile)
    ========================================================================== */
-@media (max-width: 980px) {
+@media (max-width: 1280px) {
   header .container {
     padding: 0 16px;
   }
