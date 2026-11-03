@@ -43,7 +43,14 @@
 .sentence-punctuation { font-size: 24px; color: var(--mist); }
 .sentence-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
 .sentence-feedback { border-left: 4px solid var(--seal); padding: 20px 24px; background: var(--rice); margin: 24px 0; }
-.sentence-feedback.correct { border-color: #28734e; }
+.sentence-answer.correct, .sentence-feedback.correct { --sentence-result-color: #28734e; }
+.sentence-answer.incorrect, .sentence-feedback.incorrect { --sentence-result-color: var(--seal); }
+:root.dark .sentence-answer.correct, :root.dark .sentence-feedback.correct { --sentence-result-color: #86d6a4; }
+.sentence-answer.correct, .sentence-answer.incorrect { border: 2px solid var(--sentence-result-color); }
+.sentence-answer.correct .sentence-tile, .sentence-answer.incorrect .sentence-tile { border-color: var(--sentence-result-color); opacity: 1; }
+.sentence-feedback.correct, .sentence-feedback.incorrect { border-color: var(--sentence-result-color); background: color-mix(in srgb, var(--sentence-result-color) 8%, var(--card)); }
+.sentence-result-heading { display: flex; align-items: center; gap: 12px; }
+.sentence-result-icon { width: 32px; height: 32px; flex-shrink: 0; color: var(--sentence-result-color); }
 .sentence-feedback h3 { font-size: 18px; margin: 0 0 16px; }
 .sentence-feedback p { margin: 8px 0; line-height: 1.65; }
 .sentence-page .sentence-chinese { font-size: 28px; }

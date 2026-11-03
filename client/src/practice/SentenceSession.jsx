@@ -85,7 +85,7 @@ export default function SentenceSession({ initialSentences, onExit, onMastered }
     <p className="sentence-eyebrow">Build the sentence</p>
     <h2 id="sentence-prompt" tabIndex={-1} ref={titleRef}>{sentence.english}</h2>
     <p className="sentence-muted">Tap the words in order. Tap a word in your answer to put it back.</p>
-    <div className="sentence-answer" role="group" aria-label="Your sentence">
+    <div className={`sentence-answer${feedback ? ` ${feedback}` : ''}`} role="group" aria-label="Your sentence">
       {selected.length === 0 && <span className="sentence-muted">Your sentence starts here…</span>}
       {selected.map((id, position) => <button key={id} lang="zh-CN" className="sentence-tile" disabled={Boolean(feedback)} aria-label={`Remove word ${position + 1}: ${sentence.tokens[id]}`} onClick={() => setSelected(previous => previous.filter(value => value !== id))}><PinyinText text={sentence.tokens[id]} readings={sentence.tokenPinyin?.[id]} /></button>)}
       <span className="sentence-punctuation" aria-hidden="true">{sentence.chinese.endsWith('？') ? '？' : '。'}</span>
@@ -95,7 +95,14 @@ export default function SentenceSession({ initialSentences, onExit, onMastered }
     </div>
     {!feedback && <div className="sentence-actions"><button className="sentence-primary" disabled={selected.length !== tiles.length} onClick={check}>Check sentence</button><button className="sentence-secondary" disabled={!selected.length} onClick={() => setSelected([])}>Clear</button></div>}
     {feedback && <div className={`sentence-feedback ${feedback}`} role="status">
-      <h3>{feedback === 'correct' ? 'Correct — nicely done!' : 'Here is one correct order'}</h3>
+      <h3 className="sentence-result-heading">
+        <svg className="sentence-result-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <circle cx="16" cy="16" r="14" />
+          {feedback === 'correct' ? <path d="m9 16 5 5 9-10" /> : <path d="m11 11 10 10m0-10L11 21" />}
+        </svg>
+        <span>{feedback === 'correct' ? 'Correct — nicely done!' : 'Incorrect — check the word order'}</span>
+      </h3>
+      {feedback === 'incorrect' && <p>Compare your answer with this correct sentence:</p>}
       <p className="sentence-chinese"><SentenceText sentence={sentence} /></p>
       <p>{sentence.explanation}</p>
     </div>}
