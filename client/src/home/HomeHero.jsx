@@ -7,20 +7,20 @@ export default function HomeHero({ goHome, handleVideoToggle, heroVideoRef, isPl
               <div className="hero-text">
                 <div className="hero-badge">
                   <span className="hero-badge-dot" aria-hidden="true"></span>
-                  <span className="hero-badge-text">नेपालीहरूको लागि विशेष चिनियाँ कक्षा · HSK 1–4</span>
+                  <span className="hero-badge-text">Mandarin Chinese · English explanations</span>
                 </div>
                 <h1 className="hero-title">
                   {user ? (
                     <>Welcome back, <span className="hero-highlight">{user.name}</span>!</>
                   ) : (
                     <>
-                      चिनियाँ भाषा सिक्नुहोस्,{' '}
-                      <span className="hero-highlight">सजिलै र प्रभावकारी रूपमा।</span>
+                      Learn Chinese,{' '}
+                      <span className="hero-highlight">one clear step at a time.</span>
                     </>
                   )}
                 </h1>
                 <p className="hero-subtitle">
-                  From your first nǐ hǎo to your next HSK milestone. Learn with Nepali explanations, guided lessons, and pronunciation you can hear and practice.
+                  From your first nǐ hǎo to your next HSK milestone. Learn with English explanations, guided lessons, and pronunciation you can hear and practice.
                 </p>
                 <div className="hero-actions">
                   {!user ? (
@@ -51,8 +51,8 @@ export default function HomeHero({ goHome, handleVideoToggle, heroVideoRef, isPl
                       </svg>
                     </div>
                     <div className="stat-text-wrap">
-                      <strong>Made for Nepal</strong>
-                      <span>Learn with Nepali support</span>
+                      <strong>English explanations</strong>
+                      <span>Clear guidance at every step</span>
                     </div>
                   </div>
 
@@ -137,9 +137,9 @@ export default function HomeHero({ goHome, handleVideoToggle, heroVideoRef, isPl
                     </div>
                     <div className="card-characters zh">你好</div>
                     <div className="card-meaning-line">
-                      <span className="card-nepali ne">नमस्ते</span>
+                      <span className="card-translation en">Hello</span>
                       <span className="card-dot">•</span>
-                      <span className="card-english">hello · greeting</span>
+                      <span className="card-english">a friendly greeting</span>
                     </div>
                   </div>
 

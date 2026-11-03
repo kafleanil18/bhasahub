@@ -9,7 +9,7 @@
 .home-page .hero-badge { padding: 0; border: 0; background: none; box-shadow: none; margin-bottom: 28px; }
 .home-page .hero-badge-dot { animation: none; box-shadow: none; background: var(--jade); flex-shrink: 0; }
 .home-page .hero-badge-text { color: var(--jade); font-size: 13px; }
-.home-page .hero-title { font-family: 'Noto Serif Devanagari', 'Fraunces', serif; font-size: clamp(32px, 3.5vw, 48px); line-height: 1.55; letter-spacing: -.035em; text-wrap: balance; }
+.home-page .hero-title { font-family: 'Fraunces', serif; font-size: clamp(32px, 3.5vw, 48px); line-height: 1.2; letter-spacing: -.035em; text-wrap: balance; }
 .home-page .hero-highlight { background: none; color: var(--seal); -webkit-text-fill-color: currentColor; }
 .home-page .hero-subtitle { font-size: 16px; line-height: 1.85; color: var(--ink); opacity: .8; margin: 16px 0 28px; }
 .home-page .hero-actions { gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }

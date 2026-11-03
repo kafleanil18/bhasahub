@@ -9,7 +9,7 @@ export default function WordOfTheDay({ isPlayingWotd, playWotdAudio, wotd }) {
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                     </svg>
-                    <span>Daily Vocabulary Spotlight · दिनको शब्द</span>
+                    <span>Daily Vocabulary Spotlight</span>
                   </div>
                   <p className="wotd-subheading">One essential word every single day to expand your vocabulary effortlessly.</p>
                 </div>
@@ -41,7 +41,6 @@ export default function WordOfTheDay({ isPlayingWotd, playWotdAudio, wotd }) {
 
                     <span className="wotd-word zh">{wotd.zh}</span>
                     <div className="wotd-pinyin">{wotd.zhP}</div>
-                    <div className="wotd-meaning">"{wotd.meaning}"</div>
                   </div>
 
                   <div className="wotd-card-divider" aria-hidden="true">
@@ -50,15 +49,14 @@ export default function WordOfTheDay({ isPlayingWotd, playWotdAudio, wotd }) {
                     <div className="divider-line"></div>
                   </div>
 
-                  <div className="wotd-card ne-card">
+                  <div className="wotd-card en-card">
                     <div className="wotd-card-top">
-                      <span className="wotd-lang-tag">Nepali Translation</span>
-                      <span className="wotd-nepali-badge">नेपाली अर्थ</span>
+                      <span className="wotd-lang-tag">English Translation</span>
+                      <span className="wotd-english-badge">English meaning</span>
                     </div>
 
-                    <span className="wotd-word ne">{wotd.ne}</span>
-                    <div className="wotd-pinyin">{wotd.neP}</div>
-                    <div className="wotd-meaning">"{wotd.meaning}"</div>
+                    <span className="wotd-word en">{wotd.meaning}</span>
+                    <div className="wotd-meaning">The meaning of {wotd.zh}</div>
                   </div>
                 </div>
               </div>

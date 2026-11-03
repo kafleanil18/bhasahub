@@ -510,7 +510,7 @@ function LessonManager({ course, onBack }) {
           <h2>{editingWordId ? 'Edit word' : 'Add a word'}</h2>
           <label>
             Word (script)
-            <input value={word} onChange={(e) => setWord(e.target.value)} placeholder="你好 or नमस्ते" />
+            <input value={word} onChange={(e) => setWord(e.target.value)} placeholder="你好" />
           </label>
           <label>
             Pronunciation
@@ -561,7 +561,7 @@ function LessonManager({ course, onBack }) {
               onDrop={handleDrop}
             >
               <span className="drag-handle" title="Drag to reorder">⠿</span>
-              <span className={`row-glyph ${course.language === 'chinese' ? 'zh' : 'ne'}`}>{w.word}</span>
+              <span className={`row-glyph ${course.language === 'chinese' ? 'zh' : 'en'}`}>{w.word}</span>
               <div className="row-info">
                 <strong>{w.pronunciation}</strong>
                 <span>{w.meaning}</span>
@@ -596,10 +596,10 @@ function LessonManager({ course, onBack }) {
       <button className="back-btn" onClick={onBack}>← Back to courses</button>
 
       <div className="course-head">
-        <span className={`glyph ${course.language === 'chinese' ? 'zh' : 'ne'}`}>
+        <span className={`glyph ${course.language === 'chinese' ? 'zh' : 'en'}`}>
           {course.glyph && course.glyph.trim().length > 0 && course.glyph.trim().length <= 2 
             ? course.glyph 
-            : (course.language === 'chinese' ? '中' : 'ने')}
+            : (course.language === 'chinese' ? '中' : 'EN')}
         </span>
         <div>
           <h1 className="section-title">{course.title}</h1>

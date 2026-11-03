@@ -47,8 +47,8 @@ function SrsReview({ lessonId, language, token, onExit }) {
       const utterance = new SpeechSynthesisUtterance(card.word);
       if (language === 'chinese') {
         utterance.lang = 'zh-CN';
-      } else if (language === 'nepali') {
-        utterance.lang = 'ne-NP';
+      } else {
+        utterance.lang = 'en-US';
       }
       window.speechSynthesis.speak(utterance);
     }
@@ -159,7 +159,7 @@ function SrsReview({ lessonId, language, token, onExit }) {
         onClick={() => setFlipped(!flipped)}
       >
         <div className="flash-front">
-          <span className={`flash-word ${language === 'chinese' ? 'zh' : 'ne'}`}>{card.word}</span>
+          <span className={`flash-word ${language === 'chinese' ? 'zh' : 'en'}`}>{card.word}</span>
           <button
             type="button"
             className="flash-repeat-icon-btn"

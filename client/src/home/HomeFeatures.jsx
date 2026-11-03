@@ -7,7 +7,7 @@ export default function HomeFeatures({ isPlayingFeatureAudio, playFeatureSample 
                 <span className="section-kicker">Built for Real Fluency</span>
                 <h2 className="section-title">Everything you need to master Chinese</h2>
                 <p className="section-sublead">
-                  Designed specifically for Nepali learners with native audio, phonetic clarity, and logical step-by-step milestones.
+                  Learn Chinese with English explanations, pronunciation audio, and clear step-by-step milestones.
                 </p>
               </div>
 
@@ -26,7 +26,7 @@ export default function HomeFeatures({ isPlayingFeatureAudio, playFeatureSample 
                   </div>
                   <h3>Pronunciation & Script</h3>
                   <p>
-                    Start from zero with Pinyin and Devanagari — every character introduced with tone pitch contours you can replicate accurately.
+                    Start with pinyin, tones, and Chinese characters, then build clear pronunciation step by step.
                   </p>
                   <div className="feature-visual tone-visual" aria-label="Chinese 4 tones pitch guide">
                     <div className="tone-pill"><span className="tone-mark">—</span> 1st: High</div>

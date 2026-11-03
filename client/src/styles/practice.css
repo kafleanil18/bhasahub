@@ -707,7 +707,7 @@
   color: var(--mist);
 }
 
-.card-nepali {
+.card-translation {
   font-weight: 600;
   color: var(--ink);
 }
@@ -784,138 +784,6 @@
 .tag-locked {
   color: var(--mist);
   border-color: var(--line);
-}
-
-/* ---------- Language choice ---------- */
-.lang-choice {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 24px;
-  background:
-    radial-gradient(circle at 20% 30%, rgba(201, 154, 60, 0.18), transparent 45%),
-    radial-gradient(circle at 80% 70%, rgba(0, 0, 0, 0.15), transparent 50%),
-    linear-gradient(135deg, #c8362a, #a02318);
-}
-
-.lang-choice-inner {
-  text-align: center;
-  max-width: 800px;
-}
-
-.lang-choice-title {
-  font-family: 'Fraunces', serif;
-  font-size: 40px;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #faf6ec;
-}
-
-.lang-choice-title span {
-  color: var(--gold);
-}
-
-.lang-choice-sub {
-  color: rgba(250, 246, 236, 0.85);
-  font-size: 18px;
-  margin-bottom: 48px;
-}
-
-.lang-options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
-
-.lang-option {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 48px 32px;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-top: 3px solid var(--gold);
-  border-radius: 16px;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.lang-option:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 18px 36px rgba(42, 35, 32, 0.12);
-  border-color: var(--seal);
-}
-
-.lang-glyph {
-  font-size: 56px;
-  line-height: 1;
-}
-
-.lang-label {
-  font-family: 'Fraunces', serif;
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--ink);
-}
-
-.lang-note {
-  font-size: 14px;
-  color: var(--mist);
-}
-
-/* ---------- Nepali placeholder ---------- */
-.nepali-page {
-  padding: 48px 24px 80px;
-}
-
-.nepali-hero {
-  text-align: center;
-  padding: 40px 0;
-  max-width: 640px;
-  margin: 0 auto;
-}
-
-.nepali-glyph {
-  font-size: 72px;
-  display: block;
-  margin-bottom: 16px;
-}
-
-.nepali-status-box {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 28px 24px;
-  margin: 32px auto;
-  box-shadow: 0 10px 24px rgba(42, 35, 32, 0.06);
-}
-
-.nepali-status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--rice);
-  color: var(--seal);
-  font-size: 13px;
-  font-weight: 600;
-  padding: 5px 14px;
-  border-radius: 999px;
-  margin-bottom: 14px;
-}
-
-.nepali-status-text {
-  font-size: 15px;
-  color: var(--mist);
-  line-height: 1.65;
-  margin-bottom: 20px;
-}
-
-.nepali-actions {
-  display: flex;
-  justify-content: center;
 }
 
 /* ---------- Lesson dialogue ---------- */

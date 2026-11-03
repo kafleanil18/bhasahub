@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const courseSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    language: { type: String, enum: ['chinese', 'nepali'], required: true },
+    language: { type: String, enum: ['chinese'], required: true },
     level: { type: String, default: 'Beginner' },
     description: { type: String, default: '' },
     glyph: { type: String, default: '' },

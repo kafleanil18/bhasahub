@@ -7,7 +7,7 @@ export default function HomeTestimonials({ scrollTestimonials, setShowTestimonia
               <div className="section-header-center">
                 <span className="section-kicker">Student Reviews</span>
                 <h2 className="section-title">Real Results from Real Learners</h2>
-                <p className="section-sublead">Hear how Nepali learners are achieving conversational fluency and confidence in Chinese.</p>
+                <p className="section-sublead">Hear how learners are building conversational fluency and confidence in Chinese.</p>
               </div>
               {testimonials.length === 0 ? (
                 <p className="courses-empty">Be the first to share your experience!</p>

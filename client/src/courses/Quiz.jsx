@@ -338,7 +338,7 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
 
       {/* 2. Question word details */}
       <div className="quiz-question">
-        <span className={`quiz-word ${language === 'chinese' ? 'zh' : 'ne'}`}>
+        <span className={`quiz-word ${language === 'chinese' ? 'zh' : 'en'}`}>
           {q.word.word}
         </span>
         <span className="quiz-pron">{q.word.pronunciation}</span>

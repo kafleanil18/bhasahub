@@ -41,8 +41,8 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, co
       const utterance = new SpeechSynthesisUtterance(currentWord.word);
       if (course?.language === 'chinese') {
         utterance.lang = 'zh-CN';
-      } else if (course?.language === 'nepali') {
-        utterance.lang = 'ne-NP';
+      } else {
+        utterance.lang = 'en-US';
       }
       window.speechSynthesis.speak(utterance);
     }
@@ -305,7 +305,7 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, co
             onClick={() => setFlipped(!flipped)}
           >
             <div className="flash-front">
-              <span className={`flash-word ${course.language === 'chinese' ? 'zh' : 'ne'}`}>
+              <span className={`flash-word ${course.language === 'chinese' ? 'zh' : 'en'}`}>
                 {words[flashIndex].word}
               </span>
               <button
@@ -396,7 +396,7 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, co
         {words.map((w) => (
           <div className="vocab-card" key={w._id}>
             <span className="annotation">{w.pronunciation}</span>
-            <span className={`word ${course.language === 'chinese' ? 'zh' : 'ne'}`}>
+            <span className={`word ${course.language === 'chinese' ? 'zh' : 'en'}`}>
               {w.word}
             </span>
             <span className="meaning">{w.meaning}</span>

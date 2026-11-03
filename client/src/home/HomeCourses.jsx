@@ -45,10 +45,10 @@ export default function HomeCourses({ filteredCourses, hskLevels, levelFilter, o
                           <img className="course-card-img" src={mediaUrl(c.image)} alt={c.title} />
                         ) : (
                           <div className="course-card-glyph">
-                            <span className={c.language === 'chinese' ? 'zh' : 'ne'}>
+                            <span className={c.language === 'chinese' ? 'zh' : 'en'}>
                               {c.glyph && c.glyph.trim().length > 0 && c.glyph.trim().length <= 2
                                 ? c.glyph
-                                : (c.language === 'chinese' ? '中' : 'ने')}
+                                : (c.language === 'chinese' ? '中' : 'EN')}
                             </span>
                           </div>
                         )}

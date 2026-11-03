@@ -33,6 +33,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
     if (!title || !language) {
       return res.status(400).json({ error: 'Title and language are required' });
     }
+    if (language !== 'chinese') return res.status(400).json({ error: 'Only Chinese courses are supported' });
     const course = await Course.create({ title, language, level, description, glyph, image, published });
     logActivity(req, { action: 'create', resourceType: 'course', resourceId: course._id, label: course.title });
     res.status(201).json(course);
@@ -44,6 +45,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
 // PUT /api/courses/:id — admin: update a course
 router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
   try {
+    if (req.body.language !== undefined && req.body.language !== 'chinese') return res.status(400).json({ error: 'Only Chinese courses are supported' });
     const course = await Course.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!course) return res.status(404).json({ error: 'Course not found' });
     logActivity(req, { action: 'update', resourceType: 'course', resourceId: course._id, label: course.title });

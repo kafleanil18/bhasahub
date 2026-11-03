@@ -63,6 +63,7 @@ function GoogleAuthButton({ mode = 'signin', onSuccess, onError, setLoading }) {
 
           window.google.accounts.id.renderButton(containerRef.current, {
             type: 'standard',
+            locale: 'en',
             theme: 'outline',
             size: 'large',
             text: mode === 'signup' ? 'signup_with' : 'signin_with',

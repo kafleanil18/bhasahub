@@ -122,7 +122,7 @@ function ProgressAnalytics({ user, onBack }) {
     } else if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const ut = new SpeechSynthesisUtterance(wordObj.word);
-      ut.lang = isChineseWord(wordObj.word) ? 'zh-CN' : 'ne-NP';
+      ut.lang = isChineseWord(wordObj.word) ? 'zh-CN' : 'en-US';
       window.speechSynthesis.speak(ut);
     }
   };
@@ -450,7 +450,7 @@ function ProgressAnalytics({ user, onBack }) {
                   title="Click to reveal/hide translation"
                 >
                   <div className="vocab-card-header">
-                    <span className={`vocab-word-text ${isZh ? 'zh' : 'ne'}`}>
+                    <span className={`vocab-word-text ${isZh ? 'zh' : 'en'}`}>
                       {w.word}
                     </span>
                     <div className="vocab-action-group" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>

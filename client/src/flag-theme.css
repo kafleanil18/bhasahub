@@ -74,7 +74,7 @@
 :root .home-page .card-characters { color: #bd210d; }
 :root .home-page .card-pinyin-tag,
 :root .home-page .card-meaning-line,
-:root .home-page .card-nepali,
+:root .home-page .card-translation,
 :root .home-page .card-english { color: #161616; }
 :root .home-page .tone-indicator { background: var(--flag-yellow); color: #161616; }
 :root .home-page .hero-audio-btn { color: #bd210d; background: #ffffff; border-color: #bd210d; }
@@ -103,8 +103,8 @@
 :root .home-page .wotd-badge { background: var(--flag-yellow); color: #161616; border-color: var(--flag-yellow); box-shadow: none; }
 :root .home-page .wotd-card { background: var(--card); border: 1px solid var(--line); box-shadow: none; }
 :root .home-page .wotd-card.zh-card { border-top: 4px solid var(--flag-red); }
-:root .home-page .wotd-card.ne-card { border-top: 4px solid var(--flag-yellow); }
-:root .home-page .wotd-nepali-badge { background: var(--flag-yellow); color: #161616; }
+:root .home-page .wotd-card.en-card { border-top: 4px solid var(--flag-yellow); }
+:root .home-page .wotd-english-badge { background: var(--flag-yellow); color: #161616; }
 :root .home-page .wotd-word { color: var(--seal); }
 :root .home-page .testimonial-stars { color: var(--seal); }
 :root .home-page .testimonial-photo-placeholder { background: var(--flag-red); color: #ffffff; }

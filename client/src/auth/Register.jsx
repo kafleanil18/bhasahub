@@ -12,8 +12,8 @@ const WIDGET_WORDS = {
     {word: '再见', phonetic: 'zài jiàn', meaning: 'Goodbye' },
     {word: '请', phonetic: 'qǐng', meaning: 'Please'},
     {word: '对不起', phonetic: 'duì bù qǐ', meaning: 'Sorry'},
-    {word: '是', phonetic: 'shì', meaning: 'Yes / To be'},
-    {word: '不是', phonetic: 'bù shì', meaning: 'No / Not to be'},
+    {word: '是', phonetic: 'shì', meaning: 'To be'},
+    {word: '不是', phonetic: 'bù shì', meaning: 'Not to be'},
     {word: '我', phonetic: 'wǒ', meaning: 'I / Me'},
     {word: '你', phonetic: 'nǐ', meaning: 'You'},
     {word: '他', phonetic: 'tā', meaning: 'He / Him'},
@@ -26,11 +26,9 @@ const WIDGET_WORDS = {
     {word: '什么', phonetic: 'shén me', meaning: 'What'},
 
   ],
-  ne: [
-    { word: 'नमस्ते', phonetic: 'na·mas·te', meaning: 'Hello' },
-  
-  ]
+
 };
+WIDGET_WORDS.en = WIDGET_WORDS.zh.map(item => ({ word: item.meaning, phonetic: item.word, meaning: item.phonetic }));
 
 function Register({ onRegistered, onBack, onSwitch, onLogin }) {
   const [name, setName] = useState('');
@@ -85,7 +83,6 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
 
   const handleLangToggle = (lang) => {
     setWidgetLang(lang);
-    setWidgetIndex(0);
   };
 
   const handleSubmit = async (e) => {
@@ -144,11 +141,11 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
           <div className="welcome-header">
             <h2>Learn <span>中文</span></h2>
             <p className="welcome-subtitle">
-             हाम्रा  (Interactive) पाठहरू र अभ्यासहरूसँग आफ्नो यात्रा सुरु गर्नुहोस्। नयाँ vocabularies सिक्नुहोस्, उच्चारणको अभ्यास गर्नुहोस्, र चिनियाँ भाषाको सिक्नुहोस्।
+              Start learning Chinese with interactive lessons and exercises. Build your vocabulary, practice pronunciation, and learn useful sentence patterns.
             </p>
             <br></br>
             <p className="welcome-subtitle">
-              तपाईं पूर्ण रूपमा (Beginner) हुनुहुन्छ वा आफ्नो भाषा सीप अझ सुधार गर्न चाहनुहुन्छ भने, हाम्रो platform सामग्री र स्रोतहरू उपलब्ध गराउँछ। आजै सहभागी हुनुहोस् र आत्मविश्वासका साथ चिनियाँ भाषा सिक्न सुरु गर्नुहोस्।
+              Whether you are a complete beginner or building on what you know, follow clear English explanations and practice at your own pace.
             </p>
           </div>
 
@@ -165,15 +162,15 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
               </button>
               <button 
                 type="button"
-                className={`widget-tab ne-tab ${widgetLang === 'ne' ? 'active' : ''}`}
-                onClick={() => handleLangToggle('ne')}
+                className={`widget-tab en-tab ${widgetLang === 'en' ? 'active' : ''}`}
+                onClick={() => handleLangToggle('en')}
               >
-                Nepali नेपाली
+                English
               </button>
             </div>
 
             <div className="widget-word-container">
-              <div className={`word-main ${widgetLang === 'zh' ? 'zh' : 'ne'} ${widgetLang === 'zh' ? 'zh-color' : 'ne-color'}`}>
+              <div className={`word-main ${widgetLang === 'zh' ? 'zh' : 'en'} ${widgetLang === 'zh' ? 'zh-color' : 'en-color'}`}>
                 {currentWord.word}
               </div>
               <div className="word-phonetic">{currentWord.phonetic}</div>

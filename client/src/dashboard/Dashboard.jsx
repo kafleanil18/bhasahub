@@ -121,7 +121,7 @@ function Dashboard({ user, onOpenCourse, onBrowse }) {
         <div className="dash-empty-card">
           <div className="dash-empty-icon">📖</div>
           <h3>Start Your Language Journey Today</h3>
-          <p>You haven't enrolled in any courses yet. Browse our structured Mandarin and Nepali courses to begin learning.</p>
+          <p>You haven't enrolled in any courses yet. Browse our structured Mandarin Chinese courses to begin learning.</p>
           <button className="btn-primary" onClick={onBrowse}>Browse Available Courses</button>
         </div>
       )}
@@ -137,10 +137,10 @@ function Dashboard({ user, onOpenCourse, onBrowse }) {
             return (
               <div className="dash-course-card" key={c._id} onClick={() => onOpenCourse(c)}>
                 <div className="dash-card-banner">
-                  <span className={`dash-glyph-badge ${c.language === 'chinese' ? 'zh' : 'ne'}`}>
+                  <span className={`dash-glyph-badge ${c.language === 'chinese' ? 'zh' : 'en'}`}>
                     {c.glyph && c.glyph.trim().length > 0 && c.glyph.trim().length <= 2 
                       ? c.glyph 
-                      : (c.language === 'chinese' ? '中' : 'ने')}
+                      : (c.language === 'chinese' ? '中' : 'EN')}
                   </span>
                   <div className="dash-badge-group">
                     <span className="dash-level-pill">{c.level || 'HSK'}</span>

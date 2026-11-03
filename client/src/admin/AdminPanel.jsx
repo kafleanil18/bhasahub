@@ -151,8 +151,8 @@ function AdminPanel({ onBack, onManageLessons }) {
   const stats = useMemo(() => {
     const total = courses.length;
     const chinese = courses.filter((c) => c.language === 'chinese').length;
-    const nepali = courses.filter((c) => c.language === 'nepali').length;
-    return { total, chinese, nepali };
+    const published = courses.filter((c) => c.published).length;
+    return { total, chinese, published };
   }, [courses]);
 
   return (
@@ -510,10 +510,10 @@ function AdminPanel({ onBack, onManageLessons }) {
           font-family: 'Noto Serif SC', serif;
         }
 
-        .row-glyph.ne {
+        .row-glyph.en {
           background: linear-gradient(135deg, rgba(200, 54, 42, 0.08) 0%, rgba(122, 114, 102, 0.15) 100%);
           color: var(--seal);
-          font-family: 'Noto Serif Devanagari', serif;
+          font-family: inherit;
         }
 
         .row-info {
@@ -652,10 +652,10 @@ function AdminPanel({ onBack, onManageLessons }) {
           </div>
         </div>
         <div className="metric-card">
-          <div className="metric-icon seal">ने</div>
+          <div className="metric-icon seal">✓</div>
           <div className="metric-details">
-            <span className="metric-value">{stats.nepali}</span>
-            <span className="metric-label">Nepali Paths</span>
+            <span className="metric-value">{stats.published}</span>
+            <span className="metric-label">Published Paths</span>
           </div>
         </div>
       </div>
@@ -674,7 +674,6 @@ function AdminPanel({ onBack, onManageLessons }) {
             <label>Language</label>
             <select value={language} onChange={(e) => setLanguage(e.target.value)}>
               <option value="chinese">Chinese</option>
-              <option value="nepali">Nepali</option>
             </select>
           </div>
 
@@ -690,7 +689,7 @@ function AdminPanel({ onBack, onManageLessons }) {
 
           <div className="admin-form-group">
             <label>Card glyph</label>
-            <input value={glyph} onChange={(e) => setGlyph(e.target.value)} placeholder="你好 or नमस्ते" />
+            <input value={glyph} onChange={(e) => setGlyph(e.target.value)} placeholder="你好" />
           </div>
 
           <div className="admin-form-group">
@@ -748,10 +747,10 @@ function AdminPanel({ onBack, onManageLessons }) {
             {courses.map((c) => (
               <div className="admin-row" key={c._id}>
                 <div className="row-left-group">
-                  <span className={`row-glyph ${c.language === 'chinese' ? 'zh' : 'ne'}`}>
+                  <span className={`row-glyph ${c.language === 'chinese' ? 'zh' : 'en'}`}>
                     {c.glyph && c.glyph.trim().length > 0 && c.glyph.trim().length <= 2 
                       ? c.glyph 
-                      : (c.language === 'chinese' ? '中' : 'ने')}
+                      : (c.language === 'chinese' ? '中' : 'EN')}
                   </span>
                   
                   <div className="row-info">

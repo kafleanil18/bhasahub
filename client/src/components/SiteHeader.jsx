@@ -1,9 +1,9 @@
-export default function SiteHeader({ setShowListeningPractice, adminSidebarOpen, changeLanguage, darkMode, goHome, handleLogout, isAdmin, isSuperAdmin, language, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowClassCalendar, setShowConversationPractice, setShowDashboard, setShowFeedback, setShowHanziTrace, setShowLangMenu, setShowPinyinPage, setShowPracticeMenu, setShowSubscriptions, setShowTests, setShowToneScorer, setShowUserMenu, showLangMenu, showPracticeMenu, showUserMenu, unreadFeedbackCount, user }) {
+export default function SiteHeader({ setShowListeningPractice, adminSidebarOpen, darkMode, goHome, handleLogout, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowClassCalendar, setShowConversationPractice, setShowDashboard, setShowFeedback, setShowHanziTrace, setShowPinyinPage, setShowPracticeMenu, setShowSubscriptions, setShowTests, setShowToneScorer, setShowUserMenu, showPracticeMenu, showUserMenu, unreadFeedbackCount, user }) {
   return (
     <header className="site-header">
         <div className="container header-row">
           <div className="header-left">
-            <button className="logo brand-logo" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); setShowLangMenu(false); setShowUserMenu(false); goHome(); }}>
+            <button className="logo brand-logo" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); setShowUserMenu(false); goHome(); }}>
               <span className="brand-seal" aria-hidden="true">汉</span>
               <span className="brand-title">
                 Learn Chinese with <span className="brand-accent">Anil</span>
@@ -15,7 +15,7 @@ export default function SiteHeader({ setShowListeningPractice, adminSidebarOpen,
             <div className="nav-links">
               {user ? (
                 <>
-                  <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); setShowLangMenu(false); goHome(); setShowDashboard(true); }}>
+                  <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowDashboard(true); }}>
                     <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                       <polyline points="2 17 12 22 22 17"></polyline>
@@ -24,14 +24,14 @@ export default function SiteHeader({ setShowListeningPractice, adminSidebarOpen,
                     <span>My Courses</span>
                   </button>
 
-                  <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); setShowLangMenu(false); goHome(); setShowAnalytics(true); }}>
+                  <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowAnalytics(true); }}>
                     <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                     </svg>
                     <span>My Progress</span>
                   </button>
 
-                  <a className="nav-link" href="#courses" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); setShowLangMenu(false); goHome(); }}>
+                  <a className="nav-link" href="#courses" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); }}>
                     <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"></path>
                       <path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"></path>
@@ -40,7 +40,7 @@ export default function SiteHeader({ setShowListeningPractice, adminSidebarOpen,
                   </a>
                 </>
               ) : (
-                <a className="nav-link" href="#courses" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); setShowLangMenu(false); goHome(); }}>
+                <a className="nav-link" href="#courses" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); }}>
                   <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"></path>
                     <path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"></path>
@@ -52,7 +52,7 @@ export default function SiteHeader({ setShowListeningPractice, adminSidebarOpen,
               <div className="nav-dropdown-wrapper">
                 <button
                   className={`nav-link nav-dropdown-trigger ${showPracticeMenu ? 'active' : ''}`}
-                  onClick={() => { setShowPracticeMenu(!showPracticeMenu); setShowLangMenu(false); }}
+                  onClick={() => { setShowPracticeMenu(!showPracticeMenu); }}
                   aria-expanded={showPracticeMenu}
                 >
                   <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -122,65 +122,14 @@ export default function SiteHeader({ setShowListeningPractice, adminSidebarOpen,
                 )}
               </div>
 
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); setShowLangMenu(false); setShowFeedback(true); }}>
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); setShowFeedback(true); }}>
                 <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                 </svg>
                 <span>Message us</span>
               </button>
 
-              <div className="nav-dropdown-wrapper">
-                <button
-                  type="button"
-                  className={`nav-link nav-dropdown-trigger lang-picker-trigger ${showLangMenu ? 'active' : ''}`}
-                  onClick={() => { setShowLangMenu(!showLangMenu); setShowPracticeMenu(false); }}
-                  aria-expanded={showLangMenu}
-                  title="Choose Language Track"
-                >
-                  <span className="lang-icon" aria-hidden="true">{language === 'chinese' ? '🇨🇳' : '🇳🇵'}</span>
-                  <span>{language === 'chinese' ? 'Chinese' : 'Nepali'}</span>
-                  <span className={`caret ${showLangMenu ? 'open' : ''}`}>▾</span>
-                </button>
-
-                {showLangMenu && (
-                  <div className="nav-dropdown-menu lang-dropdown-menu">
-                    <button
-                      type="button"
-                      className={`nav-dropdown-item ${language === 'chinese' ? 'is-active-lang' : ''}`}
-                      onClick={() => {
-                        changeLanguage('chinese');
-                        setShowLangMenu(false);
-                        setMobileMenuOpen(false);
-                        goHome();
-                      }}
-                    >
-                      <span className="lang-dropdown-flag" aria-hidden="true">🇨🇳</span>
-                      <div className="lang-dropdown-col">
-                        <span className="lang-dropdown-name">Learn Chinese</span>
-                        <span className="lang-dropdown-sub">HSK 1–4 · PinYin & Audio</span>
-                      </div>
-                      {language === 'chinese' && <span className="lang-active-check" aria-hidden="true">✓</span>}
-                    </button>
-
-                    <button
-                      type="button"
-                      className={`nav-dropdown-item ${language === 'nepali' ? 'is-active-lang' : ''}`}
-                      onClick={() => {
-                        changeLanguage('nepali');
-                        setShowLangMenu(false);
-                        setMobileMenuOpen(false);
-                      }}
-                    >
-                      <span className="lang-dropdown-flag" aria-hidden="true">🇳🇵</span>
-                      <div className="lang-dropdown-col">
-                        <span className="lang-dropdown-name">Learn Nepali</span>
-                        <span className="lang-dropdown-tag">Coming Soon</span>
-                      </div>
-                      {language === 'nepali' && <span className="lang-active-check" aria-hidden="true">✓</span>}
-                    </button>
-                  </div>
-                )}
-              </div>
+              <span className="nav-language-note" title="Chinese courses with English explanations">English explanations</span>
             </div>
 
             {/* Mobile Drawer Actions (shown inside mobile drawer) */}

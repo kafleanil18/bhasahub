@@ -284,3 +284,17 @@ test('students cannot approve or deny subscription requests', () => {
     assert.equal(allowed, true);
   }
 });
+
+test('course management keeps Chinese as the only learning track', async () => {
+  const Course = require('../models/Course');
+  await assert.doesNotReject(new Course({ title: 'HSK 1', language: 'chinese' }).validate());
+  await assert.rejects(new Course({ title: 'Other track', language: 'english' }).validate(), error => Boolean(error.errors.language));
+  mock(Course, 'create', () => assert.fail('unsupported course must not be created'));
+  mock(Course, 'findByIdAndUpdate', () => assert.fail('unsupported language must not be saved'));
+  let res = response();
+  await handler('../routes/courses', '/', 'post')({ body: { title: 'Other track', language: 'english' } }, res);
+  assert.equal(res.code, 400);
+  res = response();
+  await handler('../routes/courses', '/:id', 'put')({ params: { id: 'course' }, body: { language: 'english' } }, res);
+  assert.equal(res.code, 400);
+});

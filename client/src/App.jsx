@@ -23,8 +23,6 @@ const LessonManager = lazy(() => import('./admin/LessonManager'));
 const ClassCalendarPage = lazy(() => import('./dashboard/ClassCalendar'));
 const Dashboard = lazy(() => import('./dashboard/Dashboard'));
 const ProgressAnalytics = lazy(() => import('./dashboard/ProgressAnalytics'));
-const LanguageChoice = lazy(() => import('./practice/LanguageChoice'));
-const NepaliPage = lazy(() => import('./practice/NepaliPage'));
 const PinyinPage = lazy(() => import('./practice/PinyinPage'));
 const ChangePassword = lazy(() => import('./auth/ChangePassword'));
 const FeedbackModal = lazy(() => import('./components/FeedbackModal'));
@@ -53,15 +51,6 @@ function AppContent() {
   );
   const wotd = wotdList[dayOfYear % wotdList.length];
 
-  const [language, setLanguage] = useState(() => localStorage.getItem('bhasha_language') || 'chinese');
-  const [showLangMenu, setShowLangMenu] = useState(false);
-
-  const changeLanguage = (lang) => {
-    setLanguage(lang);
-    if (lang) {
-      localStorage.setItem('bhasha_language', lang);
-    }
-  };
   const [serverOk, setServerOk] = useState(null);
   const [user, setUser] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
@@ -231,7 +220,6 @@ function AppContent() {
     const handleGlobalClick = (e) => {
       if (!e.target.closest('.nav-dropdown-wrapper')) {
         setShowPracticeMenu(false);
-        setShowLangMenu(false);
       }
       if (!e.target.closest('.user-menu')) {
         setShowUserMenu(false);
@@ -440,7 +428,6 @@ function AppContent() {
     setShowTeamManager(false);
     setAdminSidebarOpen(false);
     setShowPracticeMenu(false);
-    setShowLangMenu(false);
     setShowToneScorer(false);
     setShowListeningPractice(false);
     loadCourses();
@@ -496,7 +483,7 @@ function AppContent() {
     ? courses
     : courses.filter((c) => getHskLevel(c) === levelFilter);
 
-  // ---------- Password reset (reached via emailed link, before language/login) ----------
+  // ---------- Password reset (reached via emailed link, before login) ----------
   if (resetToken) {
     return (
       <ResetPassword
@@ -504,51 +491,10 @@ function AppContent() {
         onDone={() => {
           window.history.replaceState({}, '', window.location.pathname);
           setResetToken(null);
-          setLanguage('chinese');
           setAuthView('login');
           setShowLogin(true);
         }}
       />
-    );
-  }
-
-  // ---------- Optional Language choice screen (if explicitly chosen) ----------
-  if (language === 'choice') {
-    return <LanguageChoice onChoose={(lang) => { changeLanguage(lang); goHome(); }} />;
-  }
-
-  // ---------- Nepali placeholder ----------
-  if (language === 'nepali') {
-    return (
-      <>
-        <div className="ambient-background" aria-hidden="true">
-          <div className="ambient-orb orb-1"></div>
-          <div className="ambient-orb orb-2"></div>
-          <div className="ambient-orb orb-3"></div>
-          <div className="ambient-orb orb-4"></div>
-          <div className="ambient-mesh-grid"></div>
-
-        </div>
-
-        <header className="site-header">
-          <div className="container header-row">
-            <div className="header-left">
-              <button className="logo brand-logo" onClick={() => { changeLanguage('chinese'); goHome(); }}>
-                <span className="brand-seal brand-seal-ne" aria-hidden="true">ने</span>
-                <span className="brand-title">
-                  Learn Chinese with <span className="brand-accent">Anil</span>
-                </span>
-              </button>
-            </div>
-            <div className="header-right nav-actions">
-              <button className="nav-btn-primary" onClick={() => { changeLanguage('chinese'); goHome(); }}>
-                ← Switch to Chinese Courses
-              </button>
-            </div>
-          </div>
-        </header>
-        <NepaliPage onBack={() => { changeLanguage('chinese'); goHome(); }} />
-      </>
     );
   }
 
@@ -602,7 +548,7 @@ function AppContent() {
         </>
       )}
 
-      <SiteHeader setShowListeningPractice={setShowListeningPractice} adminSidebarOpen={adminSidebarOpen} changeLanguage={changeLanguage} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} language={language} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowClassCalendar={setShowClassCalendar} setShowConversationPractice={setShowConversationPractice} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowHanziTrace={setShowHanziTrace} setShowLangMenu={setShowLangMenu} setShowPinyinPage={setShowPinyinPage} setShowPracticeMenu={setShowPracticeMenu} setShowSubscriptions={setShowSubscriptions} setShowTests={setShowTests} setShowToneScorer={setShowToneScorer} setShowUserMenu={setShowUserMenu} showLangMenu={showLangMenu} showPracticeMenu={showPracticeMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
+      <SiteHeader setShowListeningPractice={setShowListeningPractice} adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowClassCalendar={setShowClassCalendar} setShowConversationPractice={setShowConversationPractice} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowHanziTrace={setShowHanziTrace} setShowPinyinPage={setShowPinyinPage} setShowPracticeMenu={setShowPracticeMenu} setShowSubscriptions={setShowSubscriptions} setShowTests={setShowTests} setShowToneScorer={setShowToneScorer} setShowUserMenu={setShowUserMenu} showPracticeMenu={showPracticeMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
 
       {!user && showLogin ? (
         <div>
