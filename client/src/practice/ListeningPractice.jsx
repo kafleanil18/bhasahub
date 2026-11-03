@@ -50,7 +50,7 @@ export default function ListeningPractice({ user, onBack, onSignIn }) {
     setFailedResource('lessons');
     setError('');
     readApi(`/lessons/course/${courseId}`, controller.signal)
-      .then(setLessons)
+      .then(data => setLessons(data.filter(lesson => (lesson.category || 'vocabulary') === 'vocabulary')))
       .catch(err => { if (!controller.signal.aborted) setError(err.message); })
       .finally(() => { if (!controller.signal.aborted) setLoading(''); });
     return () => controller.abort();
@@ -105,7 +105,7 @@ export default function ListeningPractice({ user, onBack, onSignIn }) {
             {loading && <p role="status" className="listening-muted">Loading {loading === 'words' ? 'recorded vocabulary' : loading}…</p>}
             {error && <div className="listening-error" role="alert"><p>{error}</p><button className="listening-secondary" onClick={() => { if (failedResource === 'courses') setCourseRetry(value => value + 1); else if (failedResource === 'lessons') setLessonRetry(value => value + 1); else setWordRetry(value => value + 1); }}>Try again</button></div>}
             {!loading && !error && !courses.length && <p role="status">No Chinese courses are available for your account yet. Ask your teacher for course access.</p>}
-            {!loading && !error && courseId && !lessons.length && <p role="status">This course has no published lessons yet.</p>}
+            {!loading && !error && courseId && !lessons.length && <p role="status">This course has no published vocabulary lessons yet.</p>}
             {!loading && !error && lessonId && <p role="status" className="listening-muted">{eligible ? `${words.length} recorded words available. Words without recordings are skipped.` : 'This lesson needs at least two recorded words with different meanings. Choose another lesson or ask your teacher to add recordings.'}</p>}
             <button className="listening-primary" disabled={!lessonId || !eligible || Boolean(loading) || Boolean(error)} onClick={() => setQuestions(createListeningQuiz(words))}>Start listening</button>
           </div>}

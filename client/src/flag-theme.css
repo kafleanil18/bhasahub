@@ -163,3 +163,10 @@
   color: #000000;
 }
 :root .home-page .continue-learning-icon { color: inherit; }
+
+:root .home-page .hero .pinyin-practice-btn,
+:root .home-page .hero .pinyin-practice-btn:hover {
+  background: var(--flag-red);
+  border-color: var(--flag-red);
+  color: #ffffff;
+}
