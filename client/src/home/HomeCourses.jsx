@@ -1,6 +1,6 @@
 import { mediaUrl } from '../utils/mediaUrl';
 
-export default function HomeCourses({ access, filteredCourses, hskLevels, levelFilter, openLogin, setActiveCourse, setLevelFilter, setLockedNotice, user }) {
+export default function HomeCourses({ filteredCourses, hskLevels, levelFilter, openLogin, setActiveCourse, setLevelFilter, user }) {
   return (
     <section className="courses-section" id="courses">
             <div className="container">
@@ -28,22 +28,15 @@ export default function HomeCourses({ access, filteredCourses, hskLevels, levelF
               ) : (
                 <div className="course-cards">
                   {filteredCourses.map((c) => {
-                    const a = access[c._id];
-                    const locked = user && a && !a.unlocked;
                     return (
                       <div
-                        className={`course-card ${locked ? 'card-locked' : ''}`}
+                        className="course-card"
                         key={c._id}
                         role="button"
                         tabIndex={0}
-                        aria-label={`${c.title}${locked ? ', complete the previous course to unlock' : ', view course'}`}
+                        aria-label={`${c.title}, view course`}
                         onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.currentTarget.click(); } }}
                         onClick={() => {
-                          if (locked) {
-                            setLockedNotice(`"${c.title}" is locked. Complete the prerequisite course to unlock it!`);
-                            setTimeout(() => setLockedNotice(null), 5000);
-                            return;
-                          }
                           if (!user) { openLogin(); return; }
                           setActiveCourse(c);
                         }}
@@ -63,12 +56,8 @@ export default function HomeCourses({ access, filteredCourses, hskLevels, levelF
                           <span className="course-card-eyebrow">{c.level} · Guided learning</span>
                           <h3 className="course-card-title">{c.title}</h3>
                           <p className="course-card-desc">{c.description}</p>
-                          {locked ? (
-                            <span className="tag tag-locked">🔒 Finish previous course</span>
-                          ) : (
-                            <span className="tag">{c.level}</span>
-                          )}
-                          <span className="course-card-link">{locked ? 'Keep learning to unlock' : 'View course'} <span aria-hidden="true">↗</span></span>
+                          <span className="tag">{c.level}</span>
+                          <span className="course-card-link">View course <span aria-hidden="true">↗</span></span>
                         </div>
                       </div>
                     );

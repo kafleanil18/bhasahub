@@ -1,4 +1,4 @@
-export default function SiteHeader({ adminSidebarOpen, changeLanguage, darkMode, goHome, handleLogout, isAdmin, isSuperAdmin, language, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowClassCalendar, setShowConversationPractice, setShowDashboard, setShowFeedback, setShowHanziTrace, setShowLangMenu, setShowPinyinPage, setShowPracticeMenu, setShowSubscriptions, setShowTests, setShowToneScorer, setShowUserMenu, showLangMenu, showPracticeMenu, showUserMenu, unreadFeedbackCount, user }) {
+export default function SiteHeader({ setShowListeningPractice, adminSidebarOpen, changeLanguage, darkMode, goHome, handleLogout, isAdmin, isSuperAdmin, language, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowClassCalendar, setShowConversationPractice, setShowDashboard, setShowFeedback, setShowHanziTrace, setShowLangMenu, setShowPinyinPage, setShowPracticeMenu, setShowSubscriptions, setShowTests, setShowToneScorer, setShowUserMenu, showLangMenu, showPracticeMenu, showUserMenu, unreadFeedbackCount, user }) {
   return (
     <header className="site-header">
         <div className="container header-row">
@@ -92,6 +92,12 @@ export default function SiteHeader({ adminSidebarOpen, changeLanguage, darkMode,
                         <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
                       </svg>
                       <span>Trace Characters</span>
+                    </button>
+                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowListeningPractice(true); }}>
+                      <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                        <path d="M3 14v-3a9 9 0 0 1 18 0v3M3 13h4v8H3zM17 13h4v8h-4z" />
+                      </svg>
+                      <span>Listening Practice</span>
                     </button>
                     {user && (
                       <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowConversationPractice(true); }}>

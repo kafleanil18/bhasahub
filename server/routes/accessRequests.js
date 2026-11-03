@@ -4,6 +4,7 @@ const AccessRequest = require('../models/AccessRequest');
 const Subscription = require('../models/Subscription');
 const Course = require('../models/Course');
 const User = require('../models/User');
+const Enrollment = require('../models/Enrollment');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { logActivity } = require('../utils/auditLog');
 
@@ -37,10 +38,10 @@ router.get('/my', requireAuth, async (req, res) => {
 router.post('/', requireAuth, async (req, res) => {
   try {
     const { courseId } = req.body;
-    if (!courseId) return res.status(400).json({ error: 'courseId is required' });
+    if (!Types.ObjectId.isValid(courseId)) return res.status(400).json({ error: 'A valid courseId is required' });
 
     const course = await Course.findById(courseId);
-    if (!course) return res.status(404).json({ error: 'Course not found' });
+    if (!course || !course.published) return res.status(404).json({ error: 'Course not found' });
 
     const now = new Date();
     const activeSub = await Subscription.findOne({ user: req.user.id, course: courseId, expiresAt: { $gt: now } });
@@ -89,6 +90,12 @@ router.put('/:id/approve', requireAuth, requireAdmin, async (req, res) => {
     );
     sub = granted || await Subscription.findById(sub._id);
 
+    await Enrollment.updateOne(
+      { user: request.user, course: request.course },
+      { $setOnInsert: { user: request.user, course: request.course } },
+      { upsert: true }
+    ).catch(err => { if (err.code !== 11000) throw err; });
+
     request.status = 'approved';
     await request.save();
 
@@ -112,12 +119,12 @@ router.put('/:id/approve', requireAuth, requireAdmin, async (req, res) => {
 // PUT /api/access-requests/:id/deny — admin: mark denied
 router.put('/:id/deny', requireAuth, requireAdmin, async (req, res) => {
   try {
-    const request = await AccessRequest.findByIdAndUpdate(
-      req.params.id,
+    const request = await AccessRequest.findOneAndUpdate(
+      { _id: req.params.id, status: 'pending' },
       { status: 'denied' },
       { new: true }
     ).populate('user', 'name').populate('course', 'title');
-    if (!request) return res.status(404).json({ error: 'Request not found' });
+    if (!request) return res.status(409).json({ error: 'Request is no longer pending' });
     logActivity(req, {
       action: 'deny',
       resourceType: 'access-request',

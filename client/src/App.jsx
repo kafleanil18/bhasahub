@@ -41,6 +41,7 @@ const AdminDashboard = lazy(() => import('./admin/AdminDashboard'));
 const AuditLog = lazy(() => import('./admin/AuditLog'));
 const HanziTracePage = lazy(() => import('./practice/HanziTracePage'));
 const ConversationPracticePage = lazy(() => import('./practice/ConversationPractice'));
+const ListeningPractice = lazy(() => import('./practice/ListeningPractice'));
 const ToneScorer = lazy(() => import('./practice/ToneScorer'));
 
 
@@ -114,6 +115,7 @@ function AppContent() {
   const [resetToken, setResetToken] = useState(() => new URLSearchParams(window.location.search).get('reset'));
   const [showPracticeMenu, setShowPracticeMenu] = useState(false);
   const [lockedNotice, setLockedNotice] = useState(null);
+  const [showListeningPractice, setShowListeningPractice] = useState(false);
   const [showToneScorer, setShowToneScorer] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
@@ -440,6 +442,7 @@ function AppContent() {
     setShowPracticeMenu(false);
     setShowLangMenu(false);
     setShowToneScorer(false);
+    setShowListeningPractice(false);
     loadCourses();
     loadAccess();
     loadTestimonials();
@@ -599,7 +602,7 @@ function AppContent() {
         </>
       )}
 
-      <SiteHeader adminSidebarOpen={adminSidebarOpen} changeLanguage={changeLanguage} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} language={language} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowClassCalendar={setShowClassCalendar} setShowConversationPractice={setShowConversationPractice} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowHanziTrace={setShowHanziTrace} setShowLangMenu={setShowLangMenu} setShowPinyinPage={setShowPinyinPage} setShowPracticeMenu={setShowPracticeMenu} setShowSubscriptions={setShowSubscriptions} setShowTests={setShowTests} setShowToneScorer={setShowToneScorer} setShowUserMenu={setShowUserMenu} showLangMenu={showLangMenu} showPracticeMenu={showPracticeMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
+      <SiteHeader setShowListeningPractice={setShowListeningPractice} adminSidebarOpen={adminSidebarOpen} changeLanguage={changeLanguage} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} language={language} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowClassCalendar={setShowClassCalendar} setShowConversationPractice={setShowConversationPractice} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowHanziTrace={setShowHanziTrace} setShowLangMenu={setShowLangMenu} setShowPinyinPage={setShowPinyinPage} setShowPracticeMenu={setShowPracticeMenu} setShowSubscriptions={setShowSubscriptions} setShowTests={setShowTests} setShowToneScorer={setShowToneScorer} setShowUserMenu={setShowUserMenu} showLangMenu={showLangMenu} showPracticeMenu={showPracticeMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
 
       {!user && showLogin ? (
         <div>
@@ -634,6 +637,8 @@ function AppContent() {
         <TestimonialManager onBack={goAdminDashboard} />
       ) : showHanziTrace ? (
         <HanziTracePage user={user} token={localStorage.getItem('token')} onBack={goHome} />
+      ) : showListeningPractice ? (
+        <ListeningPractice user={user} onBack={goHome} onSignIn={openLogin} />
       ) : showToneScorer ? (
         <ToneScorer onBack={goHome} />
       ) : showPinyinPage ? (

@@ -7,6 +7,7 @@ const Attempt = require('../models/Attempt');
 const Lesson = require('../models/Lesson');
 const Subscription = require('../models/Subscription');
 const AccessRequest = require('../models/AccessRequest');
+const Enrollment = require('../models/Enrollment');
 const AuditLog = require('../models/AuditLog');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const restorations = [];
@@ -98,11 +99,19 @@ test('concurrent approval retries use a guarded subscription update', async () =
   mock(User, 'findById', () => ({ select: async () => ({ name: 'Student' }) }));
   mock(require('../models/Course'), 'findById', () => ({ select: async () => ({ title: 'Course' }) }));
   mock(AuditLog, 'create', async () => ({}));
+  let enrollments = 0;
+  mock(Enrollment, 'updateOne', async (filter, update, options) => {
+    assert.deepEqual(filter, { user: 'student', course: 'course' });
+    assert.deepEqual(update.$setOnInsert, filter);
+    assert.equal(options.upsert, true);
+    enrollments++;
+  });
   const run = handler('../routes/accessRequests', '/:id/approve', 'put');
   const req = { params: { id: 'request' }, body: { days: 30 }, user: { id: '507f1f77bcf86cd799439011' } };
   const responses = [response(), response()];
   await Promise.all(responses.map(res => run(req, res)));
   responses.forEach(res => assert.equal(res.code, 200));
+  assert.equal(enrollments, 2);
 });
 
 test('quiz grading derives missed words and rejects invented vocabulary IDs', async () => {
@@ -215,4 +224,63 @@ test('lesson review keeps access checks and clamps negative limits', async () =>
   const denied = response();
   await handler('../routes/srs', '/due')(req, denied);
   assert.equal(denied.code, 403);
+});
+
+
+test('subscription requests reject unpublished courses and reuse a pending request', async () => {
+  const Course = require('../models/Course');
+  const courseId = '507f1f77bcf86cd799439011';
+  const req = { user: { id: 'student' }, body: { courseId } };
+  const run = handler('../routes/accessRequests', '/', 'post');
+  mock(Course, 'findById', async () => ({ published: false }));
+  let res = response();
+  await run(req, res);
+  assert.equal(res.code, 404);
+  mock(Course, 'findById', async () => ({ published: true }));
+  mock(Subscription, 'findOne', async () => null);
+  const pending = { _id: 'pending', status: 'pending' };
+  mock(AccessRequest, 'findOne', async () => pending);
+  mock(AccessRequest, 'create', () => assert.fail('must not create duplicate request'));
+  res = response();
+  await run(req, res);
+  assert.equal(res.code, 200);
+  assert.equal(res.body, pending);
+});
+
+test('a student can request subscription without receiving access', async () => {
+  const courseId = '507f1f77bcf86cd799439011';
+  mock(require('../models/Course'), 'findById', async () => ({ published: true }));
+  mock(Subscription, 'findOne', async () => null);
+  mock(Subscription, 'create', () => assert.fail('request must not grant access'));
+  mock(Enrollment, 'updateOne', () => assert.fail('request must not enroll before approval'));
+  mock(AccessRequest, 'findOne', async () => null);
+  mock(AccessRequest, 'create', async data => data);
+  const res = response();
+  await handler('../routes/accessRequests', '/', 'post')({ user: { id: 'student' }, body: { courseId } }, res);
+  assert.equal(res.code, 201);
+  assert.deepEqual(res.body, { user: 'student', course: courseId, status: 'pending' });
+});
+
+test('denial only processes pending requests and does not grant a subscription', async () => {
+  mock(Subscription, 'create', () => assert.fail('denial must not grant access'));
+  mock(AccessRequest, 'findOneAndUpdate', filter => {
+    assert.equal(filter.status, 'pending');
+    return { populate() { return this; }, then(resolve) { resolve(null); } };
+  });
+  const res = response();
+  await handler('../routes/accessRequests', '/:id/deny', 'put')({ params: { id: 'request' } }, res);
+  assert.equal(res.code, 409);
+});
+
+test('students cannot approve or deny subscription requests', () => {
+  const router = require('../routes/accessRequests');
+  for (const path of ['/:id/approve', '/:id/deny']) {
+    const stack = router.stack.find(layer => layer.route?.path === path).route.stack;
+    const res = response();
+    stack[1].handle({ user: { role: 'student' } }, res, () => assert.fail('must reject student'));
+    assert.equal(res.code, 403);
+    let allowed = false;
+    stack[1].handle({ user: { role: 'superadmin' } }, response(), () => { allowed = true; });
+    assert.equal(allowed, true);
+  }
 });

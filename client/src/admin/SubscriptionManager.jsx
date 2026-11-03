@@ -101,11 +101,19 @@ function SubscriptionManager({ onBack }) {
 
   const denyRequest = async (id) => {
     if (!confirm('Deny this access request?')) return;
+    setError('');
+    setMessage('');
     try {
-      await fetch(`${API}/access-requests/${id}/deny`, { method: 'PUT', headers: authHeaders });
+      const res = await fetch(`${API}/access-requests/${id}/deny`, { method: 'PUT', headers: authHeaders });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || 'Could not deny subscription request');
+        return;
+      }
+      setMessage('Subscription request denied.');
       loadRequests();
     } catch {
-      // ignore
+      setError('Could not reach the server');
     }
   };
 

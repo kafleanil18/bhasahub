@@ -45,7 +45,7 @@ function CourseOverview({
     fetch(`${API}/access-requests/my`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then(res => res.json())
+      .then(res => { if (!res.ok) throw new Error(); return res.json(); })
       .then(data => {
         const mine = (Array.isArray(data) ? data : []).filter(r => r.course && r.course._id === course._id);
         const pending = mine.find(r => r.status === 'pending');
@@ -71,7 +71,8 @@ function CourseOverview({
       if (res.ok) {
         setRequestStatus('pending');
       } else {
-        setAccessRequestError('Could not send your access request.');
+        const data = await res.json();
+        setAccessRequestError(data.error || 'Could not send your subscription request.');
       }
     } catch {
       setAccessRequestError('Could not send your access request.');
@@ -123,7 +124,7 @@ function CourseOverview({
           <span className="tag" style={{ background: 'var(--jade)', color: '#fff', border: 'none' }}>
             {course.level}
           </span>
-          {user && (
+          {user && canOpenLessons && (
             <div className="enroll-wrap" style={{ marginTop: 14 }}>
               <button
                 className={enrolled ? 'nav-btn' : 'btn-primary'}
@@ -155,16 +156,16 @@ function CourseOverview({
                   <circle cx="12" cy="12" r="10"></circle>
                   <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
-                Access request sent — waiting for an admin to grant it.
+                Pending approval — your subscription request is waiting for review.
               </span>
             ) : (
               <>
                 <span>
                   🔒 You don't have access to this course yet.
-                  {requestStatus === 'denied' && ' Your previous request was denied.'}
+                  {requestStatus === 'denied' && ' Your subscription request was denied. You can submit a new request.'}
                 </span>
                 <button className="nav-btn" onClick={requestAccess} disabled={requestingAccess}>
-                  {requestingAccess ? 'Sending...' : 'Request access'}
+                  {requestingAccess ? 'Sending...' : requestStatus === 'denied' ? 'Request subscription again' : 'Subscribe to course'}
                 </button>
               </>
             )}
@@ -178,7 +179,7 @@ function CourseOverview({
         <div className="access-msg" style={{ margin: '20px 0 0' }}>
           <p>
             🔒 This lesson is locked. You need active access to open lessons.
-            Scroll up and click <strong>Request access</strong> to ask an admin to grant it.
+            Scroll up and click <strong>Subscribe to course</strong> to request approval.
           </p>
           <button className="nav-btn" onClick={onDismissAccessMsg}>Got it</button>
         </div>
