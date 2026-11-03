@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -24,6 +24,21 @@ function SubscriptionManager({ onBack }) {
 
   // list filter hooks
   const [listSearch, setListSearch] = useState('');
+  const grantFormRef = useRef(null);
+
+  const startGrant = (subscription) => {
+    setError('');
+    setMessage('');
+    if (subscription) {
+      setSelectedStudent(subscription.user);
+      setSelectedCourse(subscription.course._id);
+      setAmount(30);
+      setUnit('days');
+    }
+    grantFormRef.current?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    grantFormRef.current?.focus({ preventScroll: true });
+  };
+
   const [listStatus, setListStatus] = useState('all'); // all, active, expired
 
   const loadStudents = useCallback(async () => {
@@ -253,6 +268,8 @@ function SubscriptionManager({ onBack }) {
           box-shadow: 0 4px 12px rgba(42, 35, 32, 0.02);
           transition: transform 0.2s, box-shadow 0.2s;
         }
+        .subs-stat-action { width: 100%; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+        .subs-stat-action:focus-visible, .admin-form:focus-visible { outline: 2px solid var(--seal); outline-offset: 4px; }
         .subs-stat-card:hover {
           transform: translateY(-2px);
           box-shadow: 0 6px 16px rgba(42, 35, 32, 0.04);
@@ -649,13 +666,13 @@ function SubscriptionManager({ onBack }) {
 
       {/* 1. Statistics Cards */}
       <div className="subs-stats-grid">
-        <div className="subs-stat-card">
+        <button type="button" className="subs-stat-card subs-stat-action" onClick={() => startGrant()} aria-label="Active licenses — grant course access">
           <div className="subs-stat-icon active">✔</div>
           <div className="subs-stat-info">
             <span className="subs-stat-number">{activeCount}</span>
-            <span className="subs-stat-label">Active Licenses</span>
+            <span className="subs-stat-label">Active Licenses · Grant access</span>
           </div>
-        </div>
+        </button>
         <div className="subs-stat-card">
           <div className="subs-stat-icon expired">⏰</div>
           <div className="subs-stat-info">
@@ -725,7 +742,7 @@ function SubscriptionManager({ onBack }) {
       <div className="subs-manager-grid">
         
         {/* Left Column: Grant Access Form */}
-        <div className="admin-form">
+        <div className="admin-form" ref={grantFormRef} tabIndex={-1} aria-label="Grant course access" style={{ scrollMarginTop: '96px' }}>
           <h2>Grant course access</h2>
           
           {/* Student Picker */}
@@ -927,9 +944,16 @@ function SubscriptionManager({ onBack }) {
 
                   {/* Status Badges */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <span className={`pill ${isActive(sub) ? 'pill-live' : 'pill-draft'}`}>
+                    <button
+                      type="button"
+                      className={`pill ${isActive(sub) ? 'pill-live' : 'pill-draft'}`}
+                      onClick={() => startGrant(sub)}
+                      disabled={!sub.user || !sub.course}
+                      aria-label={`${isActive(sub) ? 'Active' : 'Expired'} — grant access for ${sub.user?.name || 'deleted student'} to ${sub.course?.title || 'deleted course'}`}
+                      title="Open grant access with this student and course selected"
+                    >
                       {isActive(sub) ? 'Active' : 'Expired'}
-                    </span>
+                    </button>
                     
                     <button
                       className="row-delete"
