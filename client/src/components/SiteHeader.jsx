@@ -129,7 +129,7 @@ export default function SiteHeader({ setShowListeningPractice, adminSidebarOpen,
                 <span>Message us</span>
               </button>
 
-              <span className="nav-language-note" title="Chinese courses with English explanations">English explanations</span>
+
             </div>
 
             {/* Mobile Drawer Actions (shown inside mobile drawer) */}
