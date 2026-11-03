@@ -12,7 +12,7 @@ Microphone recording requires HTTPS (or localhost), browser permission, and Medi
 
 Only super admins may record, replace, or remove audio. The server checks the current database role before parsing files. Saving validates the sentence ID, extension, MIME type, and size. Saves are limited to 100 per 15 minutes per IP. Failed saves preserve the existing recording. Replacing or removing a recording does not delete the old Cloudinary asset; it removes it from the sentence catalog. There are no bundled recordings: the super admin supplies them through this portal.
 
-The sentence bank and recording URLs are public practice content. Students do not need a subscription to use this tool, matching the public pinyin and tone practice tools. No audio plays automatically; students may listen before or after checking an answer.
+The sentence bank and recording URLs are public practice content. Students do not need a subscription to use this tool, matching the public pinyin and tone practice tools. Sentence audio plays automatically when a student checks a completed answer, whether correct or incorrect. No audio or playback controls are offered before answering. Students may replay the recording after checking. Advancing to the next sentence stops the previous recording.
 
 ## API
 

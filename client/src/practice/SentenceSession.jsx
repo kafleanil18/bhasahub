@@ -15,6 +15,7 @@ export default function SentenceSession({ initialSentences, onExit, onMastered }
   const audioRef = useRef(null);
   const titleRef = useRef(null);
   const lockedRef = useRef(false);
+  const playbackRef = useRef(0);
   const sentence = sentences[index];
 
   useEffect(() => { titleRef.current?.focus(); }, [index, finished, sentences]);
@@ -30,9 +31,11 @@ export default function SentenceSession({ initialSentences, onExit, onMastered }
     setFeedback(correct ? 'correct' : 'incorrect');
     if (correct) onMastered(sentence.id);
     else setMissed(previous => [...previous, sentence]);
+    void listen();
   }
 
   function advance() {
+    playbackRef.current++;
     audioRef.current?.pause();
     if (index === sentences.length - 1) setFinished(true);
     else { setIndex(index + 1); setTiles(sentenceTiles(sentences[index + 1])); }
@@ -57,12 +60,15 @@ export default function SentenceSession({ initialSentences, onExit, onMastered }
 
   async function listen() {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !lockedRef.current) return;
+    const attempt = ++playbackRef.current;
     setAudioError('');
     audio.pause();
     audio.currentTime = 0;
     try { await audio.play(); }
-    catch { setAudioError('Could not play the recording. Please try again.'); }
+    catch {
+      if (audioRef.current === audio && attempt === playbackRef.current) setAudioError('Could not play the recording. Tap Replay sentence to try again.');
+    }
   }
 
   if (finished) return <section className="sentence-card sentence-results" aria-labelledby="sentence-results-title">
@@ -93,7 +99,8 @@ export default function SentenceSession({ initialSentences, onExit, onMastered }
       <p className="sentence-chinese"><SentenceText sentence={sentence} /></p>
       <p>{sentence.explanation}</p>
     </div>}
-    {sentence.audioUrl ? <div className="sentence-recording"><audio ref={audioRef} src={mediaUrl(sentence.audioUrl)} preload="none" onError={() => setAudioError('The recording is unavailable. Please try again later.')} /><button className="sentence-secondary" onClick={listen}>▷ Listen to the sentence</button>{audioError && <p role="alert" className="sentence-error">{audioError}</p>}</div> : <p className="sentence-muted sentence-recording">Audio has not been added for this sentence yet.</p>}
+    {sentence.audioUrl && <audio key={sentence.id} ref={audioRef} src={mediaUrl(sentence.audioUrl)} preload="none" onError={() => setAudioError('The recording is unavailable. Please try again later.')} />}
+    {feedback && (sentence.audioUrl ? <div className="sentence-recording"><button className="sentence-secondary" onClick={listen}>▷ Replay sentence</button>{audioError && <p role="alert" className="sentence-error">{audioError}</p>}</div> : <p className="sentence-muted sentence-recording">Audio has not been added for this sentence yet.</p>)}
     {feedback && <button className="sentence-primary" onClick={advance}>{index === sentences.length - 1 ? 'See results' : 'Next sentence →'}</button>}
   </section>;
 }
