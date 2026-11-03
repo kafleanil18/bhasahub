@@ -282,19 +282,35 @@ function LessonManager({ course, onBack }) {
 
   const deleteLesson = async (id) => {
     if (!confirm('Delete this lesson AND all its words?')) return;
-    await fetch(`${API}/lessons/${id}`, { method: 'DELETE', headers: authHeaders });
-    if (activeLesson && activeLesson._id === id) setActiveLesson(null);
-    if (editingLessonId === id) resetLessonForm();
-    loadLessons();
+    setError('');
+    try {
+      const res = await fetch(`${API}/lessons/${id}`, { method: 'DELETE', headers: authHeaders });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Could not delete lesson');
+      if (activeLesson && activeLesson._id === id) setActiveLesson(null);
+      if (editingLessonId === id) resetLessonForm();
+      setLessons((current) => current.filter((lesson) => lesson._id !== id));
+      loadLessons();
+    } catch (err) {
+      setError(err.message || 'Could not delete lesson');
+    }
   };
 
   const toggleLesson = async (lesson) => {
-    await fetch(`${API}/lessons/${lesson._id}`, {
-      method: 'PUT',
-      headers: jsonHeaders,
-      body: JSON.stringify({ published: !lesson.published }),
-    });
-    loadLessons();
+    setError('');
+    try {
+      const res = await fetch(`${API}/lessons/${lesson._id}`, {
+        method: 'PUT',
+        headers: jsonHeaders,
+        body: JSON.stringify({ published: !lesson.published }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `Could not ${lesson.published ? 'unpublish' : 'publish'} lesson`);
+      setLessons((current) => current.map((item) => item._id === lesson._id ? data : item));
+      loadLessons();
+    } catch (err) {
+      setError(err.message || 'Could not update lesson status');
+    }
   };
 
   // ---------- words ----------
