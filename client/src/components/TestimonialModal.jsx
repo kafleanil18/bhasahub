@@ -13,21 +13,38 @@ function TestimonialModal({ user, onClose }) {
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
   const [sending, setSending] = useState(false);
+  const [photoUploading, setPhotoUploading] = useState(false);
 
   const uploadPhoto = async (file) => {
     if (!file) return;
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) {
+      setError('Choose a JPG, PNG, WEBP, or GIF image.');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Images must be 5 MB or smaller.');
+      return;
+    }
     const fd = new FormData();
     fd.append('file', file);
+    setError('');
+    setPhoto('');
+    setPhotoUploading(true);
     try {
-      const res = await fetch(`${API}/upload`, {
+      const res = await fetch(`${API}/testimonials/photo`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: fd,
       });
-      const data = await res.json();
-      if (res.ok) setPhoto(data.url);
-    } catch {
-      setError('Photo upload failed');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Photo upload failed');
+      if (!data.url) throw new Error('The image was uploaded, but its link is missing. Please try again.');
+      setPhoto(data.url);
+    } catch (err) {
+      setError(err.message || 'Photo upload failed');
+    } finally {
+      setPhotoUploading(false);
     }
   };
 
@@ -65,7 +82,8 @@ function TestimonialModal({ user, onClose }) {
           background: #ffffff; width: 100%; max-width: 480px; padding: 2.25rem;
           border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
           border: 1px solid rgba(229, 231, 235, 0.5); box-sizing: border-box;
-          position: relative; animation: tmSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          position: relative; max-height: calc(100dvh - 2rem); overflow-y: auto;
+          animation: tmSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .tm-close-corner {
           position: absolute; top: 20px; right: 20px; background: #f3f4f6;
@@ -102,10 +120,22 @@ function TestimonialModal({ user, onClose }) {
           display: flex; align-items: center; gap: 1rem;
         }
         .tm-file-input { font-size: 0.85rem; color: #4b5563; }
+        .tm-photo-status { color: #4b5563; font-size: 0.8rem; }
+        .tm-photo-remove { border: 0; background: none; color: #b42318; padding: 0; cursor: pointer; font: inherit; font-size: 0.8rem; }
         .tm-avatar-frame {
           width: 48px; height: 48px; border-radius: 50%; object-fit: cover;
           border: 2px solid #4f46e5; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.08);
         }
+        .tm-preview { margin: 0 0 1.25rem; padding: 1rem; border: 1px solid #e5e7eb; border-radius: 12px; background: #f9fafb; }
+        .tm-preview-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; margin-bottom: 0.75rem; }
+        .tm-preview-heading strong { color: #374151; font-size: 0.8rem; }
+        .tm-preview-heading span { color: #9ca3af; font-size: 0.72rem; }
+        .tm-preview-card { padding: 1rem; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; }
+        .tm-preview-stars { margin-bottom: 0.45rem; color: #f59e0b; letter-spacing: 0.08em; }
+        .tm-preview-quote { min-height: 2.8rem; margin: 0 0 0.9rem; color: #4b5563; font-size: 0.88rem; line-height: 1.55; overflow-wrap: anywhere; }
+        .tm-preview-person { display: flex; align-items: center; gap: 0.65rem; color: #111827; font-size: 0.84rem; font-weight: 600; }
+        .tm-preview-avatar { display: flex; width: 36px; height: 36px; flex: 0 0 36px; align-items: center; justify-content: center; border-radius: 50%; background: #eef2ff; color: #4f46e5; font-size: 0.85rem; }
+        .tm-preview-photo { width: 36px; height: 36px; flex: 0 0 36px; border-radius: 50%; object-fit: cover; }
         .tm-check-label {
           display: flex; align-items: flex-start; gap: 0.65rem; font-size: 0.875rem;
           color: #4b5563; line-height: 1.4; cursor: pointer; margin: 1.5rem 0;
@@ -189,19 +219,53 @@ function TestimonialModal({ user, onClose }) {
             </div>
 
             <div className="tm-group">
-              <label className="tm-label">Photo Asset <span style={{ fontWeight: 4, color: '#9ca3af' }}>(Optional)</span></label>
+              <label className="tm-label" htmlFor="testimonial-photo">Profile photo <span style={{ fontWeight: 400, color: '#9ca3af' }}>(Optional)</span></label>
               <div className="tm-upload-box">
                 {photo && (
                   <img src={mediaUrl(photo)} alt="User identity avatar" className="tm-avatar-frame" />
                 )}
-                <input 
+                <input
+                  id="testimonial-photo"
                   type="file" 
-                  accept="image/*" 
+                  accept=".jpg,.jpeg,.png,.webp,.gif,image/jpeg,image/png,image/webp,image/gif"
                   className="tm-file-input"
-                  onChange={(e) => uploadPhoto(e.target.files[0])} 
+                  onChange={(e) => {
+                    uploadPhoto(e.target.files[0]);
+                    e.target.value = '';
+                  }}
+                  disabled={photoUploading || sending}
                 />
+                {photoUploading && <span className="tm-photo-status" role="status">Uploading…</span>}
+                {photo && !photoUploading && (
+                  <button className="tm-photo-remove" type="button" onClick={() => setPhoto('')}>Remove photo</button>
+                )}
               </div>
             </div>
+
+            <section className="tm-preview" aria-label="Live testimonial preview">
+              <div className="tm-preview-heading">
+                <strong>Homepage preview</strong>
+                <span>Updates as you type</span>
+              </div>
+              <div className="tm-preview-card">
+                <div className="tm-preview-stars" role="img" aria-label={`${rating} out of 5 stars`}>
+                  {'★'.repeat(rating)}{'☆'.repeat(5 - rating)}
+                </div>
+                <p className="tm-preview-quote">
+                  {text.trim() ? `“${text.trim()}”` : 'Your testimonial will appear here as you write it.'}
+                </p>
+                <div className="tm-preview-person">
+                  {photo ? (
+                    <img src={mediaUrl(photo)} alt="" className="tm-preview-photo" />
+                  ) : (
+                    <span className="tm-preview-avatar" aria-hidden="true">
+                      {name.trim().charAt(0).toUpperCase() || 'Y'}
+                    </span>
+                  )}
+                  <span>{name.trim() || 'Your name'}</span>
+                </div>
+              </div>
+            </section>
 
             <label className="tm-check-label">
               <input 
@@ -213,8 +277,8 @@ function TestimonialModal({ user, onClose }) {
               <span>I give explicit permission to have this profile feedback review displayed publicly across matching channels.</span>
             </label>
 
-            <button className="tm-btn-submit" onClick={submit} disabled={sending}>
-              {sending ? 'Processing Verification...' : 'Submit Testimonial'}
+            <button className="tm-btn-submit" onClick={submit} disabled={sending || photoUploading}>
+              {sending ? 'Submitting…' : photoUploading ? 'Uploading photo…' : 'Submit Testimonial'}
             </button>
           </>
         )}
