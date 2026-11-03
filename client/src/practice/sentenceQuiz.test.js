@@ -1,0 +1,51 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { isCorrectSentence, sentenceTiles, shuffleSentences } from './sentenceQuiz.js';
+const catalog = JSON.parse(readFileSync(new URL('../../../server/data/hsk1Sentences.json', import.meta.url)));
+
+test('the bank contains 300 unique, complete sentences and 20 balanced topics', () => {
+  assert.equal(catalog.sentences.length, 300);
+  assert.equal(catalog.topics.length, 20);
+  assert.equal(new Set(catalog.sentences.map(sentence => sentence.id)).size, 300);
+  assert.equal(new Set(catalog.sentences.map(sentence => sentence.chinese)).size, 300);
+  for (const topic of catalog.topics) assert.equal(catalog.sentences.filter(sentence => sentence.topicId === topic.id).length, 15);
+  for (const [index, sentence] of catalog.sentences.entries()) {
+    assert.equal(sentence.id, `hsk1-${String(index + 1).padStart(3, '0')}`);
+    assert.ok(sentence.tokens.length >= 3);
+    assert.equal(sentence.tokens.join(''), sentence.chinese.slice(0, -1));
+    assert.match(sentence.chinese, /[。？]$/);
+    assert.ok(sentence.pinyin && sentence.english && sentence.explanation);
+    assert.ok(catalog.topics.some(topic => topic.id === sentence.topicId));
+    assert.equal(isCorrectSentence(sentence, sentence.tokens), true);
+    for (const alternative of sentence.acceptedOrders || []) {
+      assert.deepEqual([...alternative].sort(), [...sentence.tokens].sort());
+      assert.equal(isCorrectSentence(sentence, alternative), true);
+    }
+  }
+});
+
+test('every shuffled question keeps all words and begins unsolved, even with deterministic randomness', () => {
+  for (const sentence of catalog.sentences) {
+    for (const random of [() => 0, () => 0.999999]) {
+      const tiles = sentenceTiles(sentence, random);
+      assert.equal(new Set(tiles.map(tile => tile.id)).size, sentence.tokens.length);
+      assert.deepEqual(tiles.map(tile => tile.text).sort(), [...sentence.tokens].sort());
+      assert.notEqual(tiles.map(tile => tile.text).join(''), sentence.tokens.join(''));
+    }
+  }
+});
+
+test('grading handles repeated words, omissions, foreign words, and correct alternative time orders', () => {
+  const repeated = catalog.sentences.find(sentence => sentence.tokens.filter(token => token === '我').length > 1);
+  assert.ok(repeated);
+  assert.equal(isCorrectSentence(repeated, repeated.tokens.slice(1)), false);
+  assert.equal(isCorrectSentence(repeated, [...repeated.tokens, '我']), false);
+  assert.equal(isCorrectSentence(repeated, repeated.tokens.map((token, index) => index ? token : '你')), false);
+  const timed = catalog.sentences.find(sentence => sentence.chinese === '我明天去北京。');
+  assert.equal(isCorrectSentence(timed, ['明天', '我', '去', '北京']), true);
+  assert.equal(isCorrectSentence(timed, ['我', '去', '北京', '明天']), false);
+  const original = structuredClone(catalog.sentences);
+  shuffleSentences(catalog.sentences, () => 0.3);
+  assert.deepEqual(catalog.sentences, original);
+});

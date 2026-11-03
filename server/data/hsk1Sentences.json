@@ -1,0 +1,5097 @@
+{
+  "level": "HSK 1",
+  "version": 1,
+  "topics": [
+    {
+      "id": "identity",
+      "title": "People and identity",
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+    },
+    {
+      "id": "introductions",
+      "title": "Names and introductions",
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+    },
+    {
+      "id": "family",
+      "title": "Family and ages",
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+    },
+    {
+      "id": "possession",
+      "title": "Whose things?",
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+    },
+    {
+      "id": "locations",
+      "title": "Where people are",
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+    },
+    {
+      "id": "objects",
+      "title": "Things around you",
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+    },
+    {
+      "id": "quantities",
+      "title": "Numbers and quantities",
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+    },
+    {
+      "id": "dates",
+      "title": "Days and dates",
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence."
+    },
+    {
+      "id": "time",
+      "title": "Telling the time",
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action."
+    },
+    {
+      "id": "routines",
+      "title": "Daily activities",
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+    },
+    {
+      "id": "food",
+      "title": "Food and meals",
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+    },
+    {
+      "id": "drinks",
+      "title": "Drinks and invitations",
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+    },
+    {
+      "id": "likes",
+      "title": "Likes and preferences",
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+    },
+    {
+      "id": "abilities",
+      "title": "What you can do",
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+    },
+    {
+      "id": "plans",
+      "title": "Wishes and plans",
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+    },
+    {
+      "id": "questions",
+      "title": "Simple questions",
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+    },
+    {
+      "id": "descriptions",
+      "title": "Describing things",
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+    },
+    {
+      "id": "negatives",
+      "title": "Saying no",
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+    },
+    {
+      "id": "polite",
+      "title": "Polite everyday phrases",
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+    },
+    {
+      "id": "travel",
+      "title": "Going places",
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+    }
+  ],
+  "sentences": [
+    {
+      "id": "hsk1-001",
+      "number": 1,
+      "topicId": "identity",
+      "tokens": [
+        "我",
+        "是",
+        "学生"
+      ],
+      "chinese": "我是学生。",
+      "pinyin": "Wǒ shì xuésheng.",
+      "english": "I am a student.",
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+    },
+    {
+      "id": "hsk1-002",
+      "number": 2,
+      "topicId": "identity",
+      "tokens": [
+        "你",
+        "是",
+        "老师"
+      ],
+      "chinese": "你是老师。",
+      "pinyin": "Nǐ shì lǎoshī.",
+      "english": "You are a teacher.",
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+    },
+    {
+      "id": "hsk1-003",
+      "number": 3,
+      "topicId": "identity",
+      "tokens": [
+        "他",
+        "是",
+        "医生"
+      ],
+      "chinese": "他是医生。",
+      "pinyin": "Tā shì yīshēng.",
+      "english": "He is a doctor.",
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+    },
+    {
+      "id": "hsk1-004",
+      "number": 4,
+      "topicId": "identity",
+      "tokens": [
+        "她",
+        "是",
+        "中国人"
+      ],
+      "chinese": "她是中国人。",
+      "pinyin": "Tā shì Zhōngguórén.",
+      "english": "She is Chinese.",
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+    },
+    {
+      "id": "hsk1-005",
+      "number": 5,
+      "topicId": "identity",
+      "tokens": [
+        "我们",
+        "是",
+        "同学"
+      ],
+      "chinese": "我们是同学。",
+      "pinyin": "Wǒmen shì tóngxué.",
+      "english": "We are classmates.",
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+    },
+    {
+      "id": "hsk1-006",
+      "number": 6,
+      "topicId": "identity",
+      "tokens": [
+        "他们",
+        "是",
+        "学生"
+      ],
+      "chinese": "他们是学生。",
+      "pinyin": "Tāmen shì xuésheng.",
+      "english": "They are students.",
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+    },
+    {
+      "id": "hsk1-007",
+      "number": 7,
+      "topicId": "identity",
+      "tokens": [
+        "她们",
+        "是",
+        "老师"
+      ],
+      "chinese": "她们是老师。",
+      "pinyin": "Tāmen shì lǎoshī.",
+      "english": "They are teachers.",
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+    },
+    {
+      "id": "hsk1-008",
+      "number": 8,
+      "topicId": "identity",
+      "tokens": [
+        "这",
+        "是",
+        "我",
+        "的",
+        "朋友"
+      ],
+      "chinese": "这是我的朋友。",
+      "pinyin": "Zhè shì wǒ de péngyou.",
+      "english": "This is my friend.",
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+    },
+    {
+      "id": "hsk1-009",
+      "number": 9,
+      "topicId": "identity",
+      "tokens": [
+        "那",
+        "是",
+        "我",
+        "的",
+        "老师"
+      ],
+      "chinese": "那是我的老师。",
+      "pinyin": "Nà shì wǒ de lǎoshī.",
+      "english": "That is my teacher.",
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+    },
+    {
+      "id": "hsk1-010",
+      "number": 10,
+      "topicId": "identity",
+      "tokens": [
+        "他",
+        "是",
+        "我",
+        "的",
+        "同学"
+      ],
+      "chinese": "他是我的同学。",
+      "pinyin": "Tā shì wǒ de tóngxué.",
+      "english": "He is my classmate.",
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+    },
+    {
+      "id": "hsk1-011",
+      "number": 11,
+      "topicId": "identity",
+      "tokens": [
+        "她",
+        "是",
+        "我",
+        "的",
+        "妈妈"
+      ],
+      "chinese": "她是我的妈妈。",
+      "pinyin": "Tā shì wǒ de māma.",
+      "english": "She is my mother.",
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+    },
+    {
+      "id": "hsk1-012",
+      "number": 12,
+      "topicId": "identity",
+      "tokens": [
+        "这",
+        "是",
+        "我",
+        "的",
+        "爸爸"
+      ],
+      "chinese": "这是我的爸爸。",
+      "pinyin": "Zhè shì wǒ de bàba.",
+      "english": "This is my father.",
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+    },
+    {
+      "id": "hsk1-013",
+      "number": 13,
+      "topicId": "identity",
+      "tokens": [
+        "我",
+        "和",
+        "他",
+        "是",
+        "朋友"
+      ],
+      "chinese": "我和他是朋友。",
+      "pinyin": "Wǒ hé tā shì péngyou.",
+      "english": "He and I are friends.",
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement.",
+      "acceptedOrders": [
+        [
+          "他",
+          "和",
+          "我",
+          "是",
+          "朋友"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-014",
+      "number": 14,
+      "topicId": "identity",
+      "tokens": [
+        "爸爸",
+        "是",
+        "医生"
+      ],
+      "chinese": "爸爸是医生。",
+      "pinyin": "Bàba shì yīshēng.",
+      "english": "Dad is a doctor.",
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+    },
+    {
+      "id": "hsk1-015",
+      "number": 15,
+      "topicId": "identity",
+      "tokens": [
+        "妈妈",
+        "是",
+        "老师"
+      ],
+      "chinese": "妈妈是老师。",
+      "pinyin": "Māma shì lǎoshī.",
+      "english": "Mom is a teacher.",
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+    },
+    {
+      "id": "hsk1-016",
+      "number": 16,
+      "topicId": "introductions",
+      "tokens": [
+        "我",
+        "叫",
+        "小王"
+      ],
+      "chinese": "我叫小王。",
+      "pinyin": "Wǒ jiào Xiǎo Wáng.",
+      "english": "My name is Xiao Wang.",
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+    },
+    {
+      "id": "hsk1-017",
+      "number": 17,
+      "topicId": "introductions",
+      "tokens": [
+        "他",
+        "叫",
+        "小李"
+      ],
+      "chinese": "他叫小李。",
+      "pinyin": "Tā jiào Xiǎo Lǐ.",
+      "english": "His name is Xiao Li.",
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+    },
+    {
+      "id": "hsk1-018",
+      "number": 18,
+      "topicId": "introductions",
+      "tokens": [
+        "她",
+        "叫",
+        "小张"
+      ],
+      "chinese": "她叫小张。",
+      "pinyin": "Tā jiào Xiǎo Zhāng.",
+      "english": "Her name is Xiao Zhang.",
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+    },
+    {
+      "id": "hsk1-019",
+      "number": 19,
+      "topicId": "introductions",
+      "tokens": [
+        "你",
+        "叫",
+        "什么",
+        "名字"
+      ],
+      "chinese": "你叫什么名字？",
+      "pinyin": "Nǐ jiào shénme míngzi?",
+      "english": "What is your name?",
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+    },
+    {
+      "id": "hsk1-020",
+      "number": 20,
+      "topicId": "introductions",
+      "tokens": [
+        "他",
+        "叫",
+        "什么",
+        "名字"
+      ],
+      "chinese": "他叫什么名字？",
+      "pinyin": "Tā jiào shénme míngzi?",
+      "english": "What is his name?",
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+    },
+    {
+      "id": "hsk1-021",
+      "number": 21,
+      "topicId": "introductions",
+      "tokens": [
+        "她",
+        "叫",
+        "什么",
+        "名字"
+      ],
+      "chinese": "她叫什么名字？",
+      "pinyin": "Tā jiào shénme míngzi?",
+      "english": "What is her name?",
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+    },
+    {
+      "id": "hsk1-022",
+      "number": 22,
+      "topicId": "introductions",
+      "tokens": [
+        "我",
+        "的",
+        "名字",
+        "叫",
+        "小李"
+      ],
+      "chinese": "我的名字叫小李。",
+      "pinyin": "Wǒ de míngzi jiào Xiǎo Lǐ.",
+      "english": "My name is Xiao Li.",
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+    },
+    {
+      "id": "hsk1-023",
+      "number": 23,
+      "topicId": "introductions",
+      "tokens": [
+        "你",
+        "的",
+        "老师",
+        "叫",
+        "什么",
+        "名字"
+      ],
+      "chinese": "你的老师叫什么名字？",
+      "pinyin": "Nǐ de lǎoshī jiào shénme míngzi?",
+      "english": "What is your teacher's name?",
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+    },
+    {
+      "id": "hsk1-024",
+      "number": 24,
+      "topicId": "introductions",
+      "tokens": [
+        "我",
+        "认识",
+        "你"
+      ],
+      "chinese": "我认识你。",
+      "pinyin": "Wǒ rènshi nǐ.",
+      "english": "I know you.",
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+    },
+    {
+      "id": "hsk1-025",
+      "number": 25,
+      "topicId": "introductions",
+      "tokens": [
+        "你",
+        "认识",
+        "他",
+        "吗"
+      ],
+      "chinese": "你认识他吗？",
+      "pinyin": "Nǐ rènshi tā ma?",
+      "english": "Do you know him?",
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+    },
+    {
+      "id": "hsk1-026",
+      "number": 26,
+      "topicId": "introductions",
+      "tokens": [
+        "我",
+        "不",
+        "认识",
+        "她"
+      ],
+      "chinese": "我不认识她。",
+      "pinyin": "Wǒ bú rènshi tā.",
+      "english": "I do not know her.",
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+    },
+    {
+      "id": "hsk1-027",
+      "number": 27,
+      "topicId": "introductions",
+      "tokens": [
+        "很",
+        "高兴",
+        "认识",
+        "你"
+      ],
+      "chinese": "很高兴认识你。",
+      "pinyin": "Hěn gāoxìng rènshi nǐ.",
+      "english": "Nice to meet you.",
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+    },
+    {
+      "id": "hsk1-028",
+      "number": 28,
+      "topicId": "introductions",
+      "tokens": [
+        "他",
+        "认识",
+        "我",
+        "的",
+        "爸爸"
+      ],
+      "chinese": "他认识我的爸爸。",
+      "pinyin": "Tā rènshi wǒ de bàba.",
+      "english": "He knows my father.",
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+    },
+    {
+      "id": "hsk1-029",
+      "number": 29,
+      "topicId": "introductions",
+      "tokens": [
+        "我们",
+        "都",
+        "认识",
+        "她"
+      ],
+      "chinese": "我们都认识她。",
+      "pinyin": "Wǒmen dōu rènshi tā.",
+      "english": "We all know her.",
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+    },
+    {
+      "id": "hsk1-030",
+      "number": 30,
+      "topicId": "introductions",
+      "tokens": [
+        "你",
+        "是",
+        "哪国人"
+      ],
+      "chinese": "你是哪国人？",
+      "pinyin": "Nǐ shì nǎ guó rén?",
+      "english": "What country are you from?",
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+    },
+    {
+      "id": "hsk1-031",
+      "number": 31,
+      "topicId": "family",
+      "tokens": [
+        "我",
+        "家",
+        "有",
+        "三",
+        "口",
+        "人"
+      ],
+      "chinese": "我家有三口人。",
+      "pinyin": "Wǒ jiā yǒu sān kǒu rén.",
+      "english": "There are three people in my family.",
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+    },
+    {
+      "id": "hsk1-032",
+      "number": 32,
+      "topicId": "family",
+      "tokens": [
+        "他",
+        "家",
+        "有",
+        "五",
+        "口",
+        "人"
+      ],
+      "chinese": "他家有五口人。",
+      "pinyin": "Tā jiā yǒu wǔ kǒu rén.",
+      "english": "There are five people in his family.",
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+    },
+    {
+      "id": "hsk1-033",
+      "number": 33,
+      "topicId": "family",
+      "tokens": [
+        "你",
+        "家",
+        "有",
+        "几",
+        "口",
+        "人"
+      ],
+      "chinese": "你家有几口人？",
+      "pinyin": "Nǐ jiā yǒu jǐ kǒu rén?",
+      "english": "How many people are in your family?",
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+    },
+    {
+      "id": "hsk1-034",
+      "number": 34,
+      "topicId": "family",
+      "tokens": [
+        "我",
+        "有",
+        "一",
+        "个",
+        "儿子"
+      ],
+      "chinese": "我有一个儿子。",
+      "pinyin": "Wǒ yǒu yí ge érzi.",
+      "english": "I have a son.",
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+    },
+    {
+      "id": "hsk1-035",
+      "number": 35,
+      "topicId": "family",
+      "tokens": [
+        "她",
+        "有",
+        "一",
+        "个",
+        "女儿"
+      ],
+      "chinese": "她有一个女儿。",
+      "pinyin": "Tā yǒu yí ge nǚ'ér.",
+      "english": "She has a daughter.",
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+    },
+    {
+      "id": "hsk1-036",
+      "number": 36,
+      "topicId": "family",
+      "tokens": [
+        "他",
+        "有",
+        "两",
+        "个",
+        "儿子"
+      ],
+      "chinese": "他有两个儿子。",
+      "pinyin": "Tā yǒu liǎng ge érzi.",
+      "english": "He has two sons.",
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+    },
+    {
+      "id": "hsk1-037",
+      "number": 37,
+      "topicId": "family",
+      "tokens": [
+        "我",
+        "女儿",
+        "三",
+        "岁"
+      ],
+      "chinese": "我女儿三岁。",
+      "pinyin": "Wǒ nǚ'ér sān suì.",
+      "english": "My daughter is three years old.",
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+    },
+    {
+      "id": "hsk1-038",
+      "number": 38,
+      "topicId": "family",
+      "tokens": [
+        "他",
+        "儿子",
+        "五",
+        "岁"
+      ],
+      "chinese": "他儿子五岁。",
+      "pinyin": "Tā érzi wǔ suì.",
+      "english": "His son is five years old.",
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+    },
+    {
+      "id": "hsk1-039",
+      "number": 39,
+      "topicId": "family",
+      "tokens": [
+        "你",
+        "女儿",
+        "几",
+        "岁"
+      ],
+      "chinese": "你女儿几岁？",
+      "pinyin": "Nǐ nǚ'ér jǐ suì?",
+      "english": "How old is your daughter?",
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+    },
+    {
+      "id": "hsk1-040",
+      "number": 40,
+      "topicId": "family",
+      "tokens": [
+        "我",
+        "今年",
+        "十八",
+        "岁"
+      ],
+      "chinese": "我今年十八岁。",
+      "pinyin": "Wǒ jīnnián shíbā suì.",
+      "english": "I am eighteen this year.",
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是.",
+      "acceptedOrders": [
+        [
+          "今年",
+          "我",
+          "十八",
+          "岁"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-041",
+      "number": 41,
+      "topicId": "family",
+      "tokens": [
+        "她",
+        "今年",
+        "二十",
+        "岁"
+      ],
+      "chinese": "她今年二十岁。",
+      "pinyin": "Tā jīnnián èrshí suì.",
+      "english": "She is twenty this year.",
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是.",
+      "acceptedOrders": [
+        [
+          "今年",
+          "她",
+          "二十",
+          "岁"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-042",
+      "number": 42,
+      "topicId": "family",
+      "tokens": [
+        "他",
+        "今年",
+        "三十",
+        "岁"
+      ],
+      "chinese": "他今年三十岁。",
+      "pinyin": "Tā jīnnián sānshí suì.",
+      "english": "He is thirty this year.",
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是.",
+      "acceptedOrders": [
+        [
+          "今年",
+          "他",
+          "三十",
+          "岁"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-043",
+      "number": 43,
+      "topicId": "family",
+      "tokens": [
+        "我",
+        "妈妈",
+        "四十",
+        "岁"
+      ],
+      "chinese": "我妈妈四十岁。",
+      "pinyin": "Wǒ māma sìshí suì.",
+      "english": "My mother is forty years old.",
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+    },
+    {
+      "id": "hsk1-044",
+      "number": 44,
+      "topicId": "family",
+      "tokens": [
+        "我",
+        "爸爸",
+        "五十",
+        "岁"
+      ],
+      "chinese": "我爸爸五十岁。",
+      "pinyin": "Wǒ bàba wǔshí suì.",
+      "english": "My father is fifty years old.",
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+    },
+    {
+      "id": "hsk1-045",
+      "number": 45,
+      "topicId": "family",
+      "tokens": [
+        "你",
+        "今年",
+        "多大"
+      ],
+      "chinese": "你今年多大？",
+      "pinyin": "Nǐ jīnnián duō dà?",
+      "english": "How old are you this year?",
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是.",
+      "acceptedOrders": [
+        [
+          "今年",
+          "你",
+          "多大"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-046",
+      "number": 46,
+      "topicId": "possession",
+      "tokens": [
+        "这",
+        "是",
+        "我",
+        "的",
+        "书"
+      ],
+      "chinese": "这是我的书。",
+      "pinyin": "Zhè shì wǒ de shū.",
+      "english": "This is my book.",
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+    },
+    {
+      "id": "hsk1-047",
+      "number": 47,
+      "topicId": "possession",
+      "tokens": [
+        "那",
+        "是",
+        "你",
+        "的",
+        "杯子"
+      ],
+      "chinese": "那是你的杯子。",
+      "pinyin": "Nà shì nǐ de bēizi.",
+      "english": "That is your cup.",
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+    },
+    {
+      "id": "hsk1-048",
+      "number": 48,
+      "topicId": "possession",
+      "tokens": [
+        "这",
+        "是",
+        "他",
+        "的",
+        "电脑"
+      ],
+      "chinese": "这是他的电脑。",
+      "pinyin": "Zhè shì tā de diànnǎo.",
+      "english": "This is his computer.",
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+    },
+    {
+      "id": "hsk1-049",
+      "number": 49,
+      "topicId": "possession",
+      "tokens": [
+        "那",
+        "是",
+        "她",
+        "的",
+        "衣服"
+      ],
+      "chinese": "那是她的衣服。",
+      "pinyin": "Nà shì tā de yīfu.",
+      "english": "Those are her clothes.",
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+    },
+    {
+      "id": "hsk1-050",
+      "number": 50,
+      "topicId": "possession",
+      "tokens": [
+        "这",
+        "是",
+        "谁",
+        "的",
+        "书"
+      ],
+      "chinese": "这是谁的书？",
+      "pinyin": "Zhè shì shéi de shū?",
+      "english": "Whose book is this?",
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+    },
+    {
+      "id": "hsk1-051",
+      "number": 51,
+      "topicId": "possession",
+      "tokens": [
+        "那",
+        "是",
+        "谁",
+        "的",
+        "杯子"
+      ],
+      "chinese": "那是谁的杯子？",
+      "pinyin": "Nà shì shéi de bēizi?",
+      "english": "Whose cup is that?",
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+    },
+    {
+      "id": "hsk1-052",
+      "number": 52,
+      "topicId": "possession",
+      "tokens": [
+        "我",
+        "的",
+        "书",
+        "在",
+        "这儿"
+      ],
+      "chinese": "我的书在这儿。",
+      "pinyin": "Wǒ de shū zài zhèr.",
+      "english": "My book is here.",
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+    },
+    {
+      "id": "hsk1-053",
+      "number": 53,
+      "topicId": "possession",
+      "tokens": [
+        "你",
+        "的",
+        "杯子",
+        "在",
+        "那儿"
+      ],
+      "chinese": "你的杯子在那儿。",
+      "pinyin": "Nǐ de bēizi zài nàr.",
+      "english": "Your cup is there.",
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+    },
+    {
+      "id": "hsk1-054",
+      "number": 54,
+      "topicId": "possession",
+      "tokens": [
+        "他",
+        "的",
+        "电脑",
+        "在",
+        "家"
+      ],
+      "chinese": "他的电脑在家。",
+      "pinyin": "Tā de diànnǎo zài jiā.",
+      "english": "His computer is at home.",
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+    },
+    {
+      "id": "hsk1-055",
+      "number": 55,
+      "topicId": "possession",
+      "tokens": [
+        "这",
+        "不",
+        "是",
+        "我",
+        "的",
+        "电脑"
+      ],
+      "chinese": "这不是我的电脑。",
+      "pinyin": "Zhè bú shì wǒ de diànnǎo.",
+      "english": "This is not my computer.",
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+    },
+    {
+      "id": "hsk1-056",
+      "number": 56,
+      "topicId": "possession",
+      "tokens": [
+        "那",
+        "不",
+        "是",
+        "她",
+        "的",
+        "书"
+      ],
+      "chinese": "那不是她的书。",
+      "pinyin": "Nà bú shì tā de shū.",
+      "english": "That is not her book.",
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+    },
+    {
+      "id": "hsk1-057",
+      "number": 57,
+      "topicId": "possession",
+      "tokens": [
+        "我",
+        "喜欢",
+        "你",
+        "的",
+        "衣服"
+      ],
+      "chinese": "我喜欢你的衣服。",
+      "pinyin": "Wǒ xǐhuan nǐ de yīfu.",
+      "english": "I like your clothes.",
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+    },
+    {
+      "id": "hsk1-058",
+      "number": 58,
+      "topicId": "possession",
+      "tokens": [
+        "她",
+        "的",
+        "杯子",
+        "很",
+        "漂亮"
+      ],
+      "chinese": "她的杯子很漂亮。",
+      "pinyin": "Tā de bēizi hěn piàoliang.",
+      "english": "Her cup is pretty.",
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+    },
+    {
+      "id": "hsk1-059",
+      "number": 59,
+      "topicId": "possession",
+      "tokens": [
+        "你",
+        "的",
+        "书",
+        "在",
+        "哪儿"
+      ],
+      "chinese": "你的书在哪儿？",
+      "pinyin": "Nǐ de shū zài nǎr?",
+      "english": "Where is your book?",
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+    },
+    {
+      "id": "hsk1-060",
+      "number": 60,
+      "topicId": "possession",
+      "tokens": [
+        "这",
+        "个",
+        "杯子",
+        "是",
+        "我",
+        "的"
+      ],
+      "chinese": "这个杯子是我的。",
+      "pinyin": "Zhè ge bēizi shì wǒ de.",
+      "english": "This cup is mine.",
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+    },
+    {
+      "id": "hsk1-061",
+      "number": 61,
+      "topicId": "locations",
+      "tokens": [
+        "我",
+        "在",
+        "家"
+      ],
+      "chinese": "我在家。",
+      "pinyin": "Wǒ zài jiā.",
+      "english": "I am at home.",
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+    },
+    {
+      "id": "hsk1-062",
+      "number": 62,
+      "topicId": "locations",
+      "tokens": [
+        "你",
+        "在",
+        "学校"
+      ],
+      "chinese": "你在学校。",
+      "pinyin": "Nǐ zài xuéxiào.",
+      "english": "You are at school.",
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+    },
+    {
+      "id": "hsk1-063",
+      "number": 63,
+      "topicId": "locations",
+      "tokens": [
+        "他",
+        "在",
+        "医院"
+      ],
+      "chinese": "他在医院。",
+      "pinyin": "Tā zài yīyuàn.",
+      "english": "He is at the hospital.",
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+    },
+    {
+      "id": "hsk1-064",
+      "number": 64,
+      "topicId": "locations",
+      "tokens": [
+        "她",
+        "在",
+        "饭店"
+      ],
+      "chinese": "她在饭店。",
+      "pinyin": "Tā zài fàndiàn.",
+      "english": "She is at the restaurant.",
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+    },
+    {
+      "id": "hsk1-065",
+      "number": 65,
+      "topicId": "locations",
+      "tokens": [
+        "我们",
+        "在",
+        "北京"
+      ],
+      "chinese": "我们在北京。",
+      "pinyin": "Wǒmen zài Běijīng.",
+      "english": "We are in Beijing.",
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+    },
+    {
+      "id": "hsk1-066",
+      "number": 66,
+      "topicId": "locations",
+      "tokens": [
+        "老师",
+        "在",
+        "学校"
+      ],
+      "chinese": "老师在学校。",
+      "pinyin": "Lǎoshī zài xuéxiào.",
+      "english": "The teacher is at school.",
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+    },
+    {
+      "id": "hsk1-067",
+      "number": 67,
+      "topicId": "locations",
+      "tokens": [
+        "爸爸",
+        "在",
+        "商店"
+      ],
+      "chinese": "爸爸在商店。",
+      "pinyin": "Bàba zài shāngdiàn.",
+      "english": "Dad is at the shop.",
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+    },
+    {
+      "id": "hsk1-068",
+      "number": 68,
+      "topicId": "locations",
+      "tokens": [
+        "妈妈",
+        "在",
+        "家"
+      ],
+      "chinese": "妈妈在家。",
+      "pinyin": "Māma zài jiā.",
+      "english": "Mom is at home.",
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+    },
+    {
+      "id": "hsk1-069",
+      "number": 69,
+      "topicId": "locations",
+      "tokens": [
+        "你",
+        "在",
+        "哪儿"
+      ],
+      "chinese": "你在哪儿？",
+      "pinyin": "Nǐ zài nǎr?",
+      "english": "Where are you?",
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+    },
+    {
+      "id": "hsk1-070",
+      "number": 70,
+      "topicId": "locations",
+      "tokens": [
+        "他",
+        "在",
+        "哪儿"
+      ],
+      "chinese": "他在哪儿？",
+      "pinyin": "Tā zài nǎr?",
+      "english": "Where is he?",
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+    },
+    {
+      "id": "hsk1-071",
+      "number": 71,
+      "topicId": "locations",
+      "tokens": [
+        "你",
+        "的",
+        "朋友",
+        "在",
+        "哪儿"
+      ],
+      "chinese": "你的朋友在哪儿？",
+      "pinyin": "Nǐ de péngyou zài nǎr?",
+      "english": "Where is your friend?",
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+    },
+    {
+      "id": "hsk1-072",
+      "number": 72,
+      "topicId": "locations",
+      "tokens": [
+        "我",
+        "不",
+        "在",
+        "学校"
+      ],
+      "chinese": "我不在学校。",
+      "pinyin": "Wǒ bú zài xuéxiào.",
+      "english": "I am not at school.",
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+    },
+    {
+      "id": "hsk1-073",
+      "number": 73,
+      "topicId": "locations",
+      "tokens": [
+        "她",
+        "不",
+        "在",
+        "医院"
+      ],
+      "chinese": "她不在医院。",
+      "pinyin": "Tā bú zài yīyuàn.",
+      "english": "She is not at the hospital.",
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+    },
+    {
+      "id": "hsk1-074",
+      "number": 74,
+      "topicId": "locations",
+      "tokens": [
+        "我们",
+        "都",
+        "在",
+        "家"
+      ],
+      "chinese": "我们都在家。",
+      "pinyin": "Wǒmen dōu zài jiā.",
+      "english": "We are all at home.",
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+    },
+    {
+      "id": "hsk1-075",
+      "number": 75,
+      "topicId": "locations",
+      "tokens": [
+        "他",
+        "和",
+        "我",
+        "在",
+        "北京"
+      ],
+      "chinese": "他和我在北京。",
+      "pinyin": "Tā hé wǒ zài Běijīng.",
+      "english": "He and I are in Beijing.",
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where.",
+      "acceptedOrders": [
+        [
+          "我",
+          "和",
+          "他",
+          "在",
+          "北京"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-076",
+      "number": 76,
+      "topicId": "objects",
+      "tokens": [
+        "书",
+        "在",
+        "桌子",
+        "上"
+      ],
+      "chinese": "书在桌子上。",
+      "pinyin": "Shū zài zhuōzi shàng.",
+      "english": "The book is on the table.",
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+    },
+    {
+      "id": "hsk1-077",
+      "number": 77,
+      "topicId": "objects",
+      "tokens": [
+        "猫",
+        "在",
+        "椅子",
+        "下"
+      ],
+      "chinese": "猫在椅子下。",
+      "pinyin": "Māo zài yǐzi xià.",
+      "english": "The cat is under the chair.",
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+    },
+    {
+      "id": "hsk1-078",
+      "number": 78,
+      "topicId": "objects",
+      "tokens": [
+        "狗",
+        "在",
+        "桌子",
+        "下"
+      ],
+      "chinese": "狗在桌子下。",
+      "pinyin": "Gǒu zài zhuōzi xià.",
+      "english": "The dog is under the table.",
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+    },
+    {
+      "id": "hsk1-079",
+      "number": 79,
+      "topicId": "objects",
+      "tokens": [
+        "杯子",
+        "在",
+        "桌子",
+        "上"
+      ],
+      "chinese": "杯子在桌子上。",
+      "pinyin": "Bēizi zài zhuōzi shàng.",
+      "english": "The cup is on the table.",
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+    },
+    {
+      "id": "hsk1-080",
+      "number": 80,
+      "topicId": "objects",
+      "tokens": [
+        "电脑",
+        "在",
+        "桌子",
+        "上"
+      ],
+      "chinese": "电脑在桌子上。",
+      "pinyin": "Diànnǎo zài zhuōzi shàng.",
+      "english": "The computer is on the table.",
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+    },
+    {
+      "id": "hsk1-081",
+      "number": 81,
+      "topicId": "objects",
+      "tokens": [
+        "衣服",
+        "在",
+        "椅子",
+        "上"
+      ],
+      "chinese": "衣服在椅子上。",
+      "pinyin": "Yīfu zài yǐzi shàng.",
+      "english": "The clothes are on the chair.",
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+    },
+    {
+      "id": "hsk1-082",
+      "number": 82,
+      "topicId": "objects",
+      "tokens": [
+        "桌子",
+        "上",
+        "有",
+        "一",
+        "本",
+        "书"
+      ],
+      "chinese": "桌子上有一本书。",
+      "pinyin": "Zhuōzi shàng yǒu yì běn shū.",
+      "english": "There is a book on the table.",
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+    },
+    {
+      "id": "hsk1-083",
+      "number": 83,
+      "topicId": "objects",
+      "tokens": [
+        "椅子",
+        "下",
+        "有",
+        "一",
+        "只",
+        "猫"
+      ],
+      "chinese": "椅子下有一只猫。",
+      "pinyin": "Yǐzi xià yǒu yì zhī māo.",
+      "english": "There is a cat under the chair.",
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+    },
+    {
+      "id": "hsk1-084",
+      "number": 84,
+      "topicId": "objects",
+      "tokens": [
+        "桌子",
+        "上",
+        "有",
+        "三",
+        "个",
+        "杯子"
+      ],
+      "chinese": "桌子上有三个杯子。",
+      "pinyin": "Zhuōzi shàng yǒu sān ge bēizi.",
+      "english": "There are three cups on the table.",
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+    },
+    {
+      "id": "hsk1-085",
+      "number": 85,
+      "topicId": "objects",
+      "tokens": [
+        "椅子",
+        "上",
+        "没有",
+        "衣服"
+      ],
+      "chinese": "椅子上没有衣服。",
+      "pinyin": "Yǐzi shàng méiyǒu yīfu.",
+      "english": "There are no clothes on the chair.",
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+    },
+    {
+      "id": "hsk1-086",
+      "number": 86,
+      "topicId": "objects",
+      "tokens": [
+        "桌子",
+        "上",
+        "没有",
+        "电脑"
+      ],
+      "chinese": "桌子上没有电脑。",
+      "pinyin": "Zhuōzi shàng méiyǒu diànnǎo.",
+      "english": "There is no computer on the table.",
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+    },
+    {
+      "id": "hsk1-087",
+      "number": 87,
+      "topicId": "objects",
+      "tokens": [
+        "书",
+        "在",
+        "哪儿"
+      ],
+      "chinese": "书在哪儿？",
+      "pinyin": "Shū zài nǎr?",
+      "english": "Where is the book?",
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+    },
+    {
+      "id": "hsk1-088",
+      "number": 88,
+      "topicId": "objects",
+      "tokens": [
+        "猫",
+        "在",
+        "哪儿"
+      ],
+      "chinese": "猫在哪儿？",
+      "pinyin": "Māo zài nǎr?",
+      "english": "Where is the cat?",
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+    },
+    {
+      "id": "hsk1-089",
+      "number": 89,
+      "topicId": "objects",
+      "tokens": [
+        "这儿",
+        "有",
+        "人",
+        "吗"
+      ],
+      "chinese": "这儿有人吗？",
+      "pinyin": "Zhèr yǒu rén ma?",
+      "english": "Is anyone here?",
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+    },
+    {
+      "id": "hsk1-090",
+      "number": 90,
+      "topicId": "objects",
+      "tokens": [
+        "那儿",
+        "有",
+        "一",
+        "把",
+        "椅子"
+      ],
+      "chinese": "那儿有一把椅子。",
+      "pinyin": "Nàr yǒu yì bǎ yǐzi.",
+      "english": "There is a chair there.",
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+    },
+    {
+      "id": "hsk1-091",
+      "number": 91,
+      "topicId": "quantities",
+      "tokens": [
+        "我",
+        "有",
+        "三",
+        "本",
+        "书"
+      ],
+      "chinese": "我有三本书。",
+      "pinyin": "Wǒ yǒu sān běn shū.",
+      "english": "I have three books.",
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+    },
+    {
+      "id": "hsk1-092",
+      "number": 92,
+      "topicId": "quantities",
+      "tokens": [
+        "他",
+        "有",
+        "两",
+        "个",
+        "杯子"
+      ],
+      "chinese": "他有两个杯子。",
+      "pinyin": "Tā yǒu liǎng ge bēizi.",
+      "english": "He has two cups.",
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+    },
+    {
+      "id": "hsk1-093",
+      "number": 93,
+      "topicId": "quantities",
+      "tokens": [
+        "她",
+        "有",
+        "五",
+        "个",
+        "苹果"
+      ],
+      "chinese": "她有五个苹果。",
+      "pinyin": "Tā yǒu wǔ ge píngguǒ.",
+      "english": "She has five apples.",
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+    },
+    {
+      "id": "hsk1-094",
+      "number": 94,
+      "topicId": "quantities",
+      "tokens": [
+        "我们",
+        "有",
+        "六",
+        "个",
+        "学生"
+      ],
+      "chinese": "我们有六个学生。",
+      "pinyin": "Wǒmen yǒu liù ge xuésheng.",
+      "english": "We have six students.",
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+    },
+    {
+      "id": "hsk1-095",
+      "number": 95,
+      "topicId": "quantities",
+      "tokens": [
+        "这儿",
+        "有",
+        "八",
+        "个",
+        "人"
+      ],
+      "chinese": "这儿有八个人。",
+      "pinyin": "Zhèr yǒu bā ge rén.",
+      "english": "There are eight people here.",
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+    },
+    {
+      "id": "hsk1-096",
+      "number": 96,
+      "topicId": "quantities",
+      "tokens": [
+        "我",
+        "买",
+        "三",
+        "个",
+        "苹果"
+      ],
+      "chinese": "我买三个苹果。",
+      "pinyin": "Wǒ mǎi sān ge píngguǒ.",
+      "english": "I am buying three apples.",
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+    },
+    {
+      "id": "hsk1-097",
+      "number": 97,
+      "topicId": "quantities",
+      "tokens": [
+        "他",
+        "买",
+        "两",
+        "本",
+        "书"
+      ],
+      "chinese": "他买两本书。",
+      "pinyin": "Tā mǎi liǎng běn shū.",
+      "english": "He is buying two books.",
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+    },
+    {
+      "id": "hsk1-098",
+      "number": 98,
+      "topicId": "quantities",
+      "tokens": [
+        "你",
+        "有",
+        "几",
+        "本",
+        "书"
+      ],
+      "chinese": "你有几本书？",
+      "pinyin": "Nǐ yǒu jǐ běn shū?",
+      "english": "How many books do you have?",
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+    },
+    {
+      "id": "hsk1-099",
+      "number": 99,
+      "topicId": "quantities",
+      "tokens": [
+        "你",
+        "要",
+        "几",
+        "个",
+        "杯子"
+      ],
+      "chinese": "你要几个杯子？",
+      "pinyin": "Nǐ yào jǐ ge bēizi?",
+      "english": "How many cups do you want?",
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+    },
+    {
+      "id": "hsk1-100",
+      "number": 100,
+      "topicId": "quantities",
+      "tokens": [
+        "这",
+        "本",
+        "书",
+        "十",
+        "块",
+        "钱"
+      ],
+      "chinese": "这本书十块钱。",
+      "pinyin": "Zhè běn shū shí kuài qián.",
+      "english": "This book costs ten yuan.",
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+    },
+    {
+      "id": "hsk1-101",
+      "number": 101,
+      "topicId": "quantities",
+      "tokens": [
+        "那",
+        "个",
+        "杯子",
+        "五",
+        "块",
+        "钱"
+      ],
+      "chinese": "那个杯子五块钱。",
+      "pinyin": "Nà ge bēizi wǔ kuài qián.",
+      "english": "That cup costs five yuan.",
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+    },
+    {
+      "id": "hsk1-102",
+      "number": 102,
+      "topicId": "quantities",
+      "tokens": [
+        "这",
+        "个",
+        "苹果",
+        "三",
+        "块",
+        "钱"
+      ],
+      "chinese": "这个苹果三块钱。",
+      "pinyin": "Zhè ge píngguǒ sān kuài qián.",
+      "english": "This apple costs three yuan.",
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+    },
+    {
+      "id": "hsk1-103",
+      "number": 103,
+      "topicId": "quantities",
+      "tokens": [
+        "我",
+        "有",
+        "二十",
+        "块",
+        "钱"
+      ],
+      "chinese": "我有二十块钱。",
+      "pinyin": "Wǒ yǒu èrshí kuài qián.",
+      "english": "I have twenty yuan.",
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+    },
+    {
+      "id": "hsk1-104",
+      "number": 104,
+      "topicId": "quantities",
+      "tokens": [
+        "这",
+        "件",
+        "衣服",
+        "多少",
+        "钱"
+      ],
+      "chinese": "这件衣服多少钱？",
+      "pinyin": "Zhè jiàn yīfu duōshao qián?",
+      "english": "How much does this piece of clothing cost?",
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+    },
+    {
+      "id": "hsk1-105",
+      "number": 105,
+      "topicId": "quantities",
+      "tokens": [
+        "一",
+        "本",
+        "书",
+        "多少",
+        "钱"
+      ],
+      "chinese": "一本书多少钱？",
+      "pinyin": "Yì běn shū duōshao qián?",
+      "english": "How much does one book cost?",
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+    },
+    {
+      "id": "hsk1-106",
+      "number": 106,
+      "topicId": "dates",
+      "tokens": [
+        "今天",
+        "是",
+        "星期一"
+      ],
+      "chinese": "今天是星期一。",
+      "pinyin": "Jīntiān shì xīngqīyī.",
+      "english": "Today is Monday.",
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence."
+    },
+    {
+      "id": "hsk1-107",
+      "number": 107,
+      "topicId": "dates",
+      "tokens": [
+        "明天",
+        "是",
+        "星期二"
+      ],
+      "chinese": "明天是星期二。",
+      "pinyin": "Míngtiān shì xīngqī'èr.",
+      "english": "Tomorrow is Tuesday.",
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence."
+    },
+    {
+      "id": "hsk1-108",
+      "number": 108,
+      "topicId": "dates",
+      "tokens": [
+        "昨天",
+        "是",
+        "星期日"
+      ],
+      "chinese": "昨天是星期日。",
+      "pinyin": "Zuótiān shì xīngqīrì.",
+      "english": "Yesterday was Sunday.",
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence."
+    },
+    {
+      "id": "hsk1-109",
+      "number": 109,
+      "topicId": "dates",
+      "tokens": [
+        "今天",
+        "是",
+        "几月",
+        "几号"
+      ],
+      "chinese": "今天是几月几号？",
+      "pinyin": "Jīntiān shì jǐ yuè jǐ hào?",
+      "english": "What is today's date?",
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence."
+    },
+    {
+      "id": "hsk1-110",
+      "number": 110,
+      "topicId": "dates",
+      "tokens": [
+        "今天",
+        "是",
+        "三月",
+        "五号"
+      ],
+      "chinese": "今天是三月五号。",
+      "pinyin": "Jīntiān shì sān yuè wǔ hào.",
+      "english": "Today is March fifth.",
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence."
+    },
+    {
+      "id": "hsk1-111",
+      "number": 111,
+      "topicId": "dates",
+      "tokens": [
+        "明天",
+        "是",
+        "六月",
+        "一号"
+      ],
+      "chinese": "明天是六月一号。",
+      "pinyin": "Míngtiān shì liù yuè yī hào.",
+      "english": "Tomorrow is June first.",
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence."
+    },
+    {
+      "id": "hsk1-112",
+      "number": 112,
+      "topicId": "dates",
+      "tokens": [
+        "今天",
+        "星期",
+        "几"
+      ],
+      "chinese": "今天星期几？",
+      "pinyin": "Jīntiān xīngqī jǐ?",
+      "english": "What day of the week is it today?",
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence."
+    },
+    {
+      "id": "hsk1-113",
+      "number": 113,
+      "topicId": "dates",
+      "tokens": [
+        "明天",
+        "星期",
+        "几"
+      ],
+      "chinese": "明天星期几？",
+      "pinyin": "Míngtiān xīngqī jǐ?",
+      "english": "What day of the week is it tomorrow?",
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence."
+    },
+    {
+      "id": "hsk1-114",
+      "number": 114,
+      "topicId": "dates",
+      "tokens": [
+        "我",
+        "星期一",
+        "去",
+        "学校"
+      ],
+      "chinese": "我星期一去学校。",
+      "pinyin": "Wǒ xīngqīyī qù xuéxiào.",
+      "english": "I go to school on Monday.",
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence.",
+      "acceptedOrders": [
+        [
+          "星期一",
+          "我",
+          "去",
+          "学校"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-115",
+      "number": 115,
+      "topicId": "dates",
+      "tokens": [
+        "他",
+        "星期五",
+        "回",
+        "家"
+      ],
+      "chinese": "他星期五回家。",
+      "pinyin": "Tā xīngqīwǔ huí jiā.",
+      "english": "He goes home on Friday.",
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence.",
+      "acceptedOrders": [
+        [
+          "星期五",
+          "他",
+          "回",
+          "家"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-116",
+      "number": 116,
+      "topicId": "dates",
+      "tokens": [
+        "我们",
+        "星期六",
+        "看",
+        "电影"
+      ],
+      "chinese": "我们星期六看电影。",
+      "pinyin": "Wǒmen xīngqīliù kàn diànyǐng.",
+      "english": "We watch a movie on Saturday.",
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence.",
+      "acceptedOrders": [
+        [
+          "星期六",
+          "我们",
+          "看",
+          "电影"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-117",
+      "number": 117,
+      "topicId": "dates",
+      "tokens": [
+        "她",
+        "星期日",
+        "不",
+        "工作"
+      ],
+      "chinese": "她星期日不工作。",
+      "pinyin": "Tā xīngqīrì bù gōngzuò.",
+      "english": "She does not work on Sunday.",
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence.",
+      "acceptedOrders": [
+        [
+          "星期日",
+          "她",
+          "不",
+          "工作"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-118",
+      "number": 118,
+      "topicId": "dates",
+      "tokens": [
+        "我",
+        "明天",
+        "去",
+        "北京"
+      ],
+      "chinese": "我明天去北京。",
+      "pinyin": "Wǒ míngtiān qù Běijīng.",
+      "english": "I am going to Beijing tomorrow.",
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence.",
+      "acceptedOrders": [
+        [
+          "明天",
+          "我",
+          "去",
+          "北京"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-119",
+      "number": 119,
+      "topicId": "dates",
+      "tokens": [
+        "他",
+        "昨天",
+        "来",
+        "了"
+      ],
+      "chinese": "他昨天来了。",
+      "pinyin": "Tā zuótiān lái le.",
+      "english": "He came yesterday.",
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence.",
+      "acceptedOrders": [
+        [
+          "昨天",
+          "他",
+          "来",
+          "了"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-120",
+      "number": 120,
+      "topicId": "dates",
+      "tokens": [
+        "我们",
+        "今天",
+        "都",
+        "在",
+        "家"
+      ],
+      "chinese": "我们今天都在家。",
+      "pinyin": "Wǒmen jīntiān dōu zài jiā.",
+      "english": "We are all at home today.",
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence.",
+      "acceptedOrders": [
+        [
+          "今天",
+          "我们",
+          "都",
+          "在",
+          "家"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-121",
+      "number": 121,
+      "topicId": "time",
+      "tokens": [
+        "现在",
+        "三",
+        "点"
+      ],
+      "chinese": "现在三点。",
+      "pinyin": "Xiànzài sān diǎn.",
+      "english": "It is three o'clock now.",
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action."
+    },
+    {
+      "id": "hsk1-122",
+      "number": 122,
+      "topicId": "time",
+      "tokens": [
+        "现在",
+        "几",
+        "点"
+      ],
+      "chinese": "现在几点？",
+      "pinyin": "Xiànzài jǐ diǎn?",
+      "english": "What time is it now?",
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action."
+    },
+    {
+      "id": "hsk1-123",
+      "number": 123,
+      "topicId": "time",
+      "tokens": [
+        "现在",
+        "十",
+        "点",
+        "十",
+        "分"
+      ],
+      "chinese": "现在十点十分。",
+      "pinyin": "Xiànzài shí diǎn shí fēn.",
+      "english": "It is ten ten now.",
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action."
+    },
+    {
+      "id": "hsk1-124",
+      "number": 124,
+      "topicId": "time",
+      "tokens": [
+        "现在",
+        "八",
+        "点",
+        "二十",
+        "分"
+      ],
+      "chinese": "现在八点二十分。",
+      "pinyin": "Xiànzài bā diǎn èrshí fēn.",
+      "english": "It is eight twenty now.",
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action."
+    },
+    {
+      "id": "hsk1-125",
+      "number": 125,
+      "topicId": "time",
+      "tokens": [
+        "我",
+        "七",
+        "点",
+        "吃",
+        "饭"
+      ],
+      "chinese": "我七点吃饭。",
+      "pinyin": "Wǒ qī diǎn chī fàn.",
+      "english": "I eat at seven o'clock.",
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action.",
+      "acceptedOrders": [
+        [
+          "七",
+          "点",
+          "我",
+          "吃",
+          "饭"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-126",
+      "number": 126,
+      "topicId": "time",
+      "tokens": [
+        "他",
+        "八",
+        "点",
+        "去",
+        "学校"
+      ],
+      "chinese": "他八点去学校。",
+      "pinyin": "Tā bā diǎn qù xuéxiào.",
+      "english": "He goes to school at eight o'clock.",
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action.",
+      "acceptedOrders": [
+        [
+          "八",
+          "点",
+          "他",
+          "去",
+          "学校"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-127",
+      "number": 127,
+      "topicId": "time",
+      "tokens": [
+        "她",
+        "六",
+        "点",
+        "回",
+        "家"
+      ],
+      "chinese": "她六点回家。",
+      "pinyin": "Tā liù diǎn huí jiā.",
+      "english": "She goes home at six o'clock.",
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action.",
+      "acceptedOrders": [
+        [
+          "六",
+          "点",
+          "她",
+          "回",
+          "家"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-128",
+      "number": 128,
+      "topicId": "time",
+      "tokens": [
+        "我们",
+        "九",
+        "点",
+        "看",
+        "电视"
+      ],
+      "chinese": "我们九点看电视。",
+      "pinyin": "Wǒmen jiǔ diǎn kàn diànshì.",
+      "english": "We watch television at nine o'clock.",
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action.",
+      "acceptedOrders": [
+        [
+          "九",
+          "点",
+          "我们",
+          "看",
+          "电视"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-129",
+      "number": 129,
+      "topicId": "time",
+      "tokens": [
+        "我",
+        "下午",
+        "三",
+        "点",
+        "去",
+        "医院"
+      ],
+      "chinese": "我下午三点去医院。",
+      "pinyin": "Wǒ xiàwǔ sān diǎn qù yīyuàn.",
+      "english": "I go to the hospital at three in the afternoon.",
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action.",
+      "acceptedOrders": [
+        [
+          "下午",
+          "三",
+          "点",
+          "我",
+          "去",
+          "医院"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-130",
+      "number": 130,
+      "topicId": "time",
+      "tokens": [
+        "他",
+        "上午",
+        "十",
+        "点",
+        "来"
+      ],
+      "chinese": "他上午十点来。",
+      "pinyin": "Tā shàngwǔ shí diǎn lái.",
+      "english": "He comes at ten in the morning.",
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action.",
+      "acceptedOrders": [
+        [
+          "上午",
+          "十",
+          "点",
+          "他",
+          "来"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-131",
+      "number": 131,
+      "topicId": "time",
+      "tokens": [
+        "你",
+        "几",
+        "点",
+        "回",
+        "家"
+      ],
+      "chinese": "你几点回家？",
+      "pinyin": "Nǐ jǐ diǎn huí jiā?",
+      "english": "What time do you go home?",
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action.",
+      "acceptedOrders": [
+        [
+          "几",
+          "点",
+          "你",
+          "回",
+          "家"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-132",
+      "number": 132,
+      "topicId": "time",
+      "tokens": [
+        "你",
+        "几",
+        "点",
+        "去",
+        "学校"
+      ],
+      "chinese": "你几点去学校？",
+      "pinyin": "Nǐ jǐ diǎn qù xuéxiào?",
+      "english": "What time do you go to school?",
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action.",
+      "acceptedOrders": [
+        [
+          "几",
+          "点",
+          "你",
+          "去",
+          "学校"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-133",
+      "number": 133,
+      "topicId": "time",
+      "tokens": [
+        "她",
+        "下午",
+        "五",
+        "点",
+        "回来"
+      ],
+      "chinese": "她下午五点回来。",
+      "pinyin": "Tā xiàwǔ wǔ diǎn huílai.",
+      "english": "She comes back at five in the afternoon.",
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action.",
+      "acceptedOrders": [
+        [
+          "下午",
+          "五",
+          "点",
+          "她",
+          "回来"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-134",
+      "number": 134,
+      "topicId": "time",
+      "tokens": [
+        "我们",
+        "中午",
+        "十二",
+        "点",
+        "吃",
+        "饭"
+      ],
+      "chinese": "我们中午十二点吃饭。",
+      "pinyin": "Wǒmen zhōngwǔ shí'èr diǎn chī fàn.",
+      "english": "We eat at twelve noon.",
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action.",
+      "acceptedOrders": [
+        [
+          "中午",
+          "十二",
+          "点",
+          "我们",
+          "吃",
+          "饭"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-135",
+      "number": 135,
+      "topicId": "time",
+      "tokens": [
+        "我",
+        "今天",
+        "上午",
+        "不",
+        "工作"
+      ],
+      "chinese": "我今天上午不工作。",
+      "pinyin": "Wǒ jīntiān shàngwǔ bù gōngzuò.",
+      "english": "I am not working this morning.",
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action.",
+      "acceptedOrders": [
+        [
+          "今天",
+          "上午",
+          "我",
+          "不",
+          "工作"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-136",
+      "number": 136,
+      "topicId": "routines",
+      "tokens": [
+        "我",
+        "看",
+        "书"
+      ],
+      "chinese": "我看书。",
+      "pinyin": "Wǒ kàn shū.",
+      "english": "I read books.",
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+    },
+    {
+      "id": "hsk1-137",
+      "number": 137,
+      "topicId": "routines",
+      "tokens": [
+        "他",
+        "看",
+        "电视"
+      ],
+      "chinese": "他看电视。",
+      "pinyin": "Tā kàn diànshì.",
+      "english": "He watches television.",
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+    },
+    {
+      "id": "hsk1-138",
+      "number": 138,
+      "topicId": "routines",
+      "tokens": [
+        "她",
+        "听",
+        "老师",
+        "说话"
+      ],
+      "chinese": "她听老师说话。",
+      "pinyin": "Tā tīng lǎoshī shuōhuà.",
+      "english": "She listens to the teacher speaking.",
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+    },
+    {
+      "id": "hsk1-139",
+      "number": 139,
+      "topicId": "routines",
+      "tokens": [
+        "我们",
+        "学习",
+        "汉语"
+      ],
+      "chinese": "我们学习汉语。",
+      "pinyin": "Wǒmen xuéxí Hànyǔ.",
+      "english": "We study Chinese.",
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+    },
+    {
+      "id": "hsk1-140",
+      "number": 140,
+      "topicId": "routines",
+      "tokens": [
+        "他们",
+        "在",
+        "学校",
+        "学习"
+      ],
+      "chinese": "他们在学校学习。",
+      "pinyin": "Tāmen zài xuéxiào xuéxí.",
+      "english": "They study at school.",
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+    },
+    {
+      "id": "hsk1-141",
+      "number": 141,
+      "topicId": "routines",
+      "tokens": [
+        "我",
+        "在",
+        "家",
+        "看",
+        "书"
+      ],
+      "chinese": "我在家看书。",
+      "pinyin": "Wǒ zài jiā kàn shū.",
+      "english": "I read books at home.",
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+    },
+    {
+      "id": "hsk1-142",
+      "number": 142,
+      "topicId": "routines",
+      "tokens": [
+        "爸爸",
+        "在",
+        "医院",
+        "工作"
+      ],
+      "chinese": "爸爸在医院工作。",
+      "pinyin": "Bàba zài yīyuàn gōngzuò.",
+      "english": "Dad works at the hospital.",
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+    },
+    {
+      "id": "hsk1-143",
+      "number": 143,
+      "topicId": "routines",
+      "tokens": [
+        "妈妈",
+        "在",
+        "学校",
+        "工作"
+      ],
+      "chinese": "妈妈在学校工作。",
+      "pinyin": "Māma zài xuéxiào gōngzuò.",
+      "english": "Mom works at the school.",
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+    },
+    {
+      "id": "hsk1-144",
+      "number": 144,
+      "topicId": "routines",
+      "tokens": [
+        "他",
+        "在",
+        "家",
+        "睡觉"
+      ],
+      "chinese": "他在家睡觉。",
+      "pinyin": "Tā zài jiā shuìjiào.",
+      "english": "He sleeps at home.",
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+    },
+    {
+      "id": "hsk1-145",
+      "number": 145,
+      "topicId": "routines",
+      "tokens": [
+        "我",
+        "写",
+        "汉字"
+      ],
+      "chinese": "我写汉字。",
+      "pinyin": "Wǒ xiě Hànzì.",
+      "english": "I write Chinese characters.",
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+    },
+    {
+      "id": "hsk1-146",
+      "number": 146,
+      "topicId": "routines",
+      "tokens": [
+        "老师",
+        "读",
+        "这",
+        "本",
+        "书"
+      ],
+      "chinese": "老师读这本书。",
+      "pinyin": "Lǎoshī dú zhè běn shū.",
+      "english": "The teacher reads this book aloud.",
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+    },
+    {
+      "id": "hsk1-147",
+      "number": 147,
+      "topicId": "routines",
+      "tokens": [
+        "她",
+        "在",
+        "看",
+        "电影"
+      ],
+      "chinese": "她在看电影。",
+      "pinyin": "Tā zài kàn diànyǐng.",
+      "english": "She is watching a movie.",
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+    },
+    {
+      "id": "hsk1-148",
+      "number": 148,
+      "topicId": "routines",
+      "tokens": [
+        "我",
+        "在",
+        "听",
+        "你",
+        "说话"
+      ],
+      "chinese": "我在听你说话。",
+      "pinyin": "Wǒ zài tīng nǐ shuōhuà.",
+      "english": "I am listening to you speaking.",
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+    },
+    {
+      "id": "hsk1-149",
+      "number": 149,
+      "topicId": "routines",
+      "tokens": [
+        "他们",
+        "在",
+        "吃",
+        "饭"
+      ],
+      "chinese": "他们在吃饭。",
+      "pinyin": "Tāmen zài chī fàn.",
+      "english": "They are eating.",
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+    },
+    {
+      "id": "hsk1-150",
+      "number": 150,
+      "topicId": "routines",
+      "tokens": [
+        "你",
+        "在",
+        "做",
+        "什么"
+      ],
+      "chinese": "你在做什么？",
+      "pinyin": "Nǐ zài zuò shénme?",
+      "english": "What are you doing?",
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+    },
+    {
+      "id": "hsk1-151",
+      "number": 151,
+      "topicId": "food",
+      "tokens": [
+        "我",
+        "吃",
+        "米饭"
+      ],
+      "chinese": "我吃米饭。",
+      "pinyin": "Wǒ chī mǐfàn.",
+      "english": "I eat rice.",
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+    },
+    {
+      "id": "hsk1-152",
+      "number": 152,
+      "topicId": "food",
+      "tokens": [
+        "她",
+        "吃",
+        "苹果"
+      ],
+      "chinese": "她吃苹果。",
+      "pinyin": "Tā chī píngguǒ.",
+      "english": "She eats apples.",
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+    },
+    {
+      "id": "hsk1-153",
+      "number": 153,
+      "topicId": "food",
+      "tokens": [
+        "他",
+        "喜欢",
+        "吃",
+        "菜"
+      ],
+      "chinese": "他喜欢吃菜。",
+      "pinyin": "Tā xǐhuan chī cài.",
+      "english": "He likes eating vegetables.",
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+    },
+    {
+      "id": "hsk1-154",
+      "number": 154,
+      "topicId": "food",
+      "tokens": [
+        "我们",
+        "在",
+        "饭店",
+        "吃",
+        "饭"
+      ],
+      "chinese": "我们在饭店吃饭。",
+      "pinyin": "Wǒmen zài fàndiàn chī fàn.",
+      "english": "We eat at a restaurant.",
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+    },
+    {
+      "id": "hsk1-155",
+      "number": 155,
+      "topicId": "food",
+      "tokens": [
+        "你",
+        "想",
+        "吃",
+        "什么"
+      ],
+      "chinese": "你想吃什么？",
+      "pinyin": "Nǐ xiǎng chī shénme?",
+      "english": "What would you like to eat?",
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+    },
+    {
+      "id": "hsk1-156",
+      "number": 156,
+      "topicId": "food",
+      "tokens": [
+        "我",
+        "想",
+        "吃",
+        "米饭"
+      ],
+      "chinese": "我想吃米饭。",
+      "pinyin": "Wǒ xiǎng chī mǐfàn.",
+      "english": "I would like to eat rice.",
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+    },
+    {
+      "id": "hsk1-157",
+      "number": 157,
+      "topicId": "food",
+      "tokens": [
+        "他",
+        "不",
+        "吃",
+        "苹果"
+      ],
+      "chinese": "他不吃苹果。",
+      "pinyin": "Tā bù chī píngguǒ.",
+      "english": "He does not eat apples.",
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+    },
+    {
+      "id": "hsk1-158",
+      "number": 158,
+      "topicId": "food",
+      "tokens": [
+        "你",
+        "吃",
+        "米饭",
+        "吗"
+      ],
+      "chinese": "你吃米饭吗？",
+      "pinyin": "Nǐ chī mǐfàn ma?",
+      "english": "Do you eat rice?",
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+    },
+    {
+      "id": "hsk1-159",
+      "number": 159,
+      "topicId": "food",
+      "tokens": [
+        "我",
+        "买",
+        "了",
+        "苹果"
+      ],
+      "chinese": "我买了苹果。",
+      "pinyin": "Wǒ mǎi le píngguǒ.",
+      "english": "I bought apples.",
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+    },
+    {
+      "id": "hsk1-160",
+      "number": 160,
+      "topicId": "food",
+      "tokens": [
+        "她",
+        "买",
+        "了",
+        "很",
+        "多",
+        "菜"
+      ],
+      "chinese": "她买了很多菜。",
+      "pinyin": "Tā mǎi le hěn duō cài.",
+      "english": "She bought a lot of food.",
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+    },
+    {
+      "id": "hsk1-161",
+      "number": 161,
+      "topicId": "food",
+      "tokens": [
+        "这",
+        "个",
+        "苹果",
+        "很",
+        "大"
+      ],
+      "chinese": "这个苹果很大。",
+      "pinyin": "Zhè ge píngguǒ hěn dà.",
+      "english": "This apple is big.",
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+    },
+    {
+      "id": "hsk1-162",
+      "number": 162,
+      "topicId": "food",
+      "tokens": [
+        "那",
+        "个",
+        "苹果",
+        "很",
+        "小"
+      ],
+      "chinese": "那个苹果很小。",
+      "pinyin": "Nà ge píngguǒ hěn xiǎo.",
+      "english": "That apple is small.",
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+    },
+    {
+      "id": "hsk1-163",
+      "number": 163,
+      "topicId": "food",
+      "tokens": [
+        "我",
+        "中午",
+        "在",
+        "家",
+        "吃",
+        "饭"
+      ],
+      "chinese": "我中午在家吃饭。",
+      "pinyin": "Wǒ zhōngwǔ zài jiā chī fàn.",
+      "english": "I eat lunch at home.",
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb.",
+      "acceptedOrders": [
+        [
+          "中午",
+          "我",
+          "在",
+          "家",
+          "吃",
+          "饭"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-164",
+      "number": 164,
+      "topicId": "food",
+      "tokens": [
+        "我们",
+        "都",
+        "喜欢",
+        "吃",
+        "苹果"
+      ],
+      "chinese": "我们都喜欢吃苹果。",
+      "pinyin": "Wǒmen dōu xǐhuan chī píngguǒ.",
+      "english": "We all like eating apples.",
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+    },
+    {
+      "id": "hsk1-165",
+      "number": 165,
+      "topicId": "food",
+      "tokens": [
+        "这儿",
+        "的",
+        "菜",
+        "很",
+        "好"
+      ],
+      "chinese": "这儿的菜很好。",
+      "pinyin": "Zhèr de cài hěn hǎo.",
+      "english": "The food here is good.",
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+    },
+    {
+      "id": "hsk1-166",
+      "number": 166,
+      "topicId": "drinks",
+      "tokens": [
+        "我",
+        "喝",
+        "水"
+      ],
+      "chinese": "我喝水。",
+      "pinyin": "Wǒ hē shuǐ.",
+      "english": "I drink water.",
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+    },
+    {
+      "id": "hsk1-167",
+      "number": 167,
+      "topicId": "drinks",
+      "tokens": [
+        "他",
+        "喝",
+        "茶"
+      ],
+      "chinese": "他喝茶。",
+      "pinyin": "Tā hē chá.",
+      "english": "He drinks tea.",
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+    },
+    {
+      "id": "hsk1-168",
+      "number": 168,
+      "topicId": "drinks",
+      "tokens": [
+        "你",
+        "想",
+        "喝",
+        "什么"
+      ],
+      "chinese": "你想喝什么？",
+      "pinyin": "Nǐ xiǎng hē shénme?",
+      "english": "What would you like to drink?",
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+    },
+    {
+      "id": "hsk1-169",
+      "number": 169,
+      "topicId": "drinks",
+      "tokens": [
+        "我",
+        "想",
+        "喝",
+        "茶"
+      ],
+      "chinese": "我想喝茶。",
+      "pinyin": "Wǒ xiǎng hē chá.",
+      "english": "I would like to drink tea.",
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+    },
+    {
+      "id": "hsk1-170",
+      "number": 170,
+      "topicId": "drinks",
+      "tokens": [
+        "她",
+        "不",
+        "喝",
+        "茶"
+      ],
+      "chinese": "她不喝茶。",
+      "pinyin": "Tā bù hē chá.",
+      "english": "She does not drink tea.",
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+    },
+    {
+      "id": "hsk1-171",
+      "number": 171,
+      "topicId": "drinks",
+      "tokens": [
+        "你",
+        "喝",
+        "水",
+        "吗"
+      ],
+      "chinese": "你喝水吗？",
+      "pinyin": "Nǐ hē shuǐ ma?",
+      "english": "Do you drink water?",
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+    },
+    {
+      "id": "hsk1-172",
+      "number": 172,
+      "topicId": "drinks",
+      "tokens": [
+        "请",
+        "喝",
+        "水"
+      ],
+      "chinese": "请喝水。",
+      "pinyin": "Qǐng hē shuǐ.",
+      "english": "Please have some water.",
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+    },
+    {
+      "id": "hsk1-173",
+      "number": 173,
+      "topicId": "drinks",
+      "tokens": [
+        "请",
+        "喝",
+        "茶"
+      ],
+      "chinese": "请喝茶。",
+      "pinyin": "Qǐng hē chá.",
+      "english": "Please have some tea.",
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+    },
+    {
+      "id": "hsk1-174",
+      "number": 174,
+      "topicId": "drinks",
+      "tokens": [
+        "我",
+        "要",
+        "一",
+        "杯",
+        "水"
+      ],
+      "chinese": "我要一杯水。",
+      "pinyin": "Wǒ yào yì bēi shuǐ.",
+      "english": "I want a glass of water.",
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+    },
+    {
+      "id": "hsk1-175",
+      "number": 175,
+      "topicId": "drinks",
+      "tokens": [
+        "他",
+        "要",
+        "两",
+        "杯",
+        "茶"
+      ],
+      "chinese": "他要两杯茶。",
+      "pinyin": "Tā yào liǎng bēi chá.",
+      "english": "He wants two cups of tea.",
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+    },
+    {
+      "id": "hsk1-176",
+      "number": 176,
+      "topicId": "drinks",
+      "tokens": [
+        "你",
+        "要",
+        "几",
+        "杯",
+        "茶"
+      ],
+      "chinese": "你要几杯茶？",
+      "pinyin": "Nǐ yào jǐ bēi chá?",
+      "english": "How many cups of tea do you want?",
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+    },
+    {
+      "id": "hsk1-177",
+      "number": 177,
+      "topicId": "drinks",
+      "tokens": [
+        "这",
+        "杯",
+        "水",
+        "很",
+        "热"
+      ],
+      "chinese": "这杯水很热。",
+      "pinyin": "Zhè bēi shuǐ hěn rè.",
+      "english": "This glass of water is hot.",
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+    },
+    {
+      "id": "hsk1-178",
+      "number": 178,
+      "topicId": "drinks",
+      "tokens": [
+        "那",
+        "杯",
+        "茶",
+        "很",
+        "冷"
+      ],
+      "chinese": "那杯茶很冷。",
+      "pinyin": "Nà bēi chá hěn lěng.",
+      "english": "That cup of tea is cold.",
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+    },
+    {
+      "id": "hsk1-179",
+      "number": 179,
+      "topicId": "drinks",
+      "tokens": [
+        "我",
+        "不",
+        "想",
+        "喝",
+        "水"
+      ],
+      "chinese": "我不想喝水。",
+      "pinyin": "Wǒ bù xiǎng hē shuǐ.",
+      "english": "I do not want to drink water.",
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+    },
+    {
+      "id": "hsk1-180",
+      "number": 180,
+      "topicId": "drinks",
+      "tokens": [
+        "我们",
+        "在",
+        "家",
+        "喝",
+        "茶"
+      ],
+      "chinese": "我们在家喝茶。",
+      "pinyin": "Wǒmen zài jiā hē chá.",
+      "english": "We drink tea at home.",
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+    },
+    {
+      "id": "hsk1-181",
+      "number": 181,
+      "topicId": "likes",
+      "tokens": [
+        "我",
+        "喜欢",
+        "汉语"
+      ],
+      "chinese": "我喜欢汉语。",
+      "pinyin": "Wǒ xǐhuan Hànyǔ.",
+      "english": "I like Chinese.",
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+    },
+    {
+      "id": "hsk1-182",
+      "number": 182,
+      "topicId": "likes",
+      "tokens": [
+        "她",
+        "喜欢",
+        "看",
+        "书"
+      ],
+      "chinese": "她喜欢看书。",
+      "pinyin": "Tā xǐhuan kàn shū.",
+      "english": "She likes reading books.",
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+    },
+    {
+      "id": "hsk1-183",
+      "number": 183,
+      "topicId": "likes",
+      "tokens": [
+        "他",
+        "喜欢",
+        "看",
+        "电影"
+      ],
+      "chinese": "他喜欢看电影。",
+      "pinyin": "Tā xǐhuan kàn diànyǐng.",
+      "english": "He likes watching movies.",
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+    },
+    {
+      "id": "hsk1-184",
+      "number": 184,
+      "topicId": "likes",
+      "tokens": [
+        "我们",
+        "喜欢",
+        "听",
+        "老师",
+        "说话"
+      ],
+      "chinese": "我们喜欢听老师说话。",
+      "pinyin": "Wǒmen xǐhuan tīng lǎoshī shuōhuà.",
+      "english": "We like listening to the teacher speaking.",
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+    },
+    {
+      "id": "hsk1-185",
+      "number": 185,
+      "topicId": "likes",
+      "tokens": [
+        "你",
+        "喜欢",
+        "喝",
+        "茶",
+        "吗"
+      ],
+      "chinese": "你喜欢喝茶吗？",
+      "pinyin": "Nǐ xǐhuan hē chá ma?",
+      "english": "Do you like drinking tea?",
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+    },
+    {
+      "id": "hsk1-186",
+      "number": 186,
+      "topicId": "likes",
+      "tokens": [
+        "我",
+        "不",
+        "喜欢",
+        "看",
+        "电视"
+      ],
+      "chinese": "我不喜欢看电视。",
+      "pinyin": "Wǒ bù xǐhuan kàn diànshì.",
+      "english": "I do not like watching television.",
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+    },
+    {
+      "id": "hsk1-187",
+      "number": 187,
+      "topicId": "likes",
+      "tokens": [
+        "他",
+        "不",
+        "喜欢",
+        "这",
+        "件",
+        "衣服"
+      ],
+      "chinese": "他不喜欢这件衣服。",
+      "pinyin": "Tā bù xǐhuan zhè jiàn yīfu.",
+      "english": "He does not like this piece of clothing.",
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+    },
+    {
+      "id": "hsk1-188",
+      "number": 188,
+      "topicId": "likes",
+      "tokens": [
+        "她",
+        "很",
+        "喜欢",
+        "猫"
+      ],
+      "chinese": "她很喜欢猫。",
+      "pinyin": "Tā hěn xǐhuan māo.",
+      "english": "She likes cats very much.",
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+    },
+    {
+      "id": "hsk1-189",
+      "number": 189,
+      "topicId": "likes",
+      "tokens": [
+        "我",
+        "很",
+        "喜欢",
+        "狗"
+      ],
+      "chinese": "我很喜欢狗。",
+      "pinyin": "Wǒ hěn xǐhuan gǒu.",
+      "english": "I like dogs very much.",
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+    },
+    {
+      "id": "hsk1-190",
+      "number": 190,
+      "topicId": "likes",
+      "tokens": [
+        "你",
+        "喜欢",
+        "什么",
+        "水果"
+      ],
+      "chinese": "你喜欢什么水果？",
+      "pinyin": "Nǐ xǐhuan shénme shuǐguǒ?",
+      "english": "What fruit do you like?",
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+    },
+    {
+      "id": "hsk1-191",
+      "number": 191,
+      "topicId": "likes",
+      "tokens": [
+        "她",
+        "喜欢",
+        "北京"
+      ],
+      "chinese": "她喜欢北京。",
+      "pinyin": "Tā xǐhuan Běijīng.",
+      "english": "She likes Beijing.",
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+    },
+    {
+      "id": "hsk1-192",
+      "number": 192,
+      "topicId": "likes",
+      "tokens": [
+        "我们",
+        "都",
+        "喜欢",
+        "这",
+        "本",
+        "书"
+      ],
+      "chinese": "我们都喜欢这本书。",
+      "pinyin": "Wǒmen dōu xǐhuan zhè běn shū.",
+      "english": "We all like this book.",
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+    },
+    {
+      "id": "hsk1-193",
+      "number": 193,
+      "topicId": "likes",
+      "tokens": [
+        "他们",
+        "都",
+        "喜欢",
+        "学习",
+        "汉语"
+      ],
+      "chinese": "他们都喜欢学习汉语。",
+      "pinyin": "Tāmen dōu xǐhuan xuéxí Hànyǔ.",
+      "english": "They all like studying Chinese.",
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+    },
+    {
+      "id": "hsk1-194",
+      "number": 194,
+      "topicId": "likes",
+      "tokens": [
+        "你",
+        "的",
+        "女儿",
+        "喜欢",
+        "什么"
+      ],
+      "chinese": "你的女儿喜欢什么？",
+      "pinyin": "Nǐ de nǚ'ér xǐhuan shénme?",
+      "english": "What does your daughter like?",
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+    },
+    {
+      "id": "hsk1-195",
+      "number": 195,
+      "topicId": "likes",
+      "tokens": [
+        "我",
+        "喜欢",
+        "和",
+        "朋友",
+        "看",
+        "电影"
+      ],
+      "chinese": "我喜欢和朋友看电影。",
+      "pinyin": "Wǒ xǐhuan hé péngyou kàn diànyǐng.",
+      "english": "I like watching movies with friends.",
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+    },
+    {
+      "id": "hsk1-196",
+      "number": 196,
+      "topicId": "abilities",
+      "tokens": [
+        "我",
+        "会",
+        "说",
+        "汉语"
+      ],
+      "chinese": "我会说汉语。",
+      "pinyin": "Wǒ huì shuō Hànyǔ.",
+      "english": "I can speak Chinese.",
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+    },
+    {
+      "id": "hsk1-197",
+      "number": 197,
+      "topicId": "abilities",
+      "tokens": [
+        "他",
+        "会",
+        "写",
+        "汉字"
+      ],
+      "chinese": "他会写汉字。",
+      "pinyin": "Tā huì xiě Hànzì.",
+      "english": "He can write Chinese characters.",
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+    },
+    {
+      "id": "hsk1-198",
+      "number": 198,
+      "topicId": "abilities",
+      "tokens": [
+        "她",
+        "会",
+        "做",
+        "饭"
+      ],
+      "chinese": "她会做饭。",
+      "pinyin": "Tā huì zuò fàn.",
+      "english": "She can cook.",
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+    },
+    {
+      "id": "hsk1-199",
+      "number": 199,
+      "topicId": "abilities",
+      "tokens": [
+        "你",
+        "会",
+        "说",
+        "汉语",
+        "吗"
+      ],
+      "chinese": "你会说汉语吗？",
+      "pinyin": "Nǐ huì shuō Hànyǔ ma?",
+      "english": "Can you speak Chinese?",
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+    },
+    {
+      "id": "hsk1-200",
+      "number": 200,
+      "topicId": "abilities",
+      "tokens": [
+        "我",
+        "不",
+        "会",
+        "写",
+        "这",
+        "个",
+        "字"
+      ],
+      "chinese": "我不会写这个字。",
+      "pinyin": "Wǒ bú huì xiě zhè ge zì.",
+      "english": "I cannot write this character.",
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+    },
+    {
+      "id": "hsk1-201",
+      "number": 201,
+      "topicId": "abilities",
+      "tokens": [
+        "他",
+        "不",
+        "会",
+        "做",
+        "饭"
+      ],
+      "chinese": "他不会做饭。",
+      "pinyin": "Tā bú huì zuò fàn.",
+      "english": "He cannot cook.",
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+    },
+    {
+      "id": "hsk1-202",
+      "number": 202,
+      "topicId": "abilities",
+      "tokens": [
+        "你",
+        "会",
+        "写",
+        "你",
+        "的",
+        "名字",
+        "吗"
+      ],
+      "chinese": "你会写你的名字吗？",
+      "pinyin": "Nǐ huì xiě nǐ de míngzi ma?",
+      "english": "Can you write your name?",
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+    },
+    {
+      "id": "hsk1-203",
+      "number": 203,
+      "topicId": "abilities",
+      "tokens": [
+        "我们",
+        "都",
+        "会",
+        "说",
+        "汉语"
+      ],
+      "chinese": "我们都会说汉语。",
+      "pinyin": "Wǒmen dōu huì shuō Hànyǔ.",
+      "english": "We can all speak Chinese.",
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+    },
+    {
+      "id": "hsk1-204",
+      "number": 204,
+      "topicId": "abilities",
+      "tokens": [
+        "她",
+        "会",
+        "读",
+        "这",
+        "本",
+        "书"
+      ],
+      "chinese": "她会读这本书。",
+      "pinyin": "Tā huì dú zhè běn shū.",
+      "english": "She can read this book aloud.",
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+    },
+    {
+      "id": "hsk1-205",
+      "number": 205,
+      "topicId": "abilities",
+      "tokens": [
+        "我",
+        "会",
+        "写",
+        "我",
+        "的",
+        "名字"
+      ],
+      "chinese": "我会写我的名字。",
+      "pinyin": "Wǒ huì xiě wǒ de míngzi.",
+      "english": "I can write my name.",
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+    },
+    {
+      "id": "hsk1-206",
+      "number": 206,
+      "topicId": "abilities",
+      "tokens": [
+        "你",
+        "的",
+        "妈妈",
+        "会",
+        "做",
+        "饭",
+        "吗"
+      ],
+      "chinese": "你的妈妈会做饭吗？",
+      "pinyin": "Nǐ de māma huì zuò fàn ma?",
+      "english": "Can your mother cook?",
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+    },
+    {
+      "id": "hsk1-207",
+      "number": 207,
+      "topicId": "abilities",
+      "tokens": [
+        "他",
+        "会",
+        "读",
+        "汉语"
+      ],
+      "chinese": "他会读汉语。",
+      "pinyin": "Tā huì dú Hànyǔ.",
+      "english": "He can read Chinese.",
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+    },
+    {
+      "id": "hsk1-208",
+      "number": 208,
+      "topicId": "abilities",
+      "tokens": [
+        "我",
+        "不",
+        "会",
+        "读",
+        "那",
+        "个",
+        "字"
+      ],
+      "chinese": "我不会读那个字。",
+      "pinyin": "Wǒ bú huì dú nà ge zì.",
+      "english": "I cannot read that character aloud.",
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+    },
+    {
+      "id": "hsk1-209",
+      "number": 209,
+      "topicId": "abilities",
+      "tokens": [
+        "你",
+        "会",
+        "读",
+        "这",
+        "个",
+        "字",
+        "吗"
+      ],
+      "chinese": "你会读这个字吗？",
+      "pinyin": "Nǐ huì dú zhè ge zì ma?",
+      "english": "Can you read this character aloud?",
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+    },
+    {
+      "id": "hsk1-210",
+      "number": 210,
+      "topicId": "abilities",
+      "tokens": [
+        "我",
+        "的",
+        "朋友",
+        "会",
+        "说",
+        "汉语"
+      ],
+      "chinese": "我的朋友会说汉语。",
+      "pinyin": "Wǒ de péngyou huì shuō Hànyǔ.",
+      "english": "My friend can speak Chinese.",
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+    },
+    {
+      "id": "hsk1-211",
+      "number": 211,
+      "topicId": "plans",
+      "tokens": [
+        "我",
+        "想",
+        "去",
+        "中国"
+      ],
+      "chinese": "我想去中国。",
+      "pinyin": "Wǒ xiǎng qù Zhōngguó.",
+      "english": "I would like to go to China.",
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+    },
+    {
+      "id": "hsk1-212",
+      "number": 212,
+      "topicId": "plans",
+      "tokens": [
+        "她",
+        "想",
+        "学习",
+        "汉语"
+      ],
+      "chinese": "她想学习汉语。",
+      "pinyin": "Tā xiǎng xuéxí Hànyǔ.",
+      "english": "She would like to study Chinese.",
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+    },
+    {
+      "id": "hsk1-213",
+      "number": 213,
+      "topicId": "plans",
+      "tokens": [
+        "他",
+        "想",
+        "买",
+        "电脑"
+      ],
+      "chinese": "他想买电脑。",
+      "pinyin": "Tā xiǎng mǎi diànnǎo.",
+      "english": "He would like to buy a computer.",
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+    },
+    {
+      "id": "hsk1-214",
+      "number": 214,
+      "topicId": "plans",
+      "tokens": [
+        "我们",
+        "想",
+        "看",
+        "电影"
+      ],
+      "chinese": "我们想看电影。",
+      "pinyin": "Wǒmen xiǎng kàn diànyǐng.",
+      "english": "We would like to watch a movie.",
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+    },
+    {
+      "id": "hsk1-215",
+      "number": 215,
+      "topicId": "plans",
+      "tokens": [
+        "你",
+        "想",
+        "去",
+        "哪儿"
+      ],
+      "chinese": "你想去哪儿？",
+      "pinyin": "Nǐ xiǎng qù nǎr?",
+      "english": "Where would you like to go?",
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+    },
+    {
+      "id": "hsk1-216",
+      "number": 216,
+      "topicId": "plans",
+      "tokens": [
+        "我",
+        "想",
+        "回",
+        "家"
+      ],
+      "chinese": "我想回家。",
+      "pinyin": "Wǒ xiǎng huí jiā.",
+      "english": "I would like to go home.",
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+    },
+    {
+      "id": "hsk1-217",
+      "number": 217,
+      "topicId": "plans",
+      "tokens": [
+        "她",
+        "想",
+        "买",
+        "一",
+        "本",
+        "书"
+      ],
+      "chinese": "她想买一本书。",
+      "pinyin": "Tā xiǎng mǎi yì běn shū.",
+      "english": "She would like to buy a book.",
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+    },
+    {
+      "id": "hsk1-218",
+      "number": 218,
+      "topicId": "plans",
+      "tokens": [
+        "他",
+        "想",
+        "在",
+        "北京",
+        "工作"
+      ],
+      "chinese": "他想在北京工作。",
+      "pinyin": "Tā xiǎng zài Běijīng gōngzuò.",
+      "english": "He would like to work in Beijing.",
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+    },
+    {
+      "id": "hsk1-219",
+      "number": 219,
+      "topicId": "plans",
+      "tokens": [
+        "我",
+        "明天",
+        "想",
+        "去",
+        "商店"
+      ],
+      "chinese": "我明天想去商店。",
+      "pinyin": "Wǒ míngtiān xiǎng qù shāngdiàn.",
+      "english": "I would like to go to the shop tomorrow.",
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one.",
+      "acceptedOrders": [
+        [
+          "明天",
+          "我",
+          "想",
+          "去",
+          "商店"
+        ],
+        [
+          "我",
+          "想",
+          "明天",
+          "去",
+          "商店"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-220",
+      "number": 220,
+      "topicId": "plans",
+      "tokens": [
+        "你",
+        "想",
+        "看",
+        "什么",
+        "电影"
+      ],
+      "chinese": "你想看什么电影？",
+      "pinyin": "Nǐ xiǎng kàn shénme diànyǐng?",
+      "english": "What movie would you like to watch?",
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+    },
+    {
+      "id": "hsk1-221",
+      "number": 221,
+      "topicId": "plans",
+      "tokens": [
+        "我们",
+        "想",
+        "去",
+        "饭店",
+        "吃",
+        "饭"
+      ],
+      "chinese": "我们想去饭店吃饭。",
+      "pinyin": "Wǒmen xiǎng qù fàndiàn chī fàn.",
+      "english": "We would like to go to a restaurant to eat.",
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+    },
+    {
+      "id": "hsk1-222",
+      "number": 222,
+      "topicId": "plans",
+      "tokens": [
+        "她",
+        "不",
+        "想",
+        "去",
+        "医院"
+      ],
+      "chinese": "她不想去医院。",
+      "pinyin": "Tā bù xiǎng qù yīyuàn.",
+      "english": "She does not want to go to the hospital.",
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+    },
+    {
+      "id": "hsk1-223",
+      "number": 223,
+      "topicId": "plans",
+      "tokens": [
+        "我",
+        "想",
+        "买",
+        "一",
+        "些",
+        "水果"
+      ],
+      "chinese": "我想买一些水果。",
+      "pinyin": "Wǒ xiǎng mǎi yì xiē shuǐguǒ.",
+      "english": "I would like to buy some fruit.",
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+    },
+    {
+      "id": "hsk1-224",
+      "number": 224,
+      "topicId": "plans",
+      "tokens": [
+        "你",
+        "明天",
+        "想",
+        "做",
+        "什么"
+      ],
+      "chinese": "你明天想做什么？",
+      "pinyin": "Nǐ míngtiān xiǎng zuò shénme?",
+      "english": "What would you like to do tomorrow?",
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one.",
+      "acceptedOrders": [
+        [
+          "明天",
+          "你",
+          "想",
+          "做",
+          "什么"
+        ],
+        [
+          "你",
+          "想",
+          "明天",
+          "做",
+          "什么"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-225",
+      "number": 225,
+      "topicId": "plans",
+      "tokens": [
+        "他",
+        "想",
+        "和",
+        "我",
+        "去",
+        "学校"
+      ],
+      "chinese": "他想和我去学校。",
+      "pinyin": "Tā xiǎng hé wǒ qù xuéxiào.",
+      "english": "He would like to go to school with me.",
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+    },
+    {
+      "id": "hsk1-226",
+      "number": 226,
+      "topicId": "questions",
+      "tokens": [
+        "你",
+        "是",
+        "学生",
+        "吗"
+      ],
+      "chinese": "你是学生吗？",
+      "pinyin": "Nǐ shì xuésheng ma?",
+      "english": "Are you a student?",
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+    },
+    {
+      "id": "hsk1-227",
+      "number": 227,
+      "topicId": "questions",
+      "tokens": [
+        "他",
+        "是",
+        "老师",
+        "吗"
+      ],
+      "chinese": "他是老师吗？",
+      "pinyin": "Tā shì lǎoshī ma?",
+      "english": "Is he a teacher?",
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+    },
+    {
+      "id": "hsk1-228",
+      "number": 228,
+      "topicId": "questions",
+      "tokens": [
+        "她",
+        "是",
+        "医生",
+        "吗"
+      ],
+      "chinese": "她是医生吗？",
+      "pinyin": "Tā shì yīshēng ma?",
+      "english": "Is she a doctor?",
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+    },
+    {
+      "id": "hsk1-229",
+      "number": 229,
+      "topicId": "questions",
+      "tokens": [
+        "这",
+        "是",
+        "你",
+        "的",
+        "书",
+        "吗"
+      ],
+      "chinese": "这是你的书吗？",
+      "pinyin": "Zhè shì nǐ de shū ma?",
+      "english": "Is this your book?",
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+    },
+    {
+      "id": "hsk1-230",
+      "number": 230,
+      "topicId": "questions",
+      "tokens": [
+        "那",
+        "是",
+        "他",
+        "的",
+        "电脑",
+        "吗"
+      ],
+      "chinese": "那是他的电脑吗？",
+      "pinyin": "Nà shì tā de diànnǎo ma?",
+      "english": "Is that his computer?",
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+    },
+    {
+      "id": "hsk1-231",
+      "number": 231,
+      "topicId": "questions",
+      "tokens": [
+        "你",
+        "有",
+        "儿子",
+        "吗"
+      ],
+      "chinese": "你有儿子吗？",
+      "pinyin": "Nǐ yǒu érzi ma?",
+      "english": "Do you have a son?",
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+    },
+    {
+      "id": "hsk1-232",
+      "number": 232,
+      "topicId": "questions",
+      "tokens": [
+        "她",
+        "有",
+        "女儿",
+        "吗"
+      ],
+      "chinese": "她有女儿吗？",
+      "pinyin": "Tā yǒu nǚ'ér ma?",
+      "english": "Does she have a daughter?",
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+    },
+    {
+      "id": "hsk1-233",
+      "number": 233,
+      "topicId": "questions",
+      "tokens": [
+        "你",
+        "今天",
+        "工作",
+        "吗"
+      ],
+      "chinese": "你今天工作吗？",
+      "pinyin": "Nǐ jīntiān gōngzuò ma?",
+      "english": "Are you working today?",
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go.",
+      "acceptedOrders": [
+        [
+          "今天",
+          "你",
+          "工作",
+          "吗"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-234",
+      "number": 234,
+      "topicId": "questions",
+      "tokens": [
+        "你",
+        "明天",
+        "去",
+        "学校",
+        "吗"
+      ],
+      "chinese": "你明天去学校吗？",
+      "pinyin": "Nǐ míngtiān qù xuéxiào ma?",
+      "english": "Are you going to school tomorrow?",
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go.",
+      "acceptedOrders": [
+        [
+          "明天",
+          "你",
+          "去",
+          "学校",
+          "吗"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-235",
+      "number": 235,
+      "topicId": "questions",
+      "tokens": [
+        "他",
+        "在",
+        "家",
+        "吗"
+      ],
+      "chinese": "他在家吗？",
+      "pinyin": "Tā zài jiā ma?",
+      "english": "Is he at home?",
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+    },
+    {
+      "id": "hsk1-236",
+      "number": 236,
+      "topicId": "questions",
+      "tokens": [
+        "谁",
+        "是",
+        "你",
+        "的",
+        "老师"
+      ],
+      "chinese": "谁是你的老师？",
+      "pinyin": "Shéi shì nǐ de lǎoshī?",
+      "english": "Who is your teacher?",
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+    },
+    {
+      "id": "hsk1-237",
+      "number": 237,
+      "topicId": "questions",
+      "tokens": [
+        "你",
+        "看",
+        "什么",
+        "书"
+      ],
+      "chinese": "你看什么书？",
+      "pinyin": "Nǐ kàn shénme shū?",
+      "english": "What book are you reading?",
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+    },
+    {
+      "id": "hsk1-238",
+      "number": 238,
+      "topicId": "questions",
+      "tokens": [
+        "你",
+        "去",
+        "哪儿",
+        "买",
+        "东西"
+      ],
+      "chinese": "你去哪儿买东西？",
+      "pinyin": "Nǐ qù nǎr mǎi dōngxi?",
+      "english": "Where do you go to buy things?",
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+    },
+    {
+      "id": "hsk1-239",
+      "number": 239,
+      "topicId": "questions",
+      "tokens": [
+        "这",
+        "是",
+        "什么",
+        "东西"
+      ],
+      "chinese": "这是什么东西？",
+      "pinyin": "Zhè shì shénme dōngxi?",
+      "english": "What is this thing?",
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+    },
+    {
+      "id": "hsk1-240",
+      "number": 240,
+      "topicId": "questions",
+      "tokens": [
+        "你",
+        "怎么",
+        "去",
+        "学校"
+      ],
+      "chinese": "你怎么去学校？",
+      "pinyin": "Nǐ zěnme qù xuéxiào?",
+      "english": "How do you get to school?",
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+    },
+    {
+      "id": "hsk1-241",
+      "number": 241,
+      "topicId": "descriptions",
+      "tokens": [
+        "今天",
+        "很",
+        "热"
+      ],
+      "chinese": "今天很热。",
+      "pinyin": "Jīntiān hěn rè.",
+      "english": "It is hot today.",
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+    },
+    {
+      "id": "hsk1-242",
+      "number": 242,
+      "topicId": "descriptions",
+      "tokens": [
+        "今天",
+        "很",
+        "冷"
+      ],
+      "chinese": "今天很冷。",
+      "pinyin": "Jīntiān hěn lěng.",
+      "english": "It is cold today.",
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+    },
+    {
+      "id": "hsk1-243",
+      "number": 243,
+      "topicId": "descriptions",
+      "tokens": [
+        "这",
+        "件",
+        "衣服",
+        "很",
+        "漂亮"
+      ],
+      "chinese": "这件衣服很漂亮。",
+      "pinyin": "Zhè jiàn yīfu hěn piàoliang.",
+      "english": "This piece of clothing is pretty.",
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+    },
+    {
+      "id": "hsk1-244",
+      "number": 244,
+      "topicId": "descriptions",
+      "tokens": [
+        "我",
+        "的",
+        "学校",
+        "很",
+        "大"
+      ],
+      "chinese": "我的学校很大。",
+      "pinyin": "Wǒ de xuéxiào hěn dà.",
+      "english": "My school is big.",
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+    },
+    {
+      "id": "hsk1-245",
+      "number": 245,
+      "topicId": "descriptions",
+      "tokens": [
+        "他",
+        "的",
+        "家",
+        "很",
+        "小"
+      ],
+      "chinese": "他的家很小。",
+      "pinyin": "Tā de jiā hěn xiǎo.",
+      "english": "His home is small.",
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+    },
+    {
+      "id": "hsk1-246",
+      "number": 246,
+      "topicId": "descriptions",
+      "tokens": [
+        "她",
+        "今天",
+        "很",
+        "高兴"
+      ],
+      "chinese": "她今天很高兴。",
+      "pinyin": "Tā jīntiān hěn gāoxìng.",
+      "english": "She is happy today.",
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description.",
+      "acceptedOrders": [
+        [
+          "今天",
+          "她",
+          "很",
+          "高兴"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-247",
+      "number": 247,
+      "topicId": "descriptions",
+      "tokens": [
+        "老师",
+        "很",
+        "高兴"
+      ],
+      "chinese": "老师很高兴。",
+      "pinyin": "Lǎoshī hěn gāoxìng.",
+      "english": "The teacher is happy.",
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+    },
+    {
+      "id": "hsk1-248",
+      "number": 248,
+      "topicId": "descriptions",
+      "tokens": [
+        "这",
+        "个",
+        "字",
+        "很",
+        "大"
+      ],
+      "chinese": "这个字很大。",
+      "pinyin": "Zhè ge zì hěn dà.",
+      "english": "This character is large.",
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+    },
+    {
+      "id": "hsk1-249",
+      "number": 249,
+      "topicId": "descriptions",
+      "tokens": [
+        "那",
+        "本",
+        "书",
+        "很",
+        "好"
+      ],
+      "chinese": "那本书很好。",
+      "pinyin": "Nà běn shū hěn hǎo.",
+      "english": "That book is good.",
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+    },
+    {
+      "id": "hsk1-250",
+      "number": 250,
+      "topicId": "descriptions",
+      "tokens": [
+        "你",
+        "的",
+        "汉语",
+        "很",
+        "好"
+      ],
+      "chinese": "你的汉语很好。",
+      "pinyin": "Nǐ de Hànyǔ hěn hǎo.",
+      "english": "Your Chinese is good.",
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+    },
+    {
+      "id": "hsk1-251",
+      "number": 251,
+      "topicId": "descriptions",
+      "tokens": [
+        "北京",
+        "的",
+        "天气",
+        "很",
+        "好"
+      ],
+      "chinese": "北京的天气很好。",
+      "pinyin": "Běijīng de tiānqì hěn hǎo.",
+      "english": "The weather in Beijing is good.",
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+    },
+    {
+      "id": "hsk1-252",
+      "number": 252,
+      "topicId": "descriptions",
+      "tokens": [
+        "今天",
+        "的",
+        "天气",
+        "怎么样"
+      ],
+      "chinese": "今天的天气怎么样？",
+      "pinyin": "Jīntiān de tiānqì zěnmeyàng?",
+      "english": "How is the weather today?",
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+    },
+    {
+      "id": "hsk1-253",
+      "number": 253,
+      "topicId": "descriptions",
+      "tokens": [
+        "这",
+        "个",
+        "电影",
+        "怎么样"
+      ],
+      "chinese": "这个电影怎么样？",
+      "pinyin": "Zhè ge diànyǐng zěnmeyàng?",
+      "english": "How is this movie?",
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+    },
+    {
+      "id": "hsk1-254",
+      "number": 254,
+      "topicId": "descriptions",
+      "tokens": [
+        "我",
+        "很",
+        "喜欢",
+        "这",
+        "个",
+        "学校"
+      ],
+      "chinese": "我很喜欢这个学校。",
+      "pinyin": "Wǒ hěn xǐhuan zhè ge xuéxiào.",
+      "english": "I like this school very much.",
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+    },
+    {
+      "id": "hsk1-255",
+      "number": 255,
+      "topicId": "descriptions",
+      "tokens": [
+        "这",
+        "只",
+        "狗",
+        "很",
+        "小"
+      ],
+      "chinese": "这只狗很小。",
+      "pinyin": "Zhè zhī gǒu hěn xiǎo.",
+      "english": "This dog is small.",
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+    },
+    {
+      "id": "hsk1-256",
+      "number": 256,
+      "topicId": "negatives",
+      "tokens": [
+        "我",
+        "不",
+        "是",
+        "老师"
+      ],
+      "chinese": "我不是老师。",
+      "pinyin": "Wǒ bú shì lǎoshī.",
+      "english": "I am not a teacher.",
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+    },
+    {
+      "id": "hsk1-257",
+      "number": 257,
+      "topicId": "negatives",
+      "tokens": [
+        "他",
+        "不",
+        "是",
+        "中国人"
+      ],
+      "chinese": "他不是中国人。",
+      "pinyin": "Tā bú shì Zhōngguórén.",
+      "english": "He is not Chinese.",
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+    },
+    {
+      "id": "hsk1-258",
+      "number": 258,
+      "topicId": "negatives",
+      "tokens": [
+        "她",
+        "不",
+        "是",
+        "我",
+        "的",
+        "同学"
+      ],
+      "chinese": "她不是我的同学。",
+      "pinyin": "Tā bú shì wǒ de tóngxué.",
+      "english": "She is not my classmate.",
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+    },
+    {
+      "id": "hsk1-259",
+      "number": 259,
+      "topicId": "negatives",
+      "tokens": [
+        "我",
+        "没有",
+        "电脑"
+      ],
+      "chinese": "我没有电脑。",
+      "pinyin": "Wǒ méiyǒu diànnǎo.",
+      "english": "I do not have a computer.",
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+    },
+    {
+      "id": "hsk1-260",
+      "number": 260,
+      "topicId": "negatives",
+      "tokens": [
+        "他",
+        "没有",
+        "钱"
+      ],
+      "chinese": "他没有钱。",
+      "pinyin": "Tā méiyǒu qián.",
+      "english": "He does not have any money.",
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+    },
+    {
+      "id": "hsk1-261",
+      "number": 261,
+      "topicId": "negatives",
+      "tokens": [
+        "她",
+        "没有",
+        "女儿"
+      ],
+      "chinese": "她没有女儿。",
+      "pinyin": "Tā méiyǒu nǚ'ér.",
+      "english": "She does not have a daughter.",
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+    },
+    {
+      "id": "hsk1-262",
+      "number": 262,
+      "topicId": "negatives",
+      "tokens": [
+        "我",
+        "不",
+        "看",
+        "电视"
+      ],
+      "chinese": "我不看电视。",
+      "pinyin": "Wǒ bú kàn diànshì.",
+      "english": "I do not watch television.",
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+    },
+    {
+      "id": "hsk1-263",
+      "number": 263,
+      "topicId": "negatives",
+      "tokens": [
+        "你",
+        "不",
+        "认识",
+        "他",
+        "吗"
+      ],
+      "chinese": "你不认识他吗？",
+      "pinyin": "Nǐ bú rènshi tā ma?",
+      "english": "Don't you know him?",
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+    },
+    {
+      "id": "hsk1-264",
+      "number": 264,
+      "topicId": "negatives",
+      "tokens": [
+        "我们",
+        "今天",
+        "不",
+        "去",
+        "学校"
+      ],
+      "chinese": "我们今天不去学校。",
+      "pinyin": "Wǒmen jīntiān bú qù xuéxiào.",
+      "english": "We are not going to school today.",
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen.",
+      "acceptedOrders": [
+        [
+          "今天",
+          "我们",
+          "不",
+          "去",
+          "学校"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-265",
+      "number": 265,
+      "topicId": "negatives",
+      "tokens": [
+        "他",
+        "昨天",
+        "没",
+        "去",
+        "工作"
+      ],
+      "chinese": "他昨天没去工作。",
+      "pinyin": "Tā zuótiān méi qù gōngzuò.",
+      "english": "He did not go to work yesterday.",
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen.",
+      "acceptedOrders": [
+        [
+          "昨天",
+          "他",
+          "没",
+          "去",
+          "工作"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-266",
+      "number": 266,
+      "topicId": "negatives",
+      "tokens": [
+        "我",
+        "昨天",
+        "没",
+        "买",
+        "东西"
+      ],
+      "chinese": "我昨天没买东西。",
+      "pinyin": "Wǒ zuótiān méi mǎi dōngxi.",
+      "english": "I did not buy anything yesterday.",
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen.",
+      "acceptedOrders": [
+        [
+          "昨天",
+          "我",
+          "没",
+          "买",
+          "东西"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-267",
+      "number": 267,
+      "topicId": "negatives",
+      "tokens": [
+        "她",
+        "不",
+        "喜欢",
+        "这",
+        "个",
+        "电影"
+      ],
+      "chinese": "她不喜欢这个电影。",
+      "pinyin": "Tā bù xǐhuan zhè ge diànyǐng.",
+      "english": "She does not like this movie.",
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+    },
+    {
+      "id": "hsk1-268",
+      "number": 268,
+      "topicId": "negatives",
+      "tokens": [
+        "今天",
+        "不",
+        "冷"
+      ],
+      "chinese": "今天不冷。",
+      "pinyin": "Jīntiān bù lěng.",
+      "english": "It is not cold today.",
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+    },
+    {
+      "id": "hsk1-269",
+      "number": 269,
+      "topicId": "negatives",
+      "tokens": [
+        "这",
+        "个",
+        "杯子",
+        "不",
+        "大"
+      ],
+      "chinese": "这个杯子不大。",
+      "pinyin": "Zhè ge bēizi bú dà.",
+      "english": "This cup is not big.",
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+    },
+    {
+      "id": "hsk1-270",
+      "number": 270,
+      "topicId": "negatives",
+      "tokens": [
+        "我",
+        "现在",
+        "不",
+        "想",
+        "睡觉"
+      ],
+      "chinese": "我现在不想睡觉。",
+      "pinyin": "Wǒ xiànzài bù xiǎng shuìjiào.",
+      "english": "I do not want to sleep now.",
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen.",
+      "acceptedOrders": [
+        [
+          "现在",
+          "我",
+          "不",
+          "想",
+          "睡觉"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-271",
+      "number": 271,
+      "topicId": "polite",
+      "tokens": [
+        "请",
+        "坐",
+        "这儿"
+      ],
+      "chinese": "请坐这儿。",
+      "pinyin": "Qǐng zuò zhèr.",
+      "english": "Please sit here.",
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+    },
+    {
+      "id": "hsk1-272",
+      "number": 272,
+      "topicId": "polite",
+      "tokens": [
+        "请",
+        "看",
+        "这",
+        "本",
+        "书"
+      ],
+      "chinese": "请看这本书。",
+      "pinyin": "Qǐng kàn zhè běn shū.",
+      "english": "Please look at this book.",
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+    },
+    {
+      "id": "hsk1-273",
+      "number": 273,
+      "topicId": "polite",
+      "tokens": [
+        "请",
+        "写",
+        "你",
+        "的",
+        "名字"
+      ],
+      "chinese": "请写你的名字。",
+      "pinyin": "Qǐng xiě nǐ de míngzi.",
+      "english": "Please write your name.",
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+    },
+    {
+      "id": "hsk1-274",
+      "number": 274,
+      "topicId": "polite",
+      "tokens": [
+        "请",
+        "读",
+        "这",
+        "个",
+        "字"
+      ],
+      "chinese": "请读这个字。",
+      "pinyin": "Qǐng dú zhè ge zì.",
+      "english": "Please read this character aloud.",
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+    },
+    {
+      "id": "hsk1-275",
+      "number": 275,
+      "topicId": "polite",
+      "tokens": [
+        "请",
+        "听",
+        "我",
+        "说话"
+      ],
+      "chinese": "请听我说话。",
+      "pinyin": "Qǐng tīng wǒ shuōhuà.",
+      "english": "Please listen to me speaking.",
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+    },
+    {
+      "id": "hsk1-276",
+      "number": 276,
+      "topicId": "polite",
+      "tokens": [
+        "请问",
+        "你",
+        "叫",
+        "什么",
+        "名字"
+      ],
+      "chinese": "请问你叫什么名字？",
+      "pinyin": "Qǐngwèn nǐ jiào shénme míngzi?",
+      "english": "May I ask your name?",
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+    },
+    {
+      "id": "hsk1-277",
+      "number": 277,
+      "topicId": "polite",
+      "tokens": [
+        "请问",
+        "现在",
+        "几",
+        "点"
+      ],
+      "chinese": "请问现在几点？",
+      "pinyin": "Qǐngwèn xiànzài jǐ diǎn?",
+      "english": "Excuse me, what time is it now?",
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+    },
+    {
+      "id": "hsk1-278",
+      "number": 278,
+      "topicId": "polite",
+      "tokens": [
+        "请问",
+        "医院",
+        "在",
+        "哪儿"
+      ],
+      "chinese": "请问医院在哪儿？",
+      "pinyin": "Qǐngwèn yīyuàn zài nǎr?",
+      "english": "Excuse me, where is the hospital?",
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+    },
+    {
+      "id": "hsk1-279",
+      "number": 279,
+      "topicId": "polite",
+      "tokens": [
+        "谢谢",
+        "你",
+        "的",
+        "老师"
+      ],
+      "chinese": "谢谢你的老师。",
+      "pinyin": "Xièxie nǐ de lǎoshī.",
+      "english": "Thank your teacher.",
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+    },
+    {
+      "id": "hsk1-280",
+      "number": 280,
+      "topicId": "polite",
+      "tokens": [
+        "谢谢",
+        "你",
+        "来",
+        "看",
+        "我"
+      ],
+      "chinese": "谢谢你来看我。",
+      "pinyin": "Xièxie nǐ lái kàn wǒ.",
+      "english": "Thank you for coming to see me.",
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+    },
+    {
+      "id": "hsk1-281",
+      "number": 281,
+      "topicId": "polite",
+      "tokens": [
+        "我",
+        "请",
+        "你",
+        "喝",
+        "茶"
+      ],
+      "chinese": "我请你喝茶。",
+      "pinyin": "Wǒ qǐng nǐ hē chá.",
+      "english": "I invite you to have tea.",
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+    },
+    {
+      "id": "hsk1-282",
+      "number": 282,
+      "topicId": "polite",
+      "tokens": [
+        "我们",
+        "请",
+        "老师",
+        "吃",
+        "饭"
+      ],
+      "chinese": "我们请老师吃饭。",
+      "pinyin": "Wǒmen qǐng lǎoshī chī fàn.",
+      "english": "We invite the teacher to have a meal.",
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+    },
+    {
+      "id": "hsk1-283",
+      "number": 283,
+      "topicId": "polite",
+      "tokens": [
+        "请",
+        "明天",
+        "上午",
+        "来"
+      ],
+      "chinese": "请明天上午来。",
+      "pinyin": "Qǐng míngtiān shàngwǔ lái.",
+      "english": "Please come tomorrow morning.",
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+    },
+    {
+      "id": "hsk1-284",
+      "number": 284,
+      "topicId": "polite",
+      "tokens": [
+        "请",
+        "看",
+        "这",
+        "个",
+        "苹果"
+      ],
+      "chinese": "请看这个苹果。",
+      "pinyin": "Qǐng kàn zhè ge píngguǒ.",
+      "english": "Please look at this apple.",
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+    },
+    {
+      "id": "hsk1-285",
+      "number": 285,
+      "topicId": "polite",
+      "tokens": [
+        "请",
+        "明天",
+        "来",
+        "我",
+        "家"
+      ],
+      "chinese": "请明天来我家。",
+      "pinyin": "Qǐng míngtiān lái wǒ jiā.",
+      "english": "Please come to my home tomorrow.",
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+    },
+    {
+      "id": "hsk1-286",
+      "number": 286,
+      "topicId": "travel",
+      "tokens": [
+        "我",
+        "坐",
+        "出租车",
+        "去",
+        "医院"
+      ],
+      "chinese": "我坐出租车去医院。",
+      "pinyin": "Wǒ zuò chūzūchē qù yīyuàn.",
+      "english": "I take a taxi to the hospital.",
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+    },
+    {
+      "id": "hsk1-287",
+      "number": 287,
+      "topicId": "travel",
+      "tokens": [
+        "他",
+        "坐",
+        "飞机",
+        "去",
+        "北京"
+      ],
+      "chinese": "他坐飞机去北京。",
+      "pinyin": "Tā zuò fēijī qù Běijīng.",
+      "english": "He goes to Beijing by plane.",
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+    },
+    {
+      "id": "hsk1-288",
+      "number": 288,
+      "topicId": "travel",
+      "tokens": [
+        "我们",
+        "坐",
+        "出租车",
+        "回",
+        "家"
+      ],
+      "chinese": "我们坐出租车回家。",
+      "pinyin": "Wǒmen zuò chūzūchē huí jiā.",
+      "english": "We take a taxi home.",
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+    },
+    {
+      "id": "hsk1-289",
+      "number": 289,
+      "topicId": "travel",
+      "tokens": [
+        "你",
+        "坐",
+        "什么",
+        "去",
+        "北京"
+      ],
+      "chinese": "你坐什么去北京？",
+      "pinyin": "Nǐ zuò shénme qù Běijīng?",
+      "english": "What do you take to get to Beijing?",
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+    },
+    {
+      "id": "hsk1-290",
+      "number": 290,
+      "topicId": "travel",
+      "tokens": [
+        "他",
+        "明天",
+        "坐",
+        "飞机",
+        "来"
+      ],
+      "chinese": "他明天坐飞机来。",
+      "pinyin": "Tā míngtiān zuò fēijī lái.",
+      "english": "He is coming by plane tomorrow.",
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning.",
+      "acceptedOrders": [
+        [
+          "明天",
+          "他",
+          "坐",
+          "飞机",
+          "来"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-291",
+      "number": 291,
+      "topicId": "travel",
+      "tokens": [
+        "我",
+        "去",
+        "商店",
+        "买",
+        "东西"
+      ],
+      "chinese": "我去商店买东西。",
+      "pinyin": "Wǒ qù shāngdiàn mǎi dōngxi.",
+      "english": "I go to the shop to buy things.",
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+    },
+    {
+      "id": "hsk1-292",
+      "number": 292,
+      "topicId": "travel",
+      "tokens": [
+        "她",
+        "去",
+        "学校",
+        "看",
+        "老师"
+      ],
+      "chinese": "她去学校看老师。",
+      "pinyin": "Tā qù xuéxiào kàn lǎoshī.",
+      "english": "She goes to the school to see the teacher.",
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+    },
+    {
+      "id": "hsk1-293",
+      "number": 293,
+      "topicId": "travel",
+      "tokens": [
+        "我们",
+        "去",
+        "北京",
+        "看",
+        "朋友"
+      ],
+      "chinese": "我们去北京看朋友。",
+      "pinyin": "Wǒmen qù Běijīng kàn péngyou.",
+      "english": "We go to Beijing to see friends.",
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+    },
+    {
+      "id": "hsk1-294",
+      "number": 294,
+      "topicId": "travel",
+      "tokens": [
+        "你",
+        "什么",
+        "时候",
+        "回来"
+      ],
+      "chinese": "你什么时候回来？",
+      "pinyin": "Nǐ shénme shíhou huílai?",
+      "english": "When are you coming back?",
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+    },
+    {
+      "id": "hsk1-295",
+      "number": 295,
+      "topicId": "travel",
+      "tokens": [
+        "我",
+        "下午",
+        "回来"
+      ],
+      "chinese": "我下午回来。",
+      "pinyin": "Wǒ xiàwǔ huílai.",
+      "english": "I am coming back in the afternoon.",
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning.",
+      "acceptedOrders": [
+        [
+          "下午",
+          "我",
+          "回来"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-296",
+      "number": 296,
+      "topicId": "travel",
+      "tokens": [
+        "他",
+        "明天",
+        "回",
+        "中国"
+      ],
+      "chinese": "他明天回中国。",
+      "pinyin": "Tā míngtiān huí Zhōngguó.",
+      "english": "He is returning to China tomorrow.",
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning.",
+      "acceptedOrders": [
+        [
+          "明天",
+          "他",
+          "回",
+          "中国"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-297",
+      "number": 297,
+      "topicId": "travel",
+      "tokens": [
+        "我",
+        "和",
+        "妈妈",
+        "去",
+        "商店"
+      ],
+      "chinese": "我和妈妈去商店。",
+      "pinyin": "Wǒ hé māma qù shāngdiàn.",
+      "english": "Mom and I go to the shop.",
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning.",
+      "acceptedOrders": [
+        [
+          "妈妈",
+          "和",
+          "我",
+          "去",
+          "商店"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-298",
+      "number": 298,
+      "topicId": "travel",
+      "tokens": [
+        "她",
+        "不",
+        "想",
+        "坐",
+        "飞机"
+      ],
+      "chinese": "她不想坐飞机。",
+      "pinyin": "Tā bù xiǎng zuò fēijī.",
+      "english": "She does not want to take a plane.",
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+    },
+    {
+      "id": "hsk1-299",
+      "number": 299,
+      "topicId": "travel",
+      "tokens": [
+        "你",
+        "现在",
+        "去",
+        "哪儿"
+      ],
+      "chinese": "你现在去哪儿？",
+      "pinyin": "Nǐ xiànzài qù nǎr?",
+      "english": "Where are you going now?",
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning.",
+      "acceptedOrders": [
+        [
+          "现在",
+          "你",
+          "去",
+          "哪儿"
+        ]
+      ]
+    },
+    {
+      "id": "hsk1-300",
+      "number": 300,
+      "topicId": "travel",
+      "tokens": [
+        "老师",
+        "什么时候",
+        "来",
+        "学校"
+      ],
+      "chinese": "老师什么时候来学校？",
+      "pinyin": "Lǎoshī shénme shíhou lái xuéxiào?",
+      "english": "When is the teacher coming to school?",
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+    }
+  ]
+}

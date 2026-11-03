@@ -41,6 +41,8 @@ const HanziTracePage = lazy(() => import('./practice/HanziTracePage'));
 const ConversationPracticePage = lazy(() => import('./practice/ConversationPractice'));
 const ListeningPractice = lazy(() => import('./practice/ListeningPractice'));
 const ToneScorer = lazy(() => import('./practice/ToneScorer'));
+const SentencePractice = lazy(() => import('./practice/SentencePractice'));
+const SentenceAudioManager = lazy(() => import('./admin/SentenceAudioManager'));
 
 
 
@@ -106,6 +108,8 @@ function AppContent() {
   const [lockedNotice, setLockedNotice] = useState(null);
   const [showListeningPractice, setShowListeningPractice] = useState(false);
   const [showToneScorer, setShowToneScorer] = useState(false);
+  const [showSentencePractice, setShowSentencePractice] = useState(false);
+  const [showSentenceAudioManager, setShowSentenceAudioManager] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const heroVideoRef = useRef(null);
@@ -390,6 +394,8 @@ function AppContent() {
     setTestTakerBackToManager(false);
     setShowHanziTrace(false);
     setShowConversationPractice(false);
+    setShowSentencePractice(false);
+    setShowSentenceAudioManager(false);
     setShowClassCalendar(false);
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
@@ -421,6 +427,8 @@ function AppContent() {
     setTestTakerBackToManager(false);
     setShowHanziTrace(false);
     setShowConversationPractice(false);
+    setShowSentencePractice(false);
+    setShowSentenceAudioManager(false);
     setShowClassCalendar(false);
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
@@ -464,6 +472,8 @@ function AppContent() {
     setShowUserManager(false);
     setShowTeamManager(false);
     setAdminSidebarOpen(false);
+    setShowSentencePractice(false);
+    setShowSentenceAudioManager(false);
     setAuthView('login');
     setShowLogin(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -544,11 +554,11 @@ function AppContent() {
             onClick={() => setAdminSidebarOpen(false)}
             aria-hidden="true"
           />
-      <AdminSidebar adminSidebarOpen={adminSidebarOpen} goHome={goHome} isSuperAdmin={isSuperAdmin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setPinyinBackToAdmin={setPinyinBackToAdmin} setShowAdmin={setShowAdmin} setShowAdminDashboard={setShowAdminDashboard} setShowAuditLog={setShowAuditLog} setShowHanziTrace={setShowHanziTrace} setShowInbox={setShowInbox} setShowPinyinPage={setShowPinyinPage} setShowSubscriptions={setShowSubscriptions} setShowTeamManager={setShowTeamManager} setShowTestManager={setShowTestManager} setShowTestimonialManager={setShowTestimonialManager} setShowUserManager={setShowUserManager} setShowUserMenu={setShowUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
+      <AdminSidebar setShowSentenceAudioManager={setShowSentenceAudioManager} adminSidebarOpen={adminSidebarOpen} goHome={goHome} isSuperAdmin={isSuperAdmin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setPinyinBackToAdmin={setPinyinBackToAdmin} setShowAdmin={setShowAdmin} setShowAdminDashboard={setShowAdminDashboard} setShowAuditLog={setShowAuditLog} setShowHanziTrace={setShowHanziTrace} setShowInbox={setShowInbox} setShowPinyinPage={setShowPinyinPage} setShowSubscriptions={setShowSubscriptions} setShowTeamManager={setShowTeamManager} setShowTestManager={setShowTestManager} setShowTestimonialManager={setShowTestimonialManager} setShowUserManager={setShowUserManager} setShowUserMenu={setShowUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
         </>
       )}
 
-      <SiteHeader setShowListeningPractice={setShowListeningPractice} adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowClassCalendar={setShowClassCalendar} setShowConversationPractice={setShowConversationPractice} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowHanziTrace={setShowHanziTrace} setShowPinyinPage={setShowPinyinPage} setShowPracticeMenu={setShowPracticeMenu} setShowSubscriptions={setShowSubscriptions} setShowTests={setShowTests} setShowToneScorer={setShowToneScorer} setShowUserMenu={setShowUserMenu} showPracticeMenu={showPracticeMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
+      <SiteHeader setShowSentencePractice={setShowSentencePractice} setShowListeningPractice={setShowListeningPractice} adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowClassCalendar={setShowClassCalendar} setShowConversationPractice={setShowConversationPractice} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowHanziTrace={setShowHanziTrace} setShowPinyinPage={setShowPinyinPage} setShowPracticeMenu={setShowPracticeMenu} setShowSubscriptions={setShowSubscriptions} setShowTests={setShowTests} setShowToneScorer={setShowToneScorer} setShowUserMenu={setShowUserMenu} showPracticeMenu={showPracticeMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
 
       {!user && showLogin ? (
         <div>
@@ -583,6 +593,10 @@ function AppContent() {
         <TestimonialManager onBack={goAdminDashboard} />
       ) : showHanziTrace ? (
         <HanziTracePage user={user} token={localStorage.getItem('token')} onBack={goHome} />
+      ) : isSuperAdmin && showSentenceAudioManager ? (
+        <SentenceAudioManager onBack={goAdminDashboard} />
+      ) : showSentencePractice ? (
+        <SentencePractice key={user?.id || 'guest'} user={user} onBack={goHome} />
       ) : showListeningPractice ? (
         <ListeningPractice user={user} onBack={goHome} onSignIn={openLogin} />
       ) : showToneScorer ? (

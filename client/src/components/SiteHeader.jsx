@@ -1,4 +1,4 @@
-export default function SiteHeader({ setShowListeningPractice, adminSidebarOpen, darkMode, goHome, handleLogout, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowClassCalendar, setShowConversationPractice, setShowDashboard, setShowFeedback, setShowHanziTrace, setShowPinyinPage, setShowPracticeMenu, setShowSubscriptions, setShowTests, setShowToneScorer, setShowUserMenu, showPracticeMenu, showUserMenu, unreadFeedbackCount, user }) {
+export default function SiteHeader({ setShowSentencePractice, setShowListeningPractice, adminSidebarOpen, darkMode, goHome, handleLogout, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowClassCalendar, setShowConversationPractice, setShowDashboard, setShowFeedback, setShowHanziTrace, setShowPinyinPage, setShowPracticeMenu, setShowSubscriptions, setShowTests, setShowToneScorer, setShowUserMenu, showPracticeMenu, showUserMenu, unreadFeedbackCount, user }) {
   return (
     <header className="site-header">
         <div className="container header-row">
@@ -98,6 +98,10 @@ export default function SiteHeader({ setShowListeningPractice, adminSidebarOpen,
                         <path d="M3 14v-3a9 9 0 0 1 18 0v3M3 13h4v8H3zM17 13h4v8h-4z" />
                       </svg>
                       <span>Listening Practice</span>
+                    </button>
+                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowSentencePractice(true); }}>
+                      <span className="nav-svg-icon" aria-hidden="true">句</span>
+                      <span>Sentence Builder</span>
                     </button>
                     {user && (
                       <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowConversationPractice(true); }}>
