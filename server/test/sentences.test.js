@@ -54,13 +54,13 @@ async function setup(role = 'superadmin') {
   const headers = { Authorization: `Bearer ${jwt.sign({ id: '507f1f77bcf86cd799439011' }, process.env.JWT_SECRET)}` };
   return { base, headers, uploads: () => uploads };
 }
-function audioForm(type = 'audio/mpeg', name = 'sentence.mp3', size = 16) {
+function audioForm(type = 'audio/webm', name = 'sentence.webm', size = 16) {
   const body = new FormData();
-  body.append('file', new Blob([new Uint8Array(size)], { type }), name);
+  body.append('recording', new Blob([new Uint8Array(size)], { type }), name);
   return body;
 }
 
-test('super admin uploads, previews through the catalog, replaces, and removes sentence audio', async () => {
+test('super admin saves microphone recordings, replaces them, and removes sentence audio', async () => {
   const { base, headers, uploads } = await setup();
   let result = await fetch(base);
   let data = await result.json();
@@ -106,7 +106,7 @@ test('unknown sentences, missing files, non-audio files, and oversized files are
     response = await fetch(`${base}/hsk1-001/audio`, { method: 'POST', headers, body: audioForm(type, name) });
     assert.equal(response.status, 400);
   }
-  response = await fetch(`${base}/hsk1-001/audio`, { method: 'POST', headers, body: audioForm('audio/mpeg', 'large.mp3', 16 * 1024 * 1024) });
+  response = await fetch(`${base}/hsk1-001/audio`, { method: 'POST', headers, body: audioForm('audio/webm', 'large.webm', 16 * 1024 * 1024) });
   assert.equal(response.status, 400);
   assert.match((await response.json()).error, /15 MB/);
   assert.equal(uploads(), 0);
@@ -125,4 +125,18 @@ test('a failed upload leaves the previously saved recording available', async ()
   await handler({ user: { id: 'superadmin' }, params: { id: 'hsk1-001' }, file: { buffer: Buffer.from('audio') } }, res);
   assert.equal(res.code, 502);
   assert.equal((await (await fetch(base, { headers })).json()).sentences[0].audioUrl, before);
+});
+
+
+test('browser WebM, MP4, and OGG recordings can be saved; legacy file uploads are rejected', async () => {
+  const { base, headers, uploads } = await setup();
+  for (const [type, name] of [['audio/webm;codecs=opus', 'recording.webm'], ['audio/mp4', 'recording.m4a'], ['audio/ogg;codecs=opus', 'recording.ogg']]) {
+    const response = await fetch(`${base}/hsk1-001/audio`, { method: 'POST', headers, body: audioForm(type, name) });
+    assert.equal(response.status, 201);
+  }
+  const legacy = new FormData();
+  legacy.append('file', new Blob(['audio'], { type: 'audio/webm' }), 'old.webm');
+  const response = await fetch(`${base}/hsk1-001/audio`, { method: 'POST', headers, body: legacy });
+  assert.equal(response.status, 400);
+  assert.equal(uploads(), 3);
 });

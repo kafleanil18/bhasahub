@@ -50,8 +50,9 @@
 .sentence-recording { margin: 24px 0; }
 .sentence-review { padding: 0; list-style: none; }
 .sentence-review li { padding: 16px 0; border-bottom: 1px solid var(--line); }
-.sentence-review li span { display: block; margin: 4px 0; }
-.sentence-review li span[lang] { font-size: 24px; }
+.sentence-review li > span { display: block; margin: 4px 0; }
+.sentence-review li > span[lang] { font-size: 24px; }
+.sentence-review li > .sentence-annotated { display: flex; }
 .sentence-error { color: var(--seal); border: 1px solid var(--seal); border-radius: 6px; padding: 16px; line-height: 1.6; }
 .sentence-success { background: var(--rice); border-left: 3px solid #28734e; padding: 16px; }
 .sentence-filters { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; margin: 24px 0; }
@@ -63,10 +64,19 @@
 .sentence-audio-copy p { line-height: 1.6; margin: 4px 0; color: var(--mist); }
 .sentence-audio-controls { display: flex; align-items: stretch; flex-direction: column; gap: 12px; }
 .sentence-audio-controls audio { width: 100%; max-width: 100%; }
-.sentence-upload { position: relative; display: flex; justify-content: center; align-items: center; overflow: hidden; min-height: 48px; background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; font-weight: 600; cursor: pointer; }
-.sentence-upload input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-.sentence-upload:focus-within { outline: 3px solid var(--seal); outline-offset: 4px; }
-.sentence-upload.is-disabled { opacity: .5; }
+.sentence-ruby-word { display: inline-flex; align-items: baseline; gap: 2px; white-space: nowrap; }
+.sentence-ruby-word ruby { ruby-align: center; text-align: center; }
+.sentence-ruby-word rt { font: 400 13px/1.5 system-ui, sans-serif; color: var(--mist); letter-spacing: 0; padding: 0 2px 4px; }
+.sentence-annotated { display: inline-flex; align-items: baseline; flex-wrap: wrap; gap: 10px 6px; line-height: 2.4; }
+.sentence-tile .sentence-ruby-word { padding-top: 8px; }
+.sentence-tile { max-width: 100%; }
+.sentence-recorder-dialog { position: fixed; inset: 0; margin: auto; width: min(680px, calc(100vw - 32px)); max-height: calc(100dvh - 48px); padding: 0; background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; }
+.sentence-recorder-dialog::backdrop { background: #0009; }
+.sentence-recorder-content { padding: 32px; }
+.sentence-recorder-content h2 { font-size: 28px; margin: 0 0 24px; }
+.sentence-recorder-content audio { display: block; width: 100%; margin: 16px 0; }
+.sentence-recorder-script { font-size: 28px; margin: 24px 0; }
+.sentence-mic-status { font-size: 15px; font-weight: 600; padding: 16px 0; }
 .sentence-pagination { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 28px; }
 @media (max-width: 767px) {
   .sentence-page { padding: 24px 16px 56px; }
@@ -82,5 +92,7 @@
   .sentence-topic { padding: 20px; }
   .sentence-progress { font-size: 11px; }
   .sentence-pagination { flex-wrap: wrap; justify-content: center; }
+  .sentence-recorder-content { padding: 24px 16px; }
+  .sentence-recorder-script { font-size: 24px; }
 }
 @media (prefers-reduced-motion: reduce) { .sentence-page * { scroll-behavior: auto !important; transition: none !important; } }

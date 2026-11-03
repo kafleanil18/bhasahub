@@ -116,7 +116,19 @@
       "chinese": "我是学生。",
       "pinyin": "Wǒ shì xuésheng.",
       "english": "I am a student.",
-      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "xué",
+          "sheng"
+        ]
+      ]
     },
     {
       "id": "hsk1-002",
@@ -130,7 +142,19 @@
       "chinese": "你是老师。",
       "pinyin": "Nǐ shì lǎoshī.",
       "english": "You are a teacher.",
-      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "lǎo",
+          "shī"
+        ]
+      ]
     },
     {
       "id": "hsk1-003",
@@ -144,7 +168,19 @@
       "chinese": "他是医生。",
       "pinyin": "Tā shì yīshēng.",
       "english": "He is a doctor.",
-      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "yī",
+          "shēng"
+        ]
+      ]
     },
     {
       "id": "hsk1-004",
@@ -158,7 +194,20 @@
       "chinese": "她是中国人。",
       "pinyin": "Tā shì Zhōngguórén.",
       "english": "She is Chinese.",
-      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "zhōng",
+          "guó",
+          "rén"
+        ]
+      ]
     },
     {
       "id": "hsk1-005",
@@ -172,7 +221,20 @@
       "chinese": "我们是同学。",
       "pinyin": "Wǒmen shì tóngxué.",
       "english": "We are classmates.",
-      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement.",
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "tóng",
+          "xué"
+        ]
+      ]
     },
     {
       "id": "hsk1-006",
@@ -186,7 +248,20 @@
       "chinese": "他们是学生。",
       "pinyin": "Tāmen shì xuésheng.",
       "english": "They are students.",
-      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement.",
+      "tokenPinyin": [
+        [
+          "tā",
+          "men"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "xué",
+          "sheng"
+        ]
+      ]
     },
     {
       "id": "hsk1-007",
@@ -200,7 +275,20 @@
       "chinese": "她们是老师。",
       "pinyin": "Tāmen shì lǎoshī.",
       "english": "They are teachers.",
-      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement.",
+      "tokenPinyin": [
+        [
+          "tā",
+          "men"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "lǎo",
+          "shī"
+        ]
+      ]
     },
     {
       "id": "hsk1-008",
@@ -216,7 +304,25 @@
       "chinese": "这是我的朋友。",
       "pinyin": "Zhè shì wǒ de péngyou.",
       "english": "This is my friend.",
-      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "wǒ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "péng",
+          "you"
+        ]
+      ]
     },
     {
       "id": "hsk1-009",
@@ -232,7 +338,25 @@
       "chinese": "那是我的老师。",
       "pinyin": "Nà shì wǒ de lǎoshī.",
       "english": "That is my teacher.",
-      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement.",
+      "tokenPinyin": [
+        [
+          "nà"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "wǒ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "lǎo",
+          "shī"
+        ]
+      ]
     },
     {
       "id": "hsk1-010",
@@ -248,7 +372,25 @@
       "chinese": "他是我的同学。",
       "pinyin": "Tā shì wǒ de tóngxué.",
       "english": "He is my classmate.",
-      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "wǒ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "tóng",
+          "xué"
+        ]
+      ]
     },
     {
       "id": "hsk1-011",
@@ -264,7 +406,25 @@
       "chinese": "她是我的妈妈。",
       "pinyin": "Tā shì wǒ de māma.",
       "english": "She is my mother.",
-      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "wǒ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "mā",
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-012",
@@ -280,7 +440,25 @@
       "chinese": "这是我的爸爸。",
       "pinyin": "Zhè shì wǒ de bàba.",
       "english": "This is my father.",
-      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "wǒ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "bà",
+          "ba"
+        ]
+      ]
     },
     {
       "id": "hsk1-013",
@@ -305,6 +483,24 @@
           "是",
           "朋友"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "hé"
+        ],
+        [
+          "tā"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "péng",
+          "you"
+        ]
       ]
     },
     {
@@ -319,7 +515,20 @@
       "chinese": "爸爸是医生。",
       "pinyin": "Bàba shì yīshēng.",
       "english": "Dad is a doctor.",
-      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement.",
+      "tokenPinyin": [
+        [
+          "bà",
+          "ba"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "yī",
+          "shēng"
+        ]
+      ]
     },
     {
       "id": "hsk1-015",
@@ -333,7 +542,20 @@
       "chinese": "妈妈是老师。",
       "pinyin": "Māma shì lǎoshī.",
       "english": "Mom is a teacher.",
-      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement."
+      "explanation": "Use subject + 是 + identity. Put 不 before 是 for a negative statement.",
+      "tokenPinyin": [
+        [
+          "mā",
+          "ma"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "lǎo",
+          "shī"
+        ]
+      ]
     },
     {
       "id": "hsk1-016",
@@ -347,7 +569,19 @@
       "chinese": "我叫小王。",
       "pinyin": "Wǒ jiào Xiǎo Wáng.",
       "english": "My name is Xiao Wang.",
-      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "jiào"
+        ],
+        [
+          "xiǎo",
+          "wáng"
+        ]
+      ]
     },
     {
       "id": "hsk1-017",
@@ -361,7 +595,19 @@
       "chinese": "他叫小李。",
       "pinyin": "Tā jiào Xiǎo Lǐ.",
       "english": "His name is Xiao Li.",
-      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "jiào"
+        ],
+        [
+          "xiǎo",
+          "lǐ"
+        ]
+      ]
     },
     {
       "id": "hsk1-018",
@@ -375,7 +621,19 @@
       "chinese": "她叫小张。",
       "pinyin": "Tā jiào Xiǎo Zhāng.",
       "english": "Her name is Xiao Zhang.",
-      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "jiào"
+        ],
+        [
+          "xiǎo",
+          "zhāng"
+        ]
+      ]
     },
     {
       "id": "hsk1-019",
@@ -390,7 +648,23 @@
       "chinese": "你叫什么名字？",
       "pinyin": "Nǐ jiào shénme míngzi?",
       "english": "What is your name?",
-      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "jiào"
+        ],
+        [
+          "shén",
+          "me"
+        ],
+        [
+          "míng",
+          "zi"
+        ]
+      ]
     },
     {
       "id": "hsk1-020",
@@ -405,7 +679,23 @@
       "chinese": "他叫什么名字？",
       "pinyin": "Tā jiào shénme míngzi?",
       "english": "What is his name?",
-      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "jiào"
+        ],
+        [
+          "shén",
+          "me"
+        ],
+        [
+          "míng",
+          "zi"
+        ]
+      ]
     },
     {
       "id": "hsk1-021",
@@ -420,7 +710,23 @@
       "chinese": "她叫什么名字？",
       "pinyin": "Tā jiào shénme míngzi?",
       "english": "What is her name?",
-      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "jiào"
+        ],
+        [
+          "shén",
+          "me"
+        ],
+        [
+          "míng",
+          "zi"
+        ]
+      ]
     },
     {
       "id": "hsk1-022",
@@ -436,7 +742,26 @@
       "chinese": "我的名字叫小李。",
       "pinyin": "Wǒ de míngzi jiào Xiǎo Lǐ.",
       "english": "My name is Xiao Li.",
-      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "míng",
+          "zi"
+        ],
+        [
+          "jiào"
+        ],
+        [
+          "xiǎo",
+          "lǐ"
+        ]
+      ]
     },
     {
       "id": "hsk1-023",
@@ -453,7 +778,30 @@
       "chinese": "你的老师叫什么名字？",
       "pinyin": "Nǐ de lǎoshī jiào shénme míngzi?",
       "english": "What is your teacher's name?",
-      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "lǎo",
+          "shī"
+        ],
+        [
+          "jiào"
+        ],
+        [
+          "shén",
+          "me"
+        ],
+        [
+          "míng",
+          "zi"
+        ]
+      ]
     },
     {
       "id": "hsk1-024",
@@ -467,7 +815,19 @@
       "chinese": "我认识你。",
       "pinyin": "Wǒ rènshi nǐ.",
       "english": "I know you.",
-      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "rèn",
+          "shi"
+        ],
+        [
+          "nǐ"
+        ]
+      ]
     },
     {
       "id": "hsk1-025",
@@ -482,7 +842,22 @@
       "chinese": "你认识他吗？",
       "pinyin": "Nǐ rènshi tā ma?",
       "english": "Do you know him?",
-      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "rèn",
+          "shi"
+        ],
+        [
+          "tā"
+        ],
+        [
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-026",
@@ -497,7 +872,22 @@
       "chinese": "我不认识她。",
       "pinyin": "Wǒ bú rènshi tā.",
       "english": "I do not know her.",
-      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "bú"
+        ],
+        [
+          "rèn",
+          "shi"
+        ],
+        [
+          "tā"
+        ]
+      ]
     },
     {
       "id": "hsk1-027",
@@ -512,7 +902,23 @@
       "chinese": "很高兴认识你。",
       "pinyin": "Hěn gāoxìng rènshi nǐ.",
       "english": "Nice to meet you.",
-      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about.",
+      "tokenPinyin": [
+        [
+          "hěn"
+        ],
+        [
+          "gāo",
+          "xìng"
+        ],
+        [
+          "rèn",
+          "shi"
+        ],
+        [
+          "nǐ"
+        ]
+      ]
     },
     {
       "id": "hsk1-028",
@@ -528,7 +934,26 @@
       "chinese": "他认识我的爸爸。",
       "pinyin": "Tā rènshi wǒ de bàba.",
       "english": "He knows my father.",
-      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "rèn",
+          "shi"
+        ],
+        [
+          "wǒ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "bà",
+          "ba"
+        ]
+      ]
     },
     {
       "id": "hsk1-029",
@@ -543,7 +968,23 @@
       "chinese": "我们都认识她。",
       "pinyin": "Wǒmen dōu rènshi tā.",
       "english": "We all know her.",
-      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about.",
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "dōu"
+        ],
+        [
+          "rèn",
+          "shi"
+        ],
+        [
+          "tā"
+        ]
+      ]
     },
     {
       "id": "hsk1-030",
@@ -557,7 +998,20 @@
       "chinese": "你是哪国人？",
       "pinyin": "Nǐ shì nǎ guó rén?",
       "english": "What country are you from?",
-      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about."
+      "explanation": "Use 叫 before a name, and 认识 before the person you know. Question words stay in the place of the information being asked about.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "nǎ",
+          "guó",
+          "rén"
+        ]
+      ]
     },
     {
       "id": "hsk1-031",
@@ -574,7 +1028,27 @@
       "chinese": "我家有三口人。",
       "pinyin": "Wǒ jiā yǒu sān kǒu rén.",
       "english": "There are three people in my family.",
-      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "jiā"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "sān"
+        ],
+        [
+          "kǒu"
+        ],
+        [
+          "rén"
+        ]
+      ]
     },
     {
       "id": "hsk1-032",
@@ -591,7 +1065,27 @@
       "chinese": "他家有五口人。",
       "pinyin": "Tā jiā yǒu wǔ kǒu rén.",
       "english": "There are five people in his family.",
-      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "jiā"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "wǔ"
+        ],
+        [
+          "kǒu"
+        ],
+        [
+          "rén"
+        ]
+      ]
     },
     {
       "id": "hsk1-033",
@@ -608,7 +1102,27 @@
       "chinese": "你家有几口人？",
       "pinyin": "Nǐ jiā yǒu jǐ kǒu rén?",
       "english": "How many people are in your family?",
-      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "jiā"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "jǐ"
+        ],
+        [
+          "kǒu"
+        ],
+        [
+          "rén"
+        ]
+      ]
     },
     {
       "id": "hsk1-034",
@@ -624,7 +1138,25 @@
       "chinese": "我有一个儿子。",
       "pinyin": "Wǒ yǒu yí ge érzi.",
       "english": "I have a son.",
-      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "yí"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "ér",
+          "zi"
+        ]
+      ]
     },
     {
       "id": "hsk1-035",
@@ -640,7 +1172,25 @@
       "chinese": "她有一个女儿。",
       "pinyin": "Tā yǒu yí ge nǚ'ér.",
       "english": "She has a daughter.",
-      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "yí"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "nǚ",
+          "ér"
+        ]
+      ]
     },
     {
       "id": "hsk1-036",
@@ -656,7 +1206,25 @@
       "chinese": "他有两个儿子。",
       "pinyin": "Tā yǒu liǎng ge érzi.",
       "english": "He has two sons.",
-      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "liǎng"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "ér",
+          "zi"
+        ]
+      ]
     },
     {
       "id": "hsk1-037",
@@ -671,7 +1239,22 @@
       "chinese": "我女儿三岁。",
       "pinyin": "Wǒ nǚ'ér sān suì.",
       "english": "My daughter is three years old.",
-      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "nǚ",
+          "ér"
+        ],
+        [
+          "sān"
+        ],
+        [
+          "suì"
+        ]
+      ]
     },
     {
       "id": "hsk1-038",
@@ -686,7 +1269,22 @@
       "chinese": "他儿子五岁。",
       "pinyin": "Tā érzi wǔ suì.",
       "english": "His son is five years old.",
-      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "ér",
+          "zi"
+        ],
+        [
+          "wǔ"
+        ],
+        [
+          "suì"
+        ]
+      ]
     },
     {
       "id": "hsk1-039",
@@ -701,7 +1299,22 @@
       "chinese": "你女儿几岁？",
       "pinyin": "Nǐ nǚ'ér jǐ suì?",
       "english": "How old is your daughter?",
-      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "nǚ",
+          "ér"
+        ],
+        [
+          "jǐ"
+        ],
+        [
+          "suì"
+        ]
+      ]
     },
     {
       "id": "hsk1-040",
@@ -723,6 +1336,22 @@
           "我",
           "十八",
           "岁"
+        ]
+      ],
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "jīn",
+          "nián"
+        ],
+        [
+          "shí",
+          "bā"
+        ],
+        [
+          "suì"
         ]
       ]
     },
@@ -747,6 +1376,22 @@
           "二十",
           "岁"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "jīn",
+          "nián"
+        ],
+        [
+          "èr",
+          "shí"
+        ],
+        [
+          "suì"
+        ]
       ]
     },
     {
@@ -770,6 +1415,22 @@
           "三十",
           "岁"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "jīn",
+          "nián"
+        ],
+        [
+          "sān",
+          "shí"
+        ],
+        [
+          "suì"
+        ]
       ]
     },
     {
@@ -785,7 +1446,23 @@
       "chinese": "我妈妈四十岁。",
       "pinyin": "Wǒ māma sìshí suì.",
       "english": "My mother is forty years old.",
-      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "mā",
+          "ma"
+        ],
+        [
+          "sì",
+          "shí"
+        ],
+        [
+          "suì"
+        ]
+      ]
     },
     {
       "id": "hsk1-044",
@@ -800,7 +1477,23 @@
       "chinese": "我爸爸五十岁。",
       "pinyin": "Wǒ bàba wǔshí suì.",
       "english": "My father is fifty years old.",
-      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是."
+      "explanation": "Use 有 for having family members. State an age with number + 岁, without 是.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "bà",
+          "ba"
+        ],
+        [
+          "wǔ",
+          "shí"
+        ],
+        [
+          "suì"
+        ]
+      ]
     },
     {
       "id": "hsk1-045",
@@ -821,6 +1514,19 @@
           "你",
           "多大"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "jīn",
+          "nián"
+        ],
+        [
+          "duō",
+          "dà"
+        ]
       ]
     },
     {
@@ -837,7 +1543,24 @@
       "chinese": "这是我的书。",
       "pinyin": "Zhè shì wǒ de shū.",
       "english": "This is my book.",
-      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "wǒ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "shū"
+        ]
+      ]
     },
     {
       "id": "hsk1-047",
@@ -853,7 +1576,25 @@
       "chinese": "那是你的杯子。",
       "pinyin": "Nà shì nǐ de bēizi.",
       "english": "That is your cup.",
-      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is.",
+      "tokenPinyin": [
+        [
+          "nà"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "nǐ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "bēi",
+          "zi"
+        ]
+      ]
     },
     {
       "id": "hsk1-048",
@@ -869,7 +1610,25 @@
       "chinese": "这是他的电脑。",
       "pinyin": "Zhè shì tā de diànnǎo.",
       "english": "This is his computer.",
-      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "tā"
+        ],
+        [
+          "de"
+        ],
+        [
+          "diàn",
+          "nǎo"
+        ]
+      ]
     },
     {
       "id": "hsk1-049",
@@ -885,7 +1644,25 @@
       "chinese": "那是她的衣服。",
       "pinyin": "Nà shì tā de yīfu.",
       "english": "Those are her clothes.",
-      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is.",
+      "tokenPinyin": [
+        [
+          "nà"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "tā"
+        ],
+        [
+          "de"
+        ],
+        [
+          "yī",
+          "fu"
+        ]
+      ]
     },
     {
       "id": "hsk1-050",
@@ -901,7 +1678,24 @@
       "chinese": "这是谁的书？",
       "pinyin": "Zhè shì shéi de shū?",
       "english": "Whose book is this?",
-      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "shéi"
+        ],
+        [
+          "de"
+        ],
+        [
+          "shū"
+        ]
+      ]
     },
     {
       "id": "hsk1-051",
@@ -917,7 +1711,25 @@
       "chinese": "那是谁的杯子？",
       "pinyin": "Nà shì shéi de bēizi?",
       "english": "Whose cup is that?",
-      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is.",
+      "tokenPinyin": [
+        [
+          "nà"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "shéi"
+        ],
+        [
+          "de"
+        ],
+        [
+          "bēi",
+          "zi"
+        ]
+      ]
     },
     {
       "id": "hsk1-052",
@@ -933,7 +1745,25 @@
       "chinese": "我的书在这儿。",
       "pinyin": "Wǒ de shū zài zhèr.",
       "english": "My book is here.",
-      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "shū"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "zhè",
+          "r"
+        ]
+      ]
     },
     {
       "id": "hsk1-053",
@@ -949,7 +1779,26 @@
       "chinese": "你的杯子在那儿。",
       "pinyin": "Nǐ de bēizi zài nàr.",
       "english": "Your cup is there.",
-      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "bēi",
+          "zi"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "nà",
+          "r"
+        ]
+      ]
     },
     {
       "id": "hsk1-054",
@@ -965,7 +1814,25 @@
       "chinese": "他的电脑在家。",
       "pinyin": "Tā de diànnǎo zài jiā.",
       "english": "His computer is at home.",
-      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "de"
+        ],
+        [
+          "diàn",
+          "nǎo"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "jiā"
+        ]
+      ]
     },
     {
       "id": "hsk1-055",
@@ -982,7 +1849,28 @@
       "chinese": "这不是我的电脑。",
       "pinyin": "Zhè bú shì wǒ de diànnǎo.",
       "english": "This is not my computer.",
-      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "bú"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "wǒ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "diàn",
+          "nǎo"
+        ]
+      ]
     },
     {
       "id": "hsk1-056",
@@ -999,7 +1887,27 @@
       "chinese": "那不是她的书。",
       "pinyin": "Nà bú shì tā de shū.",
       "english": "That is not her book.",
-      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is.",
+      "tokenPinyin": [
+        [
+          "nà"
+        ],
+        [
+          "bú"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "tā"
+        ],
+        [
+          "de"
+        ],
+        [
+          "shū"
+        ]
+      ]
     },
     {
       "id": "hsk1-057",
@@ -1015,7 +1923,26 @@
       "chinese": "我喜欢你的衣服。",
       "pinyin": "Wǒ xǐhuan nǐ de yīfu.",
       "english": "I like your clothes.",
-      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "nǐ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "yī",
+          "fu"
+        ]
+      ]
     },
     {
       "id": "hsk1-058",
@@ -1031,7 +1958,26 @@
       "chinese": "她的杯子很漂亮。",
       "pinyin": "Tā de bēizi hěn piàoliang.",
       "english": "Her cup is pretty.",
-      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "de"
+        ],
+        [
+          "bēi",
+          "zi"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "piào",
+          "liang"
+        ]
+      ]
     },
     {
       "id": "hsk1-059",
@@ -1047,7 +1993,25 @@
       "chinese": "你的书在哪儿？",
       "pinyin": "Nǐ de shū zài nǎr?",
       "english": "Where is your book?",
-      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "shū"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "nǎ",
+          "r"
+        ]
+      ]
     },
     {
       "id": "hsk1-060",
@@ -1064,7 +2028,28 @@
       "chinese": "这个杯子是我的。",
       "pinyin": "Zhè ge bēizi shì wǒ de.",
       "english": "This cup is mine.",
-      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is."
+      "explanation": "Place the owner before 的 and then the thing owned. Use 谁 in the owner's position to ask whose it is.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "bēi",
+          "zi"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "wǒ"
+        ],
+        [
+          "de"
+        ]
+      ]
     },
     {
       "id": "hsk1-061",
@@ -1078,7 +2063,18 @@
       "chinese": "我在家。",
       "pinyin": "Wǒ zài jiā.",
       "english": "I am at home.",
-      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "jiā"
+        ]
+      ]
     },
     {
       "id": "hsk1-062",
@@ -1092,7 +2088,19 @@
       "chinese": "你在学校。",
       "pinyin": "Nǐ zài xuéxiào.",
       "english": "You are at school.",
-      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "xué",
+          "xiào"
+        ]
+      ]
     },
     {
       "id": "hsk1-063",
@@ -1106,7 +2114,19 @@
       "chinese": "他在医院。",
       "pinyin": "Tā zài yīyuàn.",
       "english": "He is at the hospital.",
-      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "yī",
+          "yuàn"
+        ]
+      ]
     },
     {
       "id": "hsk1-064",
@@ -1120,7 +2140,19 @@
       "chinese": "她在饭店。",
       "pinyin": "Tā zài fàndiàn.",
       "english": "She is at the restaurant.",
-      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "fàn",
+          "diàn"
+        ]
+      ]
     },
     {
       "id": "hsk1-065",
@@ -1134,7 +2166,20 @@
       "chinese": "我们在北京。",
       "pinyin": "Wǒmen zài Běijīng.",
       "english": "We are in Beijing.",
-      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where.",
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "běi",
+          "jīng"
+        ]
+      ]
     },
     {
       "id": "hsk1-066",
@@ -1148,7 +2193,20 @@
       "chinese": "老师在学校。",
       "pinyin": "Lǎoshī zài xuéxiào.",
       "english": "The teacher is at school.",
-      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where.",
+      "tokenPinyin": [
+        [
+          "lǎo",
+          "shī"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "xué",
+          "xiào"
+        ]
+      ]
     },
     {
       "id": "hsk1-067",
@@ -1162,7 +2220,20 @@
       "chinese": "爸爸在商店。",
       "pinyin": "Bàba zài shāngdiàn.",
       "english": "Dad is at the shop.",
-      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where.",
+      "tokenPinyin": [
+        [
+          "bà",
+          "ba"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "shāng",
+          "diàn"
+        ]
+      ]
     },
     {
       "id": "hsk1-068",
@@ -1176,7 +2247,19 @@
       "chinese": "妈妈在家。",
       "pinyin": "Māma zài jiā.",
       "english": "Mom is at home.",
-      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where.",
+      "tokenPinyin": [
+        [
+          "mā",
+          "ma"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "jiā"
+        ]
+      ]
     },
     {
       "id": "hsk1-069",
@@ -1190,7 +2273,19 @@
       "chinese": "你在哪儿？",
       "pinyin": "Nǐ zài nǎr?",
       "english": "Where are you?",
-      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "nǎ",
+          "r"
+        ]
+      ]
     },
     {
       "id": "hsk1-070",
@@ -1204,7 +2299,19 @@
       "chinese": "他在哪儿？",
       "pinyin": "Tā zài nǎr?",
       "english": "Where is he?",
-      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "nǎ",
+          "r"
+        ]
+      ]
     },
     {
       "id": "hsk1-071",
@@ -1220,7 +2327,26 @@
       "chinese": "你的朋友在哪儿？",
       "pinyin": "Nǐ de péngyou zài nǎr?",
       "english": "Where is your friend?",
-      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "péng",
+          "you"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "nǎ",
+          "r"
+        ]
+      ]
     },
     {
       "id": "hsk1-072",
@@ -1235,7 +2361,22 @@
       "chinese": "我不在学校。",
       "pinyin": "Wǒ bú zài xuéxiào.",
       "english": "I am not at school.",
-      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "bú"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "xué",
+          "xiào"
+        ]
+      ]
     },
     {
       "id": "hsk1-073",
@@ -1250,7 +2391,22 @@
       "chinese": "她不在医院。",
       "pinyin": "Tā bú zài yīyuàn.",
       "english": "She is not at the hospital.",
-      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "bú"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "yī",
+          "yuàn"
+        ]
+      ]
     },
     {
       "id": "hsk1-074",
@@ -1265,7 +2421,22 @@
       "chinese": "我们都在家。",
       "pinyin": "Wǒmen dōu zài jiā.",
       "english": "We are all at home.",
-      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where."
+      "explanation": "Use subject + 在 + place to say where someone is. Use 哪儿 in the place position to ask where.",
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "dōu"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "jiā"
+        ]
+      ]
     },
     {
       "id": "hsk1-075",
@@ -1290,6 +2461,24 @@
           "在",
           "北京"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "hé"
+        ],
+        [
+          "wǒ"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "běi",
+          "jīng"
+        ]
       ]
     },
     {
@@ -1305,7 +2494,22 @@
       "chinese": "书在桌子上。",
       "pinyin": "Shū zài zhuōzi shàng.",
       "english": "The book is on the table.",
-      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object.",
+      "tokenPinyin": [
+        [
+          "shū"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "zhuō",
+          "zi"
+        ],
+        [
+          "shàng"
+        ]
+      ]
     },
     {
       "id": "hsk1-077",
@@ -1320,7 +2524,22 @@
       "chinese": "猫在椅子下。",
       "pinyin": "Māo zài yǐzi xià.",
       "english": "The cat is under the chair.",
-      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object.",
+      "tokenPinyin": [
+        [
+          "māo"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "yǐ",
+          "zi"
+        ],
+        [
+          "xià"
+        ]
+      ]
     },
     {
       "id": "hsk1-078",
@@ -1335,7 +2554,22 @@
       "chinese": "狗在桌子下。",
       "pinyin": "Gǒu zài zhuōzi xià.",
       "english": "The dog is under the table.",
-      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object.",
+      "tokenPinyin": [
+        [
+          "gǒu"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "zhuō",
+          "zi"
+        ],
+        [
+          "xià"
+        ]
+      ]
     },
     {
       "id": "hsk1-079",
@@ -1350,7 +2584,23 @@
       "chinese": "杯子在桌子上。",
       "pinyin": "Bēizi zài zhuōzi shàng.",
       "english": "The cup is on the table.",
-      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object.",
+      "tokenPinyin": [
+        [
+          "bēi",
+          "zi"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "zhuō",
+          "zi"
+        ],
+        [
+          "shàng"
+        ]
+      ]
     },
     {
       "id": "hsk1-080",
@@ -1365,7 +2615,23 @@
       "chinese": "电脑在桌子上。",
       "pinyin": "Diànnǎo zài zhuōzi shàng.",
       "english": "The computer is on the table.",
-      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object.",
+      "tokenPinyin": [
+        [
+          "diàn",
+          "nǎo"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "zhuō",
+          "zi"
+        ],
+        [
+          "shàng"
+        ]
+      ]
     },
     {
       "id": "hsk1-081",
@@ -1380,7 +2646,23 @@
       "chinese": "衣服在椅子上。",
       "pinyin": "Yīfu zài yǐzi shàng.",
       "english": "The clothes are on the chair.",
-      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object.",
+      "tokenPinyin": [
+        [
+          "yī",
+          "fu"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "yǐ",
+          "zi"
+        ],
+        [
+          "shàng"
+        ]
+      ]
     },
     {
       "id": "hsk1-082",
@@ -1397,7 +2679,28 @@
       "chinese": "桌子上有一本书。",
       "pinyin": "Zhuōzi shàng yǒu yì běn shū.",
       "english": "There is a book on the table.",
-      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object.",
+      "tokenPinyin": [
+        [
+          "zhuō",
+          "zi"
+        ],
+        [
+          "shàng"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "yì"
+        ],
+        [
+          "běn"
+        ],
+        [
+          "shū"
+        ]
+      ]
     },
     {
       "id": "hsk1-083",
@@ -1414,7 +2717,28 @@
       "chinese": "椅子下有一只猫。",
       "pinyin": "Yǐzi xià yǒu yì zhī māo.",
       "english": "There is a cat under the chair.",
-      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object.",
+      "tokenPinyin": [
+        [
+          "yǐ",
+          "zi"
+        ],
+        [
+          "xià"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "yì"
+        ],
+        [
+          "zhī"
+        ],
+        [
+          "māo"
+        ]
+      ]
     },
     {
       "id": "hsk1-084",
@@ -1431,7 +2755,29 @@
       "chinese": "桌子上有三个杯子。",
       "pinyin": "Zhuōzi shàng yǒu sān ge bēizi.",
       "english": "There are three cups on the table.",
-      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object.",
+      "tokenPinyin": [
+        [
+          "zhuō",
+          "zi"
+        ],
+        [
+          "shàng"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "sān"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "bēi",
+          "zi"
+        ]
+      ]
     },
     {
       "id": "hsk1-085",
@@ -1446,7 +2792,24 @@
       "chinese": "椅子上没有衣服。",
       "pinyin": "Yǐzi shàng méiyǒu yīfu.",
       "english": "There are no clothes on the chair.",
-      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object.",
+      "tokenPinyin": [
+        [
+          "yǐ",
+          "zi"
+        ],
+        [
+          "shàng"
+        ],
+        [
+          "méi",
+          "yǒu"
+        ],
+        [
+          "yī",
+          "fu"
+        ]
+      ]
     },
     {
       "id": "hsk1-086",
@@ -1461,7 +2824,24 @@
       "chinese": "桌子上没有电脑。",
       "pinyin": "Zhuōzi shàng méiyǒu diànnǎo.",
       "english": "There is no computer on the table.",
-      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object.",
+      "tokenPinyin": [
+        [
+          "zhuō",
+          "zi"
+        ],
+        [
+          "shàng"
+        ],
+        [
+          "méi",
+          "yǒu"
+        ],
+        [
+          "diàn",
+          "nǎo"
+        ]
+      ]
     },
     {
       "id": "hsk1-087",
@@ -1475,7 +2855,19 @@
       "chinese": "书在哪儿？",
       "pinyin": "Shū zài nǎr?",
       "english": "Where is the book?",
-      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object.",
+      "tokenPinyin": [
+        [
+          "shū"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "nǎ",
+          "r"
+        ]
+      ]
     },
     {
       "id": "hsk1-088",
@@ -1489,7 +2881,19 @@
       "chinese": "猫在哪儿？",
       "pinyin": "Māo zài nǎr?",
       "english": "Where is the cat?",
-      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object.",
+      "tokenPinyin": [
+        [
+          "māo"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "nǎ",
+          "r"
+        ]
+      ]
     },
     {
       "id": "hsk1-089",
@@ -1504,7 +2908,22 @@
       "chinese": "这儿有人吗？",
       "pinyin": "Zhèr yǒu rén ma?",
       "english": "Is anyone here?",
-      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object.",
+      "tokenPinyin": [
+        [
+          "zhè",
+          "r"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "rén"
+        ],
+        [
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-090",
@@ -1520,7 +2939,26 @@
       "chinese": "那儿有一把椅子。",
       "pinyin": "Nàr yǒu yì bǎ yǐzi.",
       "english": "There is a chair there.",
-      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object."
+      "explanation": "For location, use thing + 在 + place. For existence, use place + 有 + thing. Place words such as 上 and 下 follow the object.",
+      "tokenPinyin": [
+        [
+          "nà",
+          "r"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "yì"
+        ],
+        [
+          "bǎ"
+        ],
+        [
+          "yǐ",
+          "zi"
+        ]
+      ]
     },
     {
       "id": "hsk1-091",
@@ -1536,7 +2974,24 @@
       "chinese": "我有三本书。",
       "pinyin": "Wǒ yǒu sān běn shū.",
       "english": "I have three books.",
-      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "sān"
+        ],
+        [
+          "běn"
+        ],
+        [
+          "shū"
+        ]
+      ]
     },
     {
       "id": "hsk1-092",
@@ -1552,7 +3007,25 @@
       "chinese": "他有两个杯子。",
       "pinyin": "Tā yǒu liǎng ge bēizi.",
       "english": "He has two cups.",
-      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "liǎng"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "bēi",
+          "zi"
+        ]
+      ]
     },
     {
       "id": "hsk1-093",
@@ -1568,7 +3041,25 @@
       "chinese": "她有五个苹果。",
       "pinyin": "Tā yǒu wǔ ge píngguǒ.",
       "english": "She has five apples.",
-      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "wǔ"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "píng",
+          "guǒ"
+        ]
+      ]
     },
     {
       "id": "hsk1-094",
@@ -1584,7 +3075,26 @@
       "chinese": "我们有六个学生。",
       "pinyin": "Wǒmen yǒu liù ge xuésheng.",
       "english": "We have six students.",
-      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices.",
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "liù"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "xué",
+          "sheng"
+        ]
+      ]
     },
     {
       "id": "hsk1-095",
@@ -1600,7 +3110,25 @@
       "chinese": "这儿有八个人。",
       "pinyin": "Zhèr yǒu bā ge rén.",
       "english": "There are eight people here.",
-      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices.",
+      "tokenPinyin": [
+        [
+          "zhè",
+          "r"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "bā"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "rén"
+        ]
+      ]
     },
     {
       "id": "hsk1-096",
@@ -1616,7 +3144,25 @@
       "chinese": "我买三个苹果。",
       "pinyin": "Wǒ mǎi sān ge píngguǒ.",
       "english": "I am buying three apples.",
-      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "mǎi"
+        ],
+        [
+          "sān"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "píng",
+          "guǒ"
+        ]
+      ]
     },
     {
       "id": "hsk1-097",
@@ -1632,7 +3178,24 @@
       "chinese": "他买两本书。",
       "pinyin": "Tā mǎi liǎng běn shū.",
       "english": "He is buying two books.",
-      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "mǎi"
+        ],
+        [
+          "liǎng"
+        ],
+        [
+          "běn"
+        ],
+        [
+          "shū"
+        ]
+      ]
     },
     {
       "id": "hsk1-098",
@@ -1648,7 +3211,24 @@
       "chinese": "你有几本书？",
       "pinyin": "Nǐ yǒu jǐ běn shū?",
       "english": "How many books do you have?",
-      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "jǐ"
+        ],
+        [
+          "běn"
+        ],
+        [
+          "shū"
+        ]
+      ]
     },
     {
       "id": "hsk1-099",
@@ -1664,7 +3244,25 @@
       "chinese": "你要几个杯子？",
       "pinyin": "Nǐ yào jǐ ge bēizi?",
       "english": "How many cups do you want?",
-      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "yào"
+        ],
+        [
+          "jǐ"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "bēi",
+          "zi"
+        ]
+      ]
     },
     {
       "id": "hsk1-100",
@@ -1681,7 +3279,27 @@
       "chinese": "这本书十块钱。",
       "pinyin": "Zhè běn shū shí kuài qián.",
       "english": "This book costs ten yuan.",
-      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "běn"
+        ],
+        [
+          "shū"
+        ],
+        [
+          "shí"
+        ],
+        [
+          "kuài"
+        ],
+        [
+          "qián"
+        ]
+      ]
     },
     {
       "id": "hsk1-101",
@@ -1698,7 +3316,28 @@
       "chinese": "那个杯子五块钱。",
       "pinyin": "Nà ge bēizi wǔ kuài qián.",
       "english": "That cup costs five yuan.",
-      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices.",
+      "tokenPinyin": [
+        [
+          "nà"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "bēi",
+          "zi"
+        ],
+        [
+          "wǔ"
+        ],
+        [
+          "kuài"
+        ],
+        [
+          "qián"
+        ]
+      ]
     },
     {
       "id": "hsk1-102",
@@ -1715,7 +3354,28 @@
       "chinese": "这个苹果三块钱。",
       "pinyin": "Zhè ge píngguǒ sān kuài qián.",
       "english": "This apple costs three yuan.",
-      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "píng",
+          "guǒ"
+        ],
+        [
+          "sān"
+        ],
+        [
+          "kuài"
+        ],
+        [
+          "qián"
+        ]
+      ]
     },
     {
       "id": "hsk1-103",
@@ -1731,7 +3391,25 @@
       "chinese": "我有二十块钱。",
       "pinyin": "Wǒ yǒu èrshí kuài qián.",
       "english": "I have twenty yuan.",
-      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "èr",
+          "shí"
+        ],
+        [
+          "kuài"
+        ],
+        [
+          "qián"
+        ]
+      ]
     },
     {
       "id": "hsk1-104",
@@ -1747,7 +3425,26 @@
       "chinese": "这件衣服多少钱？",
       "pinyin": "Zhè jiàn yīfu duōshao qián?",
       "english": "How much does this piece of clothing cost?",
-      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "jiàn"
+        ],
+        [
+          "yī",
+          "fu"
+        ],
+        [
+          "duō",
+          "shao"
+        ],
+        [
+          "qián"
+        ]
+      ]
     },
     {
       "id": "hsk1-105",
@@ -1763,7 +3460,25 @@
       "chinese": "一本书多少钱？",
       "pinyin": "Yì běn shū duōshao qián?",
       "english": "How much does one book cost?",
-      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices."
+      "explanation": "Put a number before the measure word and noun. Use 本 with books, 个 with people, and 块 with prices.",
+      "tokenPinyin": [
+        [
+          "yì"
+        ],
+        [
+          "běn"
+        ],
+        [
+          "shū"
+        ],
+        [
+          "duō",
+          "shao"
+        ],
+        [
+          "qián"
+        ]
+      ]
     },
     {
       "id": "hsk1-106",
@@ -1777,7 +3492,21 @@
       "chinese": "今天是星期一。",
       "pinyin": "Jīntiān shì xīngqīyī.",
       "english": "Today is Monday.",
-      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence."
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence.",
+      "tokenPinyin": [
+        [
+          "jīn",
+          "tiān"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "xīng",
+          "qī",
+          "yī"
+        ]
+      ]
     },
     {
       "id": "hsk1-107",
@@ -1791,7 +3520,21 @@
       "chinese": "明天是星期二。",
       "pinyin": "Míngtiān shì xīngqī'èr.",
       "english": "Tomorrow is Tuesday.",
-      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence."
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence.",
+      "tokenPinyin": [
+        [
+          "míng",
+          "tiān"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "xīng",
+          "qī",
+          "èr"
+        ]
+      ]
     },
     {
       "id": "hsk1-108",
@@ -1805,7 +3548,21 @@
       "chinese": "昨天是星期日。",
       "pinyin": "Zuótiān shì xīngqīrì.",
       "english": "Yesterday was Sunday.",
-      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence."
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence.",
+      "tokenPinyin": [
+        [
+          "zuó",
+          "tiān"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "xīng",
+          "qī",
+          "rì"
+        ]
+      ]
     },
     {
       "id": "hsk1-109",
@@ -1820,7 +3577,24 @@
       "chinese": "今天是几月几号？",
       "pinyin": "Jīntiān shì jǐ yuè jǐ hào?",
       "english": "What is today's date?",
-      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence."
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence.",
+      "tokenPinyin": [
+        [
+          "jīn",
+          "tiān"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "jǐ",
+          "yuè"
+        ],
+        [
+          "jǐ",
+          "hào"
+        ]
+      ]
     },
     {
       "id": "hsk1-110",
@@ -1835,7 +3609,24 @@
       "chinese": "今天是三月五号。",
       "pinyin": "Jīntiān shì sān yuè wǔ hào.",
       "english": "Today is March fifth.",
-      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence."
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence.",
+      "tokenPinyin": [
+        [
+          "jīn",
+          "tiān"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "sān",
+          "yuè"
+        ],
+        [
+          "wǔ",
+          "hào"
+        ]
+      ]
     },
     {
       "id": "hsk1-111",
@@ -1850,7 +3641,24 @@
       "chinese": "明天是六月一号。",
       "pinyin": "Míngtiān shì liù yuè yī hào.",
       "english": "Tomorrow is June first.",
-      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence."
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence.",
+      "tokenPinyin": [
+        [
+          "míng",
+          "tiān"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "liù",
+          "yuè"
+        ],
+        [
+          "yī",
+          "hào"
+        ]
+      ]
     },
     {
       "id": "hsk1-112",
@@ -1864,7 +3672,20 @@
       "chinese": "今天星期几？",
       "pinyin": "Jīntiān xīngqī jǐ?",
       "english": "What day of the week is it today?",
-      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence."
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence.",
+      "tokenPinyin": [
+        [
+          "jīn",
+          "tiān"
+        ],
+        [
+          "xīng",
+          "qī"
+        ],
+        [
+          "jǐ"
+        ]
+      ]
     },
     {
       "id": "hsk1-113",
@@ -1878,7 +3699,20 @@
       "chinese": "明天星期几？",
       "pinyin": "Míngtiān xīngqī jǐ?",
       "english": "What day of the week is it tomorrow?",
-      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence."
+      "explanation": "Dates follow year, month, then day order. Put a time word before the verb; dates can also be the topic of a sentence.",
+      "tokenPinyin": [
+        [
+          "míng",
+          "tiān"
+        ],
+        [
+          "xīng",
+          "qī"
+        ],
+        [
+          "jǐ"
+        ]
+      ]
     },
     {
       "id": "hsk1-114",
@@ -1900,6 +3734,23 @@
           "我",
           "去",
           "学校"
+        ]
+      ],
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "xīng",
+          "qī",
+          "yī"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "xué",
+          "xiào"
         ]
       ]
     },
@@ -1924,6 +3775,22 @@
           "回",
           "家"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "xīng",
+          "qī",
+          "wǔ"
+        ],
+        [
+          "huí"
+        ],
+        [
+          "jiā"
+        ]
       ]
     },
     {
@@ -1946,6 +3813,24 @@
           "我们",
           "看",
           "电影"
+        ]
+      ],
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "xīng",
+          "qī",
+          "liù"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "diàn",
+          "yǐng"
         ]
       ]
     },
@@ -1970,6 +3855,23 @@
           "不",
           "工作"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "xīng",
+          "qī",
+          "rì"
+        ],
+        [
+          "bù"
+        ],
+        [
+          "gōng",
+          "zuò"
+        ]
       ]
     },
     {
@@ -1993,6 +3895,22 @@
           "去",
           "北京"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "míng",
+          "tiān"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "běi",
+          "jīng"
+        ]
       ]
     },
     {
@@ -2015,6 +3933,21 @@
           "他",
           "来",
           "了"
+        ]
+      ],
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "zuó",
+          "tiān"
+        ],
+        [
+          "lái"
+        ],
+        [
+          "le"
         ]
       ]
     },
@@ -2041,6 +3974,25 @@
           "在",
           "家"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "jīn",
+          "tiān"
+        ],
+        [
+          "dōu"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "jiā"
+        ]
       ]
     },
     {
@@ -2055,7 +4007,19 @@
       "chinese": "现在三点。",
       "pinyin": "Xiànzài sān diǎn.",
       "english": "It is three o'clock now.",
-      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action."
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action.",
+      "tokenPinyin": [
+        [
+          "xiàn",
+          "zài"
+        ],
+        [
+          "sān"
+        ],
+        [
+          "diǎn"
+        ]
+      ]
     },
     {
       "id": "hsk1-122",
@@ -2069,7 +4033,19 @@
       "chinese": "现在几点？",
       "pinyin": "Xiànzài jǐ diǎn?",
       "english": "What time is it now?",
-      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action."
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action.",
+      "tokenPinyin": [
+        [
+          "xiàn",
+          "zài"
+        ],
+        [
+          "jǐ"
+        ],
+        [
+          "diǎn"
+        ]
+      ]
     },
     {
       "id": "hsk1-123",
@@ -2085,7 +4061,25 @@
       "chinese": "现在十点十分。",
       "pinyin": "Xiànzài shí diǎn shí fēn.",
       "english": "It is ten ten now.",
-      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action."
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action.",
+      "tokenPinyin": [
+        [
+          "xiàn",
+          "zài"
+        ],
+        [
+          "shí"
+        ],
+        [
+          "diǎn"
+        ],
+        [
+          "shí"
+        ],
+        [
+          "fēn"
+        ]
+      ]
     },
     {
       "id": "hsk1-124",
@@ -2101,7 +4095,26 @@
       "chinese": "现在八点二十分。",
       "pinyin": "Xiànzài bā diǎn èrshí fēn.",
       "english": "It is eight twenty now.",
-      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action."
+      "explanation": "Use 点 for hours and 分 for minutes. A time expression normally goes before the action.",
+      "tokenPinyin": [
+        [
+          "xiàn",
+          "zài"
+        ],
+        [
+          "bā"
+        ],
+        [
+          "diǎn"
+        ],
+        [
+          "èr",
+          "shí"
+        ],
+        [
+          "fēn"
+        ]
+      ]
     },
     {
       "id": "hsk1-125",
@@ -2125,6 +4138,23 @@
           "我",
           "吃",
           "饭"
+        ]
+      ],
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "qī"
+        ],
+        [
+          "diǎn"
+        ],
+        [
+          "chī"
+        ],
+        [
+          "fàn"
         ]
       ]
     },
@@ -2151,6 +4181,24 @@
           "去",
           "学校"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "bā"
+        ],
+        [
+          "diǎn"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "xué",
+          "xiào"
+        ]
       ]
     },
     {
@@ -2176,6 +4224,23 @@
           "回",
           "家"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "liù"
+        ],
+        [
+          "diǎn"
+        ],
+        [
+          "huí"
+        ],
+        [
+          "jiā"
+        ]
       ]
     },
     {
@@ -2200,6 +4265,25 @@
           "我们",
           "看",
           "电视"
+        ]
+      ],
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "jiǔ"
+        ],
+        [
+          "diǎn"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "diàn",
+          "shì"
         ]
       ]
     },
@@ -2228,6 +4312,28 @@
           "去",
           "医院"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "xià",
+          "wǔ"
+        ],
+        [
+          "sān"
+        ],
+        [
+          "diǎn"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "yī",
+          "yuàn"
+        ]
       ]
     },
     {
@@ -2252,6 +4358,24 @@
           "点",
           "他",
           "来"
+        ]
+      ],
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "shàng",
+          "wǔ"
+        ],
+        [
+          "shí"
+        ],
+        [
+          "diǎn"
+        ],
+        [
+          "lái"
         ]
       ]
     },
@@ -2278,6 +4402,23 @@
           "回",
           "家"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "jǐ"
+        ],
+        [
+          "diǎn"
+        ],
+        [
+          "huí"
+        ],
+        [
+          "jiā"
+        ]
       ]
     },
     {
@@ -2303,6 +4444,24 @@
           "去",
           "学校"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "jǐ"
+        ],
+        [
+          "diǎn"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "xué",
+          "xiào"
+        ]
       ]
     },
     {
@@ -2327,6 +4486,25 @@
           "点",
           "她",
           "回来"
+        ]
+      ],
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "xià",
+          "wǔ"
+        ],
+        [
+          "wǔ"
+        ],
+        [
+          "diǎn"
+        ],
+        [
+          "huí",
+          "lai"
         ]
       ]
     },
@@ -2355,6 +4533,29 @@
           "吃",
           "饭"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "zhōng",
+          "wǔ"
+        ],
+        [
+          "shí",
+          "èr"
+        ],
+        [
+          "diǎn"
+        ],
+        [
+          "chī"
+        ],
+        [
+          "fàn"
+        ]
       ]
     },
     {
@@ -2380,6 +4581,26 @@
           "不",
           "工作"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "jīn",
+          "tiān"
+        ],
+        [
+          "shàng",
+          "wǔ"
+        ],
+        [
+          "bù"
+        ],
+        [
+          "gōng",
+          "zuò"
+        ]
       ]
     },
     {
@@ -2394,7 +4615,18 @@
       "chinese": "我看书。",
       "pinyin": "Wǒ kàn shū.",
       "english": "I read books.",
-      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "shū"
+        ]
+      ]
     },
     {
       "id": "hsk1-137",
@@ -2408,7 +4640,19 @@
       "chinese": "他看电视。",
       "pinyin": "Tā kàn diànshì.",
       "english": "He watches television.",
-      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "diàn",
+          "shì"
+        ]
+      ]
     },
     {
       "id": "hsk1-138",
@@ -2423,7 +4667,23 @@
       "chinese": "她听老师说话。",
       "pinyin": "Tā tīng lǎoshī shuōhuà.",
       "english": "She listens to the teacher speaking.",
-      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "tīng"
+        ],
+        [
+          "lǎo",
+          "shī"
+        ],
+        [
+          "shuō",
+          "huà"
+        ]
+      ]
     },
     {
       "id": "hsk1-139",
@@ -2437,7 +4697,21 @@
       "chinese": "我们学习汉语。",
       "pinyin": "Wǒmen xuéxí Hànyǔ.",
       "english": "We study Chinese.",
-      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb.",
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "xué",
+          "xí"
+        ],
+        [
+          "hàn",
+          "yǔ"
+        ]
+      ]
     },
     {
       "id": "hsk1-140",
@@ -2452,7 +4726,24 @@
       "chinese": "他们在学校学习。",
       "pinyin": "Tāmen zài xuéxiào xuéxí.",
       "english": "They study at school.",
-      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb.",
+      "tokenPinyin": [
+        [
+          "tā",
+          "men"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "xué",
+          "xiào"
+        ],
+        [
+          "xué",
+          "xí"
+        ]
+      ]
     },
     {
       "id": "hsk1-141",
@@ -2468,7 +4759,24 @@
       "chinese": "我在家看书。",
       "pinyin": "Wǒ zài jiā kàn shū.",
       "english": "I read books at home.",
-      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "jiā"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "shū"
+        ]
+      ]
     },
     {
       "id": "hsk1-142",
@@ -2483,7 +4791,24 @@
       "chinese": "爸爸在医院工作。",
       "pinyin": "Bàba zài yīyuàn gōngzuò.",
       "english": "Dad works at the hospital.",
-      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb.",
+      "tokenPinyin": [
+        [
+          "bà",
+          "ba"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "yī",
+          "yuàn"
+        ],
+        [
+          "gōng",
+          "zuò"
+        ]
+      ]
     },
     {
       "id": "hsk1-143",
@@ -2498,7 +4823,24 @@
       "chinese": "妈妈在学校工作。",
       "pinyin": "Māma zài xuéxiào gōngzuò.",
       "english": "Mom works at the school.",
-      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb.",
+      "tokenPinyin": [
+        [
+          "mā",
+          "ma"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "xué",
+          "xiào"
+        ],
+        [
+          "gōng",
+          "zuò"
+        ]
+      ]
     },
     {
       "id": "hsk1-144",
@@ -2513,7 +4855,22 @@
       "chinese": "他在家睡觉。",
       "pinyin": "Tā zài jiā shuìjiào.",
       "english": "He sleeps at home.",
-      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "jiā"
+        ],
+        [
+          "shuì",
+          "jiào"
+        ]
+      ]
     },
     {
       "id": "hsk1-145",
@@ -2527,7 +4884,19 @@
       "chinese": "我写汉字。",
       "pinyin": "Wǒ xiě Hànzì.",
       "english": "I write Chinese characters.",
-      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "xiě"
+        ],
+        [
+          "hàn",
+          "zì"
+        ]
+      ]
     },
     {
       "id": "hsk1-146",
@@ -2543,7 +4912,25 @@
       "chinese": "老师读这本书。",
       "pinyin": "Lǎoshī dú zhè běn shū.",
       "english": "The teacher reads this book aloud.",
-      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb.",
+      "tokenPinyin": [
+        [
+          "lǎo",
+          "shī"
+        ],
+        [
+          "dú"
+        ],
+        [
+          "zhè"
+        ],
+        [
+          "běn"
+        ],
+        [
+          "shū"
+        ]
+      ]
     },
     {
       "id": "hsk1-147",
@@ -2558,7 +4945,22 @@
       "chinese": "她在看电影。",
       "pinyin": "Tā zài kàn diànyǐng.",
       "english": "She is watching a movie.",
-      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "diàn",
+          "yǐng"
+        ]
+      ]
     },
     {
       "id": "hsk1-148",
@@ -2574,7 +4976,25 @@
       "chinese": "我在听你说话。",
       "pinyin": "Wǒ zài tīng nǐ shuōhuà.",
       "english": "I am listening to you speaking.",
-      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "tīng"
+        ],
+        [
+          "nǐ"
+        ],
+        [
+          "shuō",
+          "huà"
+        ]
+      ]
     },
     {
       "id": "hsk1-149",
@@ -2589,7 +5009,22 @@
       "chinese": "他们在吃饭。",
       "pinyin": "Tāmen zài chī fàn.",
       "english": "They are eating.",
-      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb.",
+      "tokenPinyin": [
+        [
+          "tā",
+          "men"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "chī"
+        ],
+        [
+          "fàn"
+        ]
+      ]
     },
     {
       "id": "hsk1-150",
@@ -2604,7 +5039,22 @@
       "chinese": "你在做什么？",
       "pinyin": "Nǐ zài zuò shénme?",
       "english": "What are you doing?",
-      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb."
+      "explanation": "Use subject + verb + object. When describing where an action happens, put 在 + place before the verb.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "zuò"
+        ],
+        [
+          "shén",
+          "me"
+        ]
+      ]
     },
     {
       "id": "hsk1-151",
@@ -2618,7 +5068,19 @@
       "chinese": "我吃米饭。",
       "pinyin": "Wǒ chī mǐfàn.",
       "english": "I eat rice.",
-      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "chī"
+        ],
+        [
+          "mǐ",
+          "fàn"
+        ]
+      ]
     },
     {
       "id": "hsk1-152",
@@ -2632,7 +5094,19 @@
       "chinese": "她吃苹果。",
       "pinyin": "Tā chī píngguǒ.",
       "english": "She eats apples.",
-      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "chī"
+        ],
+        [
+          "píng",
+          "guǒ"
+        ]
+      ]
     },
     {
       "id": "hsk1-153",
@@ -2647,7 +5121,22 @@
       "chinese": "他喜欢吃菜。",
       "pinyin": "Tā xǐhuan chī cài.",
       "english": "He likes eating vegetables.",
-      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "chī"
+        ],
+        [
+          "cài"
+        ]
+      ]
     },
     {
       "id": "hsk1-154",
@@ -2663,7 +5152,26 @@
       "chinese": "我们在饭店吃饭。",
       "pinyin": "Wǒmen zài fàndiàn chī fàn.",
       "english": "We eat at a restaurant.",
-      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb.",
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "fàn",
+          "diàn"
+        ],
+        [
+          "chī"
+        ],
+        [
+          "fàn"
+        ]
+      ]
     },
     {
       "id": "hsk1-155",
@@ -2678,7 +5186,22 @@
       "chinese": "你想吃什么？",
       "pinyin": "Nǐ xiǎng chī shénme?",
       "english": "What would you like to eat?",
-      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "chī"
+        ],
+        [
+          "shén",
+          "me"
+        ]
+      ]
     },
     {
       "id": "hsk1-156",
@@ -2693,7 +5216,22 @@
       "chinese": "我想吃米饭。",
       "pinyin": "Wǒ xiǎng chī mǐfàn.",
       "english": "I would like to eat rice.",
-      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "chī"
+        ],
+        [
+          "mǐ",
+          "fàn"
+        ]
+      ]
     },
     {
       "id": "hsk1-157",
@@ -2708,7 +5246,22 @@
       "chinese": "他不吃苹果。",
       "pinyin": "Tā bù chī píngguǒ.",
       "english": "He does not eat apples.",
-      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "bù"
+        ],
+        [
+          "chī"
+        ],
+        [
+          "píng",
+          "guǒ"
+        ]
+      ]
     },
     {
       "id": "hsk1-158",
@@ -2723,7 +5276,22 @@
       "chinese": "你吃米饭吗？",
       "pinyin": "Nǐ chī mǐfàn ma?",
       "english": "Do you eat rice?",
-      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "chī"
+        ],
+        [
+          "mǐ",
+          "fàn"
+        ],
+        [
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-159",
@@ -2738,7 +5306,22 @@
       "chinese": "我买了苹果。",
       "pinyin": "Wǒ mǎi le píngguǒ.",
       "english": "I bought apples.",
-      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "mǎi"
+        ],
+        [
+          "le"
+        ],
+        [
+          "píng",
+          "guǒ"
+        ]
+      ]
     },
     {
       "id": "hsk1-160",
@@ -2755,7 +5338,27 @@
       "chinese": "她买了很多菜。",
       "pinyin": "Tā mǎi le hěn duō cài.",
       "english": "She bought a lot of food.",
-      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "mǎi"
+        ],
+        [
+          "le"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "duō"
+        ],
+        [
+          "cài"
+        ]
+      ]
     },
     {
       "id": "hsk1-161",
@@ -2771,7 +5374,25 @@
       "chinese": "这个苹果很大。",
       "pinyin": "Zhè ge píngguǒ hěn dà.",
       "english": "This apple is big.",
-      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "píng",
+          "guǒ"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "dà"
+        ]
+      ]
     },
     {
       "id": "hsk1-162",
@@ -2787,7 +5408,25 @@
       "chinese": "那个苹果很小。",
       "pinyin": "Nà ge píngguǒ hěn xiǎo.",
       "english": "That apple is small.",
-      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb.",
+      "tokenPinyin": [
+        [
+          "nà"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "píng",
+          "guǒ"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "xiǎo"
+        ]
+      ]
     },
     {
       "id": "hsk1-163",
@@ -2814,6 +5453,27 @@
           "吃",
           "饭"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "zhōng",
+          "wǔ"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "jiā"
+        ],
+        [
+          "chī"
+        ],
+        [
+          "fàn"
+        ]
       ]
     },
     {
@@ -2830,7 +5490,27 @@
       "chinese": "我们都喜欢吃苹果。",
       "pinyin": "Wǒmen dōu xǐhuan chī píngguǒ.",
       "english": "We all like eating apples.",
-      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb.",
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "dōu"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "chī"
+        ],
+        [
+          "píng",
+          "guǒ"
+        ]
+      ]
     },
     {
       "id": "hsk1-165",
@@ -2846,7 +5526,25 @@
       "chinese": "这儿的菜很好。",
       "pinyin": "Zhèr de cài hěn hǎo.",
       "english": "The food here is good.",
-      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb."
+      "explanation": "Put the food after 吃 or 买. To say what you ate at a particular time, put the time before the verb.",
+      "tokenPinyin": [
+        [
+          "zhè",
+          "r"
+        ],
+        [
+          "de"
+        ],
+        [
+          "cài"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "hǎo"
+        ]
+      ]
     },
     {
       "id": "hsk1-166",
@@ -2860,7 +5558,18 @@
       "chinese": "我喝水。",
       "pinyin": "Wǒ hē shuǐ.",
       "english": "I drink water.",
-      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "hē"
+        ],
+        [
+          "shuǐ"
+        ]
+      ]
     },
     {
       "id": "hsk1-167",
@@ -2874,7 +5583,18 @@
       "chinese": "他喝茶。",
       "pinyin": "Tā hē chá.",
       "english": "He drinks tea.",
-      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "hē"
+        ],
+        [
+          "chá"
+        ]
+      ]
     },
     {
       "id": "hsk1-168",
@@ -2889,7 +5609,22 @@
       "chinese": "你想喝什么？",
       "pinyin": "Nǐ xiǎng hē shénme?",
       "english": "What would you like to drink?",
-      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "hē"
+        ],
+        [
+          "shén",
+          "me"
+        ]
+      ]
     },
     {
       "id": "hsk1-169",
@@ -2904,7 +5639,21 @@
       "chinese": "我想喝茶。",
       "pinyin": "Wǒ xiǎng hē chá.",
       "english": "I would like to drink tea.",
-      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "hē"
+        ],
+        [
+          "chá"
+        ]
+      ]
     },
     {
       "id": "hsk1-170",
@@ -2919,7 +5668,21 @@
       "chinese": "她不喝茶。",
       "pinyin": "Tā bù hē chá.",
       "english": "She does not drink tea.",
-      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "bù"
+        ],
+        [
+          "hē"
+        ],
+        [
+          "chá"
+        ]
+      ]
     },
     {
       "id": "hsk1-171",
@@ -2934,7 +5697,21 @@
       "chinese": "你喝水吗？",
       "pinyin": "Nǐ hē shuǐ ma?",
       "english": "Do you drink water?",
-      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "hē"
+        ],
+        [
+          "shuǐ"
+        ],
+        [
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-172",
@@ -2948,7 +5725,18 @@
       "chinese": "请喝水。",
       "pinyin": "Qǐng hē shuǐ.",
       "english": "Please have some water.",
-      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation.",
+      "tokenPinyin": [
+        [
+          "qǐng"
+        ],
+        [
+          "hē"
+        ],
+        [
+          "shuǐ"
+        ]
+      ]
     },
     {
       "id": "hsk1-173",
@@ -2962,7 +5750,18 @@
       "chinese": "请喝茶。",
       "pinyin": "Qǐng hē chá.",
       "english": "Please have some tea.",
-      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation.",
+      "tokenPinyin": [
+        [
+          "qǐng"
+        ],
+        [
+          "hē"
+        ],
+        [
+          "chá"
+        ]
+      ]
     },
     {
       "id": "hsk1-174",
@@ -2978,7 +5777,24 @@
       "chinese": "我要一杯水。",
       "pinyin": "Wǒ yào yì bēi shuǐ.",
       "english": "I want a glass of water.",
-      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "yào"
+        ],
+        [
+          "yì"
+        ],
+        [
+          "bēi"
+        ],
+        [
+          "shuǐ"
+        ]
+      ]
     },
     {
       "id": "hsk1-175",
@@ -2994,7 +5810,24 @@
       "chinese": "他要两杯茶。",
       "pinyin": "Tā yào liǎng bēi chá.",
       "english": "He wants two cups of tea.",
-      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "yào"
+        ],
+        [
+          "liǎng"
+        ],
+        [
+          "bēi"
+        ],
+        [
+          "chá"
+        ]
+      ]
     },
     {
       "id": "hsk1-176",
@@ -3010,7 +5843,24 @@
       "chinese": "你要几杯茶？",
       "pinyin": "Nǐ yào jǐ bēi chá?",
       "english": "How many cups of tea do you want?",
-      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "yào"
+        ],
+        [
+          "jǐ"
+        ],
+        [
+          "bēi"
+        ],
+        [
+          "chá"
+        ]
+      ]
     },
     {
       "id": "hsk1-177",
@@ -3026,7 +5876,24 @@
       "chinese": "这杯水很热。",
       "pinyin": "Zhè bēi shuǐ hěn rè.",
       "english": "This glass of water is hot.",
-      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "bēi"
+        ],
+        [
+          "shuǐ"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "rè"
+        ]
+      ]
     },
     {
       "id": "hsk1-178",
@@ -3042,7 +5909,24 @@
       "chinese": "那杯茶很冷。",
       "pinyin": "Nà bēi chá hěn lěng.",
       "english": "That cup of tea is cold.",
-      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation.",
+      "tokenPinyin": [
+        [
+          "nà"
+        ],
+        [
+          "bēi"
+        ],
+        [
+          "chá"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "lěng"
+        ]
+      ]
     },
     {
       "id": "hsk1-179",
@@ -3058,7 +5942,24 @@
       "chinese": "我不想喝水。",
       "pinyin": "Wǒ bù xiǎng hē shuǐ.",
       "english": "I do not want to drink water.",
-      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "bù"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "hē"
+        ],
+        [
+          "shuǐ"
+        ]
+      ]
     },
     {
       "id": "hsk1-180",
@@ -3074,7 +5975,25 @@
       "chinese": "我们在家喝茶。",
       "pinyin": "Wǒmen zài jiā hē chá.",
       "english": "We drink tea at home.",
-      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation."
+      "explanation": "Put 想 or 要 before 喝, followed by the drink. Use 请 before a verb to make a polite invitation.",
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "jiā"
+        ],
+        [
+          "hē"
+        ],
+        [
+          "chá"
+        ]
+      ]
     },
     {
       "id": "hsk1-181",
@@ -3088,7 +6007,20 @@
       "chinese": "我喜欢汉语。",
       "pinyin": "Wǒ xǐhuan Hànyǔ.",
       "english": "I like Chinese.",
-      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "hàn",
+          "yǔ"
+        ]
+      ]
     },
     {
       "id": "hsk1-182",
@@ -3103,7 +6035,22 @@
       "chinese": "她喜欢看书。",
       "pinyin": "Tā xǐhuan kàn shū.",
       "english": "She likes reading books.",
-      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "shū"
+        ]
+      ]
     },
     {
       "id": "hsk1-183",
@@ -3118,7 +6065,23 @@
       "chinese": "他喜欢看电影。",
       "pinyin": "Tā xǐhuan kàn diànyǐng.",
       "english": "He likes watching movies.",
-      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "diàn",
+          "yǐng"
+        ]
+      ]
     },
     {
       "id": "hsk1-184",
@@ -3134,7 +6097,28 @@
       "chinese": "我们喜欢听老师说话。",
       "pinyin": "Wǒmen xǐhuan tīng lǎoshī shuōhuà.",
       "english": "We like listening to the teacher speaking.",
-      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject.",
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "tīng"
+        ],
+        [
+          "lǎo",
+          "shī"
+        ],
+        [
+          "shuō",
+          "huà"
+        ]
+      ]
     },
     {
       "id": "hsk1-185",
@@ -3150,7 +6134,25 @@
       "chinese": "你喜欢喝茶吗？",
       "pinyin": "Nǐ xǐhuan hē chá ma?",
       "english": "Do you like drinking tea?",
-      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "hē"
+        ],
+        [
+          "chá"
+        ],
+        [
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-186",
@@ -3166,7 +6168,26 @@
       "chinese": "我不喜欢看电视。",
       "pinyin": "Wǒ bù xǐhuan kàn diànshì.",
       "english": "I do not like watching television.",
-      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "bù"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "diàn",
+          "shì"
+        ]
+      ]
     },
     {
       "id": "hsk1-187",
@@ -3183,7 +6204,29 @@
       "chinese": "他不喜欢这件衣服。",
       "pinyin": "Tā bù xǐhuan zhè jiàn yīfu.",
       "english": "He does not like this piece of clothing.",
-      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "bù"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "zhè"
+        ],
+        [
+          "jiàn"
+        ],
+        [
+          "yī",
+          "fu"
+        ]
+      ]
     },
     {
       "id": "hsk1-188",
@@ -3198,7 +6241,22 @@
       "chinese": "她很喜欢猫。",
       "pinyin": "Tā hěn xǐhuan māo.",
       "english": "She likes cats very much.",
-      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "māo"
+        ]
+      ]
     },
     {
       "id": "hsk1-189",
@@ -3213,7 +6271,22 @@
       "chinese": "我很喜欢狗。",
       "pinyin": "Wǒ hěn xǐhuan gǒu.",
       "english": "I like dogs very much.",
-      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "gǒu"
+        ]
+      ]
     },
     {
       "id": "hsk1-190",
@@ -3228,7 +6301,24 @@
       "chinese": "你喜欢什么水果？",
       "pinyin": "Nǐ xǐhuan shénme shuǐguǒ?",
       "english": "What fruit do you like?",
-      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "shén",
+          "me"
+        ],
+        [
+          "shuǐ",
+          "guǒ"
+        ]
+      ]
     },
     {
       "id": "hsk1-191",
@@ -3242,7 +6332,20 @@
       "chinese": "她喜欢北京。",
       "pinyin": "Tā xǐhuan Běijīng.",
       "english": "She likes Beijing.",
-      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "běi",
+          "jīng"
+        ]
+      ]
     },
     {
       "id": "hsk1-192",
@@ -3259,7 +6362,29 @@
       "chinese": "我们都喜欢这本书。",
       "pinyin": "Wǒmen dōu xǐhuan zhè běn shū.",
       "english": "We all like this book.",
-      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject.",
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "dōu"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "zhè"
+        ],
+        [
+          "běn"
+        ],
+        [
+          "shū"
+        ]
+      ]
     },
     {
       "id": "hsk1-193",
@@ -3275,7 +6400,28 @@
       "chinese": "他们都喜欢学习汉语。",
       "pinyin": "Tāmen dōu xǐhuan xuéxí Hànyǔ.",
       "english": "They all like studying Chinese.",
-      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject.",
+      "tokenPinyin": [
+        [
+          "tā",
+          "men"
+        ],
+        [
+          "dōu"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "xué",
+          "xí"
+        ],
+        [
+          "hàn",
+          "yǔ"
+        ]
+      ]
     },
     {
       "id": "hsk1-194",
@@ -3291,7 +6437,27 @@
       "chinese": "你的女儿喜欢什么？",
       "pinyin": "Nǐ de nǚ'ér xǐhuan shénme?",
       "english": "What does your daughter like?",
-      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "nǚ",
+          "ér"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "shén",
+          "me"
+        ]
+      ]
     },
     {
       "id": "hsk1-195",
@@ -3308,7 +6474,30 @@
       "chinese": "我喜欢和朋友看电影。",
       "pinyin": "Wǒ xǐhuan hé péngyou kàn diànyǐng.",
       "english": "I like watching movies with friends.",
-      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject."
+      "explanation": "Use 喜欢 before a thing or an activity. Put 都 before 喜欢 to include everyone in the subject.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "hé"
+        ],
+        [
+          "péng",
+          "you"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "diàn",
+          "yǐng"
+        ]
+      ]
     },
     {
       "id": "hsk1-196",
@@ -3323,7 +6512,22 @@
       "chinese": "我会说汉语。",
       "pinyin": "Wǒ huì shuō Hànyǔ.",
       "english": "I can speak Chinese.",
-      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "huì"
+        ],
+        [
+          "shuō"
+        ],
+        [
+          "hàn",
+          "yǔ"
+        ]
+      ]
     },
     {
       "id": "hsk1-197",
@@ -3338,7 +6542,22 @@
       "chinese": "他会写汉字。",
       "pinyin": "Tā huì xiě Hànzì.",
       "english": "He can write Chinese characters.",
-      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "huì"
+        ],
+        [
+          "xiě"
+        ],
+        [
+          "hàn",
+          "zì"
+        ]
+      ]
     },
     {
       "id": "hsk1-198",
@@ -3353,7 +6572,21 @@
       "chinese": "她会做饭。",
       "pinyin": "Tā huì zuò fàn.",
       "english": "She can cook.",
-      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "huì"
+        ],
+        [
+          "zuò"
+        ],
+        [
+          "fàn"
+        ]
+      ]
     },
     {
       "id": "hsk1-199",
@@ -3369,7 +6602,25 @@
       "chinese": "你会说汉语吗？",
       "pinyin": "Nǐ huì shuō Hànyǔ ma?",
       "english": "Can you speak Chinese?",
-      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "huì"
+        ],
+        [
+          "shuō"
+        ],
+        [
+          "hàn",
+          "yǔ"
+        ],
+        [
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-200",
@@ -3387,7 +6638,30 @@
       "chinese": "我不会写这个字。",
       "pinyin": "Wǒ bú huì xiě zhè ge zì.",
       "english": "I cannot write this character.",
-      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "bú"
+        ],
+        [
+          "huì"
+        ],
+        [
+          "xiě"
+        ],
+        [
+          "zhè"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "zì"
+        ]
+      ]
     },
     {
       "id": "hsk1-201",
@@ -3403,7 +6677,24 @@
       "chinese": "他不会做饭。",
       "pinyin": "Tā bú huì zuò fàn.",
       "english": "He cannot cook.",
-      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "bú"
+        ],
+        [
+          "huì"
+        ],
+        [
+          "zuò"
+        ],
+        [
+          "fàn"
+        ]
+      ]
     },
     {
       "id": "hsk1-202",
@@ -3421,7 +6712,31 @@
       "chinese": "你会写你的名字吗？",
       "pinyin": "Nǐ huì xiě nǐ de míngzi ma?",
       "english": "Can you write your name?",
-      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "huì"
+        ],
+        [
+          "xiě"
+        ],
+        [
+          "nǐ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "míng",
+          "zi"
+        ],
+        [
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-203",
@@ -3437,7 +6752,26 @@
       "chinese": "我们都会说汉语。",
       "pinyin": "Wǒmen dōu huì shuō Hànyǔ.",
       "english": "We can all speak Chinese.",
-      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it.",
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "dōu"
+        ],
+        [
+          "huì"
+        ],
+        [
+          "shuō"
+        ],
+        [
+          "hàn",
+          "yǔ"
+        ]
+      ]
     },
     {
       "id": "hsk1-204",
@@ -3454,7 +6788,27 @@
       "chinese": "她会读这本书。",
       "pinyin": "Tā huì dú zhè běn shū.",
       "english": "She can read this book aloud.",
-      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "huì"
+        ],
+        [
+          "dú"
+        ],
+        [
+          "zhè"
+        ],
+        [
+          "běn"
+        ],
+        [
+          "shū"
+        ]
+      ]
     },
     {
       "id": "hsk1-205",
@@ -3471,7 +6825,28 @@
       "chinese": "我会写我的名字。",
       "pinyin": "Wǒ huì xiě wǒ de míngzi.",
       "english": "I can write my name.",
-      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "huì"
+        ],
+        [
+          "xiě"
+        ],
+        [
+          "wǒ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "míng",
+          "zi"
+        ]
+      ]
     },
     {
       "id": "hsk1-206",
@@ -3489,7 +6864,31 @@
       "chinese": "你的妈妈会做饭吗？",
       "pinyin": "Nǐ de māma huì zuò fàn ma?",
       "english": "Can your mother cook?",
-      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "mā",
+          "ma"
+        ],
+        [
+          "huì"
+        ],
+        [
+          "zuò"
+        ],
+        [
+          "fàn"
+        ],
+        [
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-207",
@@ -3504,7 +6903,22 @@
       "chinese": "他会读汉语。",
       "pinyin": "Tā huì dú Hànyǔ.",
       "english": "He can read Chinese.",
-      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "huì"
+        ],
+        [
+          "dú"
+        ],
+        [
+          "hàn",
+          "yǔ"
+        ]
+      ]
     },
     {
       "id": "hsk1-208",
@@ -3522,7 +6936,30 @@
       "chinese": "我不会读那个字。",
       "pinyin": "Wǒ bú huì dú nà ge zì.",
       "english": "I cannot read that character aloud.",
-      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "bú"
+        ],
+        [
+          "huì"
+        ],
+        [
+          "dú"
+        ],
+        [
+          "nà"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "zì"
+        ]
+      ]
     },
     {
       "id": "hsk1-209",
@@ -3540,7 +6977,30 @@
       "chinese": "你会读这个字吗？",
       "pinyin": "Nǐ huì dú zhè ge zì ma?",
       "english": "Can you read this character aloud?",
-      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "huì"
+        ],
+        [
+          "dú"
+        ],
+        [
+          "zhè"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "zì"
+        ],
+        [
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-210",
@@ -3557,7 +7017,29 @@
       "chinese": "我的朋友会说汉语。",
       "pinyin": "Wǒ de péngyou huì shuō Hànyǔ.",
       "english": "My friend can speak Chinese.",
-      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it."
+      "explanation": "Put 会 before a learned skill. Put 不 before 会 to say someone cannot do it.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "péng",
+          "you"
+        ],
+        [
+          "huì"
+        ],
+        [
+          "shuō"
+        ],
+        [
+          "hàn",
+          "yǔ"
+        ]
+      ]
     },
     {
       "id": "hsk1-211",
@@ -3572,7 +7054,22 @@
       "chinese": "我想去中国。",
       "pinyin": "Wǒ xiǎng qù Zhōngguó.",
       "english": "I would like to go to China.",
-      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "zhōng",
+          "guó"
+        ]
+      ]
     },
     {
       "id": "hsk1-212",
@@ -3587,7 +7084,23 @@
       "chinese": "她想学习汉语。",
       "pinyin": "Tā xiǎng xuéxí Hànyǔ.",
       "english": "She would like to study Chinese.",
-      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "xué",
+          "xí"
+        ],
+        [
+          "hàn",
+          "yǔ"
+        ]
+      ]
     },
     {
       "id": "hsk1-213",
@@ -3602,7 +7115,22 @@
       "chinese": "他想买电脑。",
       "pinyin": "Tā xiǎng mǎi diànnǎo.",
       "english": "He would like to buy a computer.",
-      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "mǎi"
+        ],
+        [
+          "diàn",
+          "nǎo"
+        ]
+      ]
     },
     {
       "id": "hsk1-214",
@@ -3617,7 +7145,23 @@
       "chinese": "我们想看电影。",
       "pinyin": "Wǒmen xiǎng kàn diànyǐng.",
       "english": "We would like to watch a movie.",
-      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one.",
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "diàn",
+          "yǐng"
+        ]
+      ]
     },
     {
       "id": "hsk1-215",
@@ -3632,7 +7176,22 @@
       "chinese": "你想去哪儿？",
       "pinyin": "Nǐ xiǎng qù nǎr?",
       "english": "Where would you like to go?",
-      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "nǎ",
+          "r"
+        ]
+      ]
     },
     {
       "id": "hsk1-216",
@@ -3647,7 +7206,21 @@
       "chinese": "我想回家。",
       "pinyin": "Wǒ xiǎng huí jiā.",
       "english": "I would like to go home.",
-      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "huí"
+        ],
+        [
+          "jiā"
+        ]
+      ]
     },
     {
       "id": "hsk1-217",
@@ -3664,7 +7237,27 @@
       "chinese": "她想买一本书。",
       "pinyin": "Tā xiǎng mǎi yì běn shū.",
       "english": "She would like to buy a book.",
-      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "mǎi"
+        ],
+        [
+          "yì"
+        ],
+        [
+          "běn"
+        ],
+        [
+          "shū"
+        ]
+      ]
     },
     {
       "id": "hsk1-218",
@@ -3680,7 +7273,26 @@
       "chinese": "他想在北京工作。",
       "pinyin": "Tā xiǎng zài Běijīng gōngzuò.",
       "english": "He would like to work in Beijing.",
-      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "běi",
+          "jīng"
+        ],
+        [
+          "gōng",
+          "zuò"
+        ]
+      ]
     },
     {
       "id": "hsk1-219",
@@ -3712,6 +7324,25 @@
           "去",
           "商店"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "míng",
+          "tiān"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "shāng",
+          "diàn"
+        ]
       ]
     },
     {
@@ -3728,7 +7359,26 @@
       "chinese": "你想看什么电影？",
       "pinyin": "Nǐ xiǎng kàn shénme diànyǐng?",
       "english": "What movie would you like to watch?",
-      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "shén",
+          "me"
+        ],
+        [
+          "diàn",
+          "yǐng"
+        ]
+      ]
     },
     {
       "id": "hsk1-221",
@@ -3745,7 +7395,29 @@
       "chinese": "我们想去饭店吃饭。",
       "pinyin": "Wǒmen xiǎng qù fàndiàn chī fàn.",
       "english": "We would like to go to a restaurant to eat.",
-      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one.",
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "fàn",
+          "diàn"
+        ],
+        [
+          "chī"
+        ],
+        [
+          "fàn"
+        ]
+      ]
     },
     {
       "id": "hsk1-222",
@@ -3761,7 +7433,25 @@
       "chinese": "她不想去医院。",
       "pinyin": "Tā bù xiǎng qù yīyuàn.",
       "english": "She does not want to go to the hospital.",
-      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "bù"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "yī",
+          "yuàn"
+        ]
+      ]
     },
     {
       "id": "hsk1-223",
@@ -3778,7 +7468,28 @@
       "chinese": "我想买一些水果。",
       "pinyin": "Wǒ xiǎng mǎi yì xiē shuǐguǒ.",
       "english": "I would like to buy some fruit.",
-      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "mǎi"
+        ],
+        [
+          "yì"
+        ],
+        [
+          "xiē"
+        ],
+        [
+          "shuǐ",
+          "guǒ"
+        ]
+      ]
     },
     {
       "id": "hsk1-224",
@@ -3810,6 +7521,25 @@
           "做",
           "什么"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "míng",
+          "tiān"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "zuò"
+        ],
+        [
+          "shén",
+          "me"
+        ]
       ]
     },
     {
@@ -3827,7 +7557,28 @@
       "chinese": "他想和我去学校。",
       "pinyin": "Tā xiǎng hé wǒ qù xuéxiào.",
       "english": "He would like to go to school with me.",
-      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one."
+      "explanation": "Put 想 before the action you would like to do. For movement, use 去 + place, followed by the activity if there is one.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "hé"
+        ],
+        [
+          "wǒ"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "xué",
+          "xiào"
+        ]
+      ]
     },
     {
       "id": "hsk1-226",
@@ -3842,7 +7593,22 @@
       "chinese": "你是学生吗？",
       "pinyin": "Nǐ shì xuésheng ma?",
       "english": "Are you a student?",
-      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "xué",
+          "sheng"
+        ],
+        [
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-227",
@@ -3857,7 +7623,22 @@
       "chinese": "他是老师吗？",
       "pinyin": "Tā shì lǎoshī ma?",
       "english": "Is he a teacher?",
-      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "lǎo",
+          "shī"
+        ],
+        [
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-228",
@@ -3872,7 +7653,22 @@
       "chinese": "她是医生吗？",
       "pinyin": "Tā shì yīshēng ma?",
       "english": "Is she a doctor?",
-      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "yī",
+          "shēng"
+        ],
+        [
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-229",
@@ -3889,7 +7685,27 @@
       "chinese": "这是你的书吗？",
       "pinyin": "Zhè shì nǐ de shū ma?",
       "english": "Is this your book?",
-      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "nǐ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "shū"
+        ],
+        [
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-230",
@@ -3906,7 +7722,28 @@
       "chinese": "那是他的电脑吗？",
       "pinyin": "Nà shì tā de diànnǎo ma?",
       "english": "Is that his computer?",
-      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go.",
+      "tokenPinyin": [
+        [
+          "nà"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "tā"
+        ],
+        [
+          "de"
+        ],
+        [
+          "diàn",
+          "nǎo"
+        ],
+        [
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-231",
@@ -3921,7 +7758,22 @@
       "chinese": "你有儿子吗？",
       "pinyin": "Nǐ yǒu érzi ma?",
       "english": "Do you have a son?",
-      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "ér",
+          "zi"
+        ],
+        [
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-232",
@@ -3936,7 +7788,22 @@
       "chinese": "她有女儿吗？",
       "pinyin": "Tā yǒu nǚ'ér ma?",
       "english": "Does she have a daughter?",
-      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "yǒu"
+        ],
+        [
+          "nǚ",
+          "ér"
+        ],
+        [
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-233",
@@ -3958,6 +7825,22 @@
           "你",
           "工作",
           "吗"
+        ]
+      ],
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "jīn",
+          "tiān"
+        ],
+        [
+          "gōng",
+          "zuò"
+        ],
+        [
+          "ma"
         ]
       ]
     },
@@ -3984,6 +7867,25 @@
           "学校",
           "吗"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "míng",
+          "tiān"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "xué",
+          "xiào"
+        ],
+        [
+          "ma"
+        ]
       ]
     },
     {
@@ -3999,7 +7901,21 @@
       "chinese": "他在家吗？",
       "pinyin": "Tā zài jiā ma?",
       "english": "Is he at home?",
-      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "jiā"
+        ],
+        [
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-236",
@@ -4015,7 +7931,25 @@
       "chinese": "谁是你的老师？",
       "pinyin": "Shéi shì nǐ de lǎoshī?",
       "english": "Who is your teacher?",
-      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go.",
+      "tokenPinyin": [
+        [
+          "shéi"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "nǐ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "lǎo",
+          "shī"
+        ]
+      ]
     },
     {
       "id": "hsk1-237",
@@ -4030,7 +7964,22 @@
       "chinese": "你看什么书？",
       "pinyin": "Nǐ kàn shénme shū?",
       "english": "What book are you reading?",
-      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "shén",
+          "me"
+        ],
+        [
+          "shū"
+        ]
+      ]
     },
     {
       "id": "hsk1-238",
@@ -4046,7 +7995,26 @@
       "chinese": "你去哪儿买东西？",
       "pinyin": "Nǐ qù nǎr mǎi dōngxi?",
       "english": "Where do you go to buy things?",
-      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "nǎ",
+          "r"
+        ],
+        [
+          "mǎi"
+        ],
+        [
+          "dōng",
+          "xi"
+        ]
+      ]
     },
     {
       "id": "hsk1-239",
@@ -4061,7 +8029,23 @@
       "chinese": "这是什么东西？",
       "pinyin": "Zhè shì shénme dōngxi?",
       "english": "What is this thing?",
-      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "shén",
+          "me"
+        ],
+        [
+          "dōng",
+          "xi"
+        ]
+      ]
     },
     {
       "id": "hsk1-240",
@@ -4076,7 +8060,23 @@
       "chinese": "你怎么去学校？",
       "pinyin": "Nǐ zěnme qù xuéxiào?",
       "english": "How do you get to school?",
-      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go."
+      "explanation": "Put 吗 at the end of a yes-or-no question. Question words such as 谁 and 什么 stay where the answer would go.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "zěn",
+          "me"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "xué",
+          "xiào"
+        ]
+      ]
     },
     {
       "id": "hsk1-241",
@@ -4090,7 +8090,19 @@
       "chinese": "今天很热。",
       "pinyin": "Jīntiān hěn rè.",
       "english": "It is hot today.",
-      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description.",
+      "tokenPinyin": [
+        [
+          "jīn",
+          "tiān"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "rè"
+        ]
+      ]
     },
     {
       "id": "hsk1-242",
@@ -4104,7 +8116,19 @@
       "chinese": "今天很冷。",
       "pinyin": "Jīntiān hěn lěng.",
       "english": "It is cold today.",
-      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description.",
+      "tokenPinyin": [
+        [
+          "jīn",
+          "tiān"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "lěng"
+        ]
+      ]
     },
     {
       "id": "hsk1-243",
@@ -4120,7 +8144,26 @@
       "chinese": "这件衣服很漂亮。",
       "pinyin": "Zhè jiàn yīfu hěn piàoliang.",
       "english": "This piece of clothing is pretty.",
-      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "jiàn"
+        ],
+        [
+          "yī",
+          "fu"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "piào",
+          "liang"
+        ]
+      ]
     },
     {
       "id": "hsk1-244",
@@ -4136,7 +8179,25 @@
       "chinese": "我的学校很大。",
       "pinyin": "Wǒ de xuéxiào hěn dà.",
       "english": "My school is big.",
-      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "xué",
+          "xiào"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "dà"
+        ]
+      ]
     },
     {
       "id": "hsk1-245",
@@ -4152,7 +8213,24 @@
       "chinese": "他的家很小。",
       "pinyin": "Tā de jiā hěn xiǎo.",
       "english": "His home is small.",
-      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "de"
+        ],
+        [
+          "jiā"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "xiǎo"
+        ]
+      ]
     },
     {
       "id": "hsk1-246",
@@ -4175,6 +8253,22 @@
           "很",
           "高兴"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "jīn",
+          "tiān"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "gāo",
+          "xìng"
+        ]
       ]
     },
     {
@@ -4189,7 +8283,20 @@
       "chinese": "老师很高兴。",
       "pinyin": "Lǎoshī hěn gāoxìng.",
       "english": "The teacher is happy.",
-      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description.",
+      "tokenPinyin": [
+        [
+          "lǎo",
+          "shī"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "gāo",
+          "xìng"
+        ]
+      ]
     },
     {
       "id": "hsk1-248",
@@ -4205,7 +8312,24 @@
       "chinese": "这个字很大。",
       "pinyin": "Zhè ge zì hěn dà.",
       "english": "This character is large.",
-      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "zì"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "dà"
+        ]
+      ]
     },
     {
       "id": "hsk1-249",
@@ -4221,7 +8345,24 @@
       "chinese": "那本书很好。",
       "pinyin": "Nà běn shū hěn hǎo.",
       "english": "That book is good.",
-      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description.",
+      "tokenPinyin": [
+        [
+          "nà"
+        ],
+        [
+          "běn"
+        ],
+        [
+          "shū"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "hǎo"
+        ]
+      ]
     },
     {
       "id": "hsk1-250",
@@ -4237,7 +8378,25 @@
       "chinese": "你的汉语很好。",
       "pinyin": "Nǐ de Hànyǔ hěn hǎo.",
       "english": "Your Chinese is good.",
-      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "hàn",
+          "yǔ"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "hǎo"
+        ]
+      ]
     },
     {
       "id": "hsk1-251",
@@ -4253,7 +8412,26 @@
       "chinese": "北京的天气很好。",
       "pinyin": "Běijīng de tiānqì hěn hǎo.",
       "english": "The weather in Beijing is good.",
-      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description.",
+      "tokenPinyin": [
+        [
+          "běi",
+          "jīng"
+        ],
+        [
+          "de"
+        ],
+        [
+          "tiān",
+          "qì"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "hǎo"
+        ]
+      ]
     },
     {
       "id": "hsk1-252",
@@ -4268,7 +8446,25 @@
       "chinese": "今天的天气怎么样？",
       "pinyin": "Jīntiān de tiānqì zěnmeyàng?",
       "english": "How is the weather today?",
-      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description.",
+      "tokenPinyin": [
+        [
+          "jīn",
+          "tiān"
+        ],
+        [
+          "de"
+        ],
+        [
+          "tiān",
+          "qì"
+        ],
+        [
+          "zěn",
+          "me",
+          "yàng"
+        ]
+      ]
     },
     {
       "id": "hsk1-253",
@@ -4283,7 +8479,24 @@
       "chinese": "这个电影怎么样？",
       "pinyin": "Zhè ge diànyǐng zěnmeyàng?",
       "english": "How is this movie?",
-      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "diàn",
+          "yǐng"
+        ],
+        [
+          "zěn",
+          "me",
+          "yàng"
+        ]
+      ]
     },
     {
       "id": "hsk1-254",
@@ -4300,7 +8513,29 @@
       "chinese": "我很喜欢这个学校。",
       "pinyin": "Wǒ hěn xǐhuan zhè ge xuéxiào.",
       "english": "I like this school very much.",
-      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "zhè"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "xué",
+          "xiào"
+        ]
+      ]
     },
     {
       "id": "hsk1-255",
@@ -4316,7 +8551,24 @@
       "chinese": "这只狗很小。",
       "pinyin": "Zhè zhī gǒu hěn xiǎo.",
       "english": "This dog is small.",
-      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description."
+      "explanation": "Use 很 + adjective after the subject. Do not add 是 before an ordinary adjective description.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "zhī"
+        ],
+        [
+          "gǒu"
+        ],
+        [
+          "hěn"
+        ],
+        [
+          "xiǎo"
+        ]
+      ]
     },
     {
       "id": "hsk1-256",
@@ -4331,7 +8583,22 @@
       "chinese": "我不是老师。",
       "pinyin": "Wǒ bú shì lǎoshī.",
       "english": "I am not a teacher.",
-      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "bú"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "lǎo",
+          "shī"
+        ]
+      ]
     },
     {
       "id": "hsk1-257",
@@ -4346,7 +8613,23 @@
       "chinese": "他不是中国人。",
       "pinyin": "Tā bú shì Zhōngguórén.",
       "english": "He is not Chinese.",
-      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "bú"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "zhōng",
+          "guó",
+          "rén"
+        ]
+      ]
     },
     {
       "id": "hsk1-258",
@@ -4363,7 +8646,28 @@
       "chinese": "她不是我的同学。",
       "pinyin": "Tā bú shì wǒ de tóngxué.",
       "english": "She is not my classmate.",
-      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "bú"
+        ],
+        [
+          "shì"
+        ],
+        [
+          "wǒ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "tóng",
+          "xué"
+        ]
+      ]
     },
     {
       "id": "hsk1-259",
@@ -4377,7 +8681,20 @@
       "chinese": "我没有电脑。",
       "pinyin": "Wǒ méiyǒu diànnǎo.",
       "english": "I do not have a computer.",
-      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "méi",
+          "yǒu"
+        ],
+        [
+          "diàn",
+          "nǎo"
+        ]
+      ]
     },
     {
       "id": "hsk1-260",
@@ -4391,7 +8708,19 @@
       "chinese": "他没有钱。",
       "pinyin": "Tā méiyǒu qián.",
       "english": "He does not have any money.",
-      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "méi",
+          "yǒu"
+        ],
+        [
+          "qián"
+        ]
+      ]
     },
     {
       "id": "hsk1-261",
@@ -4405,7 +8734,20 @@
       "chinese": "她没有女儿。",
       "pinyin": "Tā méiyǒu nǚ'ér.",
       "english": "She does not have a daughter.",
-      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "méi",
+          "yǒu"
+        ],
+        [
+          "nǚ",
+          "ér"
+        ]
+      ]
     },
     {
       "id": "hsk1-262",
@@ -4420,7 +8762,22 @@
       "chinese": "我不看电视。",
       "pinyin": "Wǒ bú kàn diànshì.",
       "english": "I do not watch television.",
-      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "bú"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "diàn",
+          "shì"
+        ]
+      ]
     },
     {
       "id": "hsk1-263",
@@ -4436,7 +8793,25 @@
       "chinese": "你不认识他吗？",
       "pinyin": "Nǐ bú rènshi tā ma?",
       "english": "Don't you know him?",
-      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "bú"
+        ],
+        [
+          "rèn",
+          "shi"
+        ],
+        [
+          "tā"
+        ],
+        [
+          "ma"
+        ]
+      ]
     },
     {
       "id": "hsk1-264",
@@ -4460,6 +8835,26 @@
           "不",
           "去",
           "学校"
+        ]
+      ],
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "jīn",
+          "tiān"
+        ],
+        [
+          "bú"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "xué",
+          "xiào"
         ]
       ]
     },
@@ -4486,6 +8881,25 @@
           "去",
           "工作"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "zuó",
+          "tiān"
+        ],
+        [
+          "méi"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "gōng",
+          "zuò"
+        ]
       ]
     },
     {
@@ -4511,6 +8925,25 @@
           "买",
           "东西"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "zuó",
+          "tiān"
+        ],
+        [
+          "méi"
+        ],
+        [
+          "mǎi"
+        ],
+        [
+          "dōng",
+          "xi"
+        ]
       ]
     },
     {
@@ -4528,7 +8961,29 @@
       "chinese": "她不喜欢这个电影。",
       "pinyin": "Tā bù xǐhuan zhè ge diànyǐng.",
       "english": "She does not like this movie.",
-      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "bù"
+        ],
+        [
+          "xǐ",
+          "huan"
+        ],
+        [
+          "zhè"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "diàn",
+          "yǐng"
+        ]
+      ]
     },
     {
       "id": "hsk1-268",
@@ -4542,7 +8997,19 @@
       "chinese": "今天不冷。",
       "pinyin": "Jīntiān bù lěng.",
       "english": "It is not cold today.",
-      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen.",
+      "tokenPinyin": [
+        [
+          "jīn",
+          "tiān"
+        ],
+        [
+          "bù"
+        ],
+        [
+          "lěng"
+        ]
+      ]
     },
     {
       "id": "hsk1-269",
@@ -4558,7 +9025,25 @@
       "chinese": "这个杯子不大。",
       "pinyin": "Zhè ge bēizi bú dà.",
       "english": "This cup is not big.",
-      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen."
+      "explanation": "Use 不 before most verbs or adjectives. Use 没有 to negate 有 and 没 before a completed action that did not happen.",
+      "tokenPinyin": [
+        [
+          "zhè"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "bēi",
+          "zi"
+        ],
+        [
+          "bú"
+        ],
+        [
+          "dà"
+        ]
+      ]
     },
     {
       "id": "hsk1-270",
@@ -4583,6 +9068,25 @@
           "想",
           "睡觉"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "xiàn",
+          "zài"
+        ],
+        [
+          "bù"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "shuì",
+          "jiào"
+        ]
       ]
     },
     {
@@ -4597,7 +9101,19 @@
       "chinese": "请坐这儿。",
       "pinyin": "Qǐng zuò zhèr.",
       "english": "Please sit here.",
-      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你.",
+      "tokenPinyin": [
+        [
+          "qǐng"
+        ],
+        [
+          "zuò"
+        ],
+        [
+          "zhè",
+          "r"
+        ]
+      ]
     },
     {
       "id": "hsk1-272",
@@ -4613,7 +9129,24 @@
       "chinese": "请看这本书。",
       "pinyin": "Qǐng kàn zhè běn shū.",
       "english": "Please look at this book.",
-      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你.",
+      "tokenPinyin": [
+        [
+          "qǐng"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "zhè"
+        ],
+        [
+          "běn"
+        ],
+        [
+          "shū"
+        ]
+      ]
     },
     {
       "id": "hsk1-273",
@@ -4629,7 +9162,25 @@
       "chinese": "请写你的名字。",
       "pinyin": "Qǐng xiě nǐ de míngzi.",
       "english": "Please write your name.",
-      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你.",
+      "tokenPinyin": [
+        [
+          "qǐng"
+        ],
+        [
+          "xiě"
+        ],
+        [
+          "nǐ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "míng",
+          "zi"
+        ]
+      ]
     },
     {
       "id": "hsk1-274",
@@ -4645,7 +9196,24 @@
       "chinese": "请读这个字。",
       "pinyin": "Qǐng dú zhè ge zì.",
       "english": "Please read this character aloud.",
-      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你.",
+      "tokenPinyin": [
+        [
+          "qǐng"
+        ],
+        [
+          "dú"
+        ],
+        [
+          "zhè"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "zì"
+        ]
+      ]
     },
     {
       "id": "hsk1-275",
@@ -4660,7 +9228,22 @@
       "chinese": "请听我说话。",
       "pinyin": "Qǐng tīng wǒ shuōhuà.",
       "english": "Please listen to me speaking.",
-      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你.",
+      "tokenPinyin": [
+        [
+          "qǐng"
+        ],
+        [
+          "tīng"
+        ],
+        [
+          "wǒ"
+        ],
+        [
+          "shuō",
+          "huà"
+        ]
+      ]
     },
     {
       "id": "hsk1-276",
@@ -4676,7 +9259,27 @@
       "chinese": "请问你叫什么名字？",
       "pinyin": "Qǐngwèn nǐ jiào shénme míngzi?",
       "english": "May I ask your name?",
-      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你.",
+      "tokenPinyin": [
+        [
+          "qǐng",
+          "wèn"
+        ],
+        [
+          "nǐ"
+        ],
+        [
+          "jiào"
+        ],
+        [
+          "shén",
+          "me"
+        ],
+        [
+          "míng",
+          "zi"
+        ]
+      ]
     },
     {
       "id": "hsk1-277",
@@ -4691,7 +9294,23 @@
       "chinese": "请问现在几点？",
       "pinyin": "Qǐngwèn xiànzài jǐ diǎn?",
       "english": "Excuse me, what time is it now?",
-      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你.",
+      "tokenPinyin": [
+        [
+          "qǐng",
+          "wèn"
+        ],
+        [
+          "xiàn",
+          "zài"
+        ],
+        [
+          "jǐ"
+        ],
+        [
+          "diǎn"
+        ]
+      ]
     },
     {
       "id": "hsk1-278",
@@ -4706,7 +9325,24 @@
       "chinese": "请问医院在哪儿？",
       "pinyin": "Qǐngwèn yīyuàn zài nǎr?",
       "english": "Excuse me, where is the hospital?",
-      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你.",
+      "tokenPinyin": [
+        [
+          "qǐng",
+          "wèn"
+        ],
+        [
+          "yī",
+          "yuàn"
+        ],
+        [
+          "zài"
+        ],
+        [
+          "nǎ",
+          "r"
+        ]
+      ]
     },
     {
       "id": "hsk1-279",
@@ -4721,7 +9357,23 @@
       "chinese": "谢谢你的老师。",
       "pinyin": "Xièxie nǐ de lǎoshī.",
       "english": "Thank your teacher.",
-      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你.",
+      "tokenPinyin": [
+        [
+          "xiè",
+          "xie"
+        ],
+        [
+          "nǐ"
+        ],
+        [
+          "de"
+        ],
+        [
+          "lǎo",
+          "shī"
+        ]
+      ]
     },
     {
       "id": "hsk1-280",
@@ -4737,7 +9389,25 @@
       "chinese": "谢谢你来看我。",
       "pinyin": "Xièxie nǐ lái kàn wǒ.",
       "english": "Thank you for coming to see me.",
-      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你.",
+      "tokenPinyin": [
+        [
+          "xiè",
+          "xie"
+        ],
+        [
+          "nǐ"
+        ],
+        [
+          "lái"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "wǒ"
+        ]
+      ]
     },
     {
       "id": "hsk1-281",
@@ -4753,7 +9423,24 @@
       "chinese": "我请你喝茶。",
       "pinyin": "Wǒ qǐng nǐ hē chá.",
       "english": "I invite you to have tea.",
-      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "qǐng"
+        ],
+        [
+          "nǐ"
+        ],
+        [
+          "hē"
+        ],
+        [
+          "chá"
+        ]
+      ]
     },
     {
       "id": "hsk1-282",
@@ -4769,7 +9456,26 @@
       "chinese": "我们请老师吃饭。",
       "pinyin": "Wǒmen qǐng lǎoshī chī fàn.",
       "english": "We invite the teacher to have a meal.",
-      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你.",
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "qǐng"
+        ],
+        [
+          "lǎo",
+          "shī"
+        ],
+        [
+          "chī"
+        ],
+        [
+          "fàn"
+        ]
+      ]
     },
     {
       "id": "hsk1-283",
@@ -4784,7 +9490,23 @@
       "chinese": "请明天上午来。",
       "pinyin": "Qǐng míngtiān shàngwǔ lái.",
       "english": "Please come tomorrow morning.",
-      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你.",
+      "tokenPinyin": [
+        [
+          "qǐng"
+        ],
+        [
+          "míng",
+          "tiān"
+        ],
+        [
+          "shàng",
+          "wǔ"
+        ],
+        [
+          "lái"
+        ]
+      ]
     },
     {
       "id": "hsk1-284",
@@ -4800,7 +9522,25 @@
       "chinese": "请看这个苹果。",
       "pinyin": "Qǐng kàn zhè ge píngguǒ.",
       "english": "Please look at this apple.",
-      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你.",
+      "tokenPinyin": [
+        [
+          "qǐng"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "zhè"
+        ],
+        [
+          "ge"
+        ],
+        [
+          "píng",
+          "guǒ"
+        ]
+      ]
     },
     {
       "id": "hsk1-285",
@@ -4816,7 +9556,25 @@
       "chinese": "请明天来我家。",
       "pinyin": "Qǐng míngtiān lái wǒ jiā.",
       "english": "Please come to my home tomorrow.",
-      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你."
+      "explanation": "Use 请 before a requested action. Put the listener after the verb when needed, as in 请问你.",
+      "tokenPinyin": [
+        [
+          "qǐng"
+        ],
+        [
+          "míng",
+          "tiān"
+        ],
+        [
+          "lái"
+        ],
+        [
+          "wǒ"
+        ],
+        [
+          "jiā"
+        ]
+      ]
     },
     {
       "id": "hsk1-286",
@@ -4832,7 +9590,27 @@
       "chinese": "我坐出租车去医院。",
       "pinyin": "Wǒ zuò chūzūchē qù yīyuàn.",
       "english": "I take a taxi to the hospital.",
-      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "zuò"
+        ],
+        [
+          "chū",
+          "zū",
+          "chē"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "yī",
+          "yuàn"
+        ]
+      ]
     },
     {
       "id": "hsk1-287",
@@ -4848,7 +9626,26 @@
       "chinese": "他坐飞机去北京。",
       "pinyin": "Tā zuò fēijī qù Běijīng.",
       "english": "He goes to Beijing by plane.",
-      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "zuò"
+        ],
+        [
+          "fēi",
+          "jī"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "běi",
+          "jīng"
+        ]
+      ]
     },
     {
       "id": "hsk1-288",
@@ -4864,7 +9661,27 @@
       "chinese": "我们坐出租车回家。",
       "pinyin": "Wǒmen zuò chūzūchē huí jiā.",
       "english": "We take a taxi home.",
-      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning.",
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "zuò"
+        ],
+        [
+          "chū",
+          "zū",
+          "chē"
+        ],
+        [
+          "huí"
+        ],
+        [
+          "jiā"
+        ]
+      ]
     },
     {
       "id": "hsk1-289",
@@ -4880,7 +9697,26 @@
       "chinese": "你坐什么去北京？",
       "pinyin": "Nǐ zuò shénme qù Běijīng?",
       "english": "What do you take to get to Beijing?",
-      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "zuò"
+        ],
+        [
+          "shén",
+          "me"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "běi",
+          "jīng"
+        ]
+      ]
     },
     {
       "id": "hsk1-290",
@@ -4905,6 +9741,25 @@
           "飞机",
           "来"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "míng",
+          "tiān"
+        ],
+        [
+          "zuò"
+        ],
+        [
+          "fēi",
+          "jī"
+        ],
+        [
+          "lái"
+        ]
       ]
     },
     {
@@ -4921,7 +9776,26 @@
       "chinese": "我去商店买东西。",
       "pinyin": "Wǒ qù shāngdiàn mǎi dōngxi.",
       "english": "I go to the shop to buy things.",
-      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning.",
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "shāng",
+          "diàn"
+        ],
+        [
+          "mǎi"
+        ],
+        [
+          "dōng",
+          "xi"
+        ]
+      ]
     },
     {
       "id": "hsk1-292",
@@ -4937,7 +9811,26 @@
       "chinese": "她去学校看老师。",
       "pinyin": "Tā qù xuéxiào kàn lǎoshī.",
       "english": "She goes to the school to see the teacher.",
-      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "xué",
+          "xiào"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "lǎo",
+          "shī"
+        ]
+      ]
     },
     {
       "id": "hsk1-293",
@@ -4953,7 +9846,27 @@
       "chinese": "我们去北京看朋友。",
       "pinyin": "Wǒmen qù Běijīng kàn péngyou.",
       "english": "We go to Beijing to see friends.",
-      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning.",
+      "tokenPinyin": [
+        [
+          "wǒ",
+          "men"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "běi",
+          "jīng"
+        ],
+        [
+          "kàn"
+        ],
+        [
+          "péng",
+          "you"
+        ]
+      ]
     },
     {
       "id": "hsk1-294",
@@ -4968,7 +9881,24 @@
       "chinese": "你什么时候回来？",
       "pinyin": "Nǐ shénme shíhou huílai?",
       "english": "When are you coming back?",
-      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning.",
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "shén",
+          "me"
+        ],
+        [
+          "shí",
+          "hou"
+        ],
+        [
+          "huí",
+          "lai"
+        ]
+      ]
     },
     {
       "id": "hsk1-295",
@@ -4988,6 +9918,19 @@
           "下午",
           "我",
           "回来"
+        ]
+      ],
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "xià",
+          "wǔ"
+        ],
+        [
+          "huí",
+          "lai"
         ]
       ]
     },
@@ -5011,6 +9954,22 @@
           "他",
           "回",
           "中国"
+        ]
+      ],
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "míng",
+          "tiān"
+        ],
+        [
+          "huí"
+        ],
+        [
+          "zhōng",
+          "guó"
         ]
       ]
     },
@@ -5037,6 +9996,25 @@
           "去",
           "商店"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "wǒ"
+        ],
+        [
+          "hé"
+        ],
+        [
+          "mā",
+          "ma"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "shāng",
+          "diàn"
+        ]
       ]
     },
     {
@@ -5053,7 +10031,25 @@
       "chinese": "她不想坐飞机。",
       "pinyin": "Tā bù xiǎng zuò fēijī.",
       "english": "She does not want to take a plane.",
-      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning.",
+      "tokenPinyin": [
+        [
+          "tā"
+        ],
+        [
+          "bù"
+        ],
+        [
+          "xiǎng"
+        ],
+        [
+          "zuò"
+        ],
+        [
+          "fēi",
+          "jī"
+        ]
+      ]
     },
     {
       "id": "hsk1-299",
@@ -5076,6 +10072,22 @@
           "去",
           "哪儿"
         ]
+      ],
+      "tokenPinyin": [
+        [
+          "nǐ"
+        ],
+        [
+          "xiàn",
+          "zài"
+        ],
+        [
+          "qù"
+        ],
+        [
+          "nǎ",
+          "r"
+        ]
       ]
     },
     {
@@ -5091,7 +10103,26 @@
       "chinese": "老师什么时候来学校？",
       "pinyin": "Lǎoshī shénme shíhou lái xuéxiào?",
       "english": "When is the teacher coming to school?",
-      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning."
+      "explanation": "Use 去 before a destination. Use 坐 before a form of transport and 来 or 回来 to describe coming or returning.",
+      "tokenPinyin": [
+        [
+          "lǎo",
+          "shī"
+        ],
+        [
+          "shén",
+          "me",
+          "shí",
+          "hou"
+        ],
+        [
+          "lái"
+        ],
+        [
+          "xué",
+          "xiào"
+        ]
+      ]
     }
   ]
 }

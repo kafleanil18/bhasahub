@@ -49,3 +49,20 @@ test('grading handles repeated words, omissions, foreign words, and correct alte
   shuffleSentences(catalog.sentences, () => 0.3);
   assert.deepEqual(catalog.sentences, original);
 });
+
+
+test('all 300 sentences have an aligned pinyin reading for every Chinese character', () => {
+  const letters = text => text.toLowerCase().replace(/[^\p{L}]/gu, '');
+  for (const sentence of catalog.sentences) {
+    assert.equal(sentence.tokenPinyin.length, sentence.tokens.length, sentence.id);
+    for (const [index, token] of sentence.tokens.entries()) {
+      assert.equal(sentence.tokenPinyin[index].length, Array.from(token).length, `${sentence.id}: ${token}`);
+      for (const reading of sentence.tokenPinyin[index]) assert.match(reading, /^[\p{L}]+$/u);
+    }
+    assert.equal(letters(sentence.tokenPinyin.flat().join('')), letters(sentence.pinyin), sentence.id);
+  }
+  const student = catalog.sentences.find(sentence => sentence.chinese === '我 是 学生。'.replaceAll(' ', ''));
+  assert.deepEqual(student.tokenPinyin, [['wǒ'], ['shì'], ['xué', 'sheng']]);
+  const here = catalog.sentences.find(sentence => sentence.chinese === '我 的 书 在 这儿。'.replaceAll(' ', ''));
+  assert.deepEqual(here.tokenPinyin.at(-1), ['zhè', 'r']);
+});

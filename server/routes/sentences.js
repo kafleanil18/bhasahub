@@ -17,13 +17,13 @@ const upload = multer({
     const extension = path.extname(file.originalname).toLowerCase();
     const audio = file.mimetype.startsWith('audio/') || file.mimetype === 'application/ogg';
     if (audio && ['.mp3', '.m4a', '.wav', '.ogg', '.webm'].includes(extension)) return done(null, true);
-    done(new Error('Choose an MP3, M4A, WAV, OGG, or WebM audio file.'));
+    done(new Error('Could not read the audio recording. Please record it again.'));
   },
 });
 const uploadLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, max: 100,
   standardHeaders: true, legacyHeaders: false,
-  message: { error: 'Too many audio uploads. Please wait before uploading again.' },
+  message: { error: 'Too many recordings saved. Please wait before saving another.' },
 });
 
 function knownSentence(req, res, next) {
@@ -42,8 +42,8 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/:id/audio', requireAuth, requireSuperAdmin, knownSentence, uploadLimiter, upload.single('file'), async (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'Choose an audio file to upload.' });
+router.post('/:id/audio', requireAuth, requireSuperAdmin, knownSentence, uploadLimiter, upload.single('recording'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'Record audio before saving.' });
   try {
     const result = await uploadBufferToCloudinary(req.file.buffer, 'bhashahub/sentences');
     const recording = await SentenceAudio.findOneAndUpdate(
@@ -51,10 +51,10 @@ router.post('/:id/audio', requireAuth, requireSuperAdmin, knownSentence, uploadL
       { $set: { audioUrl: result.secure_url, uploadedBy: req.user.id } },
       { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true }
     );
-    logActivity(req, { action: 'upload', resourceType: 'sentence-audio', resourceId: recording._id, label: req.params.id });
+    logActivity(req, { action: 'record', resourceType: 'sentence-audio', resourceId: recording._id, label: req.params.id });
     res.status(201).json({ sentenceId: recording.sentenceId, audioUrl: recording.audioUrl });
   } catch {
-    res.status(502).json({ error: 'Could not save the recording. Please try uploading again.' });
+    res.status(502).json({ error: 'Could not save the recording. Please try saving again.' });
   }
 });
 
@@ -69,7 +69,7 @@ router.delete('/:id/audio', requireAuth, requireSuperAdmin, knownSentence, async
 });
 
 router.use((err, req, res, next) => {
-  res.status(400).json({ error: err.code === 'LIMIT_FILE_SIZE' ? 'Audio files must be 15 MB or smaller.' : err.message || 'Upload failed.' });
+  res.status(400).json({ error: err.code === 'LIMIT_FILE_SIZE' ? 'Recordings must be 15 MB or smaller.' : err.message || 'Could not save the recording.' });
 });
 
 module.exports = router;

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
+import SentenceText, { PinyinText } from './SentenceText';
 import { isCorrectSentence, sentenceTiles, shuffleSentences } from './sentenceQuiz';
 
 export default function SentenceSession({ initialSentences, onExit, onMastered }) {
@@ -68,7 +69,7 @@ export default function SentenceSession({ initialSentences, onExit, onMastered }
     <p className="sentence-eyebrow">Session complete</p>
     <h2 id="sentence-results-title" tabIndex={-1} ref={titleRef}>{sentences.length - missed.length} of {sentences.length} correct</h2>
     <p>{missed.length ? 'A little more practice will help these sentences stick.' : 'Well done! You built every sentence correctly.'}</p>
-    {missed.length > 0 && <ul className="sentence-review">{missed.map(item => <li key={item.id}><span lang="zh-CN">{item.chinese}</span><span>{item.english}</span></li>)}</ul>}
+    {missed.length > 0 && <ul className="sentence-review">{missed.map(item => <li key={item.id}><SentenceText sentence={item} /><span>{item.english}</span></li>)}</ul>}
     <div className="sentence-actions">{missed.length > 0 && <button className="sentence-primary" onClick={retry}>Retry {missed.length} missed sentences</button>}<button className="sentence-secondary" onClick={onExit}>Choose a topic</button></div>
   </section>;
 
@@ -80,17 +81,16 @@ export default function SentenceSession({ initialSentences, onExit, onMastered }
     <p className="sentence-muted">Tap the words in order. Tap a word in your answer to put it back.</p>
     <div className="sentence-answer" role="group" aria-label="Your sentence">
       {selected.length === 0 && <span className="sentence-muted">Your sentence starts here…</span>}
-      {selected.map((id, position) => <button key={id} lang="zh-CN" className="sentence-tile" disabled={Boolean(feedback)} aria-label={`Remove word ${position + 1}: ${sentence.tokens[id]}`} onClick={() => setSelected(previous => previous.filter(value => value !== id))}>{sentence.tokens[id]}</button>)}
+      {selected.map((id, position) => <button key={id} lang="zh-CN" className="sentence-tile" disabled={Boolean(feedback)} aria-label={`Remove word ${position + 1}: ${sentence.tokens[id]}`} onClick={() => setSelected(previous => previous.filter(value => value !== id))}><PinyinText text={sentence.tokens[id]} readings={sentence.tokenPinyin?.[id]} /></button>)}
       <span className="sentence-punctuation" aria-hidden="true">{sentence.chinese.endsWith('？') ? '？' : '。'}</span>
     </div>
     <div className="sentence-bank" role="group" aria-label="Available words">
-      {tiles.map(tile => <button key={tile.id} className="sentence-tile" lang="zh-CN" disabled={Boolean(feedback) || selected.includes(tile.id)} onClick={() => setSelected(previous => previous.includes(tile.id) ? previous : [...previous, tile.id])}>{tile.text}</button>)}
+      {tiles.map(tile => <button key={tile.id} className="sentence-tile" lang="zh-CN" aria-label={tile.text} disabled={Boolean(feedback) || selected.includes(tile.id)} onClick={() => setSelected(previous => previous.includes(tile.id) ? previous : [...previous, tile.id])}><PinyinText text={tile.text} readings={sentence.tokenPinyin?.[tile.id]} /></button>)}
     </div>
     {!feedback && <div className="sentence-actions"><button className="sentence-primary" disabled={selected.length !== tiles.length} onClick={check}>Check sentence</button><button className="sentence-secondary" disabled={!selected.length} onClick={() => setSelected([])}>Clear</button></div>}
     {feedback && <div className={`sentence-feedback ${feedback}`} role="status">
       <h3>{feedback === 'correct' ? 'Correct — nicely done!' : 'Here is one correct order'}</h3>
-      <p className="sentence-chinese" lang="zh-CN">{sentence.chinese}</p>
-      <p lang="zh-Latn">{sentence.pinyin}</p>
+      <p className="sentence-chinese"><SentenceText sentence={sentence} /></p>
       <p>{sentence.explanation}</p>
     </div>}
     {sentence.audioUrl ? <div className="sentence-recording"><audio ref={audioRef} src={mediaUrl(sentence.audioUrl)} preload="none" onError={() => setAudioError('The recording is unavailable. Please try again later.')} /><button className="sentence-secondary" onClick={listen}>▷ Listen to the sentence</button>{audioError && <p role="alert" className="sentence-error">{audioError}</p>}</div> : <p className="sentence-muted sentence-recording">Audio has not been added for this sentence yet.</p>}
