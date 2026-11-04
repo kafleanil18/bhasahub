@@ -3,11 +3,8 @@ import SiteHeader from './components/SiteHeader';
 import HomeFooter from './home/HomeFooter';
 import HomeTeam from './home/HomeTeam';
 import HomeTestimonials from './home/HomeTestimonials';
-import WordOfTheDay from './home/WordOfTheDay';
-import HomeFeatures from './home/HomeFeatures';
 import HomeCourses from './home/HomeCourses';
 import HomeHero from './home/HomeHero';
-import wotdList from './data/wordsOfTheDay';
 import renderTeamAvatar from './components/TeamAvatar';
 import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import './home.css';
@@ -49,11 +46,6 @@ const SentenceAudioManager = lazy(() => import('./admin/SentenceAudioManager'));
 
 
 function AppContent() {
-
-  const dayOfYear = Math.floor(
-    (Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000
-  );
-  const wotd = wotdList[dayOfYear % wotdList.length];
 
   const [serverOk, setServerOk] = useState(null);
   const [user, setUser] = useState(null);
@@ -145,58 +137,6 @@ function AppContent() {
       });
     } catch {
       setIsPlayingAudio(false);
-    }
-  };
-
-  const [isPlayingWotd, setIsPlayingWotd] = useState(false);
-  const [isPlayingFeatureAudio, setIsPlayingFeatureAudio] = useState(false);
-
-  const fallbackSpeech = (text) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'zh-CN';
-      utterance.rate = 0.85;
-      utterance.onend = () => setIsPlayingWotd(false);
-      utterance.onerror = () => setIsPlayingWotd(false);
-      window.speechSynthesis.speak(utterance);
-    } else {
-      setIsPlayingWotd(false);
-    }
-  };
-
-  const playWotdAudio = (word) => {
-    try {
-      setIsPlayingWotd(true);
-      const audioMap = {
-        '你好': '/nihao.m4a',
-        '谢谢': '/xiexie.m4a',
-        '再见': '/zaijian.m4a',
-        '不客气': '/bukeqi.m4a'
-      };
-
-      if (audioMap[word]) {
-        const audio = new Audio(audioMap[word]);
-        audio.onended = () => setIsPlayingWotd(false);
-        audio.onerror = () => fallbackSpeech(word);
-        audio.play().catch(() => fallbackSpeech(word));
-      } else {
-        fallbackSpeech(word);
-      }
-    } catch {
-      setIsPlayingWotd(false);
-    }
-  };
-
-  const playFeatureSample = () => {
-    try {
-      setIsPlayingFeatureAudio(true);
-      const audio = new Audio('/xiexie.m4a');
-      audio.onended = () => setIsPlayingFeatureAudio(false);
-      audio.onerror = () => setIsPlayingFeatureAudio(false);
-      audio.play().catch(() => setIsPlayingFeatureAudio(false));
-    } catch {
-      setIsPlayingFeatureAudio(false);
     }
   };
 
@@ -373,6 +313,7 @@ function AppContent() {
     setActiveTestId(null);
     setTestTakerBackToManager(false);
     setShowHanziTrace(false);
+    setShowListeningPractice(false);
     setShowConversationPractice(false);
     setShowSentencePractice(false);
     setShowDictation(false);
@@ -440,6 +381,12 @@ function AppContent() {
   // open the sign-in screen from anywhere (clears other views first)
   const openLogin = () => {
     setMobileMenuOpen(false);
+    setShowPracticeMenu(false);
+    setShowPinyinPage(false);
+    setShowHanziTrace(false);
+    setShowListeningPractice(false);
+    setShowConversationPractice(false);
+    setShowClassCalendar(false);
     setShowAdmin(false);
     setShowAdminDashboard(false);
     setShowAuditLog(false);
@@ -465,6 +412,13 @@ function AppContent() {
     setAuthView('login');
     setShowLogin(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const openPractice = id => {
+    if (id !== 'pinyin' && !user) { openLogin(); return; }
+    goHome();
+    const open = { pinyin: setShowPinyinPage, trace: setShowHanziTrace, listening: setShowListeningPractice, sentences: setShowSentencePractice, measures: setShowMeasureWords, numbers: setShowNumberTrainer, dictation: setShowDictation, tests: setShowTests }[id];
+    open?.(true);
   };
 
   const getHskLevel = (course) => {
@@ -546,7 +500,7 @@ function AppContent() {
         </>
       )}
 
-      <SiteHeader setShowMeasureWords={setShowMeasureWords} setShowNumberTrainer={setShowNumberTrainer} setShowDictation={setShowDictation} setShowSentencePractice={setShowSentencePractice} setShowListeningPractice={setShowListeningPractice} adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowClassCalendar={setShowClassCalendar} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowHanziTrace={setShowHanziTrace} setShowPinyinPage={setShowPinyinPage} setShowPracticeMenu={setShowPracticeMenu} setShowSubscriptions={setShowSubscriptions} setShowTests={setShowTests} setShowUserMenu={setShowUserMenu} showPracticeMenu={showPracticeMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
+      <SiteHeader onOpenPractice={openPractice} adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowClassCalendar={setShowClassCalendar} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowPracticeMenu={setShowPracticeMenu} setShowSubscriptions={setShowSubscriptions} setShowUserMenu={setShowUserMenu} showPracticeMenu={showPracticeMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
 
       {!user && showLogin ? (
         <div>
@@ -579,19 +533,19 @@ function AppContent() {
         <SubscriptionManager onBack={goAdminDashboard} />
       ) : isSuperAdmin && showTestimonialManager ? (
         <TestimonialManager onBack={goAdminDashboard} />
-      ) : showHanziTrace ? (
+      ) : user && showHanziTrace ? (
         <HanziTracePage user={user} token={localStorage.getItem('token')} onBack={goHome} />
       ) : isSuperAdmin && showSentenceAudioManager ? (
         <SentenceAudioManager onBack={goAdminDashboard} />
-      ) : showMeasureWords ? (
+      ) : user && showMeasureWords ? (
         <MeasureWordPractice onBack={goHome} />
-      ) : showNumberTrainer ? (
+      ) : user && showNumberTrainer ? (
         <NumberTrainer onBack={goHome} />
-      ) : showDictation ? (
+      ) : user && showDictation ? (
         <ListeningDictation onBack={goHome} onRecordAudio={isSuperAdmin ? () => { goHome(); setShowSentenceAudioManager(true); } : undefined} />
-      ) : showSentencePractice ? (
+      ) : user && showSentencePractice ? (
         <SentencePractice key={user?.id || 'guest'} user={user} onBack={goHome} />
-      ) : showListeningPractice ? (
+      ) : user && showListeningPractice ? (
         <ListeningPractice user={user} onBack={goHome} onSignIn={openLogin} />
       ) : showPinyinPage ? (
         <PinyinPage
@@ -599,9 +553,9 @@ function AppContent() {
           isSuperAdmin={isSuperAdmin || isAdmin}
           backLabel={pinyinBackToAdmin ? '← Back to Admin Dashboard' : '← Back to home'}
         />
-      ) : showConversationPractice ? (
+      ) : user && showConversationPractice ? (
         <ConversationPracticePage onBack={goHome} />
-      ) : showClassCalendar ? (
+      ) : user && showClassCalendar ? (
         <ClassCalendarPage onBack={goHome} user={user} />
       ) : isSuperAdmin && showTestManager ? (
         <TestManager
@@ -612,7 +566,7 @@ function AppContent() {
             setShowTestManager(false);
           }}
         />
-      ) : activeTestId ? (
+      ) : user && activeTestId ? (
         <TestTaker
           testId={activeTestId}
           onBack={() => {
@@ -625,7 +579,7 @@ function AppContent() {
             }
           }}
         />
-      ) : showTests ? (
+      ) : user && showTests ? (
         <TestList onOpenTest={(id) => { setShowTests(false); setActiveTestId(id); }} onBack={goHome} />
       ) : isSuperAdmin && manageCourse ? (
         <LessonManager course={manageCourse} onBack={() => setManageCourse(null)} />
@@ -669,17 +623,9 @@ function AppContent() {
         <CoursePage course={activeCourse} onBack={() => setActiveCourse(null)} user={user} />
       ) : (
         <main className="home-page">
-          <HomeHero goHome={goHome} isPlayingAudio={isPlayingAudio} playNihaoAudio={playNihaoAudio} setShowDashboard={setShowDashboard} setShowPinyinPage={setShowPinyinPage} user={user} onOpenPractice={id => {
-            goHome();
-            const open = { pinyin: setShowPinyinPage, trace: setShowHanziTrace, listening: setShowListeningPractice, sentences: setShowSentencePractice, measures: setShowMeasureWords, numbers: setShowNumberTrainer, dictation: setShowDictation, tests: setShowTests }[id];
-            open?.(true);
-          }} />
+          <HomeHero goHome={goHome} isPlayingAudio={isPlayingAudio} playNihaoAudio={playNihaoAudio} setShowDashboard={setShowDashboard} setShowPinyinPage={setShowPinyinPage} user={user} onOpenPractice={openPractice} />
 
           <HomeCourses access={access} filteredCourses={filteredCourses} hskLevels={hskLevels} levelFilter={levelFilter} openLogin={openLogin} setActiveCourse={setActiveCourse} setLevelFilter={setLevelFilter} setLockedNotice={setLockedNotice} user={user} />
-
-          <HomeFeatures isPlayingFeatureAudio={isPlayingFeatureAudio} playFeatureSample={playFeatureSample} />
-
-          <WordOfTheDay isPlayingWotd={isPlayingWotd} playWotdAudio={playWotdAudio} wotd={wotd} />
 
           <HomeTestimonials scrollTestimonials={scrollTestimonials} setShowTestimonial={setShowTestimonial} testimonials={testimonials} testimonialsScrollRef={testimonialsScrollRef} user={user} />
 

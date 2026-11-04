@@ -10,7 +10,7 @@ function TestList({ onOpenTest, onBack }) {
   const [levelFilter, setLevelFilter] = useState('All');
 
   useEffect(() => {
-    fetch(`${API}/tests`)
+    fetch(`${API}/tests`, { headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` } })
       .then(res => res.json())
       .then(data => { setTests(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(() => setLoading(false));

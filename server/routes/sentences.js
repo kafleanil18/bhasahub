@@ -32,7 +32,7 @@ function knownSentence(req, res, next) {
 }
 
 // The catalog ships with the app; only recordings need database storage.
-router.get('/', async (req, res) => {
+router.get('/', requireAuth, async (req, res) => {
   try {
     const recordings = await SentenceAudio.find().select('sentenceId audioUrl');
     const byId = new Map(recordings.map(recording => [recording.sentenceId, recording.audioUrl]));

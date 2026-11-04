@@ -8,7 +8,7 @@ export function useSentenceCatalog() {
     const controller = new AbortController();
     setError('');
     setCatalog(null);
-    fetch(`${window.API_BASE_URL}/api/sentences`, { signal: controller.signal })
+    fetch(`${window.API_BASE_URL}/api/sentences`, { signal: controller.signal, headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` } })
       .then(async response => {
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || 'Could not load sentences.');

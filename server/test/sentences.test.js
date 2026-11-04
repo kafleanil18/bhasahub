@@ -62,7 +62,7 @@ function audioForm(type = 'audio/webm', name = 'sentence.webm', size = 16) {
 
 test('super admin saves microphone recordings, replaces them, and removes sentence audio', async () => {
   const { base, headers, uploads } = await setup();
-  let result = await fetch(base);
+  let result = await fetch(base, { headers });
   let data = await result.json();
   assert.equal(data.sentences.length, 1300);
   assert.equal(data.topics.length, 60);
@@ -73,12 +73,12 @@ test('super admin saves microphone recordings, replaces them, and removes senten
     assert.equal((await result.json()).sentenceId, 'hsk1-001');
   }
   assert.equal(uploads(), 2);
-  data = await (await fetch(base)).json();
+  data = await (await fetch(base, { headers })).json();
   assert.match(data.sentences[0].audioUrl, /^https:\/\/res.cloudinary.com/);
   assert.deepEqual(data.sentences[0].tokens, catalog.sentences[0].tokens);
   result = await fetch(`${base}/hsk1-001/audio`, { method: 'DELETE', headers });
   assert.equal(result.status, 200);
-  data = await (await fetch(base)).json();
+  data = await (await fetch(base, { headers })).json();
   assert.equal(data.sentences[0].audioUrl, '');
   assert.equal(data.sentences.length, 1300);
 });
@@ -146,10 +146,22 @@ test('new four-digit sentence IDs support microphone recordings and appear in th
   const saved = await fetch(`${base}/hsk1-1300/audio`, { method: 'POST', headers, body: audioForm() });
   assert.equal(saved.status, 201);
   assert.equal((await saved.json()).sentenceId, 'hsk1-1300');
-  const data = await (await fetch(base)).json();
+  const data = await (await fetch(base, { headers })).json();
   const sentence = data.sentences.find(row => row.id === 'hsk1-1300');
   assert.ok(sentence.audioUrl);
   assert.equal(sentence.number, 1300);
   assert.ok(sentence.tokenPinyin.length);
   assert.equal(data.sentences[0].audioUrl, '');
+});
+
+
+test('sentence catalog requires a valid session and is available to every signed-in role', async () => {
+  for (const role of ['student', 'admin', 'superadmin']) {
+    const { base, headers } = await setup(role);
+    assert.equal((await fetch(base)).status, 401);
+    assert.equal((await fetch(base, { headers: { Authorization: 'Bearer invalid' } })).status, 401);
+    const response = await fetch(base, { headers });
+    assert.equal(response.status, 200);
+    assert.equal((await response.json()).sentences.length, 1300);
+  }
 });

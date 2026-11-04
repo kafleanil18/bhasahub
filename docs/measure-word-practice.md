@@ -1,6 +1,6 @@
 # Measure Word Practice
 
-Available under Practice Tools, without signing in. Includes 132 phrases across five topics and ten classifiers: 个、本、杯、件、只、张、把、台、辆、条.
+Available under Practice Tools, after signing in. Includes 132 phrases across five topics and ten classifiers: 个、本、杯、件、只、张、把、台、辆、条.
 
 Mixed rounds contain one question per classifier. Topic rounds select ten phrases. Students select one of four choices, receive immediate correct/incorrect feedback and an explanation, then continue. Results include missed phrases and a retry option. Every phrase has character-level pinyin, including spoken tone changes for 一 and 两 before classifiers.
 

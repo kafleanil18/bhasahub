@@ -1,4 +1,4 @@
-export default function SiteHeader({ setShowMeasureWords, setShowNumberTrainer, setShowDictation, setShowSentencePractice, setShowListeningPractice, adminSidebarOpen, darkMode, goHome, handleLogout, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowClassCalendar, setShowDashboard, setShowFeedback, setShowHanziTrace, setShowPinyinPage, setShowPracticeMenu, setShowSubscriptions, setShowTests, setShowUserMenu, showPracticeMenu, showUserMenu, unreadFeedbackCount, user }) {
+export default function SiteHeader({ onOpenPractice, adminSidebarOpen, darkMode, goHome, handleLogout, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowClassCalendar, setShowDashboard, setShowFeedback, setShowPracticeMenu, setShowSubscriptions, setShowUserMenu, showPracticeMenu, showUserMenu, unreadFeedbackCount, user }) {
   return (
     <header className="site-header">
         <div className="container header-row">
@@ -65,46 +65,47 @@ export default function SiteHeader({ setShowMeasureWords, setShowNumberTrainer, 
 
                 {showPracticeMenu && (
                   <div className="nav-dropdown-menu">
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowPinyinPage(true); }}>
+                    {!user && <p className="practice-signin-note">Pinyin is free to explore. Sign in for other tools.</p>}
+                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); onOpenPractice('pinyin'); }}>
                       <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <polyline points="4 7 4 4 20 4 20 7"></polyline>
                         <line x1="12" y1="4" x2="12" y2="20"></line>
                       </svg>
                       <span>Pinyin Chart</span>
                     </button>
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowTests(true); }}>
+                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); onOpenPractice('tests'); }}>
                       <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
                         <path d="m9 12 2 2 4-4"></path>
                       </svg>
                       <span>Mock Tests</span>
                     </button>
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowHanziTrace(true); }}>
+                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); onOpenPractice('trace'); }}>
                       <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M12 20h9"></path>
                         <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
                       </svg>
                       <span>Trace Characters</span>
                     </button>
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowListeningPractice(true); }}>
+                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); onOpenPractice('listening'); }}>
                       <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                         <path d="M3 14v-3a9 9 0 0 1 18 0v3M3 13h4v8H3zM17 13h4v8h-4z" />
                       </svg>
                       <span>Listening Practice</span>
                     </button>
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowMeasureWords(true); }}>
+                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); onOpenPractice('measures'); }}>
                       <span className="nav-svg-icon" aria-hidden="true">本</span>
                       <span>Measure Word Practice</span>
                     </button>
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowNumberTrainer(true); }}>
+                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); onOpenPractice('numbers'); }}>
                       <span className="nav-svg-icon" aria-hidden="true">数</span>
                       <span>Everyday Chinese Numbers</span>
                     </button>
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowDictation(true); }}>
+                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); onOpenPractice('dictation'); }}>
                       <span className="nav-svg-icon" aria-hidden="true">听</span>
                       <span>Listening Dictation</span>
                     </button>
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowSentencePractice(true); }}>
+                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); onOpenPractice('sentences'); }}>
                       <span className="nav-svg-icon" aria-hidden="true">句</span>
                       <span>Sentence Builder</span>
                     </button>

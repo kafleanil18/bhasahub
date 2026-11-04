@@ -1,11 +1,11 @@
 const express = require('express');
 const Test = require('../models/Test');
-const { requireAuth, requireAdmin, optionalAuth } = require('../middleware/auth');
+const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { logActivity } = require('../utils/auditLog');
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', requireAuth, async (req, res) => {
   try {
     const tests = await Test.find({ published: true }).select('-questions.correctIndex').sort({ createdAt: -1 });
     res.json(tests);
@@ -23,7 +23,7 @@ router.get('/all', requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
-router.get('/:id', optionalAuth, async (req, res) => {
+router.get('/:id', requireAuth, async (req, res) => {
   try {
     const test = await Test.findById(req.params.id);
     const admin = req.user && ['admin', 'superadmin'].includes(req.user.role);

@@ -1548,3 +1548,4 @@ h1, h2, h3, h4, h5, h6,
 /* HanziGo wordmark and tagline. */
 .brand-lockup { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; line-height: 1.15; gap: 3px; }
 .brand-tagline { color: #faf6ec; font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 500; letter-spacing: .03em; white-space: nowrap; }
+.practice-signin-note { margin: 4px 12px 8px; max-width: 220px; color: var(--mist); font-size: 12px; line-height: 1.5; }
