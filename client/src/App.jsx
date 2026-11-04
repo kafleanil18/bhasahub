@@ -597,6 +597,7 @@ function AppContent() {
             goHome();
             if (view === 'courses') setShowAdmin(true);
             else if (view === 'audit') setShowAuditLog(true);
+            else if (view === 'sentence-audio') setShowSentenceAudioManager(true);
             else if (view === 'tests') setShowTestManager(true);
             else if (view === 'testimonials') setShowTestimonialManager(true);
             else if (view === 'inbox') setShowInbox(true);

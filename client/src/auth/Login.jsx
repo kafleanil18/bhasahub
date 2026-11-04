@@ -7,14 +7,25 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [verificationRequired, setVerificationRequired] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [notice, setNotice] = useState('');
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (!cooldown) return;
+    const timer = setTimeout(() => setCooldown(value => Math.max(0, value - 1)), 1000);
+    return () => clearTimeout(timer);
+  }, [cooldown]);
 
   // UX states
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, resend = false) => {
     if (e) e.preventDefault();
     setError('');
+    setNotice('');
 
     if (!email || !password) {
       setError('Please fill in all fields');
@@ -26,11 +37,16 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
       const res = await fetch(window.API_BASE_URL + '/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, ...(verificationRequired && !resend ? { otp } : {}) }),
       });
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || 'Login failed');
+      } else if (data.verificationRequired) {
+        setVerificationRequired(true);
+        setOtp('');
+        setNotice(data.message);
+        setCooldown(data.retryAfter || 60);
       } else {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
@@ -95,10 +111,11 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
           </div>
 
           <div className="login-form-header">
-            <h1 id="signin-title">Welcome back</h1>
-            <p>Sign in to continue your learning journey.</p>
+            <h1 id="signin-title">{verificationRequired ? 'Verify your email' : 'Welcome back'}</h1>
+            <p>{verificationRequired ? `Enter the code sent to ${email}. You only need to verify once.` : 'Sign in to continue your learning journey.'}</p>
           </div>
 
+          {!verificationRequired && <>
           <GoogleAuthButton
             mode="signin"
             onSuccess={onLogin}
@@ -110,8 +127,11 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
             <span>or sign in with email</span>
           </div>
 
+          </>}
+
           <form onSubmit={handleSubmit} className="login-form" aria-busy={loading}>
             
+            {!verificationRequired && <>
             {/* Email Address */}
             <div className="form-group">
               <label htmlFor="login-email">Email Address</label>
@@ -187,6 +207,26 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
               </a>
             </div>
 
+            </>}
+
+            {verificationRequired && <>
+              <div className="form-group">
+                <label htmlFor="email-verification-code">Six-digit verification code</label>
+                <input id="email-verification-code" type="text" inputMode="numeric"
+                  autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6}
+                  value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, ''))}
+                  autoFocus required aria-describedby="verification-help" />
+                <p id="verification-help">The code expires in 10 minutes. Check your spam folder too.</p>
+              </div>
+              <div className="login-actions">
+                <button type="button" disabled={loading || cooldown > 0} onClick={() => handleSubmit(null, true)}>
+                  {cooldown > 0 ? `Resend in ${cooldown}s` : 'Resend code'}
+                </button>
+                <button type="button" disabled={loading} onClick={() => { setVerificationRequired(false); setOtp(''); setError(''); setNotice(''); }}>Back to sign in</button>
+              </div>
+            </>}
+            {notice && <div className="login-success-banner" role="status">{notice}</div>}
+
             {/* Error Banner */}
             {error && (
               <div className="login-error-banner" role="alert">
@@ -208,10 +248,10 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
               {loading ? (
                 <>
                   <div className="spinner"></div>
-                  <span>Signing In...</span>
+                  <span>{verificationRequired ? 'Verifying...' : 'Signing In...'}</span>
                 </>
               ) : (
-                <span>Sign In</span>
+                <span>{verificationRequired ? 'Verify and sign in' : 'Sign In'}</span>
               )}
             </button>
 

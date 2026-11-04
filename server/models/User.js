@@ -14,6 +14,11 @@ const userSchema = new mongoose.Schema(
     googleId: { type: String, sparse: true, unique: true },
     avatar: { type: String },
     authProvider: { type: String, enum: ['local', 'google'], default: 'local' },
+    // Missing on legacy accounts; only new local registrations are explicitly unverified.
+    emailVerified: { type: Boolean },
+    emailVerificationHash: { type: String },
+    emailVerificationExpires: { type: Date },
+    emailVerificationSentAt: { type: Date },
     resetPasswordTokenHash: { type: String },
     resetPasswordExpires: { type: Date },
     resetPasswordOtpHash: { type: String },

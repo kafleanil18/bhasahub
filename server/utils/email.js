@@ -48,4 +48,19 @@ async function sendPasswordResetOtpEmail(to, otp) {
   });
 }
 
-module.exports = { sendPasswordResetEmail, sendPasswordResetOtpEmail };
+async function sendEmailVerificationOtp(to, otp) {
+  if (!resend) {
+    if (process.env.NODE_ENV === 'production') throw new Error('Email delivery is not configured');
+    console.warn(`Email verification code for ${to}: ${otp} (expires in 10 minutes)`);
+    return;
+  }
+  const { error } = await resend.emails.send({
+    from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+    to,
+    subject: 'Verify your HanziGo email',
+    text: `Your HanziGo verification code is ${otp}. It expires in 10 minutes. Enter it to complete your first sign-in. If you did not request this, ignore this email.`,
+  });
+  if (error) throw new Error('Verification email delivery failed');
+}
+
+module.exports = { sendPasswordResetEmail, sendPasswordResetOtpEmail, sendEmailVerificationOtp };
