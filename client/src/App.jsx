@@ -629,7 +629,7 @@ function AppContent() {
 
           <HomeTestimonials scrollTestimonials={scrollTestimonials} setShowTestimonial={setShowTestimonial} testimonials={testimonials} testimonialsScrollRef={testimonialsScrollRef} user={user} />
 
-          <HomeTeam setActiveTeamMember={setActiveTeamMember} teamPhotos={teamPhotos} />
+          {user && <HomeTeam setActiveTeamMember={setActiveTeamMember} teamPhotos={teamPhotos} />}
 
 
 
