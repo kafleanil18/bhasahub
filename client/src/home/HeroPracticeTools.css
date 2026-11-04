@@ -38,3 +38,9 @@
   .home-page .hero-practice-start { font-size: 8px; }
 }
 @media (prefers-reduced-motion: reduce) { .home-page .hero-practice-link { transition: none; } .home-page .hero-practice-link:hover { transform: none; } }
+
+/* An ink-wash landscape occupies the open space above the introduction. */
+.home-page .hero-ink-art { display: block; width: 100%; height: 240px; object-fit: cover; object-position: center 62%; margin: -32px 0 24px; border-radius: 12px; mix-blend-mode: multiply; }
+:root.dark .home-page .hero-ink-art { mix-blend-mode: normal; opacity: .9; }
+@media (max-width: 900px) { .home-page .hero-ink-art { height: 220px; margin-top: 0; } }
+@media (max-width: 480px) { .home-page .hero-ink-art { height: 176px; margin-bottom: 20px; } }

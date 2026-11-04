@@ -16,6 +16,7 @@ export default function HomeHero({ goHome, isPlayingAudio, playNihaoAudio, setSh
     <section className="hero">
             <div className="container hero-grid">
               <div className="hero-text">
+                <img className="hero-ink-art" src="/images/chinese-ink-landscape.jpg" width="960" height="640" alt="" aria-hidden="true" decoding="async" fetchPriority="high" />
                 <div className="hero-badge">
                   <span className="hero-badge-dot" aria-hidden="true"></span>
                   <span className="hero-badge-text">Mandarin Chinese · English explanations</span>
