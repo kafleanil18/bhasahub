@@ -1,4 +1,4 @@
-export default function SiteHeader({ setShowSentencePractice, setShowListeningPractice, adminSidebarOpen, darkMode, goHome, handleLogout, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowClassCalendar, setShowConversationPractice, setShowDashboard, setShowFeedback, setShowHanziTrace, setShowPinyinPage, setShowPracticeMenu, setShowSubscriptions, setShowTests, setShowToneScorer, setShowUserMenu, showPracticeMenu, showUserMenu, unreadFeedbackCount, user }) {
+export default function SiteHeader({ setShowSentencePractice, setShowListeningPractice, adminSidebarOpen, darkMode, goHome, handleLogout, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowClassCalendar, setShowDashboard, setShowFeedback, setShowHanziTrace, setShowPinyinPage, setShowPracticeMenu, setShowSubscriptions, setShowTests, setShowToneScorer, setShowUserMenu, showPracticeMenu, showUserMenu, unreadFeedbackCount, user }) {
   return (
     <header className="site-header">
         <div className="container header-row">
@@ -103,14 +103,6 @@ export default function SiteHeader({ setShowSentencePractice, setShowListeningPr
                       <span className="nav-svg-icon" aria-hidden="true">句</span>
                       <span>Sentence Builder</span>
                     </button>
-                    {user && (
-                      <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowConversationPractice(true); }}>
-                        <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                        </svg>
-                        <span>Speaking Practice</span>
-                      </button>
-                    )}
                     {user && (
                       <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowClassCalendar(true); }}>
                         <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
