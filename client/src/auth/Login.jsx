@@ -71,7 +71,7 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
         {/* Left Column: Portrait & Heading */}
         <div className="login-welcome-panel">
           <div className="login-welcome-content">
-            <p className="signin-welcome-note">Learn Chinese with Anil</p>
+            <p className="signin-welcome-note">HanziGo · Chinese Made Simple</p>
             <h2 className="signin-welcome-title">A little practice.<br />A world of possibility.</h2>
             <p className="signin-welcome-description">Pick up where you left off, one word and one conversation at a time.</p>
           

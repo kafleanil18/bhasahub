@@ -30,10 +30,10 @@ async function sendPasswordResetOtpEmail(to, otp) {
   await resend.emails.send({
     from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
     to,
-    subject: `Your BhashaHub Verification Code: ${otp}`,
+    subject: `Your HanziGo Verification Code: ${otp}`,
     html: `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px; border: 1px solid #e2dcd2; border-radius: 12px; background: #faf7f0;">
-        <h2 style="color: #c2402a; margin-top: 0;">BhashaHub Password Reset</h2>
+        <h2 style="color: #c2402a; margin-top: 0;">HanziGo Password Reset</h2>
         <p style="font-size: 15px; color: #333; line-height: 1.5;">We received a request to reset your password. Use the 6-digit verification code below to proceed:</p>
         <div style="text-align: center; margin: 28px 0;">
           <span style="display: inline-block; font-size: 32px; font-weight: 700; letter-spacing: 8px; color: #2e6b57; background: #ffffff; padding: 12px 28px; border-radius: 8px; border: 2px dashed #2e6b57;">
@@ -42,7 +42,7 @@ async function sendPasswordResetOtpEmail(to, otp) {
         </div>
         <p style="font-size: 13px; color: #666; line-height: 1.4;">This code is valid for <strong>10 minutes</strong>. If you did not request a password reset, you can safely ignore this email.</p>
         <hr style="border: none; border-top: 1px solid #e2dcd2; margin: 24px 0;" />
-        <p style="font-size: 12px; color: #999; margin-bottom: 0;">BhashaHub · Language Learning Platform</p>
+        <p style="font-size: 12px; color: #999; margin-bottom: 0;">HanziGo · Chinese Made Simple</p>
       </div>
     `,
   });

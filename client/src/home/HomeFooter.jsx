@@ -5,10 +5,10 @@ export default function HomeFooter({ goHome, isSuperAdmin, serverOk }) {
             <div className="container footer-inner">
 
               <button className="logo" onClick={goHome}>
-                Learn Chinese with <span>Anil</span>
+                Hanzi<span>Go</span>
               </button>
 
-              <p className="footer-tag">Speak Chinese ASAP!</p>
+              <p className="footer-tag">Chinese Made Simple</p>
 
               <div className="footer-social">
                 <a href="#facebook" aria-label="Facebook" className="social-link">

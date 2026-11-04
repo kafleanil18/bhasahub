@@ -1544,3 +1544,7 @@ h1, h2, h3, h4, h5, h6,
 
 
 .nav-language-note { color: #ffffff; font-size: 12px; white-space: nowrap; padding: 10px 12px; opacity: .8; }
+
+/* HanziGo wordmark and tagline. */
+.brand-lockup { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; line-height: 1.15; gap: 3px; }
+.brand-tagline { color: #faf6ec; font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 500; letter-spacing: .03em; white-space: nowrap; }

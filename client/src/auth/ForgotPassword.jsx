@@ -155,7 +155,7 @@ function ForgotPassword({ onBack, onSwitch }) {
         <div className="login-welcome-panel">
           <div className="login-welcome-content">
             <h1 className="hsk-mock-title">
-              Learn Chinese with <span style={{ color: 'var(--seal)' }}>Anil</span> now
+              Hanzi<span style={{ color: 'var(--seal)' }}>Go</span> · Chinese Made Simple
             </h1>
           </div>
         </div>

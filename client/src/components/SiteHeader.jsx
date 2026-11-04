@@ -5,9 +5,9 @@ export default function SiteHeader({ setShowMeasureWords, setShowNumberTrainer, 
           <div className="header-left">
             <button className="logo brand-logo" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); setShowUserMenu(false); goHome(); }}>
               <span className="brand-seal" aria-hidden="true">汉</span>
-              <span className="brand-title">
-                Learn Chinese with <span className="brand-accent">Anil</span>
-              </span>
+              <span className="brand-lockup"><span className="brand-title">
+                Hanzi<span className="brand-accent">Go</span>
+              </span><span className="brand-tagline">Chinese Made Simple</span></span>
             </button>
           </div>
 
