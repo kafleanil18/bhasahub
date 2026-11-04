@@ -100,14 +100,14 @@ export default function HomeHero({ goHome, isPlayingAudio, playNihaoAudio, setSh
 
               <div className="hero-showcase">
                 <section className="hero-practice-tools" aria-labelledby="hero-practice-title">
-                  <p className="hero-practice-kicker">Your next step</p>
+                  <div className="hero-practice-heading"><p className="hero-practice-kicker">Your practice studio</p><span className="hero-practice-count">8 ways to learn</span></div>
                   <h2 id="hero-practice-title">What will you practice today?</h2>
                   <p className="hero-practice-intro">New to Chinese? Start with pinyin, then choose a skill to build.</p>
                   <div className="hero-practice-list">
                     {practiceTools.map(([id, glyph, title, description]) => (
-                      <button key={id} type="button" className="hero-practice-link" onClick={() => onOpenPractice(id)}>
+                      <button key={id} type="button" className={`hero-practice-link hero-practice-${id}`} onClick={() => onOpenPractice(id)}>
                         <span className="hero-practice-glyph" lang="zh-CN" aria-hidden="true">{glyph}</span>
-                        <span className="hero-practice-copy"><strong>{title}</strong><small>{description}</small></span>
+                        <span className="hero-practice-copy">{id === 'pinyin' && <span className="hero-practice-start">START HERE · PRONUNCIATION</span>}<strong>{title}</strong><small>{description}</small></span>
                         <span className="hero-practice-arrow" aria-hidden="true">↗</span>
                       </button>
                     ))}
