@@ -64,8 +64,8 @@ test('super admin saves microphone recordings, replaces them, and removes senten
   const { base, headers, uploads } = await setup();
   let result = await fetch(base);
   let data = await result.json();
-  assert.equal(data.sentences.length, 300);
-  assert.equal(data.topics.length, 20);
+  assert.equal(data.sentences.length, 1300);
+  assert.equal(data.topics.length, 60);
   assert.equal(data.sentences[0].audioUrl, '');
   for (let i = 0; i < 2; i++) {
     result = await fetch(`${base}/hsk1-001/audio`, { method: 'POST', headers, body: audioForm() });
@@ -80,7 +80,7 @@ test('super admin saves microphone recordings, replaces them, and removes senten
   assert.equal(result.status, 200);
   data = await (await fetch(base)).json();
   assert.equal(data.sentences[0].audioUrl, '');
-  assert.equal(data.sentences.length, 300);
+  assert.equal(data.sentences.length, 1300);
 });
 
 test('anonymous users, students, and ordinary admins cannot change sentence audio', async () => {
@@ -98,7 +98,7 @@ test('anonymous users, students, and ordinary admins cannot change sentence audi
 
 test('unknown sentences, missing files, non-audio files, and oversized files are rejected before storage', async () => {
   const { base, headers, uploads } = await setup();
-  let response = await fetch(`${base}/hsk1-999/audio`, { method: 'POST', headers, body: audioForm() });
+  let response = await fetch(`${base}/hsk1-9999/audio`, { method: 'POST', headers, body: audioForm() });
   assert.equal(response.status, 404);
   response = await fetch(`${base}/hsk1-001/audio`, { method: 'POST', headers });
   assert.equal(response.status, 400);
@@ -139,4 +139,17 @@ test('browser WebM, MP4, and OGG recordings can be saved; legacy file uploads ar
   const response = await fetch(`${base}/hsk1-001/audio`, { method: 'POST', headers, body: legacy });
   assert.equal(response.status, 400);
   assert.equal(uploads(), 3);
+});
+
+test('new four-digit sentence IDs support microphone recordings and appear in the catalog', async () => {
+  const { base, headers } = await setup();
+  const saved = await fetch(`${base}/hsk1-1300/audio`, { method: 'POST', headers, body: audioForm() });
+  assert.equal(saved.status, 201);
+  assert.equal((await saved.json()).sentenceId, 'hsk1-1300');
+  const data = await (await fetch(base)).json();
+  const sentence = data.sentences.find(row => row.id === 'hsk1-1300');
+  assert.ok(sentence.audioUrl);
+  assert.equal(sentence.number, 1300);
+  assert.ok(sentence.tokenPinyin.length);
+  assert.equal(data.sentences[0].audioUrl, '');
 });

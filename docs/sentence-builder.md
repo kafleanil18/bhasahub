@@ -1,8 +1,8 @@
 # Sentence builder
 
-Students open **Practice Tools → Sentence Builder**. The bank contains 300 original beginner sentences, organized into 20 topics with 15 sentences each. Students can practice a topic or a mixed set of 10 sentences, build an answer by selecting word tiles, remove or clear selected tiles, and check their answer. Every Chinese character has its own pinyin annotation, including the word bank, selected answer, feedback, review, and admin recording script. Results show an English meaning and the topic's grammar explanation. Multi-character words remain intact as tiles. Missed sentences can be retried. Progress is stored in the current browser, separated by account ID (or guest); it is not synchronized across devices.
+Students open **Practice Tools → Sentence Builder**. The bank contains 1,300 original beginner sentences across 60 topics: the original 20 topics have 15 sentences each, and 40 additional topics have 25 sentences each. Students can practice a topic or a mixed set of 10 sentences, build an answer by selecting word tiles, remove or clear selected tiles, and check their answer. Every Chinese character has its own pinyin annotation, including the word bank, selected answer, feedback, review, and admin recording script. Results show an English meaning and the topic's grammar explanation. Multi-character words remain intact as tiles. Missed sentences can be retried. Progress is stored in the current browser, separated by account ID (or guest); it is not synchronized across devices.
 
-The content follows the classic HSK 1 beginner scope: everyday phrases and basic grammar, with proper names and useful measure words. It is original teaching content, not an official exam question bank. Reference: [Chinese Testing International's HSK 1 description](https://www.chinesetest.cn/HSK/1?type=2). Sentence IDs are stable (`hsk1-001` through `hsk1-300`); preserve them when editing content because audio and browser progress use those IDs.
+The content follows the classic HSK 1 beginner scope: everyday phrases and basic grammar, with proper names and useful measure words. It is original teaching content, not an official exam question bank. Reference: [Chinese Testing International's HSK 1 description](https://www.chinesetest.cn/HSK/1?type=2). Sentence IDs are stable (`hsk1-001` through `hsk1-1300`); preserve them when editing content because audio and browser progress use those IDs.
 
 ## Super admin audio portal
 
@@ -30,6 +30,8 @@ Deploy both the client and API so the catalog and upload endpoints are available
 - `npm run build --prefix client`
 - `npm run lint --prefix client`
 
-The data tests check the 300 unique IDs and sentences, topic counts, complete content, valid alternative orders, and repeated-word grading. API integration tests cover role restrictions, save/replace/remove, WebM/MP4/OGG compatibility, invalid or oversized recordings, and save failures.
+The data tests check the 1,300 unique IDs and sentences, topic counts, complete content, valid alternative orders, and repeated-word grading. API integration tests cover role restrictions, save/replace/remove, WebM/MP4/OGG compatibility, invalid or oversized recordings, and save failures.
 
 Character annotations are stored as `tokenPinyin`: one array per word tile and one reading per Chinese character. `scripts/annotateSentencePinyin.js` aligns the sentence's existing pinyin using the bank's vocabulary and verifies every character; the app does not guess pronunciations at runtime. The 儿 in erhua words such as 这儿 is annotated `r`, preserving the spoken reading zhèr.
+
+The additional 1,000 sentences are authored using curated, compatible grammar patterns and vocabulary in `server/scripts/expandHsk1Sentences.js`. Run it with `--check` to verify the stored expansion, or without arguments to rebuild it deterministically. It preserves the original 300 sentence records and IDs. All additional sentences include character pinyin, explanations, and safe alternative orders where applicable; the admin recording portal discovers their IDs automatically.

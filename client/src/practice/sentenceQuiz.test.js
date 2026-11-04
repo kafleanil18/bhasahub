@@ -4,12 +4,12 @@ import { readFileSync } from 'node:fs';
 import { isCorrectSentence, sentenceTiles, shuffleSentences } from './sentenceQuiz.js';
 const catalog = JSON.parse(readFileSync(new URL('../../../server/data/hsk1Sentences.json', import.meta.url)));
 
-test('the bank contains 300 unique, complete sentences and 20 balanced topics', () => {
-  assert.equal(catalog.sentences.length, 300);
-  assert.equal(catalog.topics.length, 20);
-  assert.equal(new Set(catalog.sentences.map(sentence => sentence.id)).size, 300);
-  assert.equal(new Set(catalog.sentences.map(sentence => sentence.chinese)).size, 300);
-  for (const topic of catalog.topics) assert.equal(catalog.sentences.filter(sentence => sentence.topicId === topic.id).length, 15);
+test('the bank contains 1,300 unique, complete sentences across 60 topics', () => {
+  assert.equal(catalog.sentences.length, 1300);
+  assert.equal(catalog.topics.length, 60);
+  assert.equal(new Set(catalog.sentences.map(sentence => sentence.id)).size, 1300);
+  assert.equal(new Set(catalog.sentences.map(sentence => sentence.chinese)).size, 1300);
+  for (const [index, topic] of catalog.topics.entries()) assert.equal(catalog.sentences.filter(sentence => sentence.topicId === topic.id).length, index < 20 ? 15 : 25);
   for (const [index, sentence] of catalog.sentences.entries()) {
     assert.equal(sentence.id, `hsk1-${String(index + 1).padStart(3, '0')}`);
     assert.ok(sentence.tokens.length >= 3);
@@ -51,7 +51,7 @@ test('grading handles repeated words, omissions, foreign words, and correct alte
 });
 
 
-test('all 300 sentences have an aligned pinyin reading for every Chinese character', () => {
+test('all 1,300 sentences have an aligned pinyin reading for every Chinese character', () => {
   const letters = text => text.toLowerCase().replace(/[^\p{L}]/gu, '');
   for (const sentence of catalog.sentences) {
     assert.equal(sentence.tokenPinyin.length, sentence.tokens.length, sentence.id);
