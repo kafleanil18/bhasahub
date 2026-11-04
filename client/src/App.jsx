@@ -42,6 +42,7 @@ const ConversationPracticePage = lazy(() => import('./practice/ConversationPract
 const ListeningPractice = lazy(() => import('./practice/ListeningPractice'));
 const ToneScorer = lazy(() => import('./practice/ToneScorer'));
 const SentencePractice = lazy(() => import('./practice/SentencePractice'));
+const ListeningDictation = lazy(() => import('./practice/ListeningDictation'));
 const SentenceAudioManager = lazy(() => import('./admin/SentenceAudioManager'));
 
 
@@ -109,6 +110,7 @@ function AppContent() {
   const [showListeningPractice, setShowListeningPractice] = useState(false);
   const [showToneScorer, setShowToneScorer] = useState(false);
   const [showSentencePractice, setShowSentencePractice] = useState(false);
+  const [showDictation, setShowDictation] = useState(false);
   const [showSentenceAudioManager, setShowSentenceAudioManager] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
@@ -395,6 +397,7 @@ function AppContent() {
     setShowHanziTrace(false);
     setShowConversationPractice(false);
     setShowSentencePractice(false);
+    setShowDictation(false);
     setShowSentenceAudioManager(false);
     setShowClassCalendar(false);
     setShowTestimonialManager(false);
@@ -428,6 +431,7 @@ function AppContent() {
     setShowHanziTrace(false);
     setShowConversationPractice(false);
     setShowSentencePractice(false);
+    setShowDictation(false);
     setShowSentenceAudioManager(false);
     setShowClassCalendar(false);
     setShowTestimonialManager(false);
@@ -473,6 +477,7 @@ function AppContent() {
     setShowTeamManager(false);
     setAdminSidebarOpen(false);
     setShowSentencePractice(false);
+    setShowDictation(false);
     setShowSentenceAudioManager(false);
     setAuthView('login');
     setShowLogin(true);
@@ -558,7 +563,7 @@ function AppContent() {
         </>
       )}
 
-      <SiteHeader setShowSentencePractice={setShowSentencePractice} setShowListeningPractice={setShowListeningPractice} adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowClassCalendar={setShowClassCalendar} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowHanziTrace={setShowHanziTrace} setShowPinyinPage={setShowPinyinPage} setShowPracticeMenu={setShowPracticeMenu} setShowSubscriptions={setShowSubscriptions} setShowTests={setShowTests} setShowToneScorer={setShowToneScorer} setShowUserMenu={setShowUserMenu} showPracticeMenu={showPracticeMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
+      <SiteHeader setShowDictation={setShowDictation} setShowSentencePractice={setShowSentencePractice} setShowListeningPractice={setShowListeningPractice} adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowClassCalendar={setShowClassCalendar} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowHanziTrace={setShowHanziTrace} setShowPinyinPage={setShowPinyinPage} setShowPracticeMenu={setShowPracticeMenu} setShowSubscriptions={setShowSubscriptions} setShowTests={setShowTests} setShowToneScorer={setShowToneScorer} setShowUserMenu={setShowUserMenu} showPracticeMenu={showPracticeMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
 
       {!user && showLogin ? (
         <div>
@@ -595,6 +600,8 @@ function AppContent() {
         <HanziTracePage user={user} token={localStorage.getItem('token')} onBack={goHome} />
       ) : isSuperAdmin && showSentenceAudioManager ? (
         <SentenceAudioManager onBack={goAdminDashboard} />
+      ) : showDictation ? (
+        <ListeningDictation onBack={goHome} onRecordAudio={isSuperAdmin ? () => { goHome(); setShowSentenceAudioManager(true); } : undefined} />
       ) : showSentencePractice ? (
         <SentencePractice key={user?.id || 'guest'} user={user} onBack={goHome} />
       ) : showListeningPractice ? (
