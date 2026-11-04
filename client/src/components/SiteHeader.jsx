@@ -1,4 +1,4 @@
-export default function SiteHeader({ setShowNumberTrainer, setShowDictation, setShowSentencePractice, setShowListeningPractice, adminSidebarOpen, darkMode, goHome, handleLogout, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowClassCalendar, setShowDashboard, setShowFeedback, setShowHanziTrace, setShowPinyinPage, setShowPracticeMenu, setShowSubscriptions, setShowTests, setShowUserMenu, showPracticeMenu, showUserMenu, unreadFeedbackCount, user }) {
+export default function SiteHeader({ setShowMeasureWords, setShowNumberTrainer, setShowDictation, setShowSentencePractice, setShowListeningPractice, adminSidebarOpen, darkMode, goHome, handleLogout, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowClassCalendar, setShowDashboard, setShowFeedback, setShowHanziTrace, setShowPinyinPage, setShowPracticeMenu, setShowSubscriptions, setShowTests, setShowUserMenu, showPracticeMenu, showUserMenu, unreadFeedbackCount, user }) {
   return (
     <header className="site-header">
         <div className="container header-row">
@@ -91,6 +91,10 @@ export default function SiteHeader({ setShowNumberTrainer, setShowDictation, set
                         <path d="M3 14v-3a9 9 0 0 1 18 0v3M3 13h4v8H3zM17 13h4v8h-4z" />
                       </svg>
                       <span>Listening Practice</span>
+                    </button>
+                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowMeasureWords(true); }}>
+                      <span className="nav-svg-icon" aria-hidden="true">本</span>
+                      <span>Measure Word Practice</span>
                     </button>
                     <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowNumberTrainer(true); }}>
                       <span className="nav-svg-icon" aria-hidden="true">数</span>
