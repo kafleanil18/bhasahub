@@ -1,0 +1,18 @@
+.home-page .hero-practice-tools { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 24px; min-width: 0; }
+.home-page .hero-practice-kicker { color: var(--seal); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; margin: 0 0 8px; }
+.home-page .hero-practice-tools h2 { font-family: 'Fraunces', serif; font-size: 26px; line-height: 1.25; color: var(--ink); margin: 0; }
+.home-page .hero-practice-intro { color: var(--mist); font-size: 13px; line-height: 1.6; margin: 12px 0 20px; }
+.home-page .hero-practice-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+.home-page .hero-practice-link { display: flex; align-items: flex-start; gap: 8px; width: 100%; padding: 16px 0; border: 0; border-top: 1px solid var(--line); background: transparent; color: var(--ink); text-align: left; cursor: pointer; min-width: 0; }
+.home-page .hero-practice-glyph { color: var(--seal); font-size: 20px; line-height: 1.3; flex-shrink: 0; }
+.home-page .hero-practice-copy { flex: 1; min-width: 0; }
+.home-page .hero-practice-copy strong { display: block; font-size: 13px; line-height: 1.4; }
+.home-page .hero-practice-copy small { display: block; color: var(--mist); font-size: 12px; line-height: 1.5; margin-top: 4px; }
+.home-page .hero-practice-arrow { color: var(--seal); flex-shrink: 0; }
+.home-page .hero-practice-link:hover strong { color: var(--seal); text-decoration: underline; text-underline-offset: 3px; }
+.home-page .hero-practice-link:focus-visible { outline: 3px solid var(--seal); outline-offset: 3px; border-radius: 4px; }
+@media (max-width: 480px) {
+  .home-page .hero-practice-tools { padding: 20px; }
+  .home-page .hero-practice-list { grid-template-columns: 1fr; }
+  .home-page .hero-practice-tools h2 { font-size: 24px; }
+}

@@ -1,6 +1,17 @@
-import { mediaUrl } from '../utils/mediaUrl';
+import './HeroPracticeTools.css';
 
-export default function HomeHero({ goHome, handleVideoToggle, heroVideoRef, isPlayingAudio, isVideoPlaying, playNihaoAudio, setIsVideoPlaying, setShowDashboard, setShowPinyinPage, user, welcomeVideoUrl }) {
+const practiceTools = [
+  ['pinyin', '拼', 'Pinyin Chart', 'Start here: learn sounds and tones.'],
+  ['trace', '字', 'Trace Characters', 'Follow the strokes and write Chinese.'],
+  ['listening', '听', 'Listening Practice', 'Hear a word and choose its meaning.'],
+  ['sentences', '句', 'Sentence Builder', 'Arrange words into a sentence.'],
+  ['measures', '本', 'Measure Word Practice', 'Choose the word for counting things.'],
+  ['numbers', '数', 'Everyday Chinese Numbers', 'Practice prices, times, and dates.'],
+  ['dictation', '写', 'Listening Dictation', 'Listen to recordings and write what you hear.'],
+  ['tests', '测', 'Mock Tests', 'Check what you know with a practice test.'],
+];
+
+export default function HomeHero({ goHome, isPlayingAudio, playNihaoAudio, setShowDashboard, setShowPinyinPage, user, onOpenPractice }) {
   return (
     <section className="hero">
             <div className="container hero-grid">
@@ -88,46 +99,20 @@ export default function HomeHero({ goHome, handleVideoToggle, heroVideoRef, isPl
               </div>
 
               <div className="hero-showcase">
-                <div className="hero-video-card">
-                  <div className="video-card-header">
-                    <div className="video-card-badge">
-                      <span className="live-pulse" aria-hidden="true"></span>
-                      <span>Teacher Intro Video</span>
-                    </div>
-                    <span className="video-card-duration">1-min overview</span>
-                  </div>
-
-                  <div
-                    className={`video-wrap ${isVideoPlaying ? 'is-playing' : ''}`}
-                    onClick={handleVideoToggle}
-                  >
-                    <video
-                      ref={heroVideoRef}
-                      key={welcomeVideoUrl || 'default'}
-                      preload="metadata"
-                      poster="/images/teacher_portrait.jpg"
-                      playsInline
-                      controls={isVideoPlaying}
-                      onPlay={() => setIsVideoPlaying(true)}
-                      onPause={() => setIsVideoPlaying(false)}
-                      onEnded={() => setIsVideoPlaying(false)}
-                    >
-                      <source src={welcomeVideoUrl ? mediaUrl(welcomeVideoUrl) : '/video/intro.mp4'} type="video/mp4" />
-                      Your browser doesn't support the video tag.
-                    </video>
-
-                    {!isVideoPlaying && (
-                      <button className="big-play-btn" aria-label="Play welcome video">
-                        <div className="play-btn-circle" aria-hidden="true">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M8 5v14l11-7z"/>
-                          </svg>
-                        </div>
-                        <span className="play-btn-label">Watch Introduction</span>
+                <section className="hero-practice-tools" aria-labelledby="hero-practice-title">
+                  <p className="hero-practice-kicker">Your next step</p>
+                  <h2 id="hero-practice-title">What will you practice today?</h2>
+                  <p className="hero-practice-intro">New to Chinese? Start with pinyin, then choose a skill to build.</p>
+                  <div className="hero-practice-list">
+                    {practiceTools.map(([id, glyph, title, description]) => (
+                      <button key={id} type="button" className="hero-practice-link" onClick={() => onOpenPractice(id)}>
+                        <span className="hero-practice-glyph" lang="zh-CN" aria-hidden="true">{glyph}</span>
+                        <span className="hero-practice-copy"><strong>{title}</strong><small>{description}</small></span>
+                        <span className="hero-practice-arrow" aria-hidden="true">↗</span>
                       </button>
-                    )}
+                    ))}
                   </div>
-                </div>
+                </section>
 
                 <div className="hero-interactive-card">
                   <div className="interactive-card-left">

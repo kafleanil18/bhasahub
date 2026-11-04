@@ -102,7 +102,6 @@ function AppContent() {
   const [showUserManager, setShowUserManager] = useState(false);
   const [showTeamManager, setShowTeamManager] = useState(false);
   const [teamPhotos, setTeamPhotos] = useState([]);
-  const [welcomeVideoUrl, setWelcomeVideoUrl] = useState('');
   const [adminSidebarOpen, setAdminSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
   const [resetToken, setResetToken] = useState(() => new URLSearchParams(window.location.search).get('reset'));
@@ -115,19 +114,6 @@ function AppContent() {
   const [showMeasureWords, setShowMeasureWords] = useState(false);
   const [showSentenceAudioManager, setShowSentenceAudioManager] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
-  const heroVideoRef = useRef(null);
-
-  const handleVideoToggle = () => {
-    const video = heroVideoRef.current;
-    if (!video) return;
-    if (video.paused) {
-      video.play().catch(() => {});
-    } else {
-      video.pause();
-    }
-  };
-
   const playNihaoAudio = () => {
     try {
       setIsPlayingAudio(true);
@@ -279,15 +265,6 @@ function AppContent() {
       .catch(() => {});
   };
 
-  const loadSiteSettings = () => {
-    fetch(window.API_BASE_URL + '/api/settings')
-      .then(res => res.json())
-      .then(data => {
-        if (data.welcomeVideoUrl) setWelcomeVideoUrl(data.welcomeVideoUrl);
-      })
-      .catch(() => {});
-  };
-
   const loadMyAccess = () => {
     const t = localStorage.getItem('token');
     if (!t) { setMyAccessDays(null); return; }
@@ -375,7 +352,6 @@ function AppContent() {
     loadAccess();
     loadTestimonials();
     loadTeamPhotos();
-    loadSiteSettings();
     loadMyAccess();
     const savedUser = localStorage.getItem('user');
     if (savedUser) setUser(JSON.parse(savedUser));
@@ -693,7 +669,11 @@ function AppContent() {
         <CoursePage course={activeCourse} onBack={() => setActiveCourse(null)} user={user} />
       ) : (
         <main className="home-page">
-          <HomeHero goHome={goHome} handleVideoToggle={handleVideoToggle} heroVideoRef={heroVideoRef} isPlayingAudio={isPlayingAudio} isVideoPlaying={isVideoPlaying} playNihaoAudio={playNihaoAudio} setIsVideoPlaying={setIsVideoPlaying} setShowDashboard={setShowDashboard} setShowPinyinPage={setShowPinyinPage} user={user} welcomeVideoUrl={welcomeVideoUrl} />
+          <HomeHero goHome={goHome} isPlayingAudio={isPlayingAudio} playNihaoAudio={playNihaoAudio} setShowDashboard={setShowDashboard} setShowPinyinPage={setShowPinyinPage} user={user} onOpenPractice={id => {
+            goHome();
+            const open = { pinyin: setShowPinyinPage, trace: setShowHanziTrace, listening: setShowListeningPractice, sentences: setShowSentencePractice, measures: setShowMeasureWords, numbers: setShowNumberTrainer, dictation: setShowDictation, tests: setShowTests }[id];
+            open?.(true);
+          }} />
 
           <HomeCourses access={access} filteredCourses={filteredCourses} hskLevels={hskLevels} levelFilter={levelFilter} openLogin={openLogin} setActiveCourse={setActiveCourse} setLevelFilter={setLevelFilter} setLockedNotice={setLockedNotice} user={user} />
 
