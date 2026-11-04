@@ -40,7 +40,6 @@ const AuditLog = lazy(() => import('./admin/AuditLog'));
 const HanziTracePage = lazy(() => import('./practice/HanziTracePage'));
 const ConversationPracticePage = lazy(() => import('./practice/ConversationPractice'));
 const ListeningPractice = lazy(() => import('./practice/ListeningPractice'));
-const ToneScorer = lazy(() => import('./practice/ToneScorer'));
 const SentencePractice = lazy(() => import('./practice/SentencePractice'));
 const ListeningDictation = lazy(() => import('./practice/ListeningDictation'));
 const SentenceAudioManager = lazy(() => import('./admin/SentenceAudioManager'));
@@ -108,7 +107,6 @@ function AppContent() {
   const [showPracticeMenu, setShowPracticeMenu] = useState(false);
   const [lockedNotice, setLockedNotice] = useState(null);
   const [showListeningPractice, setShowListeningPractice] = useState(false);
-  const [showToneScorer, setShowToneScorer] = useState(false);
   const [showSentencePractice, setShowSentencePractice] = useState(false);
   const [showDictation, setShowDictation] = useState(false);
   const [showSentenceAudioManager, setShowSentenceAudioManager] = useState(false);
@@ -440,7 +438,6 @@ function AppContent() {
     setShowTeamManager(false);
     setAdminSidebarOpen(false);
     setShowPracticeMenu(false);
-    setShowToneScorer(false);
     setShowListeningPractice(false);
     loadCourses();
     loadAccess();
@@ -563,7 +560,7 @@ function AppContent() {
         </>
       )}
 
-      <SiteHeader setShowDictation={setShowDictation} setShowSentencePractice={setShowSentencePractice} setShowListeningPractice={setShowListeningPractice} adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowClassCalendar={setShowClassCalendar} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowHanziTrace={setShowHanziTrace} setShowPinyinPage={setShowPinyinPage} setShowPracticeMenu={setShowPracticeMenu} setShowSubscriptions={setShowSubscriptions} setShowTests={setShowTests} setShowToneScorer={setShowToneScorer} setShowUserMenu={setShowUserMenu} showPracticeMenu={showPracticeMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
+      <SiteHeader setShowDictation={setShowDictation} setShowSentencePractice={setShowSentencePractice} setShowListeningPractice={setShowListeningPractice} adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowClassCalendar={setShowClassCalendar} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowHanziTrace={setShowHanziTrace} setShowPinyinPage={setShowPinyinPage} setShowPracticeMenu={setShowPracticeMenu} setShowSubscriptions={setShowSubscriptions} setShowTests={setShowTests} setShowUserMenu={setShowUserMenu} showPracticeMenu={showPracticeMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
 
       {!user && showLogin ? (
         <div>
@@ -606,8 +603,6 @@ function AppContent() {
         <SentencePractice key={user?.id || 'guest'} user={user} onBack={goHome} />
       ) : showListeningPractice ? (
         <ListeningPractice user={user} onBack={goHome} onSignIn={openLogin} />
-      ) : showToneScorer ? (
-        <ToneScorer onBack={goHome} />
       ) : showPinyinPage ? (
         <PinyinPage
           onBack={pinyinBackToAdmin ? () => { setPinyinBackToAdmin(false); goAdminDashboard(); } : goHome}

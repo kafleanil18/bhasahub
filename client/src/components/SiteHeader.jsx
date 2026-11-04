@@ -1,4 +1,4 @@
-export default function SiteHeader({ setShowDictation, setShowSentencePractice, setShowListeningPractice, adminSidebarOpen, darkMode, goHome, handleLogout, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowClassCalendar, setShowDashboard, setShowFeedback, setShowHanziTrace, setShowPinyinPage, setShowPracticeMenu, setShowSubscriptions, setShowTests, setShowToneScorer, setShowUserMenu, showPracticeMenu, showUserMenu, unreadFeedbackCount, user }) {
+export default function SiteHeader({ setShowDictation, setShowSentencePractice, setShowListeningPractice, adminSidebarOpen, darkMode, goHome, handleLogout, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowClassCalendar, setShowDashboard, setShowFeedback, setShowHanziTrace, setShowPinyinPage, setShowPracticeMenu, setShowSubscriptions, setShowTests, setShowUserMenu, showPracticeMenu, showUserMenu, unreadFeedbackCount, user }) {
   return (
     <header className="site-header">
         <div className="container header-row">
@@ -71,13 +71,6 @@ export default function SiteHeader({ setShowDictation, setShowSentencePractice, 
                         <line x1="12" y1="4" x2="12" y2="20"></line>
                       </svg>
                       <span>Pinyin Chart</span>
-                    </button>
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowToneScorer(true); }}>
-                      <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
-                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                      </svg>
-                      <span>Tone Scorer AI</span>
                     </button>
                     <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowTests(true); }}>
                       <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
