@@ -358,8 +358,8 @@
 }
 
 .quiz-choice.correct {
-  background: var(--jade);
-  border-color: var(--jade);
+  background: var(--answer-success-fill);
+  border-color: var(--answer-success-fill);
   color: #fff;
 }
 
@@ -481,7 +481,7 @@
 }
 
 .correct-dot {
-  background-color: var(--jade);
+  background-color: var(--answer-success);
   box-shadow: 0 0 8px rgba(46, 204, 113, 0.4);
 }
 
@@ -518,7 +518,7 @@
 }
 
 .correct-color {
-  color: var(--jade) !important;
+  color: var(--answer-success) !important;
 }
 
 .incorrect-color {

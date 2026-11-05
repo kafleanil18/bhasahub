@@ -15,3 +15,5 @@
 .dictation-extra-character { text-decoration: line-through; text-decoration-color: var(--seal); }
 :root.dark .dictation-feedback.correct, :root.dark .dictation-character.correct { border-color: #86d6a4; }
 @media (max-width: 767px) { .dictation-feedback { padding: 20px 12px; } .dictation-character { min-width: 64px; padding-inline: 8px; } }
+
+.dictation-feedback.correct h3, .dictation-character.correct small { color: var(--answer-success); }

@@ -173,7 +173,7 @@ export default function ListeningSession({ initialQuestions, onRestart }) {
             {checked && option === selection && option !== question.answer && <strong className="listening-option-status">Your answer</strong>}
           </label>)}
         </fieldset>
-        {checked && <div className="listening-feedback" role="status"><strong>{selection === question.answer ? 'Correct!' : 'Keep practicing.'}</strong><p><span className="zh">{question.word}</span> · {question.pronunciation}</p><p>{question.answer}</p></div>}
+        {checked && <div className={`listening-feedback ${selection === question.answer ? 'correct' : 'incorrect'}`} role="status"><strong>{selection === question.answer ? 'Correct!' : 'Keep practicing.'}</strong><p><span className="zh">{question.word}</span> · {question.pronunciation}</p><p>{question.answer}</p></div>}
         <div className="listening-actions">
           {checked && selection !== question.answer && <button type="button" className="listening-primary" onClick={next}>{index === questions.length - 1 ? 'See results' : 'Next word'}</button>}
         </div>

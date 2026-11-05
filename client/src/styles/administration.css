@@ -1284,7 +1284,7 @@ fadeUp .8s ease;
 .quiz-choice.correct .quiz-choice-letter {
   background: #fff;
   border-color: #fff;
-  color: var(--jade);
+  color: var(--answer-success-fill);
 }
 
 .quiz-choice.wrong .quiz-choice-letter {

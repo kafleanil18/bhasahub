@@ -15,3 +15,5 @@
 .number-feedback .number-correct-answer { font-size: 28px; font-weight: 700; }
 :root.dark .number-feedback.correct { border-color: #86d6a4; }
 @media (max-width: 767px) { .number-feedback { padding: 20px 16px; } .number-voice-settings { padding: 16px; } .number-answer-fields { gap: 12px; } }
+
+.number-feedback.correct h3 { color: var(--answer-success); }

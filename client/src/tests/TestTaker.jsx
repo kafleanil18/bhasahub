@@ -323,7 +323,7 @@ function TestTaker({ testId, onBack }) {
                 const isLatest = i === shownHistory.length - 1;
                 const isActive = hoveredHistoryBar === i;
 
-                let fill = 'var(--jade)';
+                let fill = 'var(--answer-success)';
                 if (p < 50) fill = 'var(--seal)';
                 else if (p < 75) fill = 'var(--gold)';
 

@@ -28,7 +28,11 @@
 .listening-option input { accent-color: var(--seal); flex-shrink: 0; width: 16px; height: 16px; }
 .listening-option-letter { color: var(--mist); font-size: 12px; }
 .listening-option.is-selected { border-color: var(--seal); }
-.listening-option.is-correct { border: 2px solid var(--ink); }
+.listening-option.is-correct { border: 2px solid var(--answer-success); background: var(--answer-success-bg); }
+.listening-option.is-correct input { accent-color: var(--answer-success); }
+.listening-option.is-correct .listening-option-status { color: var(--answer-success); }
+.listening-feedback.correct { background: var(--answer-success-bg); border-left: 4px solid var(--answer-success); }
+.listening-feedback.correct > strong { color: var(--answer-success); }
 .listening-option.is-wrong { border-style: dashed; }
 .listening-option-status { font-size: 11px; margin-left: auto; flex-shrink: 0; max-width: 70px; }
 .listening-options:disabled .listening-option { cursor: default; }
