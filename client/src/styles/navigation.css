@@ -606,7 +606,7 @@ header .container {
 /* ==========================================================================
    RESPONSIVE NAVIGATION (Tablet & Mobile)
    ========================================================================== */
-@media (max-width: 1280px) {
+@media (max-width: 1360px) {
   header .container {
     padding: 0 16px;
   }
@@ -711,6 +711,14 @@ header .container {
     font-size: 14.5px;
     justify-content: flex-start;
     color: #e8e2d6;
+  }
+
+  .nav-links .nav-support-link {
+    margin: 4px 0 0;
+    padding-top: 14px;
+    border-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
   }
 
   .nav-links .nav-link:hover {
@@ -1549,3 +1557,36 @@ h1, h2, h3, h4, h5, h6,
 .brand-lockup { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; line-height: 1.15; gap: 3px; }
 .brand-tagline { color: #faf6ec; font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 500; letter-spacing: .03em; white-space: nowrap; }
 .practice-signin-note { margin: 4px 12px 8px; max-width: 220px; color: var(--mist); font-size: 12px; line-height: 1.5; }
+
+/* Larger desktop type and clearer navigation spacing. */
+@media (min-width: 1361px) {
+  html { font-size: 17px; }
+  body { font-size: 1rem; }
+  header .container { max-width: 1480px; padding-inline: 36px; }
+  .site-header .header-row { gap: 24px; }
+  .site-header .main-nav { justify-content: flex-end; }
+  .site-header .nav-links { gap: 10px; }
+  .site-header .nav-link { gap: 8px; padding: 10px 14px; font-size: 15px; }
+  .site-header .nav-link .nav-svg-icon { width: 17px; height: 17px; }
+  .site-header .nav-support-link { margin-left: 10px; padding-left: 22px; border-left: 1px solid rgba(255,255,255,.24); border-radius: 0 999px 999px 0; }
+  .site-header .nav-actions { gap: 12px; }
+  .site-header .header-right { padding-left: 16px; border-left: 1px solid rgba(255,255,255,.2); }
+  .site-header .user-menu-trigger { font-size: 15px; padding: 5px 14px 5px 6px; }
+  .site-header .theme-toggle-compact { width: 42px; height: 42px; }
+  .home-page .hero-subtitle, .home-page .section-sublead, .home-page .course-card-desc { font-size: 17px; }
+  .home-page .hero-access-note, .home-page .stat-text-wrap span, .home-page .course-card-link { font-size: 14px; }
+  .home-page .course-card-eyebrow, .home-page .section-kicker { font-size: 13px; }
+  .learning-space .learning-description, .learning-space .learning-course-description { font-size: 16px; }
+  .learning-space .learning-filter-buttons button, .learning-space .learning-course-level, .learning-space .learning-course-status, .learning-space .learning-course-action, .learning-space .learning-result-count { font-size: 14px; }
+  .learning-space .learning-course-progress, .learning-space .learning-course-progress strong { font-size: 14px; }
+  .course-overview .overview-description, .course-overview .overview-access p, .course-overview .overview-enrollment p, .course-overview .overview-library-heading > div > p:last-child, .course-overview .overview-lesson-action { font-size: 16px; }
+  .course-overview .overview-category-tabs button, .course-overview .overview-lesson-filters input { font-size: 15px; }
+  .control-center .control-welcome-copy > p:not(.control-eyebrow):not(.control-welcome-note), .control-center .control-section-description, .control-center .control-hero-summary p { font-size: 16px; }
+  .control-center .control-shortcuts small, .control-center .control-queue-items small, .control-center .control-details-strip button > span { font-size: 14px; }
+  .control-center .control-refresh, .control-center .control-updated, .control-center .control-server { font-size: 14px; }
+}
+
+@media (min-width: 1920px) {
+  html { font-size: 18px; }
+  body { font-size: 1rem; }
+}

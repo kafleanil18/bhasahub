@@ -5,7 +5,6 @@ import HomeTeam from './home/HomeTeam';
 import HomeTestimonials from './home/HomeTestimonials';
 import HomeCourses from './home/HomeCourses';
 import HomeHero from './home/HomeHero';
-import PracticeStudio from './home/PracticeStudio';
 import renderTeamAvatar from './components/TeamAvatar';
 import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import './home.css';
@@ -585,6 +584,7 @@ function AppContent() {
         <CoursePage course={activeCourse} onBack={() => setActiveCourse(null)} user={user} />
       ) : isSuperAdmin ? (
         <AdminDashboard
+          user={user}
           onNavigate={(view) => {
             goHome();
             if (view === 'courses') setShowAdmin(true);
@@ -603,11 +603,10 @@ function AppContent() {
           }}
         />
       ) : user?.role === 'admin' ? (
-        <main className="home-page admin-practice-page">
-          <div className="container">
-            <PracticeStudio user={user} onOpenPractice={openPractice} standalone />
-          </div>
+        <main className="home-page">
+          <HomeHero goHome={goHome} setShowDashboard={setShowDashboard} setShowPinyinPage={setShowPinyinPage} user={user} onOpenPractice={openPractice}/>
           <HomeCourses filteredCourses={filteredCourses} hskLevels={hskLevels} levelFilter={levelFilter} openLogin={openLogin} setActiveCourse={setActiveCourse} setLevelFilter={setLevelFilter} user={user} />
+          <HomeFooter goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk}/>
         </main>
       ) : (
         <main className="home-page">

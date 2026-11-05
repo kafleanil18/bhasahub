@@ -7,6 +7,12 @@
 .home-page .hero-practice-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .home-page .hero-practice-link { position: relative; display: flex; align-items: flex-start; gap: 10px; width: 100%; padding: 14px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); color: var(--ink); text-align: left; cursor: pointer; min-width: 0; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
 .home-page .hero-practice-glyph { display: grid; place-items: center; width: 32px; height: 36px; border-radius: 8px; background: color-mix(in srgb, var(--seal) 9%, var(--card)); color: var(--seal); font-size: 22px; line-height: 1; flex-shrink: 0; font-family: serif; }
+.home-page .hero-practice-glyph { perspective: 480px; }
+.practice-symbol-flip { position: relative; display: block; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .5s cubic-bezier(.2,.75,.25,1); }
+.practice-symbol-face { position: absolute; inset: 0; display: grid; place-items: center; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.practice-symbol-face.is-back { transform: rotateY(180deg); font-family: 'Noto Serif SC',serif; }
+.hero-practice-link:is(:hover,:focus-visible) .practice-symbol-flip { transform: rotateY(180deg); }
+@media (prefers-reduced-motion: reduce) { .practice-symbol-flip { transition: none; } }
 .home-page .hero-practice-copy { flex: 1; min-width: 0; }
 .home-page .hero-practice-copy strong { display: block; font-size: 12px; line-height: 1.4; }
 .home-page .hero-practice-copy small { display: block; color: var(--mist); font-size: 11px; line-height: 1.5; margin-top: 4px; }

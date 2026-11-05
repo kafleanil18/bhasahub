@@ -1,5 +1,8 @@
 import { supportsConversation } from '../utils/courseFeatures';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { mediaUrl } from '../utils/mediaUrl';
+import LessonCategoryIcon from './LessonCategoryIcon';
+import './CourseOverview.css';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -24,6 +27,9 @@ function CourseOverview({
   onLessonClick,
 }) {
   const [catFilter, setCatFilter] = useState('all');
+  const [lessonSearch, setLessonSearch] = useState('');
+  const [enrolling, setEnrolling] = useState(false);
+  const mutationRef = useRef(false);
 
   const [enrolled, setEnrolled] = useState(false);
   const [enrollError, setEnrollError] = useState(null);
@@ -69,7 +75,8 @@ function CourseOverview({
   }, [loadRequestStatus, token, hasAccess]);
 
   const requestAccess = async () => {
-    if (!token) return;
+    if (!token || mutationRef.current || requestStatus === 'pending') return;
+    mutationRef.current = true;
     setRequestingAccess(true);
     setAccessRequestError(null);
     try {
@@ -88,11 +95,14 @@ function CourseOverview({
       setAccessRequestError('Could not send your access request.');
     } finally {
       setRequestingAccess(false);
+      mutationRef.current = false;
     }
   };
 
   const toggleEnroll = async () => {
-    if (!token) return;
+    if (!token || mutationRef.current) return;
+    mutationRef.current = true;
+    setEnrolling(true);
     setEnrollError(null);
     try {
       const res = await fetch(`${API}/enrollments/${course._id}`, {
@@ -106,206 +116,39 @@ function CourseOverview({
       }
     } catch {
       setEnrollError('Could not update your enrollment.');
-    }
+    } finally { setEnrolling(false); mutationRef.current = false; }
   };
 
-  const visibleLessons = lessons.filter(
-    (l) => (supportsConversation(course) || l.category !== 'conversation') && (catFilter === 'all' || (l.category || 'vocabulary') === catFilter)
-  );
+  const courseLessons = lessons.filter(lesson => supportsConversation(course) || lesson.category !== 'conversation');
+  const lessonQuery = lessonSearch.trim().toLocaleLowerCase();
+  const visibleLessons = courseLessons.filter(lesson => (catFilter === 'all' || (lesson.category || 'vocabulary') === catFilter) && (!lessonQuery || `${lesson.title} ${lesson.order || ''}`.toLocaleLowerCase().includes(lessonQuery)));
+  const currentCourseCompleted = courseLessons.filter(lesson => completedIds.includes(lesson._id)).length;
+  const progressPercent = courseLessons.length ? Math.round(currentCourseCompleted / courseLessons.length * 100) : 0;
+  const progressReady = !loading && !progressError && !lessonsError;
+  const nextLesson = courseLessons.find(lesson => !completedIds.includes(lesson._id)) || courseLessons[0];
+  const courseComplete = courseLessons.length > 0 && currentCourseCompleted === courseLessons.length;
+  const categories = [{ id: 'all', label: 'All lessons' }, { id: 'vocabulary', label: 'Vocabulary' }, ...(supportsConversation(course) ? [{ id: 'conversation', label: 'Conversation' }] : []), { id: 'grammar', label: 'Grammar' }];
+  const readableExpiry = accessExpiry ? new Date(accessExpiry).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) : null;
 
-  const currentCourseCompleted = completedIds.filter(id => lessons.some(l => l._id === id)).length;
-  const progressPercent = lessons.length ? Math.round((currentCourseCompleted / lessons.length) * 100) : 0;
-  const isBeginner = course.level && (course.level.toLowerCase().includes('hsk 1') || course.level.toLowerCase().includes('beginner'));
+  return <section className="container course-page course-overview" aria-labelledby="course-overview-title">
+    <button className="back-btn" onClick={onBack}>← Back to courses</button>
+    <div className="overview-hero">
+      <div className="overview-hero-copy"><p className="overview-eyebrow">Your learning path{course.level ? ` · ${course.level}` : ''}</p><h1 id="course-overview-title">{course.title}</h1><p className="overview-description">{course.description}</p><div className="overview-course-tags">{course.level && <span>{course.level}</span>}<span>{loading ? 'Preparing lessons…' : lessonsError ? 'Lesson count unavailable' : `${courseLessons.length} lessons`}</span><span>Learn at your own pace</span></div><div className="overview-hero-actions">{canOpenLessons && nextLesson && !loading && !lessonsError && <button className="overview-button is-primary" onClick={() => onLessonClick(nextLesson)}>{isAdmin ? 'Preview a lesson' : courseComplete ? 'Review course' : currentCourseCompleted ? 'Continue learning' : 'Start first lesson'}<span aria-hidden="true">↗</span></button>}<a className="overview-text-link" href="#course-lesson-library">{canOpenLessons ? 'Browse lessons' : 'Explore the syllabus'}<span aria-hidden="true">↓</span></a></div></div>
+      <aside className="overview-course-card" aria-label={isAdmin ? 'Course at a glance' : 'Your course progress'}><div className="overview-course-art"><img src={course.image ? mediaUrl(course.image) : '/images/chinese-ink-landscape.jpg'} width="1200" height="800" alt="" decoding="async"/><span>One lesson. One step forward.</span></div><div className="overview-progress"><p className="overview-eyebrow">{isAdmin ? 'Course at a glance' : 'Your course progress'}</p>{isAdmin ? <><strong>{loading ? 'Preparing lessons…' : lessonsError ? 'Lessons unavailable' : `${courseLessons.length} lessons to explore`}</strong><p>Preview the learning experience before sharing it with students.</p></> : progressReady ? <><div className="overview-progress-numbers"><strong>{progressPercent}%</strong><span>{currentCourseCompleted} of {courseLessons.length} lessons completed</span></div><progress value={currentCourseCompleted} max={courseLessons.length || 1} aria-label="Course completion"/><p>{courseComplete ? 'You’ve completed every lesson. Come back whenever you want to review.' : currentCourseCompleted ? 'Keep going. Your next lesson is ready when you are.' : 'Your progress will appear here as you complete lessons.'}</p></> : <p role="status">{progressError || lessonsError || 'Loading your progress…'}</p>}</div></aside>
+    </div>
 
-  return (
-    <section className="course-page container">
+    {user && !isAdmin && <div className={`overview-access ${accessError ? 'is-error' : hasAccess ? 'is-active' : 'is-pending'}`} role={accessError ? 'alert' : 'status'}><div><strong>{!accessChecked ? 'Checking your course access…' : accessError ? 'We couldn’t check your access' : hasAccess ? 'Your course access is active' : requestStatus === 'pending' ? 'Your access request is under review' : requestStatus === 'denied' ? 'Your previous request was declined' : 'Ready to start this course?'}</strong><p>{!accessChecked ? 'Your lesson access will update shortly.' : accessError ? accessError : hasAccess ? readableExpiry ? `You can open lessons until ${readableExpiry}.` : 'Choose a lesson below to begin.' : requestStatus === 'pending' ? 'An admin will review your request. This page checks for updates automatically.' : requestStatus === 'denied' ? 'You can send a new request when you’re ready.' : 'Browse the syllabus below, then request course access to unlock the lessons.'}</p></div>{accessChecked && !hasAccess && !accessError && requestStatus !== 'pending' && <button className="overview-button is-primary" disabled={requestingAccess} onClick={requestAccess}>{requestingAccess ? 'Sending request…' : requestStatus === 'denied' ? 'Request access again' : 'Request course access'}</button>}{accessError && <button className="overview-button" onClick={() => window.location.reload()}>Refresh page</button>}{accessRequestError && <p className="overview-feedback is-error" role="alert">{accessRequestError}</p>}</div>}
+    {user && canOpenLessons && <div className="overview-enrollment"><div><strong>{enrolled ? 'Saved to your learning dashboard' : 'Keep this course in your learning dashboard'}</strong><p>{enrolled ? 'Find this course in My learning whenever you return.' : 'Add it to My learning so it’s easy to find next time.'}</p></div><button className="overview-button" disabled={enrolling} onClick={toggleEnroll}>{enrolling ? 'Updating…' : enrolled ? 'Remove from My learning' : 'Add to My learning'}</button>{enrollError && <p className="overview-feedback is-error" role="alert">{enrollError}</p>}</div>}
+    {showAccessMsg && !canOpenLessons && <div className="overview-feedback" role="alert"><p>This lesson needs active course access. Use <strong>Request course access</strong> above to ask an admin to unlock it.</p><button className="overview-button" onClick={onDismissAccessMsg}>Got it</button></div>}
 
-      <button className="back-btn" onClick={onBack}>← Back to courses</button>
-
-      <div className="course-head" style={{ marginTop: 16 }}>
-        <div>
-          {isBeginner && (
-            <div className="course-welcome-badge">
-              👋 你好 (Nǐ hǎo) — Start Learning Chinese!
-            </div>
-          )}
-          <h1 className="section-title">{course.title}</h1>
-          <p className="course-desc">{course.description}</p>
-          <span className="tag" style={{ background: 'var(--jade)', color: '#fff', border: 'none' }}>
-            {course.level}
-          </span>
-          {user && canOpenLessons && (
-            <div className="enroll-wrap" style={{ marginTop: 14 }}>
-              <button
-                className={enrolled ? 'nav-btn' : 'btn-primary'}
-                onClick={toggleEnroll}
-              >
-                {enrolled ? '✓ Enrolled' : 'Enroll in this course'}
-              </button>
-              {enrollError && <p className="login-error" style={{ marginTop: 8, marginBottom: 0 }}>{enrollError}</p>}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Access banner */}
-      {user && !isAdmin && accessChecked && (
-        accessError ? (
-          <div className="access-banner access-locked" style={{ margin: '16px 0 0' }}>
-            ⚠ {accessError} Refresh the page to try again.
-          </div>
-        ) : hasAccess ? (
-          <div className="access-banner access-ok" style={{ margin: '16px 0 0' }}>
-            ✓ Active Subscription Access {accessExpiry && `until ${new Date(accessExpiry).toLocaleDateString()}`}
-          </div>
-        ) : (
-          <div className="access-banner access-locked" style={{ margin: '16px 0 0', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-            {requestStatus === 'pending' ? (
-              <span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-                Subscription request sent. Your request is waiting for admin approval.
-              </span>
-            ) : (
-              <>
-                <span>
-                  🔒 You don't have access to this course yet.
-                  {requestStatus === 'denied' && ' Your subscription request was denied. You can submit a new request.'}
-                </span>
-                <button className="nav-btn" onClick={requestAccess} disabled={requestingAccess}>
-                  {requestingAccess ? 'Sending...' : requestStatus === 'denied' ? 'Request subscription again' : 'Subscribe to course'}
-                </button>
-              </>
-            )}
-            {accessRequestError && <p className="login-error" style={{ margin: 0, width: '100%' }}>{accessRequestError}</p>}
-          </div>
-        )
-      )}
-
-      {/* Message shown when a locked lesson is clicked */}
-      {showAccessMsg && !canOpenLessons && (
-        <div className="access-msg" style={{ margin: '20px 0 0' }}>
-          <p>
-            🔒 This lesson is locked. You need active access to open lessons.
-            Scroll up and click <strong>Subscribe to course</strong> to request approval.
-          </p>
-          <button className="nav-btn" onClick={onDismissAccessMsg}>Got it</button>
-        </div>
-      )}
-
-      {/* Progress Dashboard */}
-      {user && (
-        <div className="course-progress-block">
-          {progressError && <p className="login-error">{progressError}</p>}
-          <div className="course-progress-header">
-            <span className="course-progress-title">Your Course Progress</span>
-            <span className="course-progress-value">{progressPercent}%</span>
-          </div>
-          <div className="course-progress-bar-bg">
-            <div className="course-progress-bar-fill" style={{ width: `${progressPercent}%` }}></div>
-          </div>
-          <div className="course-meta-grid">
-            <div className="course-meta-item">
-              <span className="course-meta-val">{currentCourseCompleted} of {lessons.length}</span>
-              <span className="course-meta-lbl">Lessons Completed</span>
-            </div>
-            <div className="course-meta-item">
-              <span className="course-meta-val">{(lessons.length * 15)} mins</span>
-              <span className="course-meta-lbl">Estimated Study Time</span>
-            </div>
-            <div className="course-meta-item">
-              <span className="course-meta-val">{enrolled ? 'Active Student' : 'Not Enrolled'}</span>
-              <span className="course-meta-lbl">Enrolment Status</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <h2 className="lessons-heading" style={{ marginTop: 32 }}>Lessons</h2>
-
-      <div className="category-tabs" style={{ marginBottom: 8 }}>
-        <button className={`cat-tab ${catFilter === 'all' ? 'active' : ''}`} onClick={() => setCatFilter('all')}>All</button>
-        <button className={`cat-tab ${catFilter === 'vocabulary' ? 'active' : ''}`} onClick={() => setCatFilter('vocabulary')}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-          </svg>
-          Vocabulary
-        </button>
-        {supportsConversation(course) && (
-        <button className={`cat-tab ${catFilter === 'conversation' ? 'active' : ''}`} onClick={() => setCatFilter('conversation')}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-          </svg>
-          Conversation
-        </button>
-        )}
-        <button className={`cat-tab ${catFilter === 'grammar' ? 'active' : ''}`} onClick={() => setCatFilter('grammar')}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
-            <path d="M12 20h9"></path>
-            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-          </svg>
-          Grammar
-        </button>
-      </div>
-
-      {loading && <p className="courses-empty">Loading lessons...</p>}
-      {lessonsError && <p className="login-error">{lessonsError}</p>}
-      {!loading && !lessonsError && visibleLessons.length === 0 && (
-        <p className="courses-empty">No lessons in this category yet.</p>
-      )}
-
-      <div className="lesson-cards-grid">
-        {visibleLessons.map((l) => {
-          const isDone = completedIds.includes(l._id);
-          const categoryLabel = l.category ? l.category : 'vocabulary';
-          const categoryVectorIcon = categoryLabel === 'grammar' ? (
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
-              <path d="M12 20h9"></path>
-              <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-            </svg>
-          ) : categoryLabel === 'conversation' ? (
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-          ) : (
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 5 }}>
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-            </svg>
-          );
-
-          return (
-            <button
-              className={`lesson-card-btn ${isDone ? 'completed-card' : ''} ${!canOpenLessons ? 'lesson-locked' : ''}`}
-              key={l._id}
-              onClick={() => onLessonClick(l)}
-            >
-              <div className="lesson-card-top">
-                <span className="lesson-card-badge" style={{ display: 'inline-flex', alignItems: 'center' }}>
-                  {categoryVectorIcon} {categoryLabel}
-                </span>
-                <div className="lesson-card-order-circle">
-                  {l.order}
-                </div>
-              </div>
-              <h3 className="lesson-card-title">{l.title}</h3>
-              <div className="lesson-card-footer">
-                <span className="lesson-card-status-text">
-                  {!canOpenLessons ? 'Locked' : isDone ? '✓ Completed' : 'Start Lesson'}
-                </span>
-                <span className="lesson-card-arrow">
-                  {!canOpenLessons ? '🔒' : isDone ? '✓' : '→'}
-                </span>
-              </div>
-            </button>
-          );
-        })}
-      </div>
+    <section className="overview-lesson-library" id="course-lesson-library" aria-labelledby="course-lessons-title"><div className="overview-library-heading"><div><p className="overview-eyebrow">Your course syllabus</p><h2 id="course-lessons-title">What will you learn today?</h2><p>{isAdmin ? 'Explore each lesson just as your students will see it.' : 'Build your knowledge one lesson at a time.'}</p></div>{!loading && !lessonsError && <span className="overview-lesson-count">{visibleLessons.length} of {courseLessons.length} lessons</span>}</div><div className="overview-lesson-filters"><div className="overview-category-tabs" aria-label="Lesson categories">{categories.map(category => <button key={category.id} aria-pressed={catFilter === category.id} onClick={() => setCatFilter(category.id)}>{category.label}</button>)}</div><label><span className="overview-visually-hidden">Search lessons</span><input type="search" placeholder="Find a lesson…" value={lessonSearch} onChange={event => setLessonSearch(event.target.value)}/></label></div>
+      {loading ? <p className="overview-empty" role="status">Preparing your lessons…</p> : lessonsError ? <p className="overview-feedback is-error" role="alert">{lessonsError}</p> : !visibleLessons.length ? <div className="overview-empty"><h3>No lessons match this view</h3><p>Try another category or search term.</p><button className="overview-button" onClick={() => { setCatFilter('all'); setLessonSearch(''); }}>View all lessons</button></div> : <div className="overview-lesson-grid">{visibleLessons.map((lesson, index) => {
+        const done = completedIds.includes(lesson._id);
+        const category = lesson.category || 'vocabulary';
+        return <button key={lesson._id} className={`overview-lesson-card category-${category} ${done ? 'is-complete' : ''}`} onClick={() => onLessonClick(lesson)} aria-label={`${lesson.title}, ${!canOpenLessons ? 'access required' : done ? 'completed, review lesson' : 'start lesson'}`}><span className="overview-lesson-top"><span className="overview-lesson-symbol"><LessonCategoryIcon category={category}/></span><span className="overview-lesson-order">{String(lesson.order ?? index + 1).padStart(2, '0')}</span></span><span className="overview-lesson-category">{category}</span><h3>{lesson.title}</h3><span className="overview-lesson-action"><span>{!canOpenLessons ? 'Access required' : done ? 'Review lesson' : 'Start lesson'}</span><span aria-hidden="true">{!canOpenLessons ? '↗' : done ? '✓' : '→'}</span></span></button>;
+      })}</div>}
     </section>
-  );
+  </section>;
 }
 
 export default CourseOverview;

@@ -3,6 +3,7 @@ import PracticeStudio from './PracticeStudio';
 import './HomeHero.css';
 
 export default function HomeHero({ goHome, setShowDashboard, setShowPinyinPage, user, hasStartedCourse = false, onOpenPractice }) {
+  const teaching = user?.role === 'admin';
   const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [audioError, setAudioError] = useState('');
@@ -30,11 +31,10 @@ export default function HomeHero({ goHome, setShowDashboard, setShowPinyinPage, 
       <div className="container home-hero-grid">
         <div className="home-hero-intro">
           <p className="home-hero-eyebrow"><span aria-hidden="true"/>{user ? `Welcome back, ${user.name}.` : 'A new language. A new beginning.'}</p>
-          <h1 id="home-hero-title">{user ? <>Your next step<br/>starts <em>here.</em></> : <>Chinese starts<br/>with a <em>hello.</em></>}</h1>
-          <p className="home-hero-description">{user ? hasStartedCourse ? 'Pick up where you left off, or choose a skill to practice. A little Chinese today goes a long way.' : 'Find your first course below, or explore a practice tool to get started.' : 'From your first words to everyday conversations. Find your voice in Chinese with guided lessons and practice at your own pace.'}</p>
-          <div className="home-hero-actions"><button className="home-hero-primary" onClick={startLearning}>{user ? hasStartedCourse ? 'Continue learning' : 'Start learning' : 'Try free pinyin practice'}<span aria-hidden="true">↗</span></button><a className="home-hero-secondary" href={user ? '#practice-studio' : '#courses'}>{user ? 'Choose a practice' : 'Explore courses'}<span aria-hidden="true">↓</span></a></div>
-          <p className="home-hero-note">{user ? 'Your courses. Your pace. Your next conversation.' : 'No account needed for pinyin practice.'}</p>
-          <a className="home-hero-studio-link" href="#practice-studio"><span className="home-hero-link-mark" aria-hidden="true">练</span><span>{user ? 'Make a little time for practice.' : 'Learning happens one small step at a time.'}<small>Explore your practice studio below</small></span><span aria-hidden="true">↓</span></a>
+          <h1 id="home-hero-title">{teaching ? <>Great lessons<br/>start <em>here.</em></> : user ? <>Your next step<br/>starts <em>here.</em></> : <>Chinese starts<br/>with a <em>hello.</em></>}</h1>
+          <p className="home-hero-description">{teaching ? 'Explore your courses, try a practice activity, and get ready for your next class. A little preparation makes a difference.' : user ? hasStartedCourse ? 'Pick up where you left off, or choose a skill to practice. A little Chinese today goes a long way.' : 'Find your first course below, or explore a practice tool to get started.' : 'From your first words to everyday conversations. Find your voice in Chinese with guided lessons and practice at your own pace.'}</p>
+          <div className="home-hero-actions"><button className="home-hero-primary" onClick={startLearning}>{teaching ? 'Explore courses' : user ? hasStartedCourse ? 'Continue learning' : 'Start learning' : 'Try free pinyin practice'}<span aria-hidden="true">↗</span></button><a className="home-hero-secondary" href={user ? '#practice-studio' : '#courses'}>{user ? 'Choose a practice' : 'Explore courses'}<span aria-hidden="true">↓</span></a></div>
+          <p className="home-hero-note">{teaching ? 'Your courses. Your classroom. Your teaching studio.' : user ? 'Your courses. Your pace. Your next conversation.' : 'No account needed for pinyin practice.'}</p>
         </div>
         <div className="home-hero-artwork">
           <div className="home-hero-landscape"><img src="/images/chinese-ink-landscape.jpg" width="1200" height="800" alt="" aria-hidden="true" decoding="async" fetchPriority="high"/><span className="home-hero-stamp" lang="zh-CN" aria-hidden="true">学</span><span className="home-hero-art-caption">A little practice. A world of possibility.</span></div>

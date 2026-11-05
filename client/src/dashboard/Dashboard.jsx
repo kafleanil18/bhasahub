@@ -1,184 +1,47 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { mediaUrl } from '../utils/mediaUrl';
+import LessonCategoryIcon from '../courses/LessonCategoryIcon';
+import useLearningSpace from './useLearningSpace';
+import './Dashboard.css';
 
-const API = window.API_BASE_URL + '/api';
+const statusLabels = { new: 'Not started', started: 'In progress', completed: 'Completed', unknown: 'Progress unavailable' };
+const actionLabels = { new: 'Start course', started: 'Continue learning', completed: 'Review course', unknown: 'Open course' };
 
-function Dashboard({ user, onOpenCourse, onBrowse }) {
-  const [courses, setCourses] = useState([]);
-  const [progress, setProgress] = useState({}); // { courseId: { total, completed } }
-  const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem('token');
+export default function Dashboard({ user, onOpenCourse, onBrowse }) {
+  const { courses, progress, loading, error, reload } = useLearningSpace(localStorage.getItem('token'));
+  const [query, setQuery] = useState('');
+  const [filter, setFilter] = useState('all');
+  const stateOf = course => {
+    const value = progress[course._id];
+    if (!value) return 'unknown';
+    return value.total > 0 && value.completed === value.total ? 'completed' : value.completed > 0 ? 'started' : 'new';
+  };
+  const counts = { all: courses.length, started: 0, completed: 0, new: 0, unknown: 0 };
+  courses.forEach(course => counts[stateOf(course)]++);
+  const totalLessons = Object.values(progress).reduce((total, value) => total + (value?.total || 0), 0);
+  const totalCompleted = Object.values(progress).reduce((total, value) => total + (value?.completed || 0), 0);
+  const known = courses.every(course => progress[course._id]);
+  const percent = totalLessons ? Math.round(totalCompleted / totalLessons * 100) : 0;
+  const startedCourses = courses.filter(course => stateOf(course) === 'started').sort((a, b) => progress[b._id].completed / progress[b._id].total - progress[a._id].completed / progress[a._id].total);
+  const nextCourse = startedCourses[0] || courses.find(course => stateOf(course) === 'new') || courses.find(course => stateOf(course) === 'completed') || courses[0];
+  const nextState = nextCourse && stateOf(nextCourse);
+  const visibleCourses = courses.filter(course => (filter === 'all' || stateOf(course) === filter) && `${course.title || ''} ${course.level || ''} ${course.description || ''}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
+  const browse = () => {
+    onBrowse();
+    requestAnimationFrame(() => document.getElementById('courses')?.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }));
+  };
 
-  useEffect(() => {
-    fetch(`${API}/enrollments/my`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(res => res.json())
-      .then(async (data) => {
-        const list = Array.isArray(data) ? data : [];
-        setCourses(list);
-        const entries = await Promise.all(
-          list.map(async (c) => {
-            try {
-              const r = await fetch(`${API}/progress/course/${c._id}`, {
-                headers: { Authorization: `Bearer ${token}` },
-              });
-              const p = await r.json();
-              return [c._id, p];
-            } catch {
-              return [c._id, { total: 0, completed: 0 }];
-            }
-          })
-        );
-        setProgress(Object.fromEntries(entries));
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [token]);
-
-  // Aggregate metrics
-  let totalLessons = 0;
-  let totalCompleted = 0;
-  let latestActiveCourse = null;
-  let maxPercent = -1;
-
-  courses.forEach(c => {
-    const p = progress[c._id] || { total: 0, completed: 0 };
-    totalLessons += (p.total || 0);
-    totalCompleted += (p.completed || 0);
-    const percent = p.total > 0 ? (p.completed / p.total) * 100 : 0;
-    if (percent < 100 && percent >= maxPercent) {
-      maxPercent = percent;
-      latestActiveCourse = c;
-    }
-  });
-  if (!latestActiveCourse && courses.length > 0) {
-    latestActiveCourse = courses[0];
-  }
-
-  const overallPercent = totalLessons > 0 ? Math.round((totalCompleted / totalLessons) * 100) : 0;
-
-  return (
-    <section className="dashboard-container container">
-      {/* Dashboard Banner */}
-      <div className="dash-hero">
-        <div className="dash-hero-content">
-          <span className="dash-eyebrow">My Learning Space</span>
-          <h1 className="dash-greeting">Welcome back, {user ? user.name : 'Learner'} 👋</h1>
-          <p className="dash-subtext">Track your progress, practice vocabulary, and resume your active lessons.</p>
-          
-          {latestActiveCourse && (
-            <div className="dash-resume-box">
-              <button className="dash-resume-btn" onClick={() => onOpenCourse(latestActiveCourse)}>
-                <span className="dash-play-icon">▶</span>
-                <span>{progress[latestActiveCourse._id]?.completed > 0 ? 'Continue' : 'Start course'}: <strong>{latestActiveCourse.title}</strong></span>
-                <span className="dash-arrow">→</span>
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Stats Grid */}
-        <div className="dash-stats-grid">
-          <div className="dash-stat-card">
-            <div className="dash-stat-icon streak-icon">⚡</div>
-            <div className="dash-stat-info">
-              <span className="dash-stat-val">Active</span>
-              <span className="dash-stat-lbl">Learning Streak</span>
-            </div>
-          </div>
-          <div className="dash-stat-card">
-            <div className="dash-stat-icon lessons-icon">📚</div>
-            <div className="dash-stat-info">
-              <span className="dash-stat-val">{totalCompleted} / {totalLessons}</span>
-              <span className="dash-stat-lbl">Lessons Completed</span>
-            </div>
-          </div>
-          <div className="dash-stat-card">
-            <div className="dash-stat-icon progress-icon">🎯</div>
-            <div className="dash-stat-info">
-              <span className="dash-stat-val">{overallPercent}%</span>
-              <span className="dash-stat-lbl">Overall Mastery</span>
-            </div>
-          </div>
-          <div className="dash-stat-card">
-            <div className="dash-stat-icon courses-icon">🎓</div>
-            <div className="dash-stat-info">
-              <span className="dash-stat-val">{courses.length}</span>
-              <span className="dash-stat-lbl">Enrolled Courses</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="dash-section-header">
-        <h2>My Enrolled Courses</h2>
-        <button className="btn-secondary-sm" onClick={onBrowse}>+ Explore All Courses</button>
-      </div>
-
-      {loading && <p className="courses-empty">Loading your learning workspace...</p>}
-
-      {!loading && courses.length === 0 && (
-        <div className="dash-empty-card">
-          <div className="dash-empty-icon">📖</div>
-          <h3>Start Your Language Journey Today</h3>
-          <p>You haven't enrolled in any courses yet. Browse our structured Mandarin Chinese courses to begin learning.</p>
-          <button className="btn-primary" onClick={onBrowse}>Browse Available Courses</button>
-        </div>
-      )}
-
-      {!loading && courses.length > 0 && (
-        <div className="dash-course-grid">
-          {courses.map((c) => {
-            const p = progress[c._id] || { total: 0, completed: 0 };
-            const percent = p.total > 0 ? Math.round((p.completed / p.total) * 100) : 0;
-            const isCompleted = percent === 100 && p.total > 0;
-            const isStarted = p.completed > 0;
-
-            return (
-              <div className="dash-course-card" key={c._id} onClick={() => onOpenCourse(c)}>
-                <div className="dash-card-banner">
-                  <span className={`dash-glyph-badge ${c.language === 'chinese' ? 'zh' : 'en'}`}>
-                    {c.glyph && c.glyph.trim().length > 0 && c.glyph.trim().length <= 2 
-                      ? c.glyph 
-                      : (c.language === 'chinese' ? '中' : 'EN')}
-                  </span>
-                  <div className="dash-badge-group">
-                    <span className="dash-level-pill">{c.level || 'HSK'}</span>
-                    {isCompleted ? (
-                      <span className="dash-status-pill done-pill">✓ Completed</span>
-                    ) : isStarted ? (
-                      <span className="dash-status-pill active-pill">In Progress</span>
-                    ) : (
-                      <span className="dash-status-pill new-pill">Not Started</span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="dash-card-body">
-                  <h3 className="dash-card-title">{c.title}</h3>
-                  <p className="dash-card-desc">{c.description}</p>
-
-                  <div className="dash-progress-wrap">
-                    <div className="dash-progress-meta">
-                      <span>{p.completed} of {p.total} lessons</span>
-                      <span className="dash-percent-val">{percent}%</span>
-                    </div>
-                    <div className="dash-progress-bar-bg">
-                      <div className="dash-progress-bar-fill" style={{ width: `${percent}%` }} />
-                    </div>
-                  </div>
-
-                  <button className="dash-card-cta">
-                    {isCompleted ? 'Review Course →' : isStarted ? 'Continue Learning →' : 'Start Course →'}
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+  return <main className="container learning-space" aria-labelledby="learning-space-title">
+    <button className="back-btn" onClick={browse}>← Explore courses</button>
+    <section className="learning-welcome" aria-labelledby="learning-space-title"><div className="learning-welcome-copy"><p className="learning-eyebrow">My Learning Space</p><h1 id="learning-space-title">A little progress.<br/><em>Every day.</em></h1><p className="learning-greeting">{user?.name ? `Welcome back, ${user.name}.` : 'Welcome to your learning space.'}</p><p className="learning-description">{loading ? 'Getting your courses and progress ready.' : error ? 'Your learning is still here. Try refreshing, or explore the course library.' : !courses.length ? 'Your first course is waiting. Find a path that feels right and take your first step in Chinese.' : counts.started ? 'Pick up a course you’ve started, or make room for something new. Every lesson moves you forward.' : counts.completed === courses.length ? 'Look at how far you’ve come. Review what you’ve learned, or find your next course.' : 'Choose a course and begin at your own pace. Your progress will be saved as you complete lessons.'}</p><div className="learning-welcome-actions"><button className="learning-button is-primary" disabled={loading} onClick={() => nextCourse ? onOpenCourse(nextCourse) : browse()}>{loading ? 'Preparing courses…' : nextCourse ? actionLabels[nextState] : 'Explore courses'}<span aria-hidden="true">↗</span></button><a className="learning-text-link" href="#my-learning-courses">View my courses <span aria-hidden="true">↓</span></a></div>{!loading && nextCourse && <p className="learning-next-course"><span>Up next</span> {nextCourse.title}</p>}</div><aside className="learning-progress-card" aria-label="Overall lesson progress"><div className="learning-landscape"><img src="/images/great-wall-ink-wash.jpg" width="1536" height="1024" alt="Traditional Chinese ink-and-wash painting of the Great Wall winding through misty mountains" decoding="async" fetchPriority="high"/><span>Small steps. Lasting progress.</span></div><div className="learning-progress-summary"><p className="learning-eyebrow">Your journey so far</p>{loading ? <p role="status">Loading your progress…</p> : error || !known ? <><strong>Progress unavailable</strong><p>{error ? 'Refresh your learning space to try again.' : 'Some course progress couldn’t load. Your saved work hasn’t changed.'}</p></> : <><div className="learning-overall-value"><strong>{percent}%</strong><span>{totalCompleted} of {totalLessons} lessons completed</span></div><progress value={totalCompleted} max={totalLessons || 1} aria-label="Overall course completion"/><p>{totalCompleted ? 'Every completed lesson is another step forward.' : 'Complete your first lesson to see your progress grow.'}</p></>}</div></aside></section>
+    {error && <div className="learning-feedback is-error" role="alert"><div><strong>We couldn’t load your courses</strong><p>{error}</p></div><button className="learning-button" onClick={reload}>Try again</button></div>}
+    {!loading && !error && !known && <div className="learning-feedback" role="alert"><p>Some course progress is unavailable. You can still open your courses.</p><button className="learning-button" onClick={reload}>Retry progress</button></div>}
+    <div className="learning-overview" aria-label="Your learning overview">{[{ label: 'My courses', value: courses.length, note: 'Saved to your learning space' }, { label: 'Lessons completed', value: known ? totalCompleted : null, note: 'Across your saved courses' }, { label: 'Courses completed', value: known ? counts.completed : null, note: 'Ready to revisit and review' }].map(item => <div className="learning-overview-item" key={item.label}><span>{item.label}</span><strong>{loading || error || item.value === null ? '—' : item.value.toLocaleString()}</strong><small>{item.note}</small></div>)}</div>
+    <section className="learning-course-library" id="my-learning-courses" aria-labelledby="my-learning-courses-title"><div className="learning-library-heading"><div><p className="learning-eyebrow">Your course library</p><h2 id="my-learning-courses-title">Make time for your next lesson.</h2><p>Start something new, keep going, or revisit what you’ve learned.</p></div><button className="learning-button" onClick={browse}>Explore more courses <span aria-hidden="true">↗</span></button></div>
+      {loading ? <div className="learning-loading" role="status">Loading your learning space…</div> : error ? <div className="learning-empty"><LessonCategoryIcon category="vocabulary"/><h3>Your course list couldn’t load</h3><p>Try again to see your saved courses and progress.</p><button className="learning-button" onClick={reload}>Reload courses</button></div> : !courses.length ? <div className="learning-empty"><LessonCategoryIcon category="vocabulary"/><h3>Your next chapter starts here</h3><p>You haven’t added a course to My learning yet. Explore the course library, request access, and add a course when you’re ready.</p><button className="learning-button is-primary" onClick={browse}>Find your first course <span aria-hidden="true">↗</span></button></div> : <>
+        <div className="learning-course-filters"><div className="learning-filter-buttons" aria-label="Filter your courses">{[['all', 'All courses'], ['started', 'In progress'], ['new', 'Not started'], ['completed', 'Completed']].map(([value, label]) => <button key={value} aria-pressed={filter === value} onClick={() => setFilter(value)}>{label}<span>{counts[value]}</span></button>)}</div><label><span className="learning-visually-hidden">Search my courses</span><input type="search" placeholder="Find a course…" value={query} onChange={event => setQuery(event.target.value)}/></label></div><p className="learning-result-count" role="status">Showing {visibleCourses.length} of {courses.length} courses</p>
+        {!visibleCourses.length ? <div className="learning-empty"><h3>No courses match this view</h3><p>Try another course name or change the progress filter.</p><button className="learning-button" onClick={() => { setFilter('all'); setQuery(''); }}>Clear filters</button></div> : <div className="learning-course-grid">{visibleCourses.map(course => {const state = stateOf(course); const value = progress[course._id]; const coursePercent = value?.total ? Math.round(value.completed / value.total * 100) : 0; return <button key={course._id} className={`learning-course-card is-${state}`} onClick={() => onOpenCourse(course)} aria-label={`${actionLabels[state]}: ${course.title}`}><span className="learning-course-top">{course.image ? <img className="learning-course-cover" src={mediaUrl(course.image)} alt="" loading="lazy"/> : <span className="learning-course-icon"><LessonCategoryIcon category="vocabulary"/></span>}<span className={`learning-course-status is-${state}`}>{state === 'completed' && <span aria-hidden="true">✓ </span>}{statusLabels[state]}</span></span><span className="learning-course-level">{course.level || 'Chinese course'}</span><h3>{course.title}</h3>{course.description && <p className="learning-course-description">{course.description}</p>}<div className="learning-course-progress">{value ? <><div><span>{value.completed} of {value.total} lessons</span><strong>{coursePercent}%</strong></div><progress value={value.completed} max={value.total || 1} aria-label={`${course.title} completion`}/></> : <p>Progress couldn’t load. Open this course to try again.</p>}</div><span className="learning-course-action"><span>{actionLabels[state]}</span><span aria-hidden="true">{state === 'completed' ? '↻' : '→'}</span></span></button>})}</div>}
+      </>}
     </section>
-  );
+  </main>;
 }
-
-export default Dashboard;

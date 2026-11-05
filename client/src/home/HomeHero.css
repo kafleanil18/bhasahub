@@ -13,9 +13,9 @@
 .home-hero-secondary { display: inline-flex; align-items: center; gap: 16px; min-height: 44px; color: inherit; font-size: 12px; font-weight: 650; text-decoration: none; border-bottom: 1px solid var(--hero-line); }
 .home-hero-secondary:hover { color: var(--hero-red); border-color: currentColor; }
 .home-hero-note { margin-top: 12px; color: var(--hero-muted); font-size: 10px; }
-.home-hero-studio-link { display: flex; align-items: center; gap: 12px; max-width: 400px; border-top: 1px solid var(--hero-line); margin-top: 36px; padding-top: 20px; text-decoration: none; color: inherit; }
-.home-hero-link-mark { display: grid; place-items: center; width: 36px; height: 40px; border: 1px solid var(--hero-line); border-radius: 4px; color: var(--hero-red); font-family: 'Noto Serif SC',serif; font-size: 22px; flex-shrink: 0; }
-.home-hero-studio-link > span:nth-child(2) { flex: 1; font-size: 11px; font-weight: 600; }.home-hero-studio-link small { display: block; color: var(--hero-muted); font-size: 10px; margin-top: 4px; font-weight: 400; }.home-hero-studio-link > span:last-child { font-size: 18px; color: var(--hero-red); }
+
+
+
 .home-hero-artwork { min-width: 0; padding: 8px; border: 1px solid var(--hero-line); border-radius: 12px; background: color-mix(in srgb,var(--hero-paper) 85%,white); box-shadow: 0 16px 40px -28px #37271b40; }
 .home-hero-landscape { position: relative; aspect-ratio: 1.65; overflow: hidden; border-radius: 6px 6px 0 0; background: #f5eddc; }
 .home-hero-landscape img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 60%; }
@@ -44,14 +44,14 @@
  box-shadow: 0 16px 40px -32px #4a4c3540; animation: none;
 }
 .home-page .home-practice-directory .hero-practice-heading { margin-bottom: 8px; }
-.home-page .home-practice-directory .hero-practice-kicker { color: var(--accent-red); }
-.home-page .home-practice-directory .hero-practice-count { background: #ffffffa8; color: #48554c; border: 1px solid #ffffffb8; padding: 5px 10px; }
-.home-page .home-practice-directory .hero-practice-tools h2 { max-width: none; font-size: 30px; }
-.home-page .home-practice-directory .hero-practice-intro { max-width: none; margin-bottom: 24px; }
+.home-page .home-practice-directory .hero-practice-kicker { color: var(--accent-red); font-size: 12px; }
+.home-page .home-practice-directory .hero-practice-count { background: #ffffffa8; color: #48554c; border: 1px solid #ffffffb8; padding: 6px 12px; font-size: 12px; }
+.home-page .home-practice-directory .hero-practice-tools h2 { max-width: none; font-size: 36px; }
+.home-page .home-practice-directory .hero-practice-intro { max-width: none; margin-bottom: 28px; font-size: 15px; line-height: 1.7; }
 .home-page .home-practice-directory .hero-practice-list { grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; border: 0; }
 .home-page .home-practice-directory .hero-practice-link {
  --tool-color: var(--accent-red); --tool-bg: #ffeadf;
- align-items: flex-start; gap: 12px; padding: 24px 16px 20px; min-height: 172px;
+ align-items: flex-start; flex-direction: column; gap: 16px; padding: 24px 20px; min-height: 236px;
  border: 1px solid color-mix(in srgb,var(--tool-color) 16%,white); border-radius: 12px;
  background: var(--tool-bg); color: var(--ink); transform: none; box-shadow: 0 2px 0 #ffffff80 inset; animation: none;
  transition: transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s cubic-bezier(.2,.8,.2,1),border-color .22s cubic-bezier(.2,.8,.2,1);
@@ -71,18 +71,19 @@
 .home-page .home-practice-directory .hero-practice-link:active { transform: translateY(-1px) scale(.985); }
 .home-page .home-practice-directory .hero-practice-link:focus-visible { outline: 3px solid var(--tool-color); outline-offset: 3px; }
 .home-page .home-practice-directory .hero-practice-glyph {
- width: 32px; height: 36px; margin: 0; font-size: 24px; border: 1px solid #ffffff90; border-radius: 8px;
+ width: 48px; height: 52px; margin: 0; font-size: 36px; border: 1px solid #ffffff90; border-radius: 8px;
  background: #ffffff80; color: var(--tool-color); transition: transform .22s cubic-bezier(.2,.8,.2,1);
 }
-.home-page .home-practice-directory .hero-practice-link:is(:hover,:focus-visible) .hero-practice-glyph { transform: rotate(-4deg) scale(1.08); }
+.home-page .home-practice-directory .hero-practice-glyph svg { width: 34px; height: 34px; }
+.home-page .home-practice-directory .hero-practice-link:is(:hover,:focus-visible) .hero-practice-glyph { transform: scale(1.03); }
 .home-page .home-practice-directory .hero-practice-link :is(.hero-practice-start,.mock-test-kicker) { display: none; }
-.home-page .home-practice-directory .hero-practice-link strong { font-size: 12px; line-height: 1.5; color: var(--ink); }
-.home-page .home-practice-directory .hero-practice-link small { font-size: 10px; line-height: 1.7; margin-top: 6px; color: var(--mist); opacity: 1; }
+.home-page .home-practice-directory .hero-practice-link strong { font-size: 16px; line-height: 1.45; color: var(--ink); }
+.home-page .home-practice-directory .hero-practice-link small { font-size: 13px; line-height: 1.65; margin-top: 8px; color: var(--mist); opacity: 1; }
 .home-page .home-practice-directory .hero-practice-pinyin, .home-page .home-practice-directory .hero-practice-tests { grid-column: auto; }
 .home-page .home-practice-directory .hero-practice-pinyin::after { display: none; }
 .home-page .home-practice-directory .hero-practice-arrow {
- position: absolute; right: 8px; top: 7px; display: grid; place-items: center; width: 22px; height: 22px;
- margin: 0; border-radius: 50%; font-size: 12px; color: var(--tool-color);
+ position: absolute; right: 8px; top: 7px; display: grid; place-items: center; width: 30px; height: 30px;
+ margin: 0; border-radius: 50%; font-size: 18px; color: var(--tool-color);
  transition: transform .22s cubic-bezier(.2,.8,.2,1),background .22s cubic-bezier(.2,.8,.2,1),color .22s cubic-bezier(.2,.8,.2,1);
 }
 .home-page .home-practice-directory .hero-practice-link:is(:hover,:focus-visible) .hero-practice-arrow { background: var(--tool-color); color: white; transform: translate(1px,-1px); }
@@ -94,16 +95,19 @@
 .dark .home-page .home-practice-directory .hero-practice-link:is(:hover,:focus-visible) { background: color-mix(in srgb,var(--tool-color) 35%,#202626); }
 .dark .home-page .home-practice-directory .hero-practice-glyph { color: color-mix(in srgb,var(--tool-color) 30%,white); background: #ffffff0d; border-color: #ffffff22; }
 .dark .home-page .home-practice-directory .hero-practice-arrow { color: color-mix(in srgb,var(--tool-color) 30%,white); }
-@media (max-width: 640px) { .home-page .home-practice-directory .hero-practice-tools { padding: 20px 16px; border-radius: 16px; }.home-page .home-practice-directory .hero-practice-tools h2 { font-size: 26px; }.home-page .home-practice-directory .hero-practice-list { gap: 10px; } }
+@media (max-width: 640px) { .home-page .home-practice-directory .hero-practice-tools { padding: 20px 16px; border-radius: 16px; }.home-page .home-practice-directory .hero-practice-tools h2 { font-size: 30px; }.home-page .home-practice-directory .hero-practice-list { gap: 12px; grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .home-page .home-practice-directory .hero-practice-link,.home-page .home-practice-directory .hero-practice-glyph,.home-page .home-practice-directory .hero-practice-arrow { transition: none; transform: none !important; } }
 @media (max-width: 1050px) {
- .home-page .home-hero-grid { gap: 40px; }.home-hero h1 { font-size: 56px; }.home-hero-actions { gap: 12px; }.home-hero-primary { padding-left: 14px; gap: 12px; }.home-page .home-practice-directory .hero-practice-list { grid-template-columns: repeat(2,minmax(0,1fr)); }.home-page .home-practice-directory .hero-practice-link { min-height: 124px; }
+ .home-page .home-hero-grid { gap: 40px; }.home-hero h1 { font-size: 56px; }.home-hero-actions { gap: 12px; }.home-hero-primary { padding-left: 14px; gap: 12px; }.home-page .home-practice-directory .hero-practice-list { grid-template-columns: repeat(2,minmax(0,1fr)); }.home-page .home-practice-directory .hero-practice-link { min-height: 164px; flex-direction: row; }
 }
 @media (max-width: 767px) {
- .home-page .home-hero { padding: 36px 0 40px; }.home-page .home-hero-grid { grid-template-columns: 1fr; gap: 32px; }.home-hero-intro { padding-block: 0; }.home-hero h1 { font-size: clamp(44px,8vw,60px); margin: 20px 0; }.home-hero-description { max-width: 480px; }.home-hero-artwork { max-width: 480px; width: 100%; justify-self: center; }.home-hero-studio-link { margin-top: 24px; max-width: none; }.home-hero-landscape { aspect-ratio: 2; }.home-hero-greeting { padding: 20px; }.home-hero-hanzi { font-size: 60px; }.home-page .home-practice-directory { padding-block: 32px 40px; }.home-hero-listen-note { font-size: 10px; }
+ .home-page .home-hero { padding: 36px 0 40px; }.home-page .home-hero-grid { grid-template-columns: 1fr; gap: 32px; }.home-hero-intro { padding-block: 0; }.home-hero h1 { font-size: clamp(44px,8vw,60px); margin: 20px 0; }.home-hero-description { max-width: 480px; }.home-hero-artwork { max-width: 480px; width: 100%; justify-self: center; }.home-hero-landscape { aspect-ratio: 2; }.home-hero-greeting { padding: 20px; }.home-hero-hanzi { font-size: 60px; }.home-page .home-practice-directory { padding-block: 32px 40px; }.home-hero-listen-note { font-size: 10px; }
+}
+@media (max-width: 640px) {
+ .home-page .home-practice-directory .hero-practice-list { grid-template-columns: 1fr; }
 }
 @media (max-width: 400px) {
  .home-page .home-practice-directory .hero-practice-list { grid-template-columns: 1fr; }
- .home-hero-actions { align-items: stretch; flex-direction: column; gap: 8px; }.home-hero-primary { min-height: 52px; }.home-hero-secondary { justify-content: center; border-bottom: 0; }.home-hero-greeting { padding: 16px; }.home-hero-hanzi { font-size: 52px; }.home-hero-eyebrow { font-size: 9px; }.home-hero-studio-link > span:nth-child(2) { font-size: 10px; }.home-page .home-practice-directory .hero-practice-link { padding: 16px; min-height: 88px; gap: 12px; }.home-page .home-practice-directory .hero-practice-glyph { width: 28px; height: 32px; font-size: 22px; }.home-page .home-practice-directory .hero-practice-link strong { font-size: 12px; }.home-hero-art-caption { font-size: 8px; left: 12px; bottom: 12px; }
+ .home-hero-actions { align-items: stretch; flex-direction: column; gap: 8px; }.home-hero-primary { min-height: 52px; }.home-hero-secondary { justify-content: center; border-bottom: 0; }.home-hero-greeting { padding: 16px; }.home-hero-hanzi { font-size: 52px; }.home-hero-eyebrow { font-size: 9px; }.home-page .home-practice-directory .hero-practice-link { padding: 16px; min-height: 88px; gap: 12px; }.home-page .home-practice-directory .hero-practice-glyph { width: 44px; height: 48px; font-size: 32px; }.home-page .home-practice-directory .hero-practice-link strong { font-size: 16px; }.home-hero-art-caption { font-size: 8px; left: 12px; bottom: 12px; }
 }
 @media (prefers-reduced-motion: reduce) { .home-hero *, .home-hero *::before, .home-hero *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
