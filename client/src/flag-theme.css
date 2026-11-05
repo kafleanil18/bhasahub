@@ -1,6 +1,6 @@
 /* Chinese flag palette, with neutral surfaces for long-form reading. */
 :root {
-  --flag-red: #de2910;
+  --flag-red: var(--accent-red);
   --flag-yellow: #ffde00;
   --ink: #161616;
   --paper: #ffffff;
@@ -8,20 +8,21 @@
   --card: #ffffff;
   --line: #dedede;
   --mist: #595959;
-  --seal: #bd210d;
+  --seal: var(--accent-red);
   --gold: #ffde00;
-  --jade: #bd210d;
+  --jade: var(--accent-red);
 }
 :root.dark {
+  --accent-red-text: color-mix(in srgb, var(--accent-red) 55%, white);
   --ink: #ffffff;
   --paper: #111111;
   --rice: #202020;
   --card: #181818;
   --line: #414141;
   --mist: #bdbdbd;
-  --seal: #ff7968;
+  --seal: var(--accent-red-text);
   --gold: #ffde00;
-  --jade: #ff7968;
+  --jade: var(--accent-red-text);
 }
 .ambient-background { display: none; }
 :root .site-header {
@@ -65,21 +66,21 @@
   --paper: #ffffff;
   --card: #ffffff;
   --line: #dedede;
-  --jade: #bd210d;
-  --seal: #bd210d;
+  --jade: var(--accent-red);
+  --seal: var(--accent-red);
   background: #ffffff;
   color: #161616;
   border-color: #ffffff;
 }
-:root .home-page .card-characters { color: #bd210d; }
+:root .home-page .card-characters { color: var(--accent-red); }
 :root .home-page .card-pinyin-tag,
 :root .home-page .card-meaning-line,
 :root .home-page .card-translation,
 :root .home-page .card-english { color: #161616; }
 :root .home-page .tone-indicator { background: var(--flag-yellow); color: #161616; }
-:root .home-page .hero-audio-btn { color: #bd210d; background: #ffffff; border-color: #bd210d; }
+:root .home-page .hero-audio-btn { color: var(--accent-red); background: #ffffff; border-color: var(--accent-red); }
 :root .home-page .hero-audio-btn:hover,
-:root .home-page .hero-audio-btn.is-playing { background: #bd210d; color: #ffffff; }
+:root .home-page .hero-audio-btn.is-playing { background: var(--accent-red); color: #ffffff; }
 :root .home-page .audio-icon-box { background: transparent; color: inherit; }
 :root .home-page .section-kicker { color: var(--seal); }
 :root .home-page .level-pill.active { background: var(--flag-red); border-color: var(--flag-red); color: #ffffff; }

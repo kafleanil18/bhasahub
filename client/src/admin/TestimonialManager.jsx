@@ -141,8 +141,8 @@ function TestimonialManager({ onBack }) {
         }
 
         .tmm-metric-icon.seal {
-          background: rgba(200, 54, 42, 0.08);
-          color: var(--seal, #c8362a);
+          background: rgba(169, 35, 22, 0.08);
+          color: var(--seal, #a92316);
         }
 
         .tmm-metric-details {
@@ -342,13 +342,13 @@ function TestimonialManager({ onBack }) {
         }
 
         .tmm-btn-action.delete {
-          background: rgba(200, 54, 42, 0.04);
-          color: var(--seal, #c8362a);
-          border-color: rgba(200, 54, 42, 0.08);
+          background: rgba(169, 35, 22, 0.04);
+          color: var(--seal, #a92316);
+          border-color: rgba(169, 35, 22, 0.08);
         }
         .tmm-btn-action.delete:hover {
-          background: rgba(200, 54, 42, 0.08);
-          border-color: var(--seal, #c8362a);
+          background: rgba(169, 35, 22, 0.08);
+          border-color: var(--seal, #a92316);
         }
 
         .tmm-empty-state {

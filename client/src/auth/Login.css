@@ -240,8 +240,8 @@
 
 /* Error banner */
 .login-error-banner {
-  background: rgba(200, 54, 42, 0.08);
-  border: 1px solid rgba(200, 54, 42, 0.2);
+  background: rgba(var(--accent-red-rgb), 0.08);
+  border: 1px solid rgba(var(--accent-red-rgb), 0.2);
   border-radius: 8px;
   padding: 10px 14px;
   color: var(--seal);
@@ -343,7 +343,7 @@
 }
 
 .login-switch-view button:hover {
-  color: #a0281e;
+  color: var(--accent-red);
 }
 
 /* Responsive Breakpoints */

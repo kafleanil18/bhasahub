@@ -267,7 +267,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px 22px;
-  background: var(--seal, #c8362a);
+  background: var(--seal, var(--accent-red));
   color: #ffffff;
   border: none;
   border-radius: 10px;
@@ -275,13 +275,13 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(200, 54, 42, 0.35);
+  box-shadow: 0 4px 14px rgba(var(--accent-red-rgb), 0.35);
 }
 
 .dash-resume-btn:hover {
-  background: #d74b32;
+  background: var(--accent-red);
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(200, 54, 42, 0.45);
+  box-shadow: 0 6px 18px rgba(var(--accent-red-rgb), 0.45);
 }
 
 .dash-stats-grid {
@@ -464,7 +464,7 @@
 }
 
 .done-pill { background: rgba(46, 107, 87, 0.15); color: var(--jade, #2e6b57); }
-.active-pill { background: rgba(200, 54, 42, 0.12); color: var(--seal, #c8362a); }
+.active-pill { background: rgba(var(--accent-red-rgb), 0.12); color: var(--seal, var(--accent-red)); }
 .new-pill { background: rgba(122, 114, 102, 0.12); color: var(--mist, #7a7266); }
 
 .dash-card-body {
@@ -517,7 +517,7 @@
 
 .dash-progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--gold, #c99a3c) 0%, var(--seal, #c8362a) 100%);
+  background: linear-gradient(90deg, var(--gold, #c99a3c) 0%, var(--seal, var(--accent-red)) 100%);
   border-radius: 4px;
   transition: width 0.4s ease;
 }
@@ -528,8 +528,8 @@
   font-size: 14px;
   font-weight: 600;
   color: var(--seal);
-  background: rgba(200, 54, 42, 0.08);
-  border: 1px solid rgba(200, 54, 42, 0.2);
+  background: rgba(var(--accent-red-rgb), 0.08);
+  border: 1px solid rgba(var(--accent-red-rgb), 0.2);
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -574,8 +574,8 @@
 }
 
 .vocab-audio-btn {
-  background: rgba(200, 54, 42, 0.12);
-  border: 1px solid rgba(200, 54, 42, 0.25);
+  background: rgba(var(--accent-red-rgb), 0.12);
+  border: 1px solid rgba(var(--accent-red-rgb), 0.25);
   border-radius: 6px;
   padding: 2px 8px;
   font-size: 14px;
@@ -584,7 +584,7 @@
 }
 
 .vocab-audio-btn:hover {
-  background: var(--seal, #c8362a);
+  background: var(--seal, var(--accent-red));
   color: #ffffff;
   transform: scale(1.08);
 }
@@ -645,10 +645,10 @@
 }
 
 .tone-tab-btn.active {
-  background: var(--seal, #c8362a);
+  background: var(--seal, var(--accent-red));
   border-color: var(--seal);
   color: #ffffff;
-  box-shadow: 0 8px 20px rgba(200, 54, 42, 0.25);
+  box-shadow: 0 8px 20px rgba(var(--accent-red-rgb), 0.25);
 }
 
 .tone-tab-num {
@@ -720,8 +720,8 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--seal);
-  background: rgba(200, 54, 42, 0.08);
-  border: 1px solid rgba(200, 54, 42, 0.2);
+  background: rgba(var(--accent-red-rgb), 0.08);
+  border: 1px solid rgba(var(--accent-red-rgb), 0.2);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -821,7 +821,7 @@
   align-items: center;
   gap: 10px;
   padding: 14px 24px;
-  background: var(--seal, #c8362a);
+  background: var(--seal, var(--accent-red));
   color: #ffffff;
   border: none;
   border-radius: 12px;
@@ -829,16 +829,16 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 16px rgba(200, 54, 42, 0.35);
+  box-shadow: 0 4px 16px rgba(var(--accent-red-rgb), 0.35);
 }
 
 .tone-record-btn:hover {
-  background: #d74b32;
+  background: var(--accent-red);
   transform: translateY(-1px);
 }
 
 .tone-record-btn.recording {
-  background: #b72f23;
+  background: var(--accent-red);
   animation: pulseRecording 1.2s infinite;
 }
 

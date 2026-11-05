@@ -162,7 +162,7 @@
 }
 
 @keyframes fire-flicker {
-  0% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(200, 54, 42, 0.3)); }
+  0% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(var(--accent-red-rgb), 0.3)); }
   100% { transform: scale(1.08) translateY(-2px); filter: drop-shadow(0 0 6px rgba(201, 154, 60, 0.6)); }
 }
 
@@ -411,9 +411,9 @@
 }
 
 .badge-review {
-  background: rgba(200, 54, 42, 0.1);
+  background: rgba(var(--accent-red-rgb), 0.1);
   color: var(--seal);
-  border: 1px solid rgba(200, 54, 42, 0.2);
+  border: 1px solid rgba(var(--accent-red-rgb), 0.2);
 }
 
 /* Vocabulary Review Cards */
@@ -449,7 +449,7 @@
 .vocab-review-card:hover {
   transform: translateY(-4px) scale(1.02);
   border-color: var(--seal);
-  box-shadow: 0 8px 20px rgba(200, 54, 42, 0.08);
+  box-shadow: 0 8px 20px rgba(var(--accent-red-rgb), 0.08);
 }
 
 .vocab-card-header {
@@ -460,7 +460,7 @@
 }
 
 .vocab-misses-tag {
-  background: rgba(200, 54, 42, 0.1);
+  background: rgba(var(--accent-red-rgb), 0.1);
   color: var(--seal);
   font-size: 11px;
   font-weight: 600;
@@ -605,7 +605,7 @@
 .hanzi-search-input:focus {
   outline: none;
   border-color: var(--seal);
-  box-shadow: 0 0 0 3px rgba(200, 54, 42, 0.12);
+  box-shadow: 0 0 0 3px rgba(var(--accent-red-rgb), 0.12);
 }
 
 .hanzi-categories-scroll {
@@ -637,7 +637,7 @@
   font-size: 11px;
   font-weight: 600;
   color: var(--seal);
-  background: rgba(200, 54, 42, 0.08);
+  background: rgba(var(--accent-red-rgb), 0.08);
   padding: 2px 9px;
   border-radius: 10px;
 }

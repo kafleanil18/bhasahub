@@ -1,4 +1,4 @@
-.home-page .hero-practice-tools { --practice-red: #bd210d; --practice-gold: #f5ce69; position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 24px; min-width: 0; box-shadow: 0 20px 48px -32px color-mix(in srgb, var(--ink) 35%, transparent); }
+.home-page .hero-practice-tools { --practice-red: var(--accent-red); --practice-gold: #f5ce69; position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 24px; min-width: 0; box-shadow: 0 20px 48px -32px color-mix(in srgb, var(--ink) 35%, transparent); }
 .home-page .hero-practice-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
 .home-page .hero-practice-kicker { color: var(--seal); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; margin: 0; }
 .home-page .hero-practice-count { border: 1px solid var(--line); border-radius: 20px; padding: 5px 10px; color: var(--mist); font-size: 10px; white-space: nowrap; }

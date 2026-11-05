@@ -185,7 +185,7 @@ function ToneScorer({ onBack }) {
     // Draw User Recorded Curve (Jade or Red) if score exists
     if (scoreResult && scoreResult.detectedPitch) {
       const userPitch = scoreResult.detectedPitch;
-      ctx.strokeStyle = scoreResult.overallScore >= 80 ? '#2e6b57' : '#c8362a';
+      ctx.strokeStyle = scoreResult.overallScore >= 80 ? '#2e6b57' : '#a92316';
       ctx.lineWidth = 3;
       ctx.setLineDash([5, 5]);
       ctx.beginPath();

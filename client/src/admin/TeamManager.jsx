@@ -244,9 +244,9 @@ function TeamManager({ onBack }) {
         }
 
         .tmg-error {
-          background: rgba(200, 54, 42, 0.06);
-          color: var(--seal, #c8362a);
-          border: 1px solid rgba(200, 54, 42, 0.15);
+          background: rgba(169, 35, 22, 0.06);
+          color: var(--seal, #a92316);
+          border: 1px solid rgba(169, 35, 22, 0.15);
           border-radius: 8px;
           padding: 0.75rem 1rem;
           margin-bottom: 1.5rem;
@@ -336,7 +336,7 @@ function TeamManager({ onBack }) {
         .tmg-remove-btn {
           background: none;
           border: none;
-          color: var(--seal, #c8362a);
+          color: var(--seal, #a92316);
           font-size: 0.8rem;
           font-weight: 600;
           cursor: pointer;
@@ -570,7 +570,7 @@ function TeamManager({ onBack }) {
                   style={{
                     background: 'none',
                     border: '1px solid var(--line)',
-                    color: 'var(--seal, #c8362a)',
+                    color: 'var(--seal, #a92316)',
                     padding: '8px 16px',
                     borderRadius: '8px',
                     fontSize: '0.8rem',

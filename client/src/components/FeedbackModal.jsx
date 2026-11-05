@@ -40,178 +40,178 @@ function FeedbackModal({ user, onClose }) {
           background: rgba(42, 35, 32, 0.45);
           backdrop-filter: blur(8px);
           -webkit-backdrop-filter: blur(8px);
-          display: flex; 
-          align-items: center; 
-          justify-content: center; 
+          display: flex;
+          align-items: center;
+          justify-content: center;
           z-index: 1000;
           font-family: 'Inter', sans-serif;
           animation: fbFadeIn 0.2s ease-out;
         }
-        
+
         .fb-card {
-          background: var(--card); 
-          width: 90%; 
-          max-width: 460px; 
+          background: var(--card);
+          width: 90%;
+          max-width: 460px;
           padding: 2.25rem;
-          border-radius: 16px; 
+          border-radius: 16px;
           box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-          border: 1px solid var(--line); 
+          border: 1px solid var(--line);
           box-sizing: border-box;
-          position: relative; 
+          position: relative;
           animation: fbSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        
+
         .fb-close-btn {
-          position: absolute; 
-          top: 20px; 
-          right: 20px; 
+          position: absolute;
+          top: 20px;
+          right: 20px;
           background: var(--rice);
-          border: none; 
-          width: 30px; 
-          height: 30px; 
+          border: none;
+          width: 30px;
+          height: 30px;
           border-radius: 50%;
-          cursor: pointer; 
-          color: var(--mist); 
-          font-size: 18px; 
+          cursor: pointer;
+          color: var(--mist);
+          font-size: 18px;
           font-weight: bold;
-          display: flex; 
-          align-items: center; 
-          justify-content: center; 
+          display: flex;
+          align-items: center;
+          justify-content: center;
           transition: all 0.2s ease;
         }
-        
-        .fb-close-btn:hover { 
-          background: var(--line); 
-          color: var(--seal); 
-        }
-        
-        .fb-title { 
-          font-family: 'Fraunces', serif;
-          font-size: 1.6rem; 
-          font-weight: 700; 
-          color: var(--ink); 
-          margin: 0 0 0.35rem 0; 
-          letter-spacing: -0.01em; 
-        }
-        
-        .fb-sub { 
-          font-size: 0.925rem; 
-          color: var(--mist); 
-          margin: 0 0 1.5rem 0; 
-          line-height: 1.5; 
-        }
-        
-        .fb-error {
-          background-color: rgba(200, 54, 42, 0.08); 
-          border-left: 4px solid var(--seal); 
+
+        .fb-close-btn:hover {
+          background: var(--line);
           color: var(--seal);
-          padding: 0.75rem 1rem; 
-          border-radius: 6px; 
-          margin-bottom: 1.25rem; 
+        }
+
+        .fb-title {
+          font-family: 'Fraunces', serif;
+          font-size: 1.6rem;
+          font-weight: 700;
+          color: var(--ink);
+          margin: 0 0 0.35rem 0;
+          letter-spacing: -0.01em;
+        }
+
+        .fb-sub {
+          font-size: 0.925rem;
+          color: var(--mist);
+          margin: 0 0 1.5rem 0;
+          line-height: 1.5;
+        }
+
+        .fb-error {
+          background-color: rgba(169, 35, 22, 0.08);
+          border-left: 4px solid var(--seal);
+          color: var(--seal);
+          padding: 0.75rem 1rem;
+          border-radius: 6px;
+          margin-bottom: 1.25rem;
           font-size: 0.875rem;
           font-weight: 500;
           display: flex;
           align-items: center;
           gap: 6px;
         }
-        
-        .fb-group { 
-          margin-bottom: 1.25rem; 
+
+        .fb-group {
+          margin-bottom: 1.25rem;
           display: flex;
           flex-direction: column;
           gap: 6px;
         }
-        
-        .fb-label { 
-          display: block; 
-          font-size: 0.875rem; 
-          font-weight: 600; 
-          color: var(--ink); 
-        }
-        
-        .fb-input, .fb-textarea {
-          width: 100%; 
-          padding: 0.75rem 0.875rem; 
-          border: 1px solid var(--line); 
-          border-radius: 8px;
-          font-size: 0.95rem; 
-          box-sizing: border-box; 
-          background: var(--paper); 
+
+        .fb-label {
+          display: block;
+          font-size: 0.875rem;
+          font-weight: 600;
           color: var(--ink);
-          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+
+        .fb-input, .fb-textarea {
+          width: 100%;
+          padding: 0.75rem 0.875rem;
+          border: 1px solid var(--line);
+          border-radius: 8px;
+          font-size: 0.95rem;
+          box-sizing: border-box;
+          background: var(--paper);
+          color: var(--ink);
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
           font-family: inherit;
         }
-        
+
         .fb-input:focus, .fb-textarea:focus {
-          outline: none; 
-          border-color: var(--jade); 
+          outline: none;
+          border-color: var(--jade);
           box-shadow: 0 0 0 3px rgba(46, 107, 87, 0.15);
           background: var(--card);
         }
-        
-        .fb-textarea { 
-          resize: vertical; 
-          min-height: 110px; 
+
+        .fb-textarea {
+          resize: vertical;
+          min-height: 110px;
         }
-        
+
         .fb-btn-submit {
-          width: 100%; 
-          background: var(--jade); 
-          color: white !important; 
-          border: none; 
+          width: 100%;
+          background: var(--jade);
+          color: white !important;
+          border: none;
           padding: 0.875rem;
-          border-radius: 8px; 
-          font-weight: 600; 
-          font-size: 1rem; 
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 1rem;
           cursor: pointer;
-          transition: all 0.2s ease; 
-          display: flex; 
-          justify-content: center; 
+          transition: all 0.2s ease;
+          display: flex;
+          justify-content: center;
           align-items: center;
           box-shadow: 0 4px 12px rgba(46, 107, 87, 0.15);
         }
-        
-        .fb-btn-submit:hover:not(:disabled) { 
-          background: #256e4e; 
+
+        .fb-btn-submit:hover:not(:disabled) {
+          background: #256e4e;
           transform: translateY(-1px);
           box-shadow: 0 6px 16px rgba(46, 107, 87, 0.25);
         }
-        
+
         .fb-btn-submit:active:not(:disabled) {
           transform: translateY(0);
         }
-        
-        .fb-btn-submit:disabled { 
+
+        .fb-btn-submit:disabled {
           opacity: 0.6;
-          cursor: not-allowed; 
+          cursor: not-allowed;
           box-shadow: none;
         }
-        
-        .fb-success { 
-          text-align: center; 
-          padding: 1.5rem 0 0.5rem 0; 
+
+        .fb-success {
+          text-align: center;
+          padding: 1.5rem 0 0.5rem 0;
         }
-        
-        .fb-success-icon { 
-          font-size: 3rem; 
-          margin-bottom: 1rem; 
-          display: block; 
+
+        .fb-success-icon {
+          font-size: 3rem;
+          margin-bottom: 1rem;
+          display: block;
         }
-        
+
         .fb-btn-close {
-          background: var(--rice); 
-          color: var(--ink); 
-          border: 1px solid var(--line); 
+          background: var(--rice);
+          color: var(--ink);
+          border: 1px solid var(--line);
           padding: 0.75rem 2rem;
-          border-radius: 8px; 
-          font-weight: 600; 
-          cursor: pointer; 
-          transition: all 0.2s ease; 
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
           margin-top: 1.5rem;
         }
-        
-        .fb-btn-close:hover { 
-          background: var(--line); 
+
+        .fb-btn-close:hover {
+          background: var(--line);
           color: var(--seal);
         }
 
@@ -249,31 +249,31 @@ function FeedbackModal({ user, onClose }) {
 
             <div className="fb-group">
               <label className="fb-label">Name</label>
-              <input 
-                className="fb-input" 
-                value={name} 
-                onChange={(e) => setName(e.target.value)} 
-                placeholder="Your name" 
+              <input
+                className="fb-input"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your name"
               />
             </div>
 
             <div className="fb-group">
               <label className="fb-label">Email Address</label>
-              <input 
-                className="fb-input" 
+              <input
+                className="fb-input"
                 type="email"
-                value={email} 
-                onChange={(e) => setEmail(e.target.value)} 
-                placeholder="you@example.com" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
               />
             </div>
 
             <div className="fb-group">
               <label className="fb-label">Message</label>
-              <textarea 
-                className="fb-textarea" 
-                rows="4" 
-                value={message} 
+              <textarea
+                className="fb-textarea"
+                rows="4"
+                value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Write your message here..."
               />

@@ -8,7 +8,7 @@ const FONT_SIZES = [
   { label: 'Huge', value: '7' },
 ];
 
-const COLORS = ['#1a1a1a', '#b3261e', '#1a56db', '#0f7b3f', '#a35709', '#6b21a8'];
+const COLORS = ['#1a1a1a', '#a92316', '#1a56db', '#0f7b3f', '#a35709', '#6b21a8'];
 
 function RichTextEditor({ value, onChange, placeholder, onUploadImage, onError }) {
   const ref = useRef(null);

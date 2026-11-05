@@ -250,7 +250,7 @@ function ConversationPracticePage({ onBack }) {
           text-align: left; cursor: pointer; background: var(--paper, #fff);
           transition: transform 0.15s, border-color 0.15s;
         }
-        .conv-scenario-card:hover { transform: translateY(-2px); border-color: var(--seal, #b3423a); }
+        .conv-scenario-card:hover { transform: translateY(-2px); border-color: var(--seal, #a92316); }
         .conv-scenario-icon { font-size: 1.8rem; display: block; margin-bottom: 8px; }
         .conv-scenario-title { font-weight: 600; display: block; }
         .conv-scenario-subtitle { color: var(--line); font-size: 0.85rem; }
@@ -272,7 +272,7 @@ function ConversationPracticePage({ onBack }) {
         .conv-record-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
         .conv-record-btn {
           border: none; border-radius: 999px; width: 64px; height: 64px; font-size: 1.6rem;
-          background: var(--seal, #b3423a); color: #fff; cursor: pointer;
+          background: var(--seal, #a92316); color: #fff; cursor: pointer;
         }
         .conv-record-btn.recording { animation: conv-pulse 1.2s infinite; }
         .conv-record-hint { color: var(--line); font-size: 0.85rem; }
@@ -284,13 +284,13 @@ function ConversationPracticePage({ onBack }) {
           padding: 8px 14px; cursor: pointer; font-size: 0.85rem;
         }
         .conv-photo-thumb { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; }
-        .conv-photo-remove { border: none; background: transparent; color: var(--seal, #b3423a); cursor: pointer; font-size: 0.8rem; }
+        .conv-photo-remove { border: none; background: transparent; color: var(--seal, #a92316); cursor: pointer; font-size: 0.8rem; }
 
         .conv-pending { margin-top: 16px; }
         .conv-pending audio { width: 100%; }
         .conv-pending-actions { display: flex; gap: 10px; margin-top: 10px; }
         .conv-save-btn {
-          border: none; background: var(--seal, #b3423a); color: #fff; border-radius: 10px;
+          border: none; background: var(--seal, #a92316); color: #fff; border-radius: 10px;
           padding: 10px 18px; font-weight: 600; cursor: pointer;
         }
         .conv-save-btn:disabled { opacity: 0.5; cursor: default; }
@@ -300,7 +300,7 @@ function ConversationPracticePage({ onBack }) {
         }
 
         .conv-error-banner {
-          color: #a33; background: rgba(163, 51, 51, 0.08); border: 1px solid rgba(163, 51, 51, 0.3);
+          color: #a92316; background: rgba(169, 35, 22, 0.08); border: 1px solid rgba(169, 35, 22, 0.3);
           border-radius: 8px; padding: 8px 12px; font-size: 0.9rem; margin-top: 12px;
         }
 
@@ -313,12 +313,12 @@ function ConversationPracticePage({ onBack }) {
         .conv-script-dots { display: flex; gap: 6px; }
         .conv-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line, #ddd); opacity: 0.4; }
         .conv-dot.done { background: var(--jade, #3a8f78); opacity: 1; }
-        .conv-dot.active { background: var(--seal, #b3423a); opacity: 1; transform: scale(1.3); }
+        .conv-dot.active { background: var(--seal, #a92316); opacity: 1; transform: scale(1.3); }
 
         .conv-dialogue { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
         .conv-bubble { border-radius: 14px; padding: 14px 16px; max-width: 84%; border: 1.5px solid var(--line, #ddd); }
         .conv-bubble.waiter { align-self: flex-start; background: var(--paper, #f4f1ea); }
-        .conv-bubble.you { align-self: flex-end; background: rgba(179, 66, 58, 0.06); border-color: var(--seal, #b3423a); }
+        .conv-bubble.you { align-self: flex-end; background: rgba(169, 35, 22, 0.06); border-color: var(--seal, #a92316); }
         .conv-bubble.done { opacity: 0.7; }
         .conv-bubble.active { box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
         .conv-bubble-role { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--line); margin-bottom: 4px; }
@@ -331,12 +331,12 @@ function ConversationPracticePage({ onBack }) {
           padding: 5px 10px; cursor: pointer; font-size: 0.8rem;
         }
         .conv-next-btn {
-          border: none; background: var(--seal, #b3423a); color: #fff; border-radius: 8px;
+          border: none; background: var(--seal, #a92316); color: #fff; border-radius: 8px;
           padding: 6px 14px; cursor: pointer; font-size: 0.8rem; font-weight: 600; margin-top: 10px;
         }
         .conv-bubble-recording { display: flex; align-items: center; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
         .conv-bubble-recording audio { height: 32px; }
-        .conv-redo-btn { border: none; background: transparent; color: var(--seal, #b3423a); cursor: pointer; font-size: 0.8rem; padding: 0; }
+        .conv-redo-btn { border: none; background: transparent; color: var(--seal, #a92316); cursor: pointer; font-size: 0.8rem; padding: 0; }
         .conv-complete-banner {
           text-align: center; padding: 20px; border-radius: 14px; background: rgba(58, 143, 120, 0.08);
           border: 1.5px solid var(--jade, #3a8f78); margin-bottom: 24px; font-weight: 600;

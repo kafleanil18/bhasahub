@@ -516,7 +516,7 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
           width: 18px;
           height: 18px;
           border-radius: 50%;
-          background: #d62828;
+          background: #a92316;
           box-shadow: 0 1px 3px rgba(0,0,0,0.3);
           cursor: pointer;
           vertical-align: middle;
@@ -530,7 +530,7 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
           border-color: transparent transparent transparent #fff;
         }
         .pinyin-tone-btn:hover .pinyin-tone-recorded-badge {
-          background: #ff3b3b;
+          background: #a92316;
           transform: scale(1.1);
         }
         .pinyin-record-controls {
@@ -607,8 +607,8 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
           font-size: 0.72rem;
           font-weight: 600;
           color: var(--seal);
-          background: rgba(200, 54, 42, 0.08);
-          border: 1px solid rgba(200, 54, 42, 0.25);
+          background: rgba(169, 35, 22, 0.08);
+          border: 1px solid rgba(169, 35, 22, 0.25);
           padding: 2px 8px;
           border-radius: 999px;
           margin-left: 10px;

@@ -67,7 +67,7 @@ function HanziTracePage({ user, onBack, token }) {
   const drawingRef = useRef(false);
   const currentStrokeRef = useRef([]);
   const inkColorRef = useRef('#2a2320');
-  const sealColorRef = useRef('#c8362a');
+  const sealColorRef = useRef('#a92316');
   const lineColorRef = useRef('#e6dcc6');
 
   const [demoUnavailable, setDemoUnavailable] = useState(false);
@@ -78,7 +78,7 @@ function HanziTracePage({ user, onBack, token }) {
     fetchCharacters();
     const rootStyle = getComputedStyle(document.documentElement);
     inkColorRef.current = rootStyle.getPropertyValue('--ink').trim() || '#2a2320';
-    sealColorRef.current = rootStyle.getPropertyValue('--seal').trim() || '#c8362a';
+    sealColorRef.current = rootStyle.getPropertyValue('--seal').trim() || '#a92316';
     lineColorRef.current = rootStyle.getPropertyValue('--line').trim() || '#e6dcc6';
   }, []);
 

@@ -49,7 +49,7 @@
 .listening-result-bar { display: flex; height: 10px; overflow: hidden; border-radius: 8px; background: var(--line); }
 .listening-result-bar > span { flex-basis: 0; min-width: 0; }
 .listening-result-correct { background: #28734e; }
-.listening-result-incorrect { background: #bd210d; background-image: repeating-linear-gradient(135deg, transparent 0 4px, #ffffff55 4px 6px); }
+.listening-result-incorrect { background: var(--accent-red); background-image: repeating-linear-gradient(135deg, transparent 0 4px, #ffffff55 4px 6px); }
 .listening-result-labels { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; margin-top: 12px; font-size: 13px; }
 .listening-result-labels > span { display: inline-flex; align-items: center; gap: 6px; }
 .listening-result-dot { display: inline-block; width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }

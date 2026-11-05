@@ -8,7 +8,7 @@ header,
   background: rgba(22, 19, 17, 0.96);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 2px solid rgba(200, 54, 42, 0.7);
+  border-bottom: 2px solid rgba(var(--accent-red-rgb), 0.7);
   box-shadow: 0 4px 26px rgba(0, 0, 0, 0.22);
   transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, padding 0.25s ease;
 }
@@ -68,13 +68,13 @@ header .container {
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #e63929 0%, #b82216 100%);
+  background: linear-gradient(135deg, var(--accent-red) 0%, var(--accent-red) 100%);
   color: #fff;
   font-family: 'Noto Serif SC', 'KaiTi', 'SimSun', serif;
   font-weight: 700;
   font-size: 19px;
   line-height: 1;
-  box-shadow: 0 2px 10px rgba(230, 57, 41, 0.45), inset 0 0 0 1.5px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 10px rgba(var(--accent-red-rgb), 0.45), inset 0 0 0 1.5px rgba(255, 255, 255, 0.5);
   letter-spacing: 0;
   flex-shrink: 0;
   position: relative;
@@ -83,7 +83,7 @@ header .container {
 
 .brand-logo:hover .brand-seal {
   transform: rotate(-4deg) scale(1.06);
-  box-shadow: 0 4px 16px rgba(230, 57, 41, 0.6), inset 0 0 0 1.5px rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 16px rgba(var(--accent-red-rgb), 0.6), inset 0 0 0 1.5px rgba(255, 255, 255, 0.7);
 }
 
 .brand-title {
@@ -96,7 +96,7 @@ header .container {
 }
 
 .brand-accent {
-  color: #ff5e52;
+  color: var(--accent-red-text);
 }
 
 /* Center Desktop Navigation */
@@ -251,7 +251,7 @@ header .container {
 
 .lang-picker-trigger:hover,
 .lang-picker-trigger.active {
-  border-color: #ff5e52;
+  border-color: var(--accent-red-text);
   background: rgba(255, 255, 255, 0.12);
   color: #ffffff;
 }
@@ -291,7 +291,7 @@ header .container {
 }
 
 .lang-active-check {
-  color: #ff5e52;
+  color: var(--accent-red-text);
   font-weight: 700;
   font-size: 14px;
 }
@@ -330,25 +330,25 @@ header .container {
   border-radius: 999px;
   font-size: 13px;
   font-weight: 600;
-  background: rgba(200, 54, 42, 0.22);
-  border: 1px solid rgba(200, 54, 42, 0.45);
-  color: #ff857a;
+  background: rgba(var(--accent-red-rgb), 0.22);
+  border: 1px solid rgba(var(--accent-red-rgb), 0.45);
+  color: var(--accent-red-text);
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
 }
 
 .admin-nav-toggle:hover {
-  background: #c8362a;
+  background: var(--accent-red);
   color: #fff;
-  border-color: #c8362a;
+  border-color: var(--accent-red);
 }
 
 .admin-nav-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #ff5e52;
+  background: var(--accent-red-text);
   color: #fff;
   border-radius: 999px;
   min-width: 17px;
@@ -361,7 +361,7 @@ header .container {
 
 .admin-nav-toggle:hover .admin-nav-badge {
   background: #fff;
-  color: #c8362a;
+  color: var(--accent-red);
 }
 
 /* Compact Icon-only Theme Toggle (Sun/Moon) */
@@ -451,8 +451,8 @@ header .container {
 }
 
 .user-role-badge.super {
-  background: rgba(200, 54, 42, 0.35);
-  color: #ff857a;
+  background: rgba(var(--accent-red-rgb), 0.35);
+  color: var(--accent-red-text);
 }
 
 .user-menu-dropdown {
@@ -521,8 +521,8 @@ header .container {
 }
 
 .user-menu-dropdown button.logout-item:hover {
-  background: rgba(200, 54, 42, 0.2);
-  color: #ff857a;
+  background: rgba(var(--accent-red-rgb), 0.2);
+  color: var(--accent-red-text);
 }
 
 /* Primary Sign In Button */
@@ -536,9 +536,9 @@ header .container {
   font-weight: 600;
   font-size: 13.5px;
   color: #fff;
-  background: linear-gradient(135deg, #e63929 0%, #ba2014 100%);
+  background: linear-gradient(135deg, var(--accent-red) 0%, var(--accent-red) 100%);
   border: none;
-  box-shadow: 0 4px 14px rgba(230, 57, 41, 0.45);
+  box-shadow: 0 4px 14px rgba(var(--accent-red-rgb), 0.45);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   white-space: nowrap;
@@ -547,7 +547,7 @@ header .container {
 
 .nav-btn-primary:hover {
   transform: translateY(-1.5px);
-  box-shadow: 0 6px 20px rgba(230, 57, 41, 0.6);
+  box-shadow: 0 6px 20px rgba(var(--accent-red-rgb), 0.6);
   color: #fff;
 }
 
@@ -932,7 +932,7 @@ h1, h2, h3, h4, h5, h6,
 
 .server-status-badge.offline .status-pulse-dot {
   background: var(--seal);
-  box-shadow: 0 0 0 0 rgba(200, 54, 42, 0.4);
+  box-shadow: 0 0 0 0 rgba(var(--accent-red-rgb), 0.4);
   animation: dot-pulse-red 1.6s infinite;
 }
 
@@ -949,19 +949,19 @@ h1, h2, h3, h4, h5, h6,
 }
 
 @keyframes dot-pulse-red {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(200, 54, 42, 0.7); }
-  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(200, 54, 42, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(200, 54, 42, 0); }
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(var(--accent-red-rgb), 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(var(--accent-red-rgb), 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(var(--accent-red-rgb), 0); }
 }
 
 /* Action Items Alert Banner */
 .admin-actions-alert-banner {
-  background: linear-gradient(135deg, var(--card) 0%, rgba(200, 54, 42, 0.05) 100%);
-  border: 1px solid rgba(200, 54, 42, 0.25);
+  background: linear-gradient(135deg, var(--card) 0%, rgba(var(--accent-red-rgb), 0.05) 100%);
+  border: 1px solid rgba(var(--accent-red-rgb), 0.25);
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 32px;
-  box-shadow: 0 4px 15px rgba(200, 54, 42, 0.03);
+  box-shadow: 0 4px 15px rgba(var(--accent-red-rgb), 0.03);
 }
 
 .alert-banner-header {
@@ -1027,7 +1027,7 @@ h1, h2, h3, h4, h5, h6,
 .alert-action-pill:hover {
   transform: translateY(-2px);
   border-color: var(--seal);
-  box-shadow: 0 4px 12px rgba(200, 54, 42, 0.08);
+  box-shadow: 0 4px 12px rgba(var(--accent-red-rgb), 0.08);
 }
 
 .alert-action-label {
@@ -1040,7 +1040,7 @@ h1, h2, h3, h4, h5, h6,
   font-size: 12px;
   font-weight: 600;
   color: var(--seal);
-  background: rgba(200, 54, 42, 0.1);
+  background: rgba(var(--accent-red-rgb), 0.1);
   padding: 2px 8px;
   border-radius: 10px;
   margin-left: 8px;
@@ -1445,7 +1445,7 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .audit-badge-delete {
-  background: rgba(200, 54, 42, 0.1);
+  background: rgba(var(--accent-red-rgb), 0.1);
   color: var(--seal);
 }
 

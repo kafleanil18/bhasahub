@@ -615,9 +615,9 @@ function AppContent() {
 
           <HomeCourses access={access} filteredCourses={filteredCourses} hskLevels={hskLevels} levelFilter={levelFilter} openLogin={openLogin} setActiveCourse={setActiveCourse} setLevelFilter={setLevelFilter} setLockedNotice={setLockedNotice} user={user} />
 
-          <HomeTestimonials scrollTestimonials={scrollTestimonials} setShowTestimonial={setShowTestimonial} testimonials={testimonials} testimonialsScrollRef={testimonialsScrollRef} user={user} />
+          {!user && <HomeTestimonials scrollTestimonials={scrollTestimonials} setShowTestimonial={setShowTestimonial} testimonials={testimonials} testimonialsScrollRef={testimonialsScrollRef} user={user} />}
 
-          {user && <HomeTeam setActiveTeamMember={setActiveTeamMember} teamPhotos={teamPhotos} />}
+          {!user && <HomeTeam setActiveTeamMember={setActiveTeamMember} teamPhotos={teamPhotos} />}
 
 
 

@@ -1,99 +1,46 @@
+import { useEffect, useRef, useState } from 'react';
 import PracticeStudio from './PracticeStudio';
+import './HomeHero.css';
 
 export default function HomeHero({ goHome, setShowDashboard, setShowPinyinPage, user, onOpenPractice }) {
-  return (
-    <section className="hero">
-            <div className="container hero-grid">
-              <div className="hero-text">
-                <img className="hero-ink-art" src="/images/chinese-ink-landscape.jpg" width="960" height="640" alt="" aria-hidden="true" decoding="async" fetchPriority="high" />
-                <div className="hero-badge">
-                  <span className="hero-badge-dot" aria-hidden="true"></span>
-                  <span className="hero-badge-text">Mandarin Chinese · English explanations</span>
-                </div>
-                <h1 className="hero-title">
-                  {user ? (
-                    <>Welcome back, <span className="hero-highlight">{user.name}</span>!</>
-                  ) : (
-                    <>
-                      Learn Chinese,{' '}
-                      <span className="hero-highlight">one clear step at a time.</span>
-                    </>
-                  )}
-                </h1>
-                <p className="hero-subtitle">
-                  From your first nǐ hǎo to your next HSK milestone. Learn with English explanations, guided lessons, and pronunciation you can hear and practice.
-                </p>
-                <div className="hero-actions">
-                  {!user ? (
-                    <button className="btn-primary hero-btn-main pinyin-practice-btn" onClick={() => { goHome(); setShowPinyinPage(true); }}>
-                      <span>Try Free Pinyin Practice</span>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                      </svg>
-                    </button>
-                  ) : (
-                    <button className="btn-primary hero-btn-main continue-learning-btn" onClick={() => { goHome(); setShowDashboard(true); }}>Continue Learning <span className="continue-learning-icon" aria-hidden="true">↗</span></button>
-                  )}
-                  <a className="btn-secondary hero-btn-secondary" href="#courses">
-                    <span>Explore Courses</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M6 9l6 6 6-6"/>
-                    </svg>
-                  </a>
-                </div>
-
-                <p className="hero-access-note">Free pronunciation practice · Course access by request</p>
-                <div className="hero-stats">
-                  <div className="hero-stat-item">
-                    <div className="stat-icon-wrap" aria-hidden="true">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                      </svg>
-                    </div>
-                    <div className="stat-text-wrap">
-                      <strong>English explanations</strong>
-                      <span>Clear guidance at every step</span>
-                    </div>
-                  </div>
-
-                  <div className="hero-stat-divider" aria-hidden="true"></div>
-
-                  <div className="hero-stat-item">
-                    <div className="stat-icon-wrap" aria-hidden="true">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                      </svg>
-                    </div>
-                    <div className="stat-text-wrap">
-                      <strong>HSK 1 to 4</strong>
-                      <span>Structured syllabus</span>
-                    </div>
-                  </div>
-
-                  <div className="hero-stat-divider" aria-hidden="true"></div>
-
-                  <div className="hero-stat-item">
-                    <div className="stat-icon-wrap" aria-hidden="true">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-                        <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
-                      </svg>
-                    </div>
-                    <div className="stat-text-wrap">
-                      <strong>Native Audio</strong>
-                      <span>Real spoken practice</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="hero-showcase">
-                <PracticeStudio user={user} onOpenPractice={onOpenPractice} />
-
-
-              </div>
-            </div>
-          </section>
-  );
+  const audioRef = useRef(null);
+  const [playing, setPlaying] = useState(false);
+  const [audioError, setAudioError] = useState('');
+  useEffect(() => {
+    const audio = audioRef.current;
+    return () => { audio?.pause(); };
+  }, []);
+  const startLearning = () => {
+    goHome();
+    if (user) setShowDashboard(true);
+    else setShowPinyinPage(true);
+  };
+  const toggleGreeting = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (!audio.paused) { audio.pause(); audio.currentTime = 0; return; }
+    setAudioError('');
+    if (audio.error) audio.load();
+    try { await audio.play(); }
+    catch { setAudioError('The greeting couldn’t play. Try again or explore pinyin practice below.'); }
+  };
+  return <>
+    <section className="home-hero" aria-labelledby="home-hero-title">
+      <div className="container home-hero-grid">
+        <div className="home-hero-intro">
+          <p className="home-hero-eyebrow"><span aria-hidden="true"/>{user ? `Welcome back, ${user.name}.` : 'A new language. A new beginning.'}</p>
+          <h1 id="home-hero-title">{user ? <>Your next step<br/>starts <em>here.</em></> : <>Chinese starts<br/>with a <em>hello.</em></>}</h1>
+          <p className="home-hero-description">{user ? 'Pick up where you left off, or choose a skill to practice. A little Chinese today goes a long way.' : 'From your first words to everyday conversations. Find your voice in Chinese with guided lessons and practice at your own pace.'}</p>
+          <div className="home-hero-actions"><button className="home-hero-primary" onClick={startLearning}>{user ? 'Continue learning' : 'Try free pinyin practice'}<span aria-hidden="true">↗</span></button><a className="home-hero-secondary" href={user ? '#practice-studio' : '#courses'}>{user ? 'Choose a practice' : 'Explore courses'}<span aria-hidden="true">↓</span></a></div>
+          <p className="home-hero-note">{user ? 'Your courses. Your pace. Your next conversation.' : 'No account needed for pinyin practice.'}</p>
+          <a className="home-hero-studio-link" href="#practice-studio"><span className="home-hero-link-mark" aria-hidden="true">练</span><span>{user ? 'Make a little time for practice.' : 'Learning happens one small step at a time.'}<small>Explore your practice studio below</small></span><span aria-hidden="true">↓</span></a>
+        </div>
+        <div className="home-hero-artwork">
+          <div className="home-hero-landscape"><img src="/images/chinese-ink-landscape.jpg" width="1200" height="800" alt="" aria-hidden="true" decoding="async" fetchPriority="high"/><span className="home-hero-stamp" lang="zh-CN" aria-hidden="true">学</span><span className="home-hero-art-caption">A little practice. A world of possibility.</span></div>
+          <section className="home-hero-greeting" aria-labelledby="hero-greeting-title"><div className="home-hero-greeting-top"><h2 id="hero-greeting-title">Your first conversation</h2><span>01 / HELLO</span></div><div className="home-hero-greeting-body"><div><p className="home-hero-hanzi" lang="zh-CN">你好<span>。</span></p><p className="home-hero-translation"><span lang="zh-Latn">nǐ hǎo</span><span aria-hidden="true">/</span>Hello.</p></div><button className={`home-hero-listen ${playing ? 'is-playing' : ''}`} aria-label={playing ? 'Stop Chinese greeting' : 'Listen to Chinese greeting'} aria-pressed={playing} onClick={toggleGreeting}><span className="home-hero-sound" aria-hidden="true">{[10,20,28,16,24].map((height,index)=><i key={index} style={{'--bar-height': `${height}px`, '--bar-delay': `${index * -0.15}s`}}/>)}</span><span>{playing ? 'Stop' : 'Listen'}</span></button></div><p className="home-hero-listen-note">Press listen. Say it out loud. You’ve already begun.</p>{audioError && <p className="home-hero-audio-error" role="alert">{audioError}</p>}<audio ref={audioRef} src="/nihao.mp3" preload="none" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} onError={() => { setPlaying(false); setAudioError('The greeting couldn’t load. Try again or explore pinyin practice below.'); }}/></section>
+        </div>
+      </div>
+    </section>
+    <div id="practice-studio" className="container home-practice-directory"><PracticeStudio user={user} onOpenPractice={onOpenPractice}/></div>
+  </>;
 }

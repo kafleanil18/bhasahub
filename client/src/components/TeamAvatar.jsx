@@ -30,12 +30,12 @@ export default function renderTeamAvatar (member, isModal = false) {
 
   const gradientId = member.name.replace(/\s+/g, '-').toLowerCase() + (isModal ? '-modal' : '') + '-grad';
   let startColor = '#c99a3c';
-  let endColor = '#c8362a';
+  let endColor = '#a92316';
   let iconContent = null;
 
   if (isTeacher) {
     startColor = '#c99a3c'; // gold
-    endColor = '#c8362a';   // red stamp
+    endColor = '#a92316';   // red stamp
     iconContent = (
       <>
         {/* Books & glasses */}

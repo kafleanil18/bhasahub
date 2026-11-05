@@ -95,7 +95,7 @@ function TestimonialModal({ user, onClose }) {
         .tm-title { font-size: 1.5rem; font-weight: 700; color: #111827; margin: 0 0 0.35rem 0; letter-spacing: -0.02em; }
         .tm-sub { font-size: 0.925rem; color: #6b7280; margin: 0 0 1.5rem 0; line-height: 1.4; }
         .tm-error {
-          background-color: #fef2f2; border-left: 4px solid #ef4444; color: #991b1b;
+          background-color: #fef2f2; border-left: 4px solid #a92316; color: #a92316;
           padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1.25rem; font-size: 0.875rem;
         }
         .tm-group { margin-bottom: 1.25rem; }
@@ -121,7 +121,7 @@ function TestimonialModal({ user, onClose }) {
         }
         .tm-file-input { font-size: 0.85rem; color: #4b5563; }
         .tm-photo-status { color: #4b5563; font-size: 0.8rem; }
-        .tm-photo-remove { border: 0; background: none; color: #b42318; padding: 0; cursor: pointer; font: inherit; font-size: 0.8rem; }
+        .tm-photo-remove { border: 0; background: none; color: #a92316; padding: 0; cursor: pointer; font: inherit; font-size: 0.8rem; }
         .tm-avatar-frame {
           width: 48px; height: 48px; border-radius: 50%; object-fit: cover;
           border: 2px solid #4f46e5; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.08);

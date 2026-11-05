@@ -13,8 +13,8 @@
 .sentence-overview strong { font-size: 32px; line-height: 1; }
 .sentence-overview span, .sentence-muted { color: var(--mist); font-size: 14px; line-height: 1.6; }
 .sentence-primary, .sentence-secondary { min-height: 48px; border-radius: 8px; padding: 12px 20px; font-weight: 600 !important; }
-.sentence-primary { border: 1px solid #bd210d; background: #bd210d; color: #fff; }
-.sentence-primary:hover:not(:disabled) { background: #9e1b0b; border-color: #9e1b0b; }
+.sentence-primary { border: 1px solid var(--accent-red); background: var(--accent-red); color: #fff; }
+.sentence-primary:hover:not(:disabled) { background: var(--accent-red); border-color: var(--accent-red); }
 .sentence-secondary { border: 1px solid var(--line); background: var(--card); color: var(--ink); }
 .sentence-secondary:hover:not(:disabled) { border-color: var(--seal); }
 .sentence-mixed { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--seal); padding: 28px; margin-bottom: 48px; }

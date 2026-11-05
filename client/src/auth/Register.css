@@ -20,7 +20,7 @@
 /* Left Column: Visual & Welcome Widget */
 .register-welcome-panel {
   flex: 1;
-  background: linear-gradient(135deg, rgba(46, 107, 87, 0.03) 0%, rgba(200, 54, 42, 0.03) 100%);
+  background: linear-gradient(135deg, rgba(46, 107, 87, 0.03) 0%, rgba(var(--accent-red-rgb), 0.03) 100%);
   border-right: 1px solid var(--line);
   padding: 48px;
   display: flex;
@@ -108,7 +108,7 @@
 .widget-tab.zh-tab.active {
   border-bottom: 2px solid var(--seal);
   border-radius: 6px 6px 0 0;
-  background: rgba(200, 54, 42, 0.05);
+  background: rgba(var(--accent-red-rgb), 0.05);
   color: var(--seal);
 }
 
@@ -210,7 +210,7 @@
 }
 
 .benefit-item:nth-child(2) .benefit-icon {
-  background: rgba(200, 54, 42, 0.08);
+  background: rgba(var(--accent-red-rgb), 0.08);
   color: var(--seal);
 }
 
@@ -494,8 +494,8 @@
 
 /* Error banner */
 .register-error-banner {
-  background: rgba(200, 54, 42, 0.08);
-  border: 1px solid rgba(200, 54, 42, 0.2);
+  background: rgba(var(--accent-red-rgb), 0.08);
+  border: 1px solid rgba(var(--accent-red-rgb), 0.2);
   border-radius: 8px;
   padding: 10px 14px;
   color: var(--seal);
@@ -584,7 +584,7 @@
 }
 
 .register-switch-view button:hover {
-  color: #a0281e;
+  color: var(--accent-red);
 }
 
 /* Responsive Breakpoints */

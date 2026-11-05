@@ -150,7 +150,7 @@ function UserManager({ onBack }) {
           color: var(--gold);
         }
         .um-metric-icon.seal {
-          background: rgba(200, 54, 42, 0.1);
+          background: rgba(169, 35, 22, 0.1);
           color: var(--seal);
         }
 
@@ -280,7 +280,7 @@ function UserManager({ onBack }) {
           flex-shrink: 0;
         }
         .um-user-avatar.superadmin {
-          background: linear-gradient(135deg, var(--seal) 0%, #a6281e 100%);
+          background: linear-gradient(135deg, var(--seal) 0%, #a92316 100%);
         }
         .um-user-avatar.admin {
           background: linear-gradient(135deg, var(--jade) 0%, #1e4d3e 100%);
@@ -327,9 +327,9 @@ function UserManager({ onBack }) {
           width: fit-content;
         }
         .um-badge.super {
-          background: rgba(200, 54, 42, 0.08);
+          background: rgba(169, 35, 22, 0.08);
           color: var(--seal);
-          border-color: rgba(200, 54, 42, 0.2);
+          border-color: rgba(169, 35, 22, 0.2);
         }
         .um-badge.admin {
           background: rgba(46, 107, 87, 0.08);

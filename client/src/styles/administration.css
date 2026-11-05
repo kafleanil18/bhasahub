@@ -69,7 +69,7 @@ border-radius:999px;
 }
 
 ::-webkit-scrollbar-thumb:hover{
-background:#a82218;
+background:var(--accent-red);
 }
 
 @keyframes fadeUp{
@@ -139,7 +139,7 @@ fadeUp .8s ease;
   border-color: var(--seal);
   color: var(--seal);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(200, 54, 42, 0.12);
+  box-shadow: 0 4px 12px rgba(var(--accent-red-rgb), 0.12);
 }
 
 .dark .theme-toggle-btn,
@@ -320,7 +320,7 @@ fadeUp .8s ease;
   --ink: #ece6da;      /* light text (was dark) */
   --paper: #1a1714;    /* dark background (was cream) */
   --rice: #241f1a;     /* slightly lighter dark */
-  --seal: #e05a4e;     /* brighter red so it pops on dark */
+  --seal: var(--accent-red);     /* brighter red so it pops on dark */
   --gold: #d9ab52;     /* brighter gold */
   --jade: #4a9b81;     /* brighter jade */
   --mist: #a49a8a;     /* muted light-grey text */
@@ -342,7 +342,7 @@ fadeUp .8s ease;
 .dark .hero {
   background-color: var(--paper);
   background-image:
-    radial-gradient(ellipse 65% 55% at 5% 20%, rgba(224, 90, 78, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 65% 55% at 5% 20%, rgba(var(--accent-red-rgb), 0.12) 0%, transparent 60%),
     radial-gradient(ellipse 60% 50% at 95% 85%, rgba(217, 171, 82, 0.1) 0%, transparent 60%),
     radial-gradient(ellipse 50% 40% at 50% 0%, rgba(74, 155, 129, 0.08) 0%, transparent 50%);
 }
@@ -380,7 +380,7 @@ fadeUp .8s ease;
 .dark .wotd {
   background-color: var(--paper);
   background-image:
-    radial-gradient(circle at 10% 20%, rgba(224, 90, 78, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 10% 20%, rgba(var(--accent-red-rgb), 0.08) 0%, transparent 40%),
     radial-gradient(circle at 90% 80%, rgba(217, 171, 82, 0.08) 0%, transparent 40%);
 }
 
@@ -395,8 +395,8 @@ fadeUp .8s ease;
 }
 
 .dark .wotd-audio-trigger {
-  background: rgba(224, 90, 78, 0.15);
-  border-color: rgba(224, 90, 78, 0.35);
+  background: rgba(var(--accent-red-rgb), 0.15);
+  border-color: rgba(var(--accent-red-rgb), 0.35);
 }
 
 .dark .wotd-meaning {
@@ -491,7 +491,7 @@ fadeUp .8s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 8px rgba(200, 54, 42, 0.15);
+  box-shadow: 0 4px 8px rgba(var(--accent-red-rgb), 0.15);
 }
 
 .admin-profile-details {
@@ -658,7 +658,7 @@ fadeUp .8s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 6px rgba(200, 54, 42, 0.3);
+  box-shadow: 0 2px 6px rgba(var(--accent-red-rgb), 0.3);
   padding: 0 4px;
 }
 
@@ -670,7 +670,7 @@ fadeUp .8s ease;
   font-weight: 700;
   padding: 2px 7px;
   border-radius: 12px;
-  box-shadow: 0 2px 5px rgba(200, 54, 42, 0.25);
+  box-shadow: 0 2px 5px rgba(var(--accent-red-rgb), 0.25);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -721,7 +721,7 @@ fadeUp .8s ease;
 }
 
 .subs-stat-icon.attention {
-  background: rgba(200, 54, 42, 0.1);
+  background: rgba(var(--accent-red-rgb), 0.1);
   color: var(--seal);
 }
 
@@ -1205,7 +1205,7 @@ fadeUp .8s ease;
 /* Pulse recording border helper */
 .recording-active-card {
   border-color: var(--seal) !important;
-  box-shadow: 0 0 12px rgba(200, 54, 42, 0.2) !important;
+  box-shadow: 0 0 12px rgba(var(--accent-red-rgb), 0.2) !important;
 }
 
 /* ---------- Interactive Study Enhancements ---------- */

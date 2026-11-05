@@ -118,7 +118,7 @@ function ChangePassword({ onClose }) {
 
         .cp-close-btn:hover {
           background: var(--line, #e6dcc6);
-          color: var(--seal, #c8362a);
+          color: var(--seal, #a92316);
           transform: rotate(90deg);
         }
 
@@ -134,14 +134,14 @@ function ChangePassword({ onClose }) {
           width: 56px;
           height: 56px;
           border-radius: 16px;
-          background: rgba(200, 54, 42, 0.08);
-          color: var(--seal, #c8362a);
+          background: rgba(169, 35, 22, 0.08);
+          color: var(--seal, #a92316);
           display: flex;
           align-items: center;
           justify-content: center;
           font-size: 1.75rem;
           margin-bottom: 1rem;
-          box-shadow: 0 4px 12px rgba(200, 54, 42, 0.05);
+          box-shadow: 0 4px 12px rgba(169, 35, 22, 0.05);
         }
 
         .cp-card h1 {
@@ -172,9 +172,9 @@ function ChangePassword({ onClose }) {
         }
 
         .cp-alert-error {
-          background: rgba(200, 54, 42, 0.05);
-          border-left: 3px solid var(--seal, #c8362a);
-          color: var(--seal, #c8362a);
+          background: rgba(169, 35, 22, 0.05);
+          border-left: 3px solid var(--seal, #a92316);
+          color: var(--seal, #a92316);
         }
 
         .cp-alert-success {
