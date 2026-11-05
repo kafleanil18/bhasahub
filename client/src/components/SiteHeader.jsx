@@ -1,4 +1,4 @@
-export default function SiteHeader({ adminSidebarOpen, darkMode, goHome, handleLogout, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowDashboard, setShowFeedback, setShowSubscriptions, setShowUserMenu, showUserMenu, unreadFeedbackCount, user }) {
+export default function SiteHeader({ adminSidebarOpen, darkMode, goHome, handleLogout, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowDashboard, setShowFeedback, setShowSubscriptions, setShowTestManager, setShowUserMenu, showUserMenu, unreadFeedbackCount, user }) {
   return (
     <header className="site-header">
         <div className="container header-row">
@@ -13,6 +13,7 @@ export default function SiteHeader({ adminSidebarOpen, darkMode, goHome, handleL
 
           <nav id="site-navigation" aria-label="Main navigation" className={`main-nav ${mobileMenuOpen ? 'open' : ''}`}>
             <div className="nav-links">
+              {isAdmin && !isSuperAdmin && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowTestManager(true); }}>Manage tests</button>}
               {isSuperAdmin ? (
                 <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); }}>
                   Dashboard

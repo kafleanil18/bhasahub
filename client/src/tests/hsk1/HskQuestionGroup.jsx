@@ -1,7 +1,7 @@
 export default function HskQuestionGroup({ group, answers, onAnswer, disabled, review }) {
   return <section className="hsk-group" aria-labelledby={`hsk-group-${group.id}`}>
     <div className="hsk-group-heading"><p className="hsk-eyebrow">Questions {group.questions[0].number}–{group.questions.at(-1).number}</p><h2 id={`hsk-group-${group.id}`}>{group.title}</h2><p>{group.instruction}</p></div>
-    {group.image && <figure className="hsk-shared-pictures"><img src={group.image} width="1200" height={group.id === 'r2' ? 1600 : 1247} alt="Color illustrations: six choices labelled A to F. Choose the picture matching each sentence or dialogue."/><figcaption>Color illustrations adapted from paper H11226. Select a letter below each question.</figcaption></figure>}
+    {group.image && <figure className="hsk-shared-pictures"><img src={group.image} width="1200" height={group.id === 'r2' ? 1600 : 1247} alt="Color illustrations: six choices labelled A to F. Choose the picture matching each sentence or dialogue."/><figcaption>{group.imageCaption || 'Shared picture choices A–F. Select a letter below each question.'}</figcaption></figure>}
     {group.choices && <ol className="hsk-word-bank" aria-label="Shared answer choices">{group.choices.map((choice, index) => <li key={index}><b>{String.fromCharCode(65 + index)}</b><span lang="zh"><small>{choice.pinyin}</small><strong>{choice.text}</strong></span></li>)}</ol>}
     {group.example && <p className="hsk-example"><strong>Example</strong><span lang="zh">{group.example}</span></p>}
     <div className="hsk-questions">{group.questions.map(question => {

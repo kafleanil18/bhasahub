@@ -6,6 +6,7 @@ const schema = new mongoose.Schema({
   startedAt: { type: Date, default: Date.now },
   submittedAt: Date,
   answers: [Number],
+  paperSnapshot: { type: mongoose.Schema.Types.Mixed },
   listening: Number,
   reading: Number,
   score: Number,

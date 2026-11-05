@@ -1,11 +1,13 @@
+import usePracticePapers from './hsk1/usePracticePapers';
 import { useState, useEffect, useMemo } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
-import './hsk1/HskPortal.css';
+import FeaturedPaper from './hsk1/FeaturedPaper';
 
 const API = window.API_BASE_URL + '/api';
 const LEVELS = ['HSK 1', 'HSK 2', 'HSK 3', 'HSK 4'];
 
-function TestList({ onOpenTest, onBack }) {
+function TestList({ onOpenTest, onBack, user }) {
+  const { papers: practicePapers, error: paperError, loading: papersLoading, reload: reloadPapers } = usePracticePapers();
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [levelFilter, setLevelFilter] = useState('All');
@@ -27,7 +29,9 @@ function TestList({ onOpenTest, onBack }) {
       <button className="back-btn" onClick={onBack}>← Back to home</button>
       <h1 className="section-title">HSK Mock Tests</h1>
 
-      <div className="hsk-featured-test"><div><small>Complete practice paper · H11226</small><h2>HSK 1 · Listening & Reading</h2><p>Take the 40-question test with colorful illustrations, pinyin, and the full listening recording. Get your result and answer review when you finish.</p><span>20 listening + 20 reading · Timed sections · Saved results</span></div><button onClick={() => onOpenTest('h11226')}>Enter test portal →</button></div>
+      {paperError && <div role="alert"><p>{paperError}</p><button onClick={reloadPapers}>Retry loading practice papers</button></div>}
+      {papersLoading && <p role="status">Loading practice papers…</p>}
+      {(levelFilter === 'All' || levelFilter === 'HSK 1') && practicePapers.map(paper => <FeaturedPaper key={paper.id} paperId={paper.id} title={paper.title} code={paper.code} onOpen={() => onOpenTest(paper.id)} showHidden={['admin', 'superadmin'].includes(user?.role)} />)}
       {!loading && tests.length > 0 && (
         <div className="test-level-filter" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
           <button

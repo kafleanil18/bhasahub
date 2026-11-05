@@ -474,7 +474,7 @@ function AppContent() {
         </>
       )}
 
-      <SiteHeader adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowSubscriptions={setShowSubscriptions} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
+      <SiteHeader adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowSubscriptions={setShowSubscriptions} setShowTestManager={setShowTestManager} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
 
       {!user && showLogin ? (
         <div>
@@ -529,8 +529,9 @@ function AppContent() {
         />
       ) : user && showConversationPractice ? (
         <ConversationPracticePage onBack={goHome} />
-      ) : isSuperAdmin && showTestManager ? (
+      ) : isAdmin && showTestManager ? (
         <TestManager
+          user={user}
           onBack={goAdminDashboard}
           onPreviewTest={(testId) => {
             setActiveTestId(testId);
@@ -538,8 +539,14 @@ function AppContent() {
             setShowTestManager(false);
           }}
         />
-      ) : user && activeTestId === 'h11226' ? (
-        <HskPortal user={user} onBack={() => { setActiveTestId(null); setShowTests(true); }} />
+      ) : user && (activeTestId === 'h11226' || /^paper-[a-f0-9]{24}$/.test(activeTestId || '')) ? (
+        <HskPortal key={activeTestId} paperId={activeTestId} user={user} onBack={() => {
+          setActiveTestId(null);
+          if (testTakerBackToManager) {
+            setShowTestManager(true);
+            setTestTakerBackToManager(false);
+          } else setShowTests(true);
+        }} />
       ) : user && activeTestId ? (
         <TestTaker
           testId={activeTestId}
@@ -554,7 +561,7 @@ function AppContent() {
           }}
         />
       ) : user && showTests ? (
-        <TestList onOpenTest={(id) => { setShowTests(false); setActiveTestId(id); }} onBack={goHome} />
+        <TestList user={user} onOpenTest={(id) => { setShowTests(false); setActiveTestId(id); }} onBack={goHome} />
       ) : isSuperAdmin && manageCourse ? (
         <LessonManager course={manageCourse} onBack={() => setManageCourse(null)} />
       ) : isSuperAdmin && showInbox ? (

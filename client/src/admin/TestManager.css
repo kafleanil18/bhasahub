@@ -1,0 +1,44 @@
+.test-studio { padding-top: 32px; padding-bottom: 48px; }
+.test-studio .test-studio-heading {
+  position: static;
+  z-index: auto;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  padding: 0;
+  margin: 24px 0;
+  color: var(--ink);
+}
+.test-studio-heading h1 { margin: 0 0 8px; font-size: 32px; }
+.test-studio-heading p { color: var(--mist); line-height: 1.6; margin: 0; }
+.paper-create-button, .paper-editor-actions button:first-child { background: var(--seal); color: #fff; border: 1px solid var(--seal); border-radius: 8px; padding: 12px 16px; min-height: 44px; font: inherit; cursor: pointer; }
+.paper-create-button { margin-bottom: 24px; }
+.paper-editor { background: var(--card); padding: 24px; border: 1px solid var(--line); border-radius: 12px; }
+.paper-editor h2 { margin-top: 0; }
+.paper-editor-heading p, .paper-help { color: var(--mist); line-height: 1.6; font-size: 13px; }
+.paper-editor label { display: grid; gap: 8px; min-width: 0; font-size: 13px; }
+.paper-editor input:not([type=file]), .paper-editor textarea, .paper-editor select { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); font: inherit; box-sizing: border-box; }
+.paper-editor textarea { min-height: 76px; resize: vertical; }
+.paper-fields, .paper-question-editor { display: grid; gap: 16px; min-width: 0; margin: 24px 0; padding: 20px; border: 1px solid var(--line); border-radius: 8px; }
+.paper-fields > legend, .paper-question-editor > legend { padding: 0 8px; font-weight: 700; }
+.paper-question-editor { margin: 8px 0; background: var(--rice); }
+.paper-timers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.paper-part-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.paper-part-tabs button { padding: 12px; background: var(--paper); border: 1px solid var(--line); border-radius: 6px; color: var(--ink); min-height: 44px; cursor: pointer; }
+.paper-part-tabs button[aria-pressed=true] { background: var(--seal); border-color: var(--seal); color: #fff; }
+.paper-part-tabs small { display: block; margin-top: 4px; }
+.paper-option-row { display: grid; grid-template-columns: 24px minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 12px; margin: 12px 0; }
+.paper-media { display: grid; gap: 12px; }
+.paper-media input { max-width: 100%; }
+.paper-media img { max-width: 100%; max-height: 300px; object-fit: contain; justify-self: start; border-radius: 6px; }
+.paper-media audio { width: 100%; }
+.paper-media button { justify-self: start; }
+.paper-editor-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding-top: 20px; border-top: 1px solid var(--line); }
+.paper-editor-actions span { color: var(--mist); font-size: 12px; }
+.paper-editor-actions button, .paper-media button { min-height: 44px; padding: 10px 16px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); cursor: pointer; }
+.paper-editor-actions button:first-child { background: var(--seal); color: #fff; }
+.paper-editor button:disabled { cursor: wait; opacity: .6; }
+.paper-editor :is(button, input, select, textarea):focus-visible, .paper-create-button:focus-visible { outline: 3px solid var(--seal); outline-offset: 3px; }
+.paper-error { color: var(--seal); padding: 12px; border: 1px solid currentColor; border-radius: 6px; }
+@media (max-width: 640px) { .paper-editor { padding: 16px; } .paper-timers { grid-template-columns: 1fr; } .paper-fields, .paper-question-editor { padding: 12px; } .paper-part-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); } .paper-option-row { grid-template-columns: 20px minmax(0, 1fr); } .paper-option-row label:last-child { grid-column: 2; } }

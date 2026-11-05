@@ -31,3 +31,13 @@ The replacement artwork uses a consistent warm editorial illustration style, wit
 ## Reading comfort and navigation
 
 The portal uses its original 1,200-pixel desktop maximum width and original text, picture, spacing, and control sizes. The timer remains visible while scrolling. Desktop has a scrollable question navigation panel; mobile uses compact part tabs and an expandable question map. Part buttons show answered counts. The next-unanswered shortcut focuses the target question, and the explicit Start listening button starts playback and unlocks answers. Image dimensions reserve space while pictures load.
+
+## Manually authored complete papers
+
+Super admins can open **Manage tests → Create complete practice paper**. The editor starts with the same eight parts as H11226: four listening parts and four reading parts, with five questions per part. Teachers enter Chinese text, pinyin, answer choices, correct answers, explanations, and optional private listening scripts. Uploads support pictures for individual questions, A/B/C strips, shared A–F sheets, and a full listening recording. Each upload has a preview and can be replaced or removed before saving.
+
+New papers save as hidden drafts. Super admins can reopen **Edit questions & pictures** to continue. The **Make live** control validates the recording, picture-dependent questions, shared answer banks, reading text and pinyin, correct answers, and explanations. Admins and super admins can manage visibility and preview; creating or editing content requires a current super admin role. Saving edits hides the paper again until it is ready to publish.
+
+Custom papers use a `paper-` ID and are stored in `PracticePaper.content`. The authenticated `/api/hsk1` catalogue returns only metadata and hides unpublished papers from students. Content editing uses `POST /api/hsk1` and `GET /api/hsk1/:paperId/editor` / `PUT /api/hsk1/:paperId/content`. The original H11226 remains available as a fixed reference. The generated HG1002 paper and its assets have been removed.
+
+Each new attempt stores a private snapshot of its question version. Grading and answer review use that snapshot even after edits. Public responses strip answer keys and teacher listening scripts; snapshot definitions returned for resuming attempts are sanitized in the same way. Results and local drafts remain scoped to the paper and student.

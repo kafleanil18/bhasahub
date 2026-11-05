@@ -90,3 +90,9 @@
 }
 
 .hsk-question-nav button.is-answered.is-in-part { outline-color: var(--answer-success); }
+
+.hsk-featured-actions { display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; }
+.hsk-featured-actions button { min-height: 44px; }
+.hsk-featured-actions button:disabled { cursor: wait; opacity: .65; }
+.hsk-featured-status { padding: 20px 0; }
+@media (max-width: 600px) { .hsk-featured-actions { width: 100%; } }

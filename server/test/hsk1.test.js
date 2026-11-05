@@ -6,6 +6,8 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const HskAttempt = require('../models/HskAttempt');
+const PracticePaper = require('../models/PracticePaper');
+const AuditLog = require('../models/AuditLog');
 const paper = require('../data/hsk11226');
 const { publicPaper, grade, result } = require('../utils/hsk11226');
 // Independently transcribed from the PDF's printed answer key, A=0 and ✓=0.
@@ -50,7 +52,15 @@ afterEach(async () => {
 });
 async function setup() {
   mock(process.env, 'JWT_SECRET', 'hsk-test-secret');
-  mock(User, 'findById', id => ({ select: async () => ({ _id: id, role: 'student' }) }));
+  mock(User, 'findById', id => ({ select: async () => ({ _id: id, role: ['admin', 'superadmin'].includes(id) ? id : 'student' }) }));
+  const publications = new Map();
+  mock(PracticePaper, 'findById', async id => publications.get(id));
+  mock(PracticePaper, 'find', async () => [...publications.values()]);
+  mock(PracticePaper, 'create', async fields => { publications.set(fields._id, structuredClone(fields)); return fields; });
+  mock(PracticePaper, 'findByIdAndUpdate', async (id, update) => {
+    const saved = { ...publications.get(id), _id: id, ...update.$set }; publications.set(id, saved); return saved;
+  });
+  mock(AuditLog, 'create', async () => ({}));
   let stored;
   const matches = filter => stored && Object.entries(filter).every(([key, value]) => String(stored[key]) === String(value));
   mock(HskAttempt, 'create', async fields => (stored = { ...fields, _id: '507f1f77bcf86cd799439013', status: 'started', startedAt: new Date() }));
@@ -63,7 +73,7 @@ async function setup() {
   const server = await new Promise((resolve, reject) => { const item = app.listen(0, '127.0.0.1', error => error ? reject(error) : resolve(item)); item.on('error', reject); });
   servers.push(server);
   const headers = id => ({ Authorization: `Bearer ${jwt.sign({ id }, process.env.JWT_SECRET)}`, 'Content-Type': 'application/json' });
-  return { base: `http://127.0.0.1:${server.address().port}/api/hsk1/h11226`, headers: headers('507f1f77bcf86cd799439011'), other: headers('507f1f77bcf86cd799439012') };
+  return { app, base: `http://127.0.0.1:${server.address().port}/api/hsk1/h11226`, headers: headers('507f1f77bcf86cd799439011'), other: headers('507f1f77bcf86cd799439012'), admin: headers('admin'), superadmin: headers('superadmin') };
 }
 test('authenticated owner gets a server-graded result; retries cannot change the published score', async () => {
   const { base, headers, other } = await setup();
@@ -82,4 +92,135 @@ test('authenticated owner gets a server-graded result; retries cannot change the
   const retry = await (await fetch(`${url}/submit`, { method: 'POST', headers, body: JSON.stringify({ answers: Array(40).fill(null) }) })).json();
   assert.equal(retry.score, 40); assert.deepEqual(retry.answers, key);
   assert.equal((await (await fetch(url, { headers })).json()).score, 40);
+});
+
+test('admins control publication; hidden papers block students but allow staff preview', async () => {
+  const { base, headers, admin, superadmin } = await setup();
+  const url = `${base}/publication`;
+  const setVisibility = (auth, published) => fetch(url, { method: 'PUT', headers: auth, body: JSON.stringify({ published }) });
+  assert.equal((await fetch(url)).status, 401);
+  assert.deepEqual(await (await fetch(url, { headers })).json(), { published: true });
+  assert.equal((await setVisibility(headers, false)).status, 403);
+  assert.equal((await setVisibility(admin, 'false')).status, 400);
+  assert.equal((await setVisibility(admin, false)).status, 200);
+  assert.deepEqual(await (await fetch(url, { headers })).json(), { published: false });
+  assert.equal((await fetch(base, { headers })).status, 404);
+  assert.equal((await fetch(`${base}/attempts`, { method: 'POST', headers })).status, 404);
+  for (const staff of [admin, superadmin]) {
+    const response = await fetch(base, { headers: staff });
+    assert.equal(response.status, 200);
+    assert.ok(!JSON.stringify(await response.json()).includes('correctIndex'));
+    assert.equal((await fetch(`${base}/attempts`, { method: 'POST', headers: staff })).status, 201);
+  }
+  assert.equal((await setVisibility(superadmin, true)).status, 200);
+  assert.equal((await fetch(base, { headers })).status, 200);
+  assert.equal((await fetch(`${base}/attempts`, { method: 'POST', headers })).status, 201);
+});
+
+test('hiding a paper preserves an existing student attempt and its saved result', async () => {
+  const { base, headers, admin } = await setup();
+  const started = await (await fetch(`${base}/attempts`, { method: 'POST', headers })).json();
+  await fetch(`${base}/publication`, { method: 'PUT', headers: admin, body: JSON.stringify({ published: false }) });
+  const url = `${base}/attempts/${started._id}`;
+  assert.equal((await fetch(url, { headers })).status, 200);
+  const submitted = await fetch(`${url}/submit`, { method: 'POST', headers, body: JSON.stringify({ answers: key }) });
+  assert.equal(submitted.status, 200);
+  assert.equal((await submitted.json()).score, 40);
+  assert.equal((await (await fetch(url, { headers })).json()).score, 40);
+});
+
+test('superadmin creates and edits complete papers; incomplete drafts cannot be made live', async () => {
+  const { base, headers, admin, superadmin } = await setup();
+  const root = base.replace('/h11226', '');
+  const content = structuredClone(paper); content.title = 'Teacher paper'; content.code = 'CLASS02';
+  const send = (url, auth, body, method = 'POST') => fetch(url, { method, headers: auth, body: JSON.stringify(body) });
+  assert.equal((await send(root, headers, content)).status, 403);
+  assert.equal((await send(root, admin, content)).status, 403);
+  assert.equal((await send(root, superadmin, { ...content, groups: [] })).status, 400);
+  const draft = { ...content, audioUrl: '' };
+  const createdResponse = await send(root, superadmin, draft);
+  assert.equal(createdResponse.status, 201);
+  const created = await createdResponse.json();
+  assert.match(created.id, /^paper-[a-f0-9]{24}$/);
+  assert.equal(created.published, false);
+  const url = `${root}/${created.id}`;
+  assert.equal((await fetch(`${url}/editor`, { headers })).status, 403);
+  assert.equal((await fetch(`${url}/editor`, { headers: admin })).status, 403);
+  const editor = await (await fetch(`${url}/editor`, { headers: superadmin })).json();
+  assert.equal(editor.title, 'Teacher paper');
+  assert.equal(editor.groups[0].questions[0].correctIndex, 1);
+  assert.equal((await send(`${url}/content`, admin, content, 'PUT')).status, 403);
+  assert.equal((await send(`${url}/publication`, admin, { published: true }, 'PUT')).status, 400);
+  assert.equal((await send(`${url}/attempts`, superadmin, {})).status, 400);
+  assert.equal((await fetch(url, { headers })).status, 404);
+  assert.equal((await (await fetch(root, { headers })).json()).length, 1);
+  assert.equal((await (await fetch(root, { headers: superadmin })).json()).length, 2);
+  assert.equal((await send(`${url}/content`, superadmin, content, 'PUT')).status, 200);
+  assert.equal((await send(`${url}/publication`, admin, { published: true }, 'PUT')).status, 200);
+  const publicResponse = await fetch(url, { headers });
+  assert.equal(publicResponse.status, 200);
+  const publicContent = await publicResponse.json();
+  assert.equal(publicContent.code, 'CLASS02');
+  assert.ok(!JSON.stringify(publicContent).includes('correctIndex'));
+  assert.ok(!JSON.stringify(publicContent).includes('explanation'));
+  const listing = await (await fetch(root, { headers })).json();
+  assert.ok(listing.some(row => row.id === created.id));
+  assert.ok(!JSON.stringify(listing).includes('correctIndex'));
+  assert.equal((await fetch(root + '/hg1002', { headers: superadmin })).status, 404);
+  assert.equal((await send(`${base}/content`, superadmin, content, 'PUT')).status, 400);
+});
+
+test('editing a custom paper hides it and preserves grading and questions of existing attempts', async () => {
+  const { base, headers, superadmin } = await setup();
+  const root = base.replace('/h11226', '');
+  const content = structuredClone(paper); content.title = 'Original teacher version';
+  const created = await (await fetch(root, { method: 'POST', headers: superadmin, body: JSON.stringify(content) })).json();
+  const url = `${root}/${created.id}`;
+  await fetch(`${url}/publication`, { method: 'PUT', headers: superadmin, body: JSON.stringify({ published: true }) });
+  const started = await (await fetch(`${url}/attempts`, { method: 'POST', headers })).json();
+  assert.ok(started.paperDefinition);
+  assert.ok(!JSON.stringify(started).includes('paperSnapshot'));
+  assert.ok(!JSON.stringify(started).includes('correctIndex'));
+  const changed = structuredClone(content); changed.title = 'Revised teacher version';
+  changed.groups[0].questions[0].correctIndex = 0;
+  await fetch(`${url}/content`, { method: 'PUT', headers: superadmin, body: JSON.stringify(changed) });
+  assert.equal((await fetch(url, { headers })).status, 404);
+  assert.equal((await fetch(`${base}/attempts/${started._id}`, { headers })).status, 404);
+  const submitted = await fetch(`${url}/attempts/${started._id}/submit`, { method: 'POST', headers, body: JSON.stringify({ answers: key }) });
+  assert.equal(submitted.status, 200);
+  const saved = await submitted.json();
+  assert.equal(saved.score, 40);
+  assert.equal(saved.paperDefinition.title, content.title);
+  assert.equal(saved.review[0].correctIndex, 1);
+  assert.ok(!JSON.stringify(saved.paperDefinition).includes('correctIndex'));
+});
+
+test('manual paper validation rejects broken sections, unsafe media, and missing answer keys', () => {
+  const { cleanContent, validateReady } = require('../utils/practicePaperContent');
+  const content = cleanContent(structuredClone(paper));
+  assert.doesNotThrow(() => validateReady(content));
+  const missingKey = structuredClone(content); missingKey.groups[0].questions[0].correctIndex = null;
+  assert.throws(() => validateReady(missingKey), /correct answer/);
+  const missingPicture = structuredClone(content); missingPicture.groups[1].questions[0].image = '';
+  assert.throws(() => validateReady(missingPicture), /picture/);
+  const wrongSection = structuredClone(content); wrongSection.groups[0].id = 'r1';
+  assert.throws(() => cleanContent(wrongSection), /order/);
+  const unsafe = structuredClone(content); unsafe.audioUrl = 'javascript:alert(1)';
+  assert.throws(() => cleanContent(unsafe), /uploaded file URL/);
+});
+
+test('superadmin can upload question pictures and audio; students cannot upload', async () => {
+  const { app, base, headers, superadmin } = await setup();
+  const cloud = require('../utils/cloudinary');
+  mock(cloud, 'uploadBufferToCloudinary', async () => ({ secure_url: 'https://example.com/uploaded-file' }));
+  app.use('/api/upload', require('../routes/upload'));
+  const url = base.replace('/api/hsk1/h11226', '/api/upload');
+  for (const [name, mime] of [['question.png', 'image/png'], ['listening.mp3', 'audio/mpeg']]) {
+    const body = new FormData(); body.append('file', new Blob(['uploaded fixture'], { type: mime }), name);
+    const response = await fetch(url, { method: 'POST', headers: { Authorization: superadmin.Authorization }, body });
+    assert.equal(response.status, 201);
+    assert.equal((await response.json()).url, 'https://example.com/uploaded-file');
+  }
+  const denied = new FormData(); denied.append('file', new Blob(['picture']), 'question.png');
+  assert.equal((await fetch(url, { method: 'POST', headers: { Authorization: headers.Authorization }, body: denied })).status, 403);
 });

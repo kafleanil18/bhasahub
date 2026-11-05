@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-const API = `${window.API_BASE_URL}/api/hsk1/h11226`;
 const auth = () => ({ Authorization: `Bearer ${localStorage.getItem('token') || ''}`, 'Content-Type': 'application/json' });
-async function request(path = '', options = {}) {
+async function requestPaper(paperId, path = '', options = {}) {
+  const API = `${window.API_BASE_URL}/api/hsk1/${paperId}`;
   const response = await fetch(API + path, { ...options, headers: auth(), signal: AbortSignal.timeout(20000) });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'The request failed. Please try again.');
@@ -10,8 +10,9 @@ async function request(path = '', options = {}) {
 const readDraft = key => { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } };
 export const clock = seconds => `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
 
-export default function useHskExam(user) {
-  const key = `hanzigo:h11226:v1:${user?._id || user?.id || user?.email}`;
+export default function useHskExam(user, paperId = 'h11226') {
+  const request = useCallback((path, options) => requestPaper(paperId, path, options), [paperId]);
+  const key = `hanzigo:${paperId}:v1:${user?._id || user?.id || user?.email}`;
   const [paper, setPaper] = useState(null);
   const [session, setSession] = useState(null);
   const [result, setResult] = useState(null);
@@ -39,6 +40,7 @@ export default function useHskExam(user) {
           try {
             const existing = await request(`/attempts/${saved.id}`);
             if (!active) return;
+            if (existing.paperDefinition) setPaper(existing.paperDefinition);
             if (existing.status === 'submitted') setResult(existing);
             else if (['ready', 'listening', 'transfer', 'reading', 'review'].includes(saved.stage) && Array.isArray(saved.answers) && saved.answers.length === 40 && Number.isFinite(saved.deadline)) setSession(saved);
           } catch (err) { if (active) setError(`Could not restore the previous attempt: ${err.message}`); }
@@ -49,7 +51,7 @@ export default function useHskExam(user) {
     load();
     request('/attempts').then(data => { if (active) { setHistory(data); setHistoryError(''); } }).catch(() => { if (active) setHistoryError('Past results could not be loaded.'); });
     return () => { active = false; };
-  }, [key, attempt]);
+  }, [key, attempt, request]);
 
   useEffect(() => {
     if (!session) return;
@@ -70,6 +72,7 @@ export default function useHskExam(user) {
     sending.current = true; setBusy(true); setError('');
     try {
       const created = await request('/attempts', { method: 'POST' });
+      if (created.paperDefinition) setPaper(created.paperDefinition);
       autoSubmitted.current = false;
       const time = Date.now();
       setNow(time); setResult(null);
@@ -85,7 +88,7 @@ export default function useHskExam(user) {
       setResult(saved); setHistory(previous => [saved, ...previous.filter(row => row._id !== saved._id)]);
     } catch (err) { setError(err.message); }
     finally { sending.current = false; setBusy(false); }
-  }, [session]);
+  }, [session, request]);
 
   useEffect(() => {
     if (!session || !paper || result || busy || now < session.deadline) return;
@@ -114,7 +117,7 @@ export default function useHskExam(user) {
   const saveAudio = time => setSession(current => current && Math.abs((current.audioTime || 0) - time) >= 3 ? { ...current, audioTime: time } : current);
   const openResult = async id => {
     setBusy(true); setError('');
-    try { setResult(await request(`/attempts/${id}`)); }
+    try { const saved = await request(`/attempts/${id}`); if (saved.paperDefinition) setPaper(saved.paperDefinition); setResult(saved); }
     catch (err) { setError(err.message); }
     finally { setBusy(false); }
   };
