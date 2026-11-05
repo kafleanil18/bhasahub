@@ -11,6 +11,8 @@ function UserManager({ onBack }) {
   const [roleFilter, setRoleFilter] = useState('all');
 
   const load = useCallback(async () => {
+    setLoading(true);
+    setError('');
     const token = localStorage.getItem('token');
     const authHeaders = { Authorization: `Bearer ${token}` };
     try {
@@ -54,7 +56,7 @@ function UserManager({ onBack }) {
 
   const visible = users.filter((u) => {
     const q = search.toLowerCase();
-    const matchesSearch = u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
+    const matchesSearch = (u.name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q);
     const matchesRole = roleFilter === 'all' || u.role === roleFilter;
     return matchesSearch && matchesRole;
   });
@@ -398,6 +400,55 @@ function UserManager({ onBack }) {
           padding: 3rem 1rem;
           font-style: italic;
         }
+
+        .um-header-section { border: 0; padding: 28px 0 24px; margin-bottom: 24px; }
+        .um-refresh-button { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 46px; padding: 10px 15px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); font: inherit; font-weight: 600; cursor: pointer; }
+        .um-refresh-button:hover:not(:disabled) { border-color: var(--seal); color: var(--seal); }
+        .um-refresh-button:disabled { opacity: .6; cursor: wait; }
+        .um-title-group { min-width: 0; }
+        .um-title-group .section-title { font-size: clamp(36px, 4vw, 48px); letter-spacing: -.035em; }
+        .um-subtitle { margin-top: 8px; font-size: 16px; line-height: 1.65; max-width: 680px; }
+        .um-metrics-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 28px; }
+        .um-metric-card { border-radius: 12px; padding: 18px; box-shadow: none; }
+        .um-metric-card:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(42,35,32,.06); border-color: var(--line); }
+        .um-metric-icon { width: 42px; height: 42px; border-radius: 10px; }
+        .um-metric-value { font-size: 30px; }
+        .um-metric-label { font-size: 14px; }
+        .um-controls-row { align-items: stretch; padding: 18px; border: 1px solid var(--line); border-radius: 12px 12px 0 0; background: var(--card); margin: 0; gap: 14px; }
+        .um-search-wrapper { max-width: none; min-width: min(280px, 100%); }
+        .um-search-input-g { min-height: 48px; padding: 10px 16px; border-radius: 8px; font: inherit; }
+        .um-search-input-g:focus { border-color: var(--seal); box-shadow: 0 0 0 3px color-mix(in srgb, var(--seal) 12%, transparent); }
+        .um-filter-tabs { align-items: center; gap: 8px; }
+        .btn-filter-pill { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 7px 12px; font: inherit; }
+        .btn-filter-pill.active { background: var(--seal); border-color: var(--seal); }
+        .um-filter-count { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding-inline: 5px; border-radius: 99px; background: color-mix(in srgb, currentColor 12%, transparent); font-size: 12px; font-weight: 700; }
+        .um-results-summary { padding: 14px 18px; border-inline: 1px solid var(--line); background: var(--card); color: var(--mist); font-size: 14px; }
+        .um-results-summary strong { color: var(--ink); }
+        .admin-directory-deck { grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; padding: 0 18px 18px; border: 1px solid var(--line); border-top: 0; border-radius: 0 0 12px 12px; background: var(--card); }
+        .admin-row-card { gap: 14px; padding: 20px; border-radius: 10px; box-shadow: none; }
+        .admin-row-card:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--seal) 38%, var(--line)); box-shadow: 0 10px 24px rgba(42,35,32,.05); }
+        .um-user-avatar { border-radius: 12px; width: 50px; height: 50px; }
+        .um-user-avatar.superadmin { background: color-mix(in srgb, var(--seal) 12%, var(--card)); color: var(--seal); box-shadow: none; }
+        .um-user-avatar.admin { background: color-mix(in srgb, var(--jade) 12%, var(--card)); color: var(--jade); box-shadow: none; }
+        .um-user-avatar.student { background: var(--rice); color: var(--ink); box-shadow: none; }
+        .card-name-text { font-family: var(--font-body, 'Inter', sans-serif); font-size: 18px; }
+        .card-email-text { font-size: 14px; }
+        .um-badge { font-size: 12px; padding: 5px 10px; border-radius: 999px; }
+        .um-btn-action { min-height: 44px; padding: 9px 14px; font: inherit; }
+        .um-btn-action.promote { background: var(--seal); box-shadow: none; }
+        .um-btn-action.promote:hover { background: #8f1d14; box-shadow: none; }
+        .card-actions-wrapper { border-top-style: solid; }
+        @media (max-width: 900px) { .um-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 680px) {
+          .admin.container { padding-top: 20px; }
+          .um-header-section { padding-top: 12px; }
+          .um-refresh-button { width: 100%; }
+          .um-controls-row { padding: 14px; }
+          .um-search-wrapper { min-width: 100%; }
+          .um-filter-tabs { width: 100%; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+          .btn-filter-pill { white-space: nowrap; }
+          .admin-directory-deck { padding: 0 12px 12px; }
+        }
       `}</style>
 
       {/* Header and navigation */}
@@ -407,8 +458,12 @@ function UserManager({ onBack }) {
             ← Back to control panel
           </button>
           <h1 className="section-title" style={{ margin: 0, marginTop: 12 }}>Admin Directory</h1>
-          <p className="um-subtitle">Audit credentials, search registry files, and configure role privileges.</p>
+          <p className="um-subtitle">Find people quickly, see their access level, and update administrator permissions.</p>
         </div>
+        <button className="um-refresh-button" type="button" onClick={load} disabled={loading}>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 7v5h-5"/><path d="M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.4-3"/></svg>
+          {loading ? 'Updating…' : 'Refresh directory'}
+        </button>
       </div>
 
       {error && <p className="login-error" style={{ marginBottom: 20 }}>{error}</p>}
@@ -442,10 +497,21 @@ function UserManager({ onBack }) {
           </div>
         </div>
         <div className="um-metric-card">
-          <div className="um-metric-icon seal">🛡</div>
+          <div className="um-metric-icon seal" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
           <div className="um-metric-details">
             <span className="um-metric-value">{stats.superAdmins}</span>
             <span className="um-metric-label">Super Admins</span>
+          </div>
+        </div>
+        <div className="um-metric-card">
+          <div className="um-metric-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg>
+          </div>
+          <div className="um-metric-details">
+            <span className="um-metric-value">{stats.students}</span>
+            <span className="um-metric-label">Student Accounts</span>
           </div>
         </div>
       </div>
@@ -454,30 +520,34 @@ function UserManager({ onBack }) {
       <div className="um-controls-row">
         <div className="um-search-wrapper">
           <input
+            type="search"
+            aria-label="Search people by name or email"
             className="um-search-input-g"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search administrators by name or email..."
+            placeholder="Search people by name or email…"
           />
         </div>
 
         <div className="um-filter-tabs">
           {[
-            { id: 'all', label: 'All Users' },
-            { id: 'superadmin', label: 'Super Admins' },
-            { id: 'admin', label: 'Admins' },
-            { id: 'student', label: 'Students' }
+            { id: 'all', label: 'Everyone', count: stats.total },
+            { id: 'superadmin', label: 'Super admins', count: stats.superAdmins },
+            { id: 'admin', label: 'Admins', count: stats.admins },
+            { id: 'student', label: 'Students', count: stats.students }
           ].map(tab => (
             <button
               key={tab.id}
               className={`btn-filter-pill ${roleFilter === tab.id ? 'active' : ''}`}
               onClick={() => setRoleFilter(tab.id)}
             >
-              {tab.label}
+              {tab.label}<span className="um-filter-count">{tab.count}</span>
             </button>
           ))}
         </div>
       </div>
+
+      {!loading && <div className="um-results-summary" aria-live="polite"><strong>{visible.length}</strong> {visible.length === 1 ? 'person' : 'people'} {search || roleFilter !== 'all' ? 'match your search' : 'in the directory'}</div>}
 
       {loading && <p className="um-empty-state">Loading registry records...</p>}
       {!loading && visible.length === 0 && <p className="um-empty-state">No users match your filters.</p>}
@@ -503,7 +573,7 @@ function UserManager({ onBack }) {
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
-                  <span style={{ fontSize: '11px', color: 'var(--mist)', fontWeight: 500 }}>System Access:</span>
+                  <span style={{ fontSize: '14px', color: 'var(--mist)', fontWeight: 500 }}>System Access:</span>
                   {roleBadge(userRole)}
                 </div>
 

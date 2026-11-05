@@ -388,7 +388,7 @@ function TeamManager({ onBack }) {
                   
                   {/* Live Avatar Preview (how it looks on the website) */}
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--mist, #7a7266)' }}>Live Site Preview</span>
+                    <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--mist, #7a7266)' }}>Live Site Preview</span>
                     <div className="tmg-avatar-wrap" style={{ borderRadius: '12px', width: '120px', height: '120px', border: '3px solid var(--jade, #2e6b57)', overflow: 'hidden', position: 'relative', margin: 0, background: 'var(--paper, #faf6ec)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {photoUrl ? (
                         <img 
@@ -412,7 +412,7 @@ function TeamManager({ onBack }) {
                   {/* Full Original Image (so they can see the whole photo they uploaded) */}
                   {photoUrl && (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', flex: '1', minWidth: '150px' }}>
-                      <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--mist, #7a7266)' }}>Uploaded Original Photo</span>
+                      <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--mist, #7a7266)' }}>Uploaded Original Photo</span>
                       <div style={{ border: '1px solid var(--line, #e6dcc6)', borderRadius: '12px', padding: '4px', background: 'var(--card, #fffdf8)', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '120px', maxHeight: '120px', overflow: 'hidden' }}>
                         <img 
                           src={mediaUrl(photoUrl)}
@@ -430,35 +430,35 @@ function TeamManager({ onBack }) {
                 </div>
                 <div style={{ width: '100%', margin: '1rem 0 1rem', display: 'flex', flexDirection: 'column', gap: '10px', textAlign: 'left' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--mist)' }}>Name</label>
+                    <label style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--mist)' }}>Name</label>
                     <input 
                       type="text" 
                       value={slot.name || ''} 
                       onChange={(e) => handleFieldChange(slot.key, 'name', e.target.value)}
                       placeholder="Enter name..."
-                      style={{ padding: '6px 10px', border: '1px solid var(--line)', borderRadius: '6px', fontSize: '0.85rem', width: '100%', background: 'var(--card)', color: 'var(--ink)', fontFamily: 'inherit' }}
+                      style={{ padding: '6px 10px', border: '1px solid var(--line)', borderRadius: '6px', fontSize: '0.875rem', width: '100%', background: 'var(--card)', color: 'var(--ink)', fontFamily: 'inherit' }}
                     />
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--mist)' }}>Role</label>
+                    <label style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--mist)' }}>Role</label>
                     <input 
                       type="text" 
                       value={slot.role || ''} 
                       onChange={(e) => handleFieldChange(slot.key, 'role', e.target.value)}
                       placeholder="Enter role..."
-                      style={{ padding: '6px 10px', border: '1px solid var(--line)', borderRadius: '6px', fontSize: '0.85rem', width: '100%', background: 'var(--card)', color: 'var(--ink)', fontFamily: 'inherit' }}
+                      style={{ padding: '6px 10px', border: '1px solid var(--line)', borderRadius: '6px', fontSize: '0.875rem', width: '100%', background: 'var(--card)', color: 'var(--ink)', fontFamily: 'inherit' }}
                     />
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--mist)' }}>Short Bio</label>
+                    <label style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--mist)' }}>Short Bio</label>
                     <textarea 
                       value={slot.bio || ''} 
                       onChange={(e) => handleFieldChange(slot.key, 'bio', e.target.value)}
                       placeholder="Enter biography..."
                       rows="3"
-                      style={{ padding: '6px 10px', border: '1px solid var(--line)', borderRadius: '6px', fontSize: '0.8rem', width: '100%', resize: 'vertical', background: 'var(--card)', color: 'var(--ink)', fontFamily: 'inherit' }}
+                      style={{ padding: '6px 10px', border: '1px solid var(--line)', borderRadius: '6px', fontSize: '0.875rem', width: '100%', resize: 'vertical', background: 'var(--card)', color: 'var(--ink)', fontFamily: 'inherit' }}
                     />
                   </div>
                 </div>
@@ -470,7 +470,7 @@ function TeamManager({ onBack }) {
                   disabled={savingDetails[slot.key]}
                   style={{
                     padding: '8px 16px',
-                    fontSize: '0.85rem',
+                    fontSize: '0.875rem',
                     fontWeight: 600,
                     width: '100%',
                     marginBottom: '1rem',
@@ -506,7 +506,7 @@ function TeamManager({ onBack }) {
 
                 {photoUrl && (
                   <div className="tmg-position-controls" style={{ width: '100%', margin: '1.25rem 0 0.5rem', borderTop: '1px dashed var(--line)', paddingTop: '1rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 600, color: 'var(--mist)', marginBottom: '4px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', fontWeight: 600, color: 'var(--mist)', marginBottom: '4px' }}>
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                           <circle cx="11" cy="11" r="8"></circle>
@@ -530,7 +530,7 @@ function TeamManager({ onBack }) {
                       style={{ width: '100%', accentColor: 'var(--jade)', cursor: 'pointer', marginBottom: '10px' }}
                     />
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 600, color: 'var(--mist)', marginBottom: '4px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', fontWeight: 600, color: 'var(--mist)', marginBottom: '4px' }}>
                       <span>Horizontal position</span>
                       <span>{slot.offsetX !== undefined ? slot.offsetX : 50}%</span>
                     </div>
@@ -545,7 +545,7 @@ function TeamManager({ onBack }) {
                       style={{ width: '100%', accentColor: 'var(--jade)', cursor: 'pointer', marginBottom: '10px' }}
                     />
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 600, color: 'var(--mist)', marginBottom: '4px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', fontWeight: 600, color: 'var(--mist)', marginBottom: '4px' }}>
                       <span>Vertical position</span>
                       <span>{slot.offsetY !== undefined ? slot.offsetY : 50}%</span>
                     </div>
@@ -559,7 +559,7 @@ function TeamManager({ onBack }) {
                       onTouchEnd={() => saveOffset(slot.key)}
                       style={{ width: '100%', accentColor: 'var(--jade)', cursor: 'pointer' }}
                     />
-                    <p style={{ fontSize: '0.65rem', color: 'var(--mist)', marginTop: '8px', fontStyle: 'italic' }}>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--mist)', marginTop: '8px', fontStyle: 'italic' }}>
                       Drag sliders to adjust. Position is saved automatically on release.
                     </p>
                   </div>
@@ -573,7 +573,7 @@ function TeamManager({ onBack }) {
                     color: 'var(--seal, #a92316)',
                     padding: '8px 16px',
                     borderRadius: '8px',
-                    fontSize: '0.8rem',
+                    fontSize: '0.875rem',
                     fontWeight: 600,
                     cursor: 'pointer',
                     width: '100%',

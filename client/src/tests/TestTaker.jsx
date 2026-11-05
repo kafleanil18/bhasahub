@@ -402,7 +402,7 @@ function TestTaker({ testId, onBack }) {
             })()}
           </div>
           {hiddenHistoryCount > 0 && (
-            <p style={{ marginTop: 8, marginBottom: 0, fontSize: '0.8rem', color: 'var(--mist)' }}>
+            <p style={{ marginTop: 8, marginBottom: 0, fontSize: '0.875rem', color: 'var(--mist)' }}>
               Showing your {MAX_HISTORY_SHOWN} most recent attempts ({hiddenHistoryCount} earlier {hiddenHistoryCount === 1 ? 'attempt' : 'attempts'} not shown).
             </p>
           )}
@@ -494,7 +494,7 @@ function TestTaker({ testId, onBack }) {
                             <span style={{ fontWeight: 600, textAlign: 'left' }}>{optionText}</span>
                           </div>
                           {optionPinyin && (
-                            <span className="option-pinyin" style={{ fontSize: '0.85rem', color: 'var(--mist)', marginLeft: '32px', textAlign: 'left' }}>
+                            <span className="option-pinyin" style={{ fontSize: '0.875rem', color: 'var(--mist)', marginLeft: '32px', textAlign: 'left' }}>
                               {optionPinyin}
                             </span>
                           )}

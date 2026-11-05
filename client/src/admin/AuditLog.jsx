@@ -63,21 +63,21 @@ function AuditLog({ onBack }) {
   });
 
   return (
-    <section className="container" style={{ padding: '32px 0 60px' }}>
-      <button className="back-btn" onClick={onBack} style={{ marginBottom: 16 }}>← Back to home</button>
+    <section className="container audit-page">
+      <button className="back-btn audit-back" onClick={onBack}>← Back to home</button>
 
-      <div style={{ marginBottom: 24 }}>
-        <h1 className="section-title" style={{ marginBottom: 4 }}>Activity log</h1>
-        <p style={{ color: 'var(--mist)' }}>Who did what across the admin tools, most recent first.</p>
+      <div className="audit-page-heading">
+        <h1 className="section-title">Activity log</h1>
+        <p>Who did what across the admin tools, most recent first.</p>
       </div>
 
       <StudentSignIns />
 
-      {error && <p className="login-error" style={{ marginBottom: 20 }}>{error}</p>}
+      {error && <p className="login-error audit-error">{error}</p>}
 
-      <div className="admin-list">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
-          <h2 style={{ marginBottom: 0 }}>Recent activity ({filtered.length})</h2>
+      <div className="admin-list audit-activity-list">
+        <div className="audit-list-heading">
+          <h2>Recent activity ({filtered.length})</h2>
           {entries.length > 0 && (
             <select value={resourceFilter} onChange={(e) => setResourceFilter(e.target.value)}>
               {resourceTypes.map((type) => (

@@ -604,7 +604,7 @@ function HanziTracePage({ user, onBack, token }) {
                         <button
                           type="button"
                           className="btn btn-sm btn-outline-secondary rounded-pill px-2 py-0"
-                          style={{ fontSize: '0.75rem' }}
+                          style={{ fontSize: '0.875rem' }}
                           onClick={() => handleOpenEditModal(c)}
                         >
                           Edit
@@ -612,7 +612,7 @@ function HanziTracePage({ user, onBack, token }) {
                         <button
                           type="button"
                           className="btn btn-sm btn-outline-danger rounded-pill px-2 py-0"
-                          style={{ fontSize: '0.75rem' }}
+                          style={{ fontSize: '0.875rem' }}
                           onClick={() => handleDeleteCharacter(c._id, c.character)}
                         >
                           Delete

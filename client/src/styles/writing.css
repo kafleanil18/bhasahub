@@ -28,7 +28,7 @@
   position: absolute;
   top: 10px;
   right: 12px;
-  font-size: 11px;
+  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
   font-weight: 700;
   color: var(--mist);
   background: var(--paper);
@@ -40,7 +40,7 @@
 
 .trace-char-position {
   display: block;
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
   color: var(--mist);
   font-weight: 600;
   margin-top: 2px;
@@ -81,7 +81,7 @@
 }
 
 .trace-step-label {
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -239,7 +239,7 @@
 
 .dash-eyebrow {
   display: inline-block;
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -331,7 +331,7 @@
 }
 
 .dash-stat-lbl {
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
   color: rgba(255, 255, 255, 0.7);
 }
 
@@ -351,7 +351,7 @@
 
 .btn-secondary-sm {
   padding: 8px 16px;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-weight: 600;
   color: var(--ink);
   background: var(--card, #ffffff);
@@ -448,7 +448,7 @@
 
 .dash-level-pill {
   padding: 4px 12px;
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
   font-weight: 700;
   background: var(--card, #ffffff);
   border: 1px solid var(--line);
@@ -458,7 +458,7 @@
 
 .dash-status-pill {
   padding: 4px 12px;
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
   font-weight: 600;
   border-radius: 20px;
 }
@@ -497,7 +497,7 @@
 .dash-progress-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-weight: 600;
   color: var(--mist);
   margin-bottom: 6px;
@@ -652,7 +652,7 @@
 }
 
 .tone-tab-num {
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -717,7 +717,7 @@
 
 .tone-speaker-btn {
   padding: 6px 14px;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-weight: 600;
   color: var(--seal);
   background: rgba(var(--accent-red-rgb), 0.08);
@@ -755,7 +755,7 @@
 }
 
 .tone-tip-box p {
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   color: var(--ink);
   line-height: 1.5;
 }
@@ -772,7 +772,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-weight: 600;
   margin-bottom: 16px;
   color: rgba(255, 255, 255, 0.8);
@@ -787,7 +787,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
 }
 
 .legend-dot {
@@ -900,7 +900,7 @@
 }
 
 .result-score-lbl {
-  font-size: 10px;
+  font-size: clamp(12px, calc(10px + 0.4vw), 14px);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   opacity: 0.85;
@@ -926,11 +926,58 @@
 }
 
 .metric-pill {
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   color: var(--ink);
   background: var(--card, #ffffff);
   border: 1px solid var(--line);
   padding: 4px 12px;
   border-radius: 20px;
+}
+
+/* Shared lesson and practice reading rhythm */
+.sentence-page, .listening-page, .lesson-study-page { font-size: clamp(16px, calc(15px + .18vw), 18px); line-height: 1.7; }
+.sentence-page, .listening-page { padding-top: clamp(32px, 5vw, 56px); padding-bottom: clamp(56px, 7vw, 88px); }
+.sentence-page :is(h1,h2,h3), .listening-page :is(h1,h2,h3), .lesson-study-page :is(h1,h2,h3) { line-height: 1.2; text-wrap: pretty; }
+.sentence-page .sentence-heading h1, .listening-page .listening-heading h1 { font-size: clamp(36px, 4.2vw, 52px); letter-spacing: -.035em; }
+.sentence-page .sentence-card, .listening-page .listening-card { border-radius: 14px; padding: clamp(24px, 3vw, 36px); box-shadow: 0 12px 34px rgba(42,35,32,.045); }
+.sentence-page :is(.sentence-muted,.sentence-progress,.sentence-section-heading p), .listening-page :is(.listening-muted,.listening-note,.listening-progress-label) { font-size: clamp(14px, calc(13px + .3vw), 16px); }
+
+.lesson-study-page { max-width: 1160px; padding-top: clamp(28px, 4vw, 48px); }
+.lesson-study-nav { margin-bottom: clamp(20px, 3vw, 32px); }
+.lesson-study-page .lesson-study-nav .back-btn { min-height: 44px; padding: 8px 0; font: inherit; font-weight: 600; }
+.lesson-study-heading { max-width: 900px; margin-bottom: clamp(24px, 4vw, 40px); }
+.lesson-study-page > .lesson-study-heading .eyebrow { margin-bottom: 10px; color: var(--seal); font-size: clamp(14px, calc(13px + .35vw), 16px); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.lesson-study-page > .lesson-study-heading .section-title { max-width: 900px; margin: 0; font-size: clamp(36px, 4.5vw, 56px); line-height: 1.12; letter-spacing: -.035em; }
+.lesson-study-page .lesson-count { margin: 16px 0 24px; color: var(--mist); font-size: clamp(15px, calc(14px + .3vw), 17px); }
+.lesson-study-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin: 24px 0 32px; }
+.lesson-study-actions > button { min-height: 48px; margin: 0; font: inherit; }
+.lesson-study-actions > .btn-primary:last-child:not(:first-child) { background: var(--seal); border-color: var(--seal); box-shadow: none; }
+.lesson-complete-error { flex-basis: 100%; margin: 0; }
+.lesson-study-page .flash-toggle { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 24px; }
+.lesson-study-page .flash-toggle .flash-toggle-btn { width: auto; min-height: 48px; margin: 0; padding: 11px 18px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); box-shadow: none; color: var(--ink); font: inherit; font-weight: 600; }
+.lesson-study-page .flash-toggle .flash-toggle-btn:hover { border-color: var(--seal); color: var(--seal); }
+.lesson-study-page .vocab-grid { gap: 16px; }
+.lesson-study-page .vocab-card { min-width: 0; padding: clamp(20px, 2.4vw, 28px); border: 1px solid var(--line); border-radius: 12px; background: var(--card); box-shadow: 0 8px 24px rgba(42,35,32,.04); }
+.lesson-study-page .vocab-card .annotation, .lesson-study-page .vocab-card .meaning { font-size: clamp(15px, calc(14px + .25vw), 17px); line-height: 1.65; }
+.lesson-study-page .vocab-card .word { font-size: clamp(30px, 3.3vw, 42px); line-height: 1.25; }
+.lesson-study-page .lesson-dialogue { max-width: 880px; margin: 28px 0; padding: clamp(20px, 3vw, 32px); border: 1px solid var(--line); border-left: 4px solid var(--seal); border-radius: 12px; background: var(--card); }
+.lesson-study-page .dialogue-line-caption { font-size: clamp(18px, calc(17px + .35vw), 21px); line-height: 1.6; }
+.lesson-study-page .dialogue-line-meaning { font-size: clamp(15px, calc(14px + .25vw), 17px); }
+.lesson-study-page .flashcard-area { max-width: 880px; margin: 24px auto 0; }
+.lesson-study-page .flashcard { width: min(100%, 620px); height: clamp(320px, 42vw, 420px); margin-inline: auto; }
+.lesson-study-page .flash-front, .lesson-study-page .flash-back { border: 1px solid var(--line); border-radius: 14px; background: var(--card); box-shadow: 0 16px 40px rgba(42,35,32,.08); }
+.lesson-study-page .flash-word { font-size: clamp(44px, 7vw, 72px); }
+.lesson-study-page .flash-pron, .lesson-study-page .flash-meaning { font-size: clamp(20px, 2.8vw, 28px); }
+.lesson-study-page .flash-controls { gap: 12px; }
+.lesson-study-page .flash-controls .nav-btn { min-height: 46px; font: inherit; }
+
+@media (max-width: 700px) {
+  .sentence-page, .listening-page, .lesson-study-page { padding-inline: 16px; }
+  .sentence-page .sentence-card, .listening-page .listening-card { padding: 22px 18px; }
+  .lesson-study-page > .lesson-study-heading .section-title { font-size: clamp(32px, 9vw, 42px); }
+  .lesson-study-page .flash-toggle > button { flex: 1 1 100%; justify-content: center; }
+  .lesson-study-page .flashcard { height: 320px; }
+  .lesson-study-page .flash-controls { flex-wrap: wrap; justify-content: center; }
+  .lesson-study-page .flash-controls .flash-count { order: -1; flex-basis: 100%; text-align: center; }
 }
 

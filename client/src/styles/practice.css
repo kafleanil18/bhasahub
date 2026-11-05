@@ -10,7 +10,7 @@
 
 .record-btn {
   font-family: 'Inter', sans-serif;
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
   font-weight: 500;
   padding: 7px 12px;
   border-radius: 999px;
@@ -129,7 +129,7 @@
 }
 
 .flash-hint {
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
   color: var(--mist);
   letter-spacing: 0.05em;
 }
@@ -181,7 +181,7 @@
   background: rgba(0, 0, 0, 0.04);
   border: 1px solid var(--line);
   color: var(--ink-light);
-  font-size: 11px;
+  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 20px;
@@ -247,7 +247,7 @@
 }
 
 .user-menu-trigger .caret {
-  font-size: 11px;
+  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
   color: var(--mist);
 }
 
@@ -453,7 +453,7 @@
 }
 
 .quiz-chart-sub {
-  font-size: 11px;
+  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--mist);
@@ -506,7 +506,7 @@
 }
 
 .quiz-legend-label {
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   color: var(--mist);
   font-weight: 500;
 }
@@ -559,7 +559,7 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-weight: 600;
   color: var(--ink);
 }
@@ -572,7 +572,7 @@
 }
 
 .video-card-duration {
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
   font-weight: 500;
   color: var(--mist);
   background: var(--paper);
@@ -643,7 +643,7 @@
 }
 
 .play-btn-label {
-  font-size: 13.5px;
+  font-size: clamp(12px, calc(13.5px + 0.4vw), 14px);
   font-weight: 600;
   letter-spacing: 0.02em;
 }
@@ -678,13 +678,13 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-weight: 600;
   color: var(--seal);
 }
 
 .tone-indicator {
-  font-size: 11px;
+  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
   color: var(--mist);
   background: var(--rice);
   padding: 1px 6px;
@@ -703,7 +703,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12.5px;
+  font-size: clamp(12px, calc(12.5px + 0.4vw), 14px);
   color: var(--mist);
 }
 
@@ -726,7 +726,7 @@
   padding: 9px 15px;
   border-radius: 10px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-weight: 600;
   transition: all 0.2s ease;
 }
@@ -842,7 +842,7 @@
 .grammar-explanation-text h4 { font-size: 21px; margin: 0 0 16px; line-height: 1.4; }
 .grammar-explanation-text h5 { font-size: 17px; margin: 20px 0 12px; line-height: 1.4; }
 .grammar-explanation-text p { overflow-wrap: anywhere; }
-.grammar-explanation-text .grammar-course-meta { color: var(--mist); font-size: 13px; }
+.grammar-explanation-text .grammar-course-meta { color: var(--mist); font-size: clamp(12px, calc(13px + 0.4vw), 14px); }
 .grammar-explanation-text .grammar-pattern { padding: 12px 16px; background: var(--rice); border-radius: 8px; }
 .grammar-explanation-text blockquote { margin: 16px 0; padding: 12px 16px; border-left: 3px solid var(--seal); background: var(--paper); }
 .grammar-explanation-text blockquote p { margin: 4px 0; }
@@ -906,7 +906,7 @@
   border-radius: 6px;
   background: var(--paper);
   color: var(--ink);
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   cursor: pointer;
 }
 
@@ -921,7 +921,7 @@
   border-radius: 6px;
   background: var(--paper);
   color: var(--ink);
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   cursor: pointer;
 }
 
@@ -1028,7 +1028,7 @@
   .courses-section { padding: 48px 0 60px; }
   .courses-section .section-title { font-size: 26px; }
   .level-pills { gap: 8px; margin-bottom: 24px; }
-  .level-pill { padding: 8px 18px; font-size: 13.5px; }
+  .level-pill { padding: 8px 18px; font-size: clamp(12px, calc(13.5px + 0.4vw), 14px); }
   .course-cards { gap: 18px; }
   .course-card-body { padding: 18px 16px; }
 
@@ -1066,7 +1066,7 @@
   .flash-pron { font-size: 28px; }
   .flash-meaning { font-size: 18px; }
   .flash-toggle { flex-direction: column; gap: 10px; }
-  .nav-btn.flash-toggle-btn { width: 100%; padding: 9px 16px; font-size: 13px; }
+  .nav-btn.flash-toggle-btn { width: 100%; padding: 9px 16px; font-size: clamp(12px, calc(13px + 0.4vw), 14px); }
 
   .quiz-choices { grid-template-columns: 1fr; max-width: 100%; }
   .quiz-word { font-size: 44px; }
@@ -1074,7 +1074,7 @@
   .login { padding: 40px 16px 24px; }
   .login-card { padding: 28px 22px; }
 
-  .progress-label { font-size: 12px; }
+  .progress-label { font-size: clamp(12px, calc(12px + 0.4vw), 14px); }
 
   .hero-video { max-width: 100%; }
 
@@ -1130,7 +1130,7 @@
   .card-characters { font-size: 24px; }
   .wotd-card .wotd-word { font-size: 28px; }
   .wotd-pinyin { font-size: 14.5px; }
-  .wotd-meaning { font-size: 13.5px; }
+  .wotd-meaning { font-size: clamp(12px, calc(13.5px + 0.4vw), 14px); }
   .testimonial-card { flex: 0 0 230px; padding: 16px 14px; }
   .course-cards { grid-template-columns: 1fr; }
 }
@@ -1138,7 +1138,7 @@
 @media (max-width: 400px) {
   .container { padding: 0 12px; }
   .hero-title { font-size: 24px; }
-  .hero-badge { font-size: 12px; padding: 5px 10px; }
+  .hero-badge { font-size: clamp(12px, calc(12px + 0.4vw), 14px); padding: 5px 10px; }
   .card-meaning-line { flex-wrap: wrap; gap: 4px; }
   .worlds-grid { grid-template-columns: 1fr; }
   .vocab-grid { grid-template-columns: 1fr 1fr; }
@@ -1160,7 +1160,7 @@
 }
 .draggable-row:hover .drag-handle { color: var(--seal); }
 .reorder-hint {
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   color: var(--mist);
   margin-bottom: 12px;
 }
@@ -1177,7 +1177,7 @@
 
 .grammar-editor label {
   display: block;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-weight: 600;
   color: var(--ink);
 }
@@ -1399,7 +1399,7 @@
   gap: 6px;
   padding: 6px 14px;
   border-radius: 999px;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-weight: 600;
   color: white;
   background: linear-gradient(135deg,#c99a3c,#e7b64b);
@@ -1431,7 +1431,7 @@
 
 .course-progress-text {
   margin-top: 8px;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   color: var(--mist);
 }
 

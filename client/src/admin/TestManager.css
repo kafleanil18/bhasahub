@@ -16,8 +16,8 @@
 .paper-create-button { margin-bottom: 24px; }
 .paper-editor { background: var(--card); padding: 24px; border: 1px solid var(--line); border-radius: 12px; }
 .paper-editor h2 { margin-top: 0; }
-.paper-editor-heading p, .paper-help { color: var(--mist); line-height: 1.6; font-size: 13px; }
-.paper-editor label { display: grid; gap: 8px; min-width: 0; font-size: 13px; }
+.paper-editor-heading p, .paper-help { color: var(--mist); line-height: 1.6; font-size: clamp(12px, calc(13px + 0.4vw), 14px); }
+.paper-editor label { display: grid; gap: 8px; min-width: 0; font-size: clamp(12px, calc(13px + 0.4vw), 14px); }
 .paper-editor input:not([type=file]), .paper-editor textarea, .paper-editor select { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); font: inherit; box-sizing: border-box; }
 .paper-editor textarea { min-height: 76px; resize: vertical; }
 .paper-fields, .paper-question-editor { display: grid; gap: 16px; min-width: 0; margin: 24px 0; padding: 20px; border: 1px solid var(--line); border-radius: 8px; }
@@ -35,7 +35,7 @@
 .paper-media audio { width: 100%; }
 .paper-media button { justify-self: start; }
 .paper-editor-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding-top: 20px; border-top: 1px solid var(--line); }
-.paper-editor-actions span { color: var(--mist); font-size: 12px; }
+.paper-editor-actions span { color: var(--mist); font-size: clamp(12px, calc(12px + 0.4vw), 14px); }
 .paper-editor-actions button, .paper-media button { min-height: 44px; padding: 10px 16px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); cursor: pointer; }
 .paper-editor-actions button:first-child { background: var(--seal); color: #fff; }
 .paper-editor button:disabled { cursor: wait; opacity: .6; }

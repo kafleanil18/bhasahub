@@ -666,12 +666,12 @@ function LessonManager({ course, onBack }) {
             <div className="dialogue-lines-head">
               <strong>Grammar image (optional)</strong>
               <div className="dialogue-image-size-wrap" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '13px', color: 'var(--mist)' }}>Upload size:</span>
+                <span style={{ fontSize: '14px', color: 'var(--mist)' }}>Upload size:</span>
                 <select
                   className="category-select"
                   value={uploadSize}
                   onChange={(e) => setUploadSize(e.target.value)}
-                  style={{ padding: '4px 8px', fontSize: '13px', minWidth: '120px' }}
+                  style={{ padding: '4px 8px', fontSize: '14px', minWidth: '120px' }}
                 >
                   <option value="xsmall">Extra Small (300px)</option>
                   <option value="small">Small (600px)</option>
@@ -724,12 +724,12 @@ function LessonManager({ course, onBack }) {
               <div className="dialogue-lines-head">
                 <strong>Conversation image (one for the whole dialogue)</strong>
                 <div className="dialogue-image-size-wrap" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '13px', color: 'var(--mist)' }}>Upload size:</span>
+                  <span style={{ fontSize: '14px', color: 'var(--mist)' }}>Upload size:</span>
                   <select
                     className="category-select"
                     value={uploadSize}
                     onChange={(e) => setUploadSize(e.target.value)}
-                    style={{ padding: '4px 8px', fontSize: '13px', minWidth: '120px' }}
+                    style={{ padding: '4px 8px', fontSize: '14px', minWidth: '120px' }}
                   >
                     <option value="xsmall">Extra Small (300px)</option>
                     <option value="small">Small (600px)</option>

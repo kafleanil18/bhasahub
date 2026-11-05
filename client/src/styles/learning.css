@@ -260,12 +260,12 @@
 }
 
 .row-info span {
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   color: var(--mist);
 }
 
 .pill {
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
   font-weight: 500;
   font-family: 'Inter', sans-serif;
   padding: 4px 12px;
@@ -302,7 +302,7 @@
 }
 
 .row-delete {
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-family: 'Inter', sans-serif;
   color: var(--seal);
   background: none;
@@ -425,7 +425,7 @@
 
 .vocab-card .annotation {
   display: block;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   color: var(--seal);
   letter-spacing: 0.04em;
   margin-bottom: 2px;
@@ -439,7 +439,7 @@
 
 .vocab-card .meaning {
   display: block;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   color: var(--mist);
   margin-top: 8px;
   padding-top: 8px;
@@ -516,7 +516,7 @@
 
 .cap-detail {
   display: block;
-  font-size: 12.5px;
+  font-size: clamp(12px, calc(12.5px + 0.4vw), 14px);
   color: var(--mist);
   letter-spacing: 0.03em;
 }
@@ -540,7 +540,7 @@
   border: 1px solid var(--line);
   background: var(--paper);
   color: var(--seal);
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
@@ -631,7 +631,7 @@
 }
 
 .progress-label {
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   color: var(--mist);
 }
 

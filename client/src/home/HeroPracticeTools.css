@@ -1,9 +1,9 @@
 .home-page .hero-practice-tools { --practice-red: var(--accent-red); --practice-gold: #f5ce69; position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 24px; min-width: 0; box-shadow: 0 20px 48px -32px color-mix(in srgb, var(--ink) 35%, transparent); }
 .home-page .hero-practice-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
-.home-page .hero-practice-kicker { color: var(--seal); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; margin: 0; }
-.home-page .hero-practice-count { border: 1px solid var(--line); border-radius: 20px; padding: 5px 10px; color: var(--mist); font-size: 10px; white-space: nowrap; }
+.home-page .hero-practice-kicker { color: var(--seal); font-size: clamp(12px, calc(10px + 0.4vw), 14px); font-weight: 800; text-transform: uppercase; letter-spacing: .14em; margin: 0; }
+.home-page .hero-practice-count { border: 1px solid var(--line); border-radius: 20px; padding: 5px 10px; color: var(--mist); font-size: clamp(12px, calc(10px + 0.4vw), 14px); white-space: nowrap; }
 .home-page .hero-practice-tools :is(h1, h2) { font-family: 'Fraunces', serif; font-size: 30px; line-height: 1.15; letter-spacing: -.035em; color: var(--ink); margin: 0; max-width: 320px; }
-.home-page .hero-practice-intro { color: var(--mist); font-size: 12px; line-height: 1.6; margin: 10px 0 20px; max-width: 360px; }
+.home-page .hero-practice-intro { color: var(--mist); font-size: clamp(12px, calc(12px + 0.4vw), 14px); line-height: 1.6; margin: 10px 0 20px; max-width: 360px; }
 .home-page .hero-practice-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .home-page .hero-practice-link { position: relative; display: flex; align-items: flex-start; gap: 10px; width: 100%; padding: 14px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); color: var(--ink); text-align: left; cursor: pointer; min-width: 0; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
 .home-page .hero-practice-glyph { display: grid; place-items: center; width: 32px; height: 36px; border-radius: 8px; background: color-mix(in srgb, var(--seal) 9%, var(--card)); color: var(--seal); font-size: 22px; line-height: 1; flex-shrink: 0; font-family: serif; }
@@ -14,24 +14,24 @@
 .hero-practice-link:is(:hover,:focus-visible) .practice-symbol-flip { transform: rotateY(180deg); }
 @media (prefers-reduced-motion: reduce) { .practice-symbol-flip { transition: none; } }
 .home-page .hero-practice-copy { flex: 1; min-width: 0; }
-.home-page .hero-practice-copy strong { display: block; font-size: 12px; line-height: 1.4; }
-.home-page .hero-practice-copy small { display: block; color: var(--mist); font-size: 11px; line-height: 1.5; margin-top: 4px; }
-.home-page .hero-practice-arrow { color: var(--seal); position: absolute; right: 10px; top: 9px; font-size: 11px; }
+.home-page .hero-practice-copy strong { display: block; font-size: clamp(12px, calc(12px + 0.4vw), 14px); line-height: 1.4; }
+.home-page .hero-practice-copy small { display: block; color: var(--mist); font-size: clamp(12px, calc(11px + 0.4vw), 14px); line-height: 1.5; margin-top: 4px; }
+.home-page .hero-practice-arrow { color: var(--seal); position: absolute; right: 10px; top: 9px; font-size: clamp(12px, calc(11px + 0.4vw), 14px); }
 .home-page .hero-practice-link:hover { transform: translateY(-3px); border-color: var(--seal); box-shadow: 0 8px 18px -14px var(--ink); }
 .home-page .hero-practice-link:hover strong { color: var(--seal); }
 .home-page .hero-practice-link:focus-visible { outline: 3px solid var(--seal); outline-offset: 3px; }
 .home-page .hero-practice-pinyin { grid-column: 1 / -1; align-items: center; padding: 20px; border: 0; background: var(--practice-red); color: white; overflow: hidden; }
 .home-page .hero-practice-pinyin::after { content: 'ā á ǎ à'; position: absolute; right: 18px; bottom: -10px; color: #ffffff14; font-size: 52px; font-family: serif; pointer-events: none; }
 .home-page .hero-practice-pinyin .hero-practice-glyph { width: 60px; height: 64px; background: #ffffff17; color: var(--practice-gold); font-size: 42px; border: 1px solid #ffffff30; margin-right: 4px; }
-.home-page .hero-practice-start { display: block; color: var(--practice-gold); font-size: 9px; font-weight: 800; letter-spacing: .09em; margin-bottom: 6px; }
+.home-page .hero-practice-start { display: block; color: var(--practice-gold); font-size: clamp(12px, calc(9px + 0.4vw), 14px); font-weight: 800; letter-spacing: .09em; margin-bottom: 6px; }
 .home-page .hero-practice-pinyin .hero-practice-copy strong { font-size: 22px; color: white; }
-.home-page .hero-practice-pinyin .hero-practice-copy small { color: white; opacity: .9; font-size: 12px; }
+.home-page .hero-practice-pinyin .hero-practice-copy small { color: white; opacity: .9; font-size: clamp(12px, calc(12px + 0.4vw), 14px); }
 .home-page .hero-practice-pinyin .hero-practice-arrow { position: static; color: white; font-size: 24px; margin-left: auto; }
 .home-page .hero-practice-tests { grid-column: 1 / -1; align-items: flex-start; gap: 16px; padding: 24px; background: var(--practice-red); border-color: var(--practice-red); color: #fff; animation: mock-test-pulse 2s ease-out infinite; }
-.home-page .mock-test-kicker { display: block; color: var(--practice-gold); font-size: 9px; font-weight: 800; letter-spacing: .09em; line-height: 1.5; margin-bottom: 8px; }
+.home-page .mock-test-kicker { display: block; color: var(--practice-gold); font-size: clamp(12px, calc(9px + 0.4vw), 14px); font-weight: 800; letter-spacing: .09em; line-height: 1.5; margin-bottom: 8px; }
 .home-page .hero-practice-tests .hero-practice-copy strong { font-size: 22px; line-height: 1.25; max-width: 300px; }
-.home-page .hero-practice-tests .hero-practice-copy small { font-size: 12px; line-height: 1.65; margin-top: 10px; max-width: 340px; }
-.home-page .mock-test-cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 44px; margin-top: 18px; padding: 10px 14px; border-radius: 6px; background: #fff; color: var(--practice-red); font-size: 12px; font-weight: 800; }
+.home-page .hero-practice-tests .hero-practice-copy small { font-size: clamp(12px, calc(12px + 0.4vw), 14px); line-height: 1.65; margin-top: 10px; max-width: 340px; }
+.home-page .mock-test-cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 44px; margin-top: 18px; padding: 10px 14px; border-radius: 6px; background: #fff; color: var(--practice-red); font-size: clamp(12px, calc(12px + 0.4vw), 14px); font-weight: 800; }
 .home-page .mock-test-cta > span { font-size: 18px; transition: transform .18s ease; }
 .home-page .hero-practice-tests:hover .mock-test-cta > span { transform: translateX(3px); }
 .home-page .hero-practice-tests .hero-practice-copy small,
@@ -52,12 +52,12 @@
   .home-page .hero-practice-list { grid-template-columns: 1fr; gap: 8px; }
   .home-page .hero-practice-tools :is(h1, h2) { font-size: 28px; }
   .home-page .hero-practice-link { padding: 12px; align-items: center; }
-  .home-page .hero-practice-copy strong { font-size: 13px; }
+  .home-page .hero-practice-copy strong { font-size: clamp(12px, calc(13px + 0.4vw), 14px); }
   .home-page .hero-practice-pinyin { padding: 16px 12px; }
   .home-page .hero-practice-pinyin .hero-practice-glyph { width: 44px; height: 56px; font-size: 32px; }
   .home-page .hero-practice-pinyin .hero-practice-copy strong { font-size: 20px; }
   .home-page .hero-practice-pinyin .hero-practice-arrow { font-size: 18px; }
-  .home-page .hero-practice-start { font-size: 8px; }
+  .home-page .hero-practice-start { font-size: clamp(12px, calc(8px + 0.4vw), 14px); }
 }
 @media (prefers-reduced-motion: reduce) { .home-page .hero-practice-link { transition: none; } .home-page .hero-practice-link:hover { transform: none; } }
 

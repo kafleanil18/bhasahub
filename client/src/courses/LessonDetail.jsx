@@ -129,19 +129,16 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, co
   };
 
   return (
-    <section className={`course-page container${lesson.category === 'grammar' ? ' grammar-course-page' : ''}`}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <button className="back-btn" style={{ margin: 0 }} onClick={onBack}>
+    <section className={`course-page container lesson-study-page${lesson.category === 'grammar' ? ' grammar-course-page' : ''}`}>
+      <div className="lesson-study-nav">
+        <button className="back-btn" onClick={onBack}>
           ← Back to {course.title}
         </button>
-        {nextLesson && (
-          <button className="back-btn" style={{ margin: 0 }} onClick={onNextLesson}>
-            Next Lesson →
-          </button>
-        )}
       </div>
-      <p className="eyebrow">{lesson.category === 'grammar' ? 'Grammar studio' : `Lesson ${lesson.order}`}</p>
-      <h1 className="section-title">{lesson.title}</h1>
+      <header className="lesson-study-heading">
+        <p className="eyebrow">{lesson.category === 'grammar' ? 'Grammar studio' : `Lesson ${lesson.order}`}</p>
+        <h1 className="section-title">{lesson.title}</h1>
+      </header>
 
       {lesson.category === 'grammar' && (lesson.grammarExplanation || lesson.grammarImage) && (
         <div className="grammar-lesson-wrapper">
@@ -188,22 +185,20 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, co
       {(lesson.category !== 'grammar' || words.length > 0) && <p className="lesson-count">{words.length} words</p>}
       {wordsError && <p className="login-error">{wordsError}</p>}
 
-      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap' }}>
+      <div className="lesson-study-actions">
         {user && (
           <button
             className={isCompleted ? 'nav-btn' : 'btn-primary'}
             onClick={onToggleComplete}
-            style={{ margin: 0 }}
           >
             {isCompleted ? '✓ Completed' : 'Mark as complete'}
           </button>
         )}
-        {completeError && <p className="login-error" style={{ margin: 0, width: '100%' }}>{completeError}</p>}
+        {completeError && <p className="login-error lesson-complete-error">{completeError}</p>}
         {nextLesson && (
           <button
             className="btn-primary"
             onClick={onNextLesson}
-            style={{ margin: 0, background: 'var(--jade)', borderColor: 'var(--jade)', boxShadow: '0 4px 12px rgba(46, 204, 113, 0.2)' }}
           >
             Next Lesson →
           </button>

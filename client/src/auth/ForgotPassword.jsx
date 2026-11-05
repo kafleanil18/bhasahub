@@ -239,7 +239,7 @@ function ForgotPassword({ onBack, onSwitch }) {
                   We sent a 6-digit code to <strong>{email}</strong>.{' '}
                   <button
                     type="button"
-                    style={{ background: 'none', border: 'none', color: 'var(--seal)', textDecoration: 'underline', cursor: 'pointer', padding: 0, fontSize: '13px' }}
+                    style={{ background: 'none', border: 'none', color: 'var(--seal)', textDecoration: 'underline', cursor: 'pointer', padding: 0, fontSize: '14px' }}
                     onClick={() => { setStep('request'); setError(''); setSuccessMsg(''); }}
                   >
                     Change email
@@ -248,7 +248,7 @@ function ForgotPassword({ onBack, onSwitch }) {
               </div>
 
               {devOtp && (
-                <div style={{ background: 'rgba(201, 154, 60, 0.12)', border: '1px dashed #c99a3c', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: 13, color: '#8a6214' }}>
+                <div style={{ background: 'rgba(201, 154, 60, 0.12)', border: '1px dashed #c99a3c', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: 14, color: '#8a6214' }}>
                   🔑 <strong>Dev Notice:</strong> Your local test code is: <code style={{ fontSize: 16, fontWeight: 700, letterSpacing: 2 }}>{devOtp}</code>
                 </div>
               )}
@@ -384,7 +384,7 @@ function ForgotPassword({ onBack, onSwitch }) {
                   )}
                 </button>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 14, fontSize: 13, color: 'var(--mist)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 14, fontSize: 14, color: 'var(--mist)' }}>
                   <span>Didn't receive the code?</span>
                   <button
                     type="button"

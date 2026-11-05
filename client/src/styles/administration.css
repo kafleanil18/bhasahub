@@ -47,7 +47,7 @@
   background: var(--rice);
   border: 1px solid var(--gold);
   border-radius: 999px;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-weight: 500;
   color: var(--ink);
   white-space: nowrap;
@@ -113,7 +113,7 @@ fadeUp .8s ease;
 
 .user-locked-note {
   color: var(--mist);
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-style: italic;
 }
 
@@ -126,7 +126,7 @@ fadeUp .8s ease;
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 20px;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-weight: 600;
   color: var(--ink);
   cursor: pointer;
@@ -225,7 +225,7 @@ fadeUp .8s ease;
 .admin-sidebar-kicker {
   margin-bottom: 2px;
   color: var(--seal);
-  font-size: 11px;
+  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -453,7 +453,7 @@ fadeUp .8s ease;
 
 .admin-sidebar-kicker {
   color: var(--gold) !important;
-  font-size: 10px !important;
+  font-size: clamp(12px, calc(10px + 0.4vw), 14px) !important;
   font-weight: 800 !important;
   letter-spacing: 1.5px !important;
   text-transform: uppercase;
@@ -487,7 +487,7 @@ fadeUp .8s ease;
   background: linear-gradient(135deg, var(--seal) 0%, var(--gold) 100%);
   color: #fff;
   font-weight: 700;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -507,7 +507,7 @@ fadeUp .8s ease;
 }
 
 .admin-profile-status {
-  font-size: 11px;
+  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
   color: var(--jade);
   font-weight: 600;
   display: flex;
@@ -595,7 +595,7 @@ fadeUp .8s ease;
 }
 
 .illustration-caption {
-  font-size: 11px;
+  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
   color: var(--mist);
   font-weight: 600;
   text-transform: uppercase;
@@ -650,7 +650,7 @@ fadeUp .8s ease;
   right: -8px;
   background: var(--seal);
   color: #fff;
-  font-size: 10px;
+  font-size: clamp(12px, calc(10px + 0.4vw), 14px);
   font-weight: 700;
   min-width: 17px;
   height: 17px;
@@ -666,7 +666,7 @@ fadeUp .8s ease;
   margin-left: auto;
   background: var(--seal);
   color: #fff;
-  font-size: 11px;
+  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
   font-weight: 700;
   padding: 2px 7px;
   border-radius: 12px;
@@ -739,7 +739,7 @@ fadeUp .8s ease;
 }
 
 .subs-stat-label {
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   color: var(--mist);
   margin-top: 2px;
 }
@@ -801,7 +801,7 @@ fadeUp .8s ease;
   border-radius: 50%;
   background: var(--line);
   color: var(--ink);
-  font-size: 11px;
+  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -814,14 +814,14 @@ fadeUp .8s ease;
 }
 
 .student-search-name {
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-weight: 650;
   color: var(--ink);
   line-height: 1.2;
 }
 
 .student-search-email {
-  font-size: 11px;
+  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
   color: var(--mist);
 }
 
@@ -837,7 +837,7 @@ fadeUp .8s ease;
   background: var(--paper);
   border: 1px solid var(--line);
   color: var(--ink);
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
   font-weight: 600;
   padding: 6px 12px;
   border-radius: 20px;
@@ -881,7 +881,7 @@ fadeUp .8s ease;
 }
 
 .selected-student-card .email {
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
   color: var(--mist);
 }
 
@@ -954,7 +954,7 @@ fadeUp .8s ease;
   background: var(--card);
   border: 1px solid var(--line);
   color: var(--ink);
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-weight: 600;
   padding: 7px 14px;
   border-radius: 20px;
@@ -977,7 +977,7 @@ fadeUp .8s ease;
 }
 
 .category-pill-count {
-  font-size: 10px;
+  font-size: clamp(12px, calc(10px + 0.4vw), 14px);
   opacity: 0.75;
   background: rgba(0, 0, 0, 0.08);
   padding: 2px 6px;
@@ -997,7 +997,7 @@ fadeUp .8s ease;
   border: 1px solid rgba(201, 154, 60, 0.2);
   border-radius: 20px;
   padding: 6px 14px;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-weight: 650;
   margin-bottom: 16px;
 }
@@ -1067,7 +1067,7 @@ fadeUp .8s ease;
 }
 
 .course-meta-lbl {
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
   color: var(--mist);
   margin-top: 2px;
 }
@@ -1126,7 +1126,7 @@ fadeUp .8s ease;
   background: var(--paper);
   border: 1px solid var(--line);
   color: var(--mist);
-  font-size: 10px;
+  font-size: clamp(12px, calc(10px + 0.4vw), 14px);
   font-weight: 700;
   padding: 4px 8px;
   border-radius: 4px;
@@ -1173,7 +1173,7 @@ fadeUp .8s ease;
 }
 
 .lesson-card-status-text {
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
   font-weight: 600;
   color: var(--mist);
 }
@@ -1227,7 +1227,7 @@ fadeUp .8s ease;
 }
 
 .keyboard-shortcut-hint {
-  font-size: 11px;
+  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
   color: var(--mist);
   text-align: center;
   font-weight: 500;
@@ -1269,7 +1269,7 @@ fadeUp .8s ease;
   border: 1px solid var(--line);
   color: var(--mist);
   font-weight: 700;
-  font-size: 11px;
+  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
   display: flex;
   align-items: center;
   justify-content: center;

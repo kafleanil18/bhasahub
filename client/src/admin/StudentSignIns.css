@@ -1,23 +1,23 @@
-.student-sign-ins { margin-bottom: 32px; padding: 24px; }
+.student-sign-ins { margin-bottom: 32px; padding: 28px; }
 .sign-ins-heading { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
 .sign-ins-heading h2 { margin: 0 0 8px; }
-.sign-ins-heading p, .sign-ins-note { color: var(--mist); font-size: 13px; line-height: 1.6; }
-.sign-ins-date { display: grid; gap: 8px; width: min(100%, 240px); font-weight: 600; }
+.sign-ins-heading p, .sign-ins-note { color: var(--mist); font-size: 15px; line-height: 1.65; }
+.sign-ins-date { display: grid; gap: 10px; width: min(100%, 260px); margin-bottom: 20px; font-size: 15px; font-weight: 600; }
 .sign-ins-date input { min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); font: inherit; color-scheme: light; }
 :root.dark .sign-ins-date input { color-scheme: dark; }
-.sign-ins-note { margin: 16px 0; max-width: 720px; }
-.sign-ins-totals { display: flex; flex-wrap: wrap; gap: 16px; margin: 24px 0; }
-.sign-ins-totals > div { display: grid; gap: 8px; flex: 1 1 180px; padding: 20px; background: var(--rice); border: 1px solid var(--line); border-radius: 8px; }
+.sign-ins-note { margin: 20px 0 24px; max-width: 760px; }
+.sign-ins-totals { display: flex; flex-wrap: wrap; gap: 20px; margin: 28px 0; }
+.sign-ins-totals > div { display: grid; gap: 10px; flex: 1 1 200px; padding: 24px; background: var(--rice); border: 1px solid var(--line); border-radius: 8px; }
 .sign-ins-totals strong { font-size: 32px; }
-.sign-ins-totals span { color: var(--mist); font-size: 14px; }
+.sign-ins-totals span { color: var(--mist); font-size: 15px; }
 .sign-ins-table-wrap { overflow-x: auto; }
-.student-sign-ins table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
-.student-sign-ins caption { text-align: left; color: var(--mist); padding-bottom: 16px; font-size: 12px; }
-.student-sign-ins th, .student-sign-ins td { padding: 16px 12px; border-bottom: 1px solid var(--line); }
+.student-sign-ins table { width: 100%; border-collapse: collapse; text-align: left; font-size: 15px; }
+.student-sign-ins caption { text-align: left; color: var(--mist); padding-bottom: 18px; font-size: 14px; line-height: 1.6; }
+.student-sign-ins th, .student-sign-ins td { padding: 18px 14px; border-bottom: 1px solid var(--line); }
 .student-sign-ins td { white-space: nowrap; }
 .student-sign-ins tbody th { font-weight: 400; min-width: 180px; }
-.student-sign-ins tbody th span { display: block; color: var(--mist); font-size: 12px; margin-top: 6px; overflow-wrap: anywhere; }
-.sign-ins-pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+.student-sign-ins tbody th span { display: block; color: var(--mist); font-size: 14px; margin-top: 6px; overflow-wrap: anywhere; }
+.sign-ins-pagination { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 28px; font-size: 15px; }
 .student-sign-ins button:disabled { opacity: .5; cursor: default; }
 .student-sign-ins :is(button, input):focus-visible { outline: 3px solid var(--seal); outline-offset: 3px; }
-@media (max-width: 480px) { .student-sign-ins { padding: 16px; } }
+@media (max-width: 480px) { .student-sign-ins { padding: 20px 16px; }.student-sign-ins th, .student-sign-ins td { padding: 14px 10px; } }

@@ -11,7 +11,7 @@
 .dictation-character.correct { border-color: #28734e; }
 .dictation-character.missing { border-style: dashed; }
 .dictation-character.extra { border-style: double; border-width: 3px; }
-.dictation-character small { display: block; max-width: 140px; font-size: 12px; line-height: 1.6; text-align: center; }
+.dictation-character small { display: block; max-width: 140px; font-size: clamp(12px, calc(12px + 0.4vw), 14px); line-height: 1.6; text-align: center; }
 .dictation-extra-character { text-decoration: line-through; text-decoration-color: var(--seal); }
 :root.dark .dictation-feedback.correct, :root.dark .dictation-character.correct { border-color: #86d6a4; }
 @media (max-width: 767px) { .dictation-feedback { padding: 20px 12px; } .dictation-character { min-width: 64px; padding-inline: 8px; } }

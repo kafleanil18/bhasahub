@@ -120,7 +120,7 @@ header .container {
   gap: 6px;
   padding: 7px 13px;
   border-radius: 999px;
-  font-size: 13.5px;
+  font-size: clamp(12px, calc(13.5px + 0.4vw), 14px);
   font-weight: 500;
   color: #d1c8b8;
   background: transparent;
@@ -157,7 +157,7 @@ header .container {
 }
 
 .nav-link .caret {
-  font-size: 9.5px;
+  font-size: clamp(12px, calc(9.5px + 0.4vw), 14px);
   margin-left: 1px;
   transition: transform 0.2s ease;
   display: inline-block;
@@ -215,7 +215,7 @@ header .container {
   align-items: center;
   gap: 10px;
   padding: 9px 12px;
-  font-size: 13.5px;
+  font-size: clamp(12px, calc(13.5px + 0.4vw), 14px);
   font-weight: 500;
   color: #eae3d5;
   background: transparent;
@@ -245,7 +245,7 @@ header .container {
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 999px;
   font-weight: 500;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   color: #faf6ec;
 }
 
@@ -275,17 +275,17 @@ header .container {
 
 .lang-dropdown-name {
   font-weight: 600;
-  font-size: 13.5px;
+  font-size: clamp(12px, calc(13.5px + 0.4vw), 14px);
   color: #faf6ec;
 }
 
 .lang-dropdown-sub {
-  font-size: 11.5px;
+  font-size: clamp(12px, calc(11.5px + 0.4vw), 14px);
   color: #a8a092;
 }
 
 .lang-dropdown-tag {
-  font-size: 10.5px;
+  font-size: clamp(12px, calc(10.5px + 0.4vw), 14px);
   color: #e5b958;
   font-weight: 600;
 }
@@ -312,7 +312,7 @@ header .container {
   align-items: center;
   gap: 5px;
   padding: 5px 11px;
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
   font-weight: 600;
   color: #5eead4;
   background: rgba(46, 107, 87, 0.28);
@@ -328,7 +328,7 @@ header .container {
   gap: 5px;
   padding: 6px 14px;
   border-radius: 999px;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-weight: 600;
   background: rgba(var(--accent-red-rgb), 0.22);
   border: 1px solid rgba(var(--accent-red-rgb), 0.45);
@@ -354,7 +354,7 @@ header .container {
   min-width: 17px;
   height: 17px;
   padding: 0 4px;
-  font-size: 10px;
+  font-size: clamp(12px, calc(10px + 0.4vw), 14px);
   font-weight: 700;
   line-height: 1;
 }
@@ -405,7 +405,7 @@ header .container {
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.08);
   color: #faf6ec;
-  font-size: 13.5px;
+  font-size: clamp(12px, calc(13.5px + 0.4vw), 14px);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.18s ease;
@@ -426,7 +426,7 @@ header .container {
   border-radius: 50%;
   background: linear-gradient(135deg, #2e6b57 0%, #1a4f3e 100%);
   color: #fff;
-  font-size: 12.5px;
+  font-size: clamp(12px, calc(12.5px + 0.4vw), 14px);
   font-weight: 700;
   flex-shrink: 0;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
@@ -440,7 +440,7 @@ header .container {
 }
 
 .user-role-badge {
-  font-size: 10px;
+  font-size: clamp(12px, calc(10px + 0.4vw), 14px);
   font-weight: 600;
   padding: 1px 6px;
   border-radius: 999px;
@@ -479,13 +479,13 @@ header .container {
 }
 
 .user-menu-header-name {
-  font-size: 13.5px;
+  font-size: clamp(12px, calc(13.5px + 0.4vw), 14px);
   font-weight: 600;
   color: #faf6ec;
 }
 
 .user-menu-header-role {
-  font-size: 11px;
+  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
   color: #a8a092;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -503,7 +503,7 @@ header .container {
   gap: 8px;
   width: 100%;
   padding: 8px 10px;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-weight: 500;
   border: none;
   background: transparent;
@@ -534,7 +534,7 @@ header .container {
   padding: 8px 18px;
   border-radius: 999px;
   font-weight: 600;
-  font-size: 13.5px;
+  font-size: clamp(12px, calc(13.5px + 0.4vw), 14px);
   color: #fff;
   background: linear-gradient(135deg, var(--accent-red) 0%, var(--accent-red) 100%);
   border: none;
@@ -765,7 +765,7 @@ header .container {
     padding: 8px 12px;
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.08);
-    font-size: 13.5px;
+    font-size: clamp(12px, calc(13.5px + 0.4vw), 14px);
     font-weight: 500;
     color: #faf6ec;
   }
@@ -799,7 +799,7 @@ header .container {
   }
 }
 
-/* ---------- Typography Override: Playfair Display ---------- */
+/* ---------- Shared display typography ---------- */
 h1, h2, h3, h4, h5, h6,
 .logo,
 .section-title,
@@ -813,7 +813,7 @@ h1, h2, h3, h4, h5, h6,
 .lesson-card-title,
 .wotd-word,
 .modal-overlay h2 {
-  font-family: 'Playfair Display', Georgia, Cambria, 'Times New Roman', Times, serif !important;
+  font-family: var(--font-display) !important;
 }
 
 /* ---------- Test Split PDF Layout ---------- */
@@ -910,7 +910,7 @@ h1, h2, h3, h4, h5, h6,
   gap: 8px;
   padding: 6px 12px;
   border-radius: 20px;
-  font-size: 11px;
+  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
   font-weight: 600;
   letter-spacing: 0.5px;
   border: 1px solid var(--line);
@@ -1009,7 +1009,7 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .alert-banner-desc {
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   color: var(--mist);
   margin-top: 3px;
 }
@@ -1039,13 +1039,13 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .alert-action-label {
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-weight: 500;
   color: var(--ink);
 }
 
 .alert-action-count {
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
   font-weight: 600;
   color: var(--seal);
   background: rgba(var(--accent-red-rgb), 0.1);
@@ -1145,7 +1145,7 @@ h1, h2, h3, h4, h5, h6,
 .admin-stat-badge {
   display: inline-block;
   width: fit-content;
-  font-size: 11px;
+  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
   font-weight: 600;
   padding: 2px 8px;
   border-radius: 10px;
@@ -1191,7 +1191,7 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .admin-welcome-video-desc {
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   color: var(--mist);
   margin-top: 4px;
 }
@@ -1225,7 +1225,7 @@ h1, h2, h3, h4, h5, h6,
   right: 10px;
   background: var(--jade);
   color: var(--paper);
-  font-size: 10px;
+  font-size: clamp(12px, calc(10px + 0.4vw), 14px);
   font-weight: 700;
   padding: 4px 8px;
   border-radius: 8px;
@@ -1244,7 +1244,7 @@ h1, h2, h3, h4, h5, h6,
   align-items: center;
   justify-content: center;
   color: var(--mist);
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-style: italic;
 }
 
@@ -1274,7 +1274,7 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .admin-welcome-video-file-tip {
-  font-size: 12px;
+  font-size: clamp(12px, calc(12px + 0.4vw), 14px);
   color: var(--mist);
   margin-top: 8px;
 }
@@ -1292,7 +1292,7 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .chart-info-pill {
-  font-size: 11px;
+  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
   font-weight: 600;
   color: var(--mist);
   background: var(--rice);
@@ -1328,7 +1328,7 @@ h1, h2, h3, h4, h5, h6,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
 }
 
 .admin-course-enrollment-name {
@@ -1389,7 +1389,7 @@ h1, h2, h3, h4, h5, h6,
 
 .dash-empty {
   color: var(--mist);
-  font-size: 13px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-style: italic;
 }
 
@@ -1409,6 +1409,21 @@ h1, h2, h3, h4, h5, h6,
 }
 
 /* ---------- Audit log ---------- */
+.audit-page {
+  width: min(100%, 1180px);
+  padding: 36px 24px 72px;
+}
+
+.audit-back { min-height: 44px; margin-bottom: 20px; font-size: 15px; }
+.audit-page-heading { margin-bottom: 32px; }
+.audit-page-heading .section-title { margin: 0 0 8px; }
+.audit-page-heading > p { color: var(--mist); font-size: 16px; line-height: 1.65; }
+.audit-error { margin-bottom: 24px; }
+.audit-activity-list { padding: 28px; }
+.audit-list-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+.audit-list-heading h2 { margin: 0; }
+.audit-activity-list .audit-row { gap: 16px; padding: 16px 0; }
+
 .audit-row {
   display: grid;
   grid-template-columns: 130px 140px 110px 120px 1fr;
@@ -1417,13 +1432,13 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .audit-row-time {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--mist);
   white-space: nowrap;
 }
 
 .audit-row-actor {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--ink);
   overflow: hidden;
@@ -1434,7 +1449,7 @@ h1, h2, h3, h4, h5, h6,
 .audit-badge {
   display: inline-block;
   width: fit-content;
-  font-size: 11px;
+  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
   font-weight: 700;
   padding: 3px 9px;
   border-radius: 20px;
@@ -1458,12 +1473,12 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .audit-row-resource {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--mist);
 }
 
 .audit-row-label {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--ink);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1471,6 +1486,9 @@ h1, h2, h3, h4, h5, h6,
 }
 
 @media (max-width: 760px) {
+  .audit-page { padding: 28px 16px 56px; }
+  .audit-activity-list { padding: 20px 16px; }
+  .audit-list-heading { margin-bottom: 16px; }
   .audit-row {
     grid-template-columns: 1fr 1fr;
     row-gap: 6px;
@@ -1551,12 +1569,12 @@ h1, h2, h3, h4, h5, h6,
 .srs-grade-easy { background: #3a8f78; }
 
 
-.nav-language-note { color: #ffffff; font-size: 12px; white-space: nowrap; padding: 10px 12px; opacity: .8; }
+.nav-language-note { color: #ffffff; font-size: clamp(12px, calc(12px + 0.4vw), 14px); white-space: nowrap; padding: 10px 12px; opacity: .8; }
 
 /* HanziGo wordmark and tagline. */
 .brand-lockup { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; line-height: 1.15; gap: 3px; }
-.brand-tagline { color: #faf6ec; font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 500; letter-spacing: .03em; white-space: nowrap; }
-.practice-signin-note { margin: 4px 12px 8px; max-width: 220px; color: var(--mist); font-size: 12px; line-height: 1.5; }
+.brand-tagline { color: #faf6ec; font-family: 'Inter', sans-serif; font-size: clamp(12px, calc(10px + 0.4vw), 14px); font-weight: 500; letter-spacing: .03em; white-space: nowrap; }
+.practice-signin-note { margin: 4px 12px 8px; max-width: 220px; color: var(--mist); font-size: clamp(12px, calc(12px + 0.4vw), 14px); line-height: 1.5; }
 
 /* Larger desktop type and clearer navigation spacing. */
 @media (min-width: 1361px) {
@@ -1575,7 +1593,7 @@ h1, h2, h3, h4, h5, h6,
   .site-header .theme-toggle-compact { width: 42px; height: 42px; }
   .home-page .hero-subtitle, .home-page .section-sublead, .home-page .course-card-desc { font-size: 17px; }
   .home-page .hero-access-note, .home-page .stat-text-wrap span, .home-page .course-card-link { font-size: 14px; }
-  .home-page .course-card-eyebrow, .home-page .section-kicker { font-size: 13px; }
+  .home-page .course-card-eyebrow, .home-page .section-kicker { font-size: clamp(12px, calc(13px + 0.4vw), 14px); }
   .learning-space .learning-description, .learning-space .learning-course-description { font-size: 16px; }
   .learning-space .learning-filter-buttons button, .learning-space .learning-course-level, .learning-space .learning-course-status, .learning-space .learning-course-action, .learning-space .learning-result-count { font-size: 14px; }
   .learning-space .learning-course-progress, .learning-space .learning-course-progress strong { font-size: 14px; }
