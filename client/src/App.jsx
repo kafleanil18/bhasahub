@@ -611,7 +611,7 @@ function AppContent() {
         </main>
       ) : (
         <main className="home-page">
-          <HomeHero goHome={goHome} setShowDashboard={setShowDashboard} setShowPinyinPage={setShowPinyinPage} user={user} onOpenPractice={openPractice} />
+          <HomeHero goHome={goHome} setShowDashboard={setShowDashboard} setShowPinyinPage={setShowPinyinPage} user={user} hasStartedCourse={Object.values(access).some(course => course.completed > 0)} onOpenPractice={openPractice} />
 
           <HomeCourses access={access} filteredCourses={filteredCourses} hskLevels={hskLevels} levelFilter={levelFilter} openLogin={openLogin} setActiveCourse={setActiveCourse} setLevelFilter={setLevelFilter} setLockedNotice={setLockedNotice} user={user} />
 

@@ -70,7 +70,7 @@ function Dashboard({ user, onOpenCourse, onBrowse }) {
             <div className="dash-resume-box">
               <button className="dash-resume-btn" onClick={() => onOpenCourse(latestActiveCourse)}>
                 <span className="dash-play-icon">▶</span>
-                <span>Continue: <strong>{latestActiveCourse.title}</strong></span>
+                <span>{progress[latestActiveCourse._id]?.completed > 0 ? 'Continue' : 'Start course'}: <strong>{latestActiveCourse.title}</strong></span>
                 <span className="dash-arrow">→</span>
               </button>
             </div>
