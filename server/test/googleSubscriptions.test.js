@@ -1,3 +1,5 @@
+const StudentSignIn = require('../models/StudentSignIn');
+StudentSignIn.create = async () => ({});
 const { test, afterEach } = require('node:test');
 const assert = require('node:assert/strict');
 const User = require('../models/User');

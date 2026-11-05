@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import StudentSignIns from './StudentSignIns';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -69,6 +70,8 @@ function AuditLog({ onBack }) {
         <h1 className="section-title" style={{ marginBottom: 4 }}>Activity log</h1>
         <p style={{ color: 'var(--mist)' }}>Who did what across the admin tools, most recent first.</p>
       </div>
+
+      <StudentSignIns />
 
       {error && <p className="login-error" style={{ marginBottom: 20 }}>{error}</p>}
 

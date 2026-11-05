@@ -7,6 +7,8 @@ const User = require('../models/User');
 const { requireAuth } = require('../middleware/auth');
 const { sendPasswordResetEmail, sendPasswordResetOtpEmail, sendEmailVerificationOtp } = require('../utils/email');
 
+const { recordStudentSignIn } = require('../utils/studentSignIns');
+
 const router = express.Router();
 
 // Rate limiter for authentication attempts (max 15 attempts per 15 minutes per IP)
@@ -114,6 +116,7 @@ router.post('/login', authLimiter, async (req, res) => {
       { expiresIn: '7d' }
     );
 
+    await recordStudentSignIn(user, 'email');
     res.json({
       message: 'Logged in',
       token,
@@ -194,6 +197,7 @@ router.post('/google', authLimiter, async (req, res) => {
       { expiresIn: '7d' }
     );
 
+    await recordStudentSignIn(user, 'google');
     res.json({
       message: 'Logged in with Google',
       token,
