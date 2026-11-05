@@ -2,7 +2,7 @@
 .home-page .hero-practice-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
 .home-page .hero-practice-kicker { color: var(--seal); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; margin: 0; }
 .home-page .hero-practice-count { border: 1px solid var(--line); border-radius: 20px; padding: 5px 10px; color: var(--mist); font-size: 10px; white-space: nowrap; }
-.home-page .hero-practice-tools h2 { font-family: 'Fraunces', serif; font-size: 30px; line-height: 1.15; letter-spacing: -.035em; color: var(--ink); margin: 0; max-width: 320px; }
+.home-page .hero-practice-tools :is(h1, h2) { font-family: 'Fraunces', serif; font-size: 30px; line-height: 1.15; letter-spacing: -.035em; color: var(--ink); margin: 0; max-width: 320px; }
 .home-page .hero-practice-intro { color: var(--mist); font-size: 12px; line-height: 1.6; margin: 10px 0 20px; max-width: 360px; }
 .home-page .hero-practice-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .home-page .hero-practice-link { position: relative; display: flex; align-items: flex-start; gap: 10px; width: 100%; padding: 14px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); color: var(--ink); text-align: left; cursor: pointer; min-width: 0; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
@@ -44,7 +44,7 @@
 @media (max-width: 480px) {
   .home-page .hero-practice-tools { padding: 16px; border-radius: 16px; }
   .home-page .hero-practice-list { grid-template-columns: 1fr; gap: 8px; }
-  .home-page .hero-practice-tools h2 { font-size: 28px; }
+  .home-page .hero-practice-tools :is(h1, h2) { font-size: 28px; }
   .home-page .hero-practice-link { padding: 12px; align-items: center; }
   .home-page .hero-practice-copy strong { font-size: 13px; }
   .home-page .hero-practice-pinyin { padding: 16px 12px; }
@@ -65,3 +65,8 @@
 :root.dark .home-page .hero-ink-art { mix-blend-mode: luminosity; opacity: .7; }
 @media (max-width: 900px) { .home-page .hero-ink-art { height: 220px; margin-top: 0; } }
 @media (max-width: 480px) { .home-page .hero-ink-art { height: 176px; margin-bottom: 20px; } }
+
+.home-page.admin-practice-page { padding: 32px 0 48px; }
+.admin-practice-page > .container { max-width: 960px; }
+.home-page.admin-practice-page .hero-practice-tools :is(h1, h2),
+.home-page.admin-practice-page .hero-practice-intro { max-width: none; }

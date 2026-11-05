@@ -1370,3 +1370,31 @@ fadeUp .8s ease;
   display: block;
 }
 
+
+
+/* Keep the control center navigation beside the workspace on desktop. */
+.super-admin-layout .admin-sidebar {
+  overflow-y: auto;
+  max-width: calc(100vw - 44px);
+}
+
+.super-admin-layout .admin-sidebar-nav {
+  flex-shrink: 0;
+}
+
+@media (min-width: 1100px) {
+  .super-admin-layout {
+    margin-left: 300px;
+  }
+
+  .super-admin-layout .admin-sidebar {
+    transform: none;
+    box-shadow: none !important;
+  }
+
+  .super-admin-layout .admin-sidebar-backdrop,
+  .super-admin-layout .admin-sidebar-close,
+  .super-admin-layout .admin-nav-toggle {
+    display: none;
+  }
+}

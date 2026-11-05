@@ -29,7 +29,6 @@ const subscriptionRoutes = require('./routes/subscriptions');
 const userRoutes = require('./routes/users');
 const slideRoutes = require('./routes/slides');
 const conversationPracticeRoutes = require('./routes/conversationPractice');
-const calendarRoutes = require('./routes/calendar');
 const helmet = require('helmet');
 
 const aiToneRoutes = require('./routes/aiTone');
@@ -109,7 +108,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/conversation-practice', conversationPracticeRoutes);
-app.use('/api/calendar', calendarRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ message: 'Language LMS API is running!' });

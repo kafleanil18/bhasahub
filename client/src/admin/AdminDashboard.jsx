@@ -13,7 +13,7 @@ const shortcuts = [
   ['audit', 'audit', 'Activity & sign-ins', 'Review recent platform activity.'],
 ];
 
-export default function AdminDashboard({ onBack, onNavigate }) {
+export default function AdminDashboard({ onNavigate }) {
   const [stats, setStats] = useState(null);
   const [error, setError] = useState('');
   const [attempt, setAttempt] = useState(0);
@@ -74,7 +74,6 @@ export default function AdminDashboard({ onBack, onNavigate }) {
 
   return <section className="container control-center" aria-labelledby="control-title">
     <div className="control-topline">
-      <button className="control-back" onClick={onBack}>← Back to site</button>
       <span>HANZIGO <span aria-hidden="true">/</span> ADMINISTRATION</span>
     </div>
     <header className="control-header">

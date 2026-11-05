@@ -5,6 +5,7 @@ import HomeTeam from './home/HomeTeam';
 import HomeTestimonials from './home/HomeTestimonials';
 import HomeCourses from './home/HomeCourses';
 import HomeHero from './home/HomeHero';
+import PracticeStudio from './home/PracticeStudio';
 import renderTeamAvatar from './components/TeamAvatar';
 import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import './home.css';
@@ -17,7 +18,6 @@ const ResetPassword = lazy(() => import('./auth/ResetPassword'));
 const AdminPanel = lazy(() => import('./admin/AdminPanel'));
 const CoursePage = lazy(() => import('./courses/CoursePage'));
 const LessonManager = lazy(() => import('./admin/LessonManager'));
-const ClassCalendarPage = lazy(() => import('./dashboard/ClassCalendar'));
 const Dashboard = lazy(() => import('./dashboard/Dashboard'));
 const ProgressAnalytics = lazy(() => import('./dashboard/ProgressAnalytics'));
 const PinyinPage = lazy(() => import('./practice/PinyinPage'));
@@ -49,11 +49,13 @@ const SentenceAudioManager = lazy(() => import('./admin/SentenceAudioManager'));
 function AppContent() {
 
   const [serverOk, setServerOk] = useState(null);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [showLogin, setShowLogin] = useState(false);
   const [authView, setAuthView] = useState('login');
   const [showAdmin, setShowAdmin] = useState(false);
-  const [showAdminDashboard, setShowAdminDashboard] = useState(false);
   const [showAuditLog, setShowAuditLog] = useState(false);
   const [courses, setCourses] = useState([]);
   const [access, setAccess] = useState({});
@@ -75,7 +77,6 @@ function AppContent() {
   const [testTakerBackToManager, setTestTakerBackToManager] = useState(false);
   const [showHanziTrace, setShowHanziTrace] = useState(false);
   const [showConversationPractice, setShowConversationPractice] = useState(false);
-  const [showClassCalendar, setShowClassCalendar] = useState(false);
   const [showTestimonial, setShowTestimonial] = useState(false);
   const [showTestimonialManager, setShowTestimonialManager] = useState(false);
   const [testimonials, setTestimonials] = useState([]);
@@ -96,9 +97,19 @@ function AppContent() {
   const [showTeamManager, setShowTeamManager] = useState(false);
   const [teamPhotos, setTeamPhotos] = useState([]);
   const [adminSidebarOpen, setAdminSidebarOpen] = useState(false);
+  const [desktopAdminNavigation, setDesktopAdminNavigation] = useState(() => window.matchMedia('(min-width: 1100px)').matches);
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 1100px)');
+    const updateNavigation = () => {
+      setDesktopAdminNavigation(media.matches);
+      setAdminSidebarOpen(false);
+    };
+    media.addEventListener('change', updateNavigation);
+    return () => media.removeEventListener('change', updateNavigation);
+  }, []);
   const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
   const [resetToken, setResetToken] = useState(() => new URLSearchParams(window.location.search).get('reset'));
-  const [showPracticeMenu, setShowPracticeMenu] = useState(false);
   const [lockedNotice, setLockedNotice] = useState(null);
   const [showListeningPractice, setShowListeningPractice] = useState(false);
   const [showSentencePractice, setShowSentencePractice] = useState(false);
@@ -106,40 +117,6 @@ function AppContent() {
   const [showNumberTrainer, setShowNumberTrainer] = useState(false);
   const [showMeasureWords, setShowMeasureWords] = useState(false);
   const [showSentenceAudioManager, setShowSentenceAudioManager] = useState(false);
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const playNihaoAudio = () => {
-    try {
-      setIsPlayingAudio(true);
-      const audio = new Audio('/nihao.m4a');
-      audio.onended = () => setIsPlayingAudio(false);
-      audio.onerror = () => {
-        const backup = new Audio('/nihao.webm');
-        backup.onended = () => setIsPlayingAudio(false);
-        backup.onerror = () => {
-          if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance('你好');
-            u.lang = 'zh-CN';
-            u.rate = 0.85;
-            u.onend = () => setIsPlayingAudio(false);
-            u.onerror = () => setIsPlayingAudio(false);
-            window.speechSynthesis.speak(u);
-          } else {
-            setIsPlayingAudio(false);
-          }
-        };
-        backup.play().catch(() => setIsPlayingAudio(false));
-      };
-      audio.play().catch(() => {
-        const backup = new Audio('/nihao.webm');
-        backup.onended = () => setIsPlayingAudio(false);
-        backup.onerror = () => setIsPlayingAudio(false);
-        backup.play().catch(() => setIsPlayingAudio(false));
-      });
-    } catch {
-      setIsPlayingAudio(false);
-    }
-  };
 
   useEffect(() => {
     if (darkMode) {
@@ -153,9 +130,6 @@ function AppContent() {
 
   useEffect(() => {
     const handleGlobalClick = (e) => {
-      if (!e.target.closest('.nav-dropdown-wrapper')) {
-        setShowPracticeMenu(false);
-      }
       if (!e.target.closest('.user-menu')) {
         setShowUserMenu(false);
       }
@@ -295,7 +269,10 @@ function AppContent() {
     loadTeamPhotos();
     loadMyAccess();
     const savedUser = localStorage.getItem('user');
-    if (savedUser) setUser(JSON.parse(savedUser));
+    if (savedUser) {
+      const restoredUser = JSON.parse(savedUser);
+      setUser(restoredUser);
+    }
   }, []);
 
   const handleLogout = () => {
@@ -303,7 +280,6 @@ function AppContent() {
     localStorage.removeItem('user');
     setUser(null);
     setShowAdmin(false);
-    setShowAdminDashboard(false);
     setShowAuditLog(false);
     setManageCourse(null);
     setShowDashboard(false);
@@ -321,7 +297,6 @@ function AppContent() {
     setShowNumberTrainer(false);
     setShowMeasureWords(false);
     setShowSentenceAudioManager(false);
-    setShowClassCalendar(false);
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
     setShowUserManager(false);
@@ -337,7 +312,6 @@ function AppContent() {
   const goHome = () => {
     setShowLogin(false);
     setShowAdmin(false);
-    setShowAdminDashboard(false);
     setShowAuditLog(false);
     setShowPinyinPage(false);
     setPinyinBackToAdmin(false);
@@ -357,13 +331,11 @@ function AppContent() {
     setShowNumberTrainer(false);
     setShowMeasureWords(false);
     setShowSentenceAudioManager(false);
-    setShowClassCalendar(false);
     setShowTestimonialManager(false);
     setShowSubscriptions(false);
     setShowUserManager(false);
     setShowTeamManager(false);
     setAdminSidebarOpen(false);
-    setShowPracticeMenu(false);
     setShowListeningPractice(false);
     loadCourses();
     loadAccess();
@@ -376,20 +348,21 @@ function AppContent() {
 
   const goAdminDashboard = () => {
     goHome();
-    setShowAdminDashboard(true);
+  };
+
+  const handleLogin = (loggedInUser) => {
+    goHome();
+    setUser(loggedInUser);
   };
 
   // open the sign-in screen from anywhere (clears other views first)
   const openLogin = () => {
     setMobileMenuOpen(false);
-    setShowPracticeMenu(false);
     setShowPinyinPage(false);
     setShowHanziTrace(false);
     setShowListeningPractice(false);
     setShowConversationPractice(false);
-    setShowClassCalendar(false);
     setShowAdmin(false);
-    setShowAdminDashboard(false);
     setShowAuditLog(false);
     setActiveCourse(null);
     setManageCourse(null);
@@ -453,7 +426,7 @@ function AppContent() {
 
   // ---------- Chinese app ----------
   return (
-    <>
+    <div className={isSuperAdmin ? 'super-admin-layout' : undefined}>
       <div className="ambient-background" aria-hidden="true">
         <div className="ambient-orb orb-1"></div>
         <div className="ambient-orb orb-2"></div>
@@ -497,17 +470,17 @@ function AppContent() {
             onClick={() => setAdminSidebarOpen(false)}
             aria-hidden="true"
           />
-      <AdminSidebar setShowSentenceAudioManager={setShowSentenceAudioManager} adminSidebarOpen={adminSidebarOpen} goHome={goHome} isSuperAdmin={isSuperAdmin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setPinyinBackToAdmin={setPinyinBackToAdmin} setShowAdmin={setShowAdmin} setShowAdminDashboard={setShowAdminDashboard} setShowAuditLog={setShowAuditLog} setShowHanziTrace={setShowHanziTrace} setShowInbox={setShowInbox} setShowPinyinPage={setShowPinyinPage} setShowSubscriptions={setShowSubscriptions} setShowTeamManager={setShowTeamManager} setShowTestManager={setShowTestManager} setShowTestimonialManager={setShowTestimonialManager} setShowUserManager={setShowUserManager} setShowUserMenu={setShowUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
+      <AdminSidebar setShowSentenceAudioManager={setShowSentenceAudioManager} adminSidebarOpen={desktopAdminNavigation || adminSidebarOpen} goHome={goHome} isSuperAdmin={isSuperAdmin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setPinyinBackToAdmin={setPinyinBackToAdmin} setShowAdmin={setShowAdmin} setShowAuditLog={setShowAuditLog} setShowHanziTrace={setShowHanziTrace} setShowInbox={setShowInbox} setShowPinyinPage={setShowPinyinPage} setShowSubscriptions={setShowSubscriptions} setShowTeamManager={setShowTeamManager} setShowTestManager={setShowTestManager} setShowTestimonialManager={setShowTestimonialManager} setShowUserManager={setShowUserManager} setShowUserMenu={setShowUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
         </>
       )}
 
-      <SiteHeader onOpenPractice={openPractice} adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowClassCalendar={setShowClassCalendar} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowPracticeMenu={setShowPracticeMenu} setShowSubscriptions={setShowSubscriptions} setShowUserMenu={setShowUserMenu} showPracticeMenu={showPracticeMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
+      <SiteHeader adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowSubscriptions={setShowSubscriptions} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
 
       {!user && showLogin ? (
         <div>
           {authView === 'login' ? (
             <Login
-              onLogin={(u) => { setUser(u); setShowLogin(false); loadAccess(); loadMyAccess(); }}
+              onLogin={handleLogin}
               onBack={goHome}
               onSwitch={() => setAuthView('register')}
               onForgotPassword={() => setAuthView('forgot')}
@@ -520,7 +493,7 @@ function AppContent() {
           ) : (
             <Register
               onRegistered={() => setAuthView('login')}
-              onLogin={(u) => { setUser(u); setShowLogin(false); loadAccess(); loadMyAccess(); }}
+              onLogin={handleLogin}
               onBack={goHome}
               onSwitch={() => setAuthView('login')}
             />
@@ -556,8 +529,6 @@ function AppContent() {
         />
       ) : user && showConversationPractice ? (
         <ConversationPracticePage onBack={goHome} />
-      ) : user && showClassCalendar ? (
-        <ClassCalendarPage onBack={goHome} user={user} />
       ) : isSuperAdmin && showTestManager ? (
         <TestManager
           onBack={goAdminDashboard}
@@ -593,9 +564,20 @@ function AppContent() {
           onBack={goAdminDashboard}
           onManageLessons={(c) => setManageCourse(c)}
         />
-      ) : isSuperAdmin && showAdminDashboard ? (
+      ) : isSuperAdmin && showAuditLog ? (
+        <AuditLog onBack={goAdminDashboard} />
+      ) : user && showDashboard ? (
+        <Dashboard
+          user={user}
+          onOpenCourse={(c) => { setShowDashboard(false); setActiveCourse(c); }}
+          onBrowse={goHome}
+        />
+      ) : user && showAnalytics ? (
+        <ProgressAnalytics user={user} onBack={goHome} />
+      ) : activeCourse ? (
+        <CoursePage course={activeCourse} onBack={() => setActiveCourse(null)} user={user} />
+      ) : isSuperAdmin ? (
         <AdminDashboard
-          onBack={goHome}
           onNavigate={(view) => {
             goHome();
             if (view === 'courses') setShowAdmin(true);
@@ -613,21 +595,16 @@ function AppContent() {
             }
           }}
         />
-      ) : isSuperAdmin && showAuditLog ? (
-        <AuditLog onBack={goAdminDashboard} />
-      ) : user && showDashboard ? (
-        <Dashboard
-          user={user}
-          onOpenCourse={(c) => { setShowDashboard(false); setActiveCourse(c); }}
-          onBrowse={goHome}
-        />
-      ) : user && showAnalytics ? (
-        <ProgressAnalytics user={user} onBack={goHome} />
-      ) : activeCourse ? (
-        <CoursePage course={activeCourse} onBack={() => setActiveCourse(null)} user={user} />
+      ) : user?.role === 'admin' ? (
+        <main className="home-page admin-practice-page">
+          <div className="container">
+            <PracticeStudio user={user} onOpenPractice={openPractice} standalone />
+          </div>
+          <HomeCourses filteredCourses={filteredCourses} hskLevels={hskLevels} levelFilter={levelFilter} openLogin={openLogin} setActiveCourse={setActiveCourse} setLevelFilter={setLevelFilter} user={user} />
+        </main>
       ) : (
         <main className="home-page">
-          <HomeHero goHome={goHome} isPlayingAudio={isPlayingAudio} playNihaoAudio={playNihaoAudio} setShowDashboard={setShowDashboard} setShowPinyinPage={setShowPinyinPage} user={user} onOpenPractice={openPractice} />
+          <HomeHero goHome={goHome} setShowDashboard={setShowDashboard} setShowPinyinPage={setShowPinyinPage} user={user} onOpenPractice={openPractice} />
 
           <HomeCourses access={access} filteredCourses={filteredCourses} hskLevels={hskLevels} levelFilter={levelFilter} openLogin={openLogin} setActiveCourse={setActiveCourse} setLevelFilter={setLevelFilter} setLockedNotice={setLockedNotice} user={user} />
 
@@ -640,7 +617,7 @@ function AppContent() {
           <HomeFooter goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} />
         </main>
       )}
-    </>
+    </div>
   );
 }
 

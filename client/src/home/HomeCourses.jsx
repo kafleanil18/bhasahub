@@ -2,14 +2,8 @@ import { mediaUrl } from '../utils/mediaUrl';
 
 export default function HomeCourses({ filteredCourses, hskLevels, levelFilter, openLogin, setActiveCourse, setLevelFilter, user }) {
   return (
-    <section className="courses-section" id="courses">
+    <section className="courses-section" id="courses" aria-label="Courses">
             <div className="container">
-              <div className="section-header-center">
-                <span className="section-kicker">Your next chapter</span>
-                <h2 className="section-title">A clear path. One lesson at a time.</h2>
-                <p className="section-sublead">Start with the foundations or build on what you know. Choose your HSK level below.</p>
-              </div>
-
               <div className="level-pills">
                 {hskLevels.map((lvl) => (
                   <button

@@ -1,9 +1,9 @@
-export default function SiteHeader({ onOpenPractice, adminSidebarOpen, darkMode, goHome, handleLogout, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowClassCalendar, setShowDashboard, setShowFeedback, setShowPracticeMenu, setShowSubscriptions, setShowUserMenu, showPracticeMenu, showUserMenu, unreadFeedbackCount, user }) {
+export default function SiteHeader({ adminSidebarOpen, darkMode, goHome, handleLogout, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowDashboard, setShowFeedback, setShowSubscriptions, setShowUserMenu, showUserMenu, unreadFeedbackCount, user }) {
   return (
     <header className="site-header">
         <div className="container header-row">
           <div className="header-left">
-            <button className="logo brand-logo" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); setShowUserMenu(false); goHome(); }}>
+            <button className="logo brand-logo" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); }}>
               <span className="brand-seal" aria-hidden="true">汉</span>
               <span className="brand-lockup"><span className="brand-title">
                 Hanzi<span className="brand-accent">Go</span>
@@ -13,9 +13,13 @@ export default function SiteHeader({ onOpenPractice, adminSidebarOpen, darkMode,
 
           <nav id="site-navigation" aria-label="Main navigation" className={`main-nav ${mobileMenuOpen ? 'open' : ''}`}>
             <div className="nav-links">
-              {user ? (
+              {isSuperAdmin ? (
+                <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); }}>
+                  Dashboard
+                </button>
+              ) : user ? (
                 <>
-                  <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowDashboard(true); }}>
+                  <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowDashboard(true); }}>
                     <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                       <polyline points="2 17 12 22 22 17"></polyline>
@@ -24,14 +28,14 @@ export default function SiteHeader({ onOpenPractice, adminSidebarOpen, darkMode,
                     <span>My Courses</span>
                   </button>
 
-                  <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowAnalytics(true); }}>
+                  <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowAnalytics(true); }}>
                     <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                     </svg>
                     <span>My Progress</span>
                   </button>
 
-                  <a className="nav-link" href="#courses" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); }}>
+                  <a className="nav-link" href="#courses" onClick={() => { setMobileMenuOpen(false); goHome(); }}>
                     <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"></path>
                       <path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"></path>
@@ -40,7 +44,7 @@ export default function SiteHeader({ onOpenPractice, adminSidebarOpen, darkMode,
                   </a>
                 </>
               ) : (
-                <a className="nav-link" href="#courses" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); }}>
+                <a className="nav-link" href="#courses" onClick={() => { setMobileMenuOpen(false); goHome(); }}>
                   <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"></path>
                     <path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"></path>
@@ -49,82 +53,7 @@ export default function SiteHeader({ onOpenPractice, adminSidebarOpen, darkMode,
                 </a>
               )}
 
-              <div className="nav-dropdown-wrapper">
-                <button
-                  className={`nav-link nav-dropdown-trigger ${showPracticeMenu ? 'active' : ''}`}
-                  onClick={() => { setShowPracticeMenu(!showPracticeMenu); }}
-                  aria-expanded={showPracticeMenu}
-                >
-                  <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 20h9"></path>
-                    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-                  </svg>
-                  <span>Practice Tools</span>
-                  <span className={`caret ${showPracticeMenu ? 'open' : ''}`}>▾</span>
-                </button>
-
-                {showPracticeMenu && (
-                  <div className="nav-dropdown-menu">
-                    {!user && <p className="practice-signin-note">Pinyin is free to explore. Sign in for other tools.</p>}
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); onOpenPractice('pinyin'); }}>
-                      <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="4 7 4 4 20 4 20 7"></polyline>
-                        <line x1="12" y1="4" x2="12" y2="20"></line>
-                      </svg>
-                      <span>Pinyin Chart</span>
-                    </button>
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); onOpenPractice('tests'); }}>
-                      <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
-                        <path d="m9 12 2 2 4-4"></path>
-                      </svg>
-                      <span>Mock Tests</span>
-                    </button>
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); onOpenPractice('trace'); }}>
-                      <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M12 20h9"></path>
-                        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-                      </svg>
-                      <span>Trace Characters</span>
-                    </button>
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); onOpenPractice('listening'); }}>
-                      <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                        <path d="M3 14v-3a9 9 0 0 1 18 0v3M3 13h4v8H3zM17 13h4v8h-4z" />
-                      </svg>
-                      <span>Listening Practice</span>
-                    </button>
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); onOpenPractice('measures'); }}>
-                      <span className="nav-svg-icon" aria-hidden="true">本</span>
-                      <span>Measure Word Practice</span>
-                    </button>
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); onOpenPractice('numbers'); }}>
-                      <span className="nav-svg-icon" aria-hidden="true">数</span>
-                      <span>Everyday Chinese Numbers</span>
-                    </button>
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); onOpenPractice('dictation'); }}>
-                      <span className="nav-svg-icon" aria-hidden="true">听</span>
-                      <span>Listening Dictation</span>
-                    </button>
-                    <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); onOpenPractice('sentences'); }}>
-                      <span className="nav-svg-icon" aria-hidden="true">句</span>
-                      <span>Sentence Builder</span>
-                    </button>
-                    {user && (
-                      <button className="nav-dropdown-item" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); goHome(); setShowClassCalendar(true); }}>
-                        <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                          <line x1="16" y1="2" x2="16" y2="6"></line>
-                          <line x1="8" y1="2" x2="8" y2="6"></line>
-                          <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        <span>Class Calendar</span>
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowPracticeMenu(false); setShowFeedback(true); }}>
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowFeedback(true); }}>
                 <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                 </svg>

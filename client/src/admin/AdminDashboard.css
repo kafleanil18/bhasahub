@@ -161,3 +161,28 @@
 .control-header .control-primary { background: #f5ce69; color: #351b10; border-color: #f5ce69; }
 .control-header .control-primary:hover { background: #ffe5a3; border-color: #ffe5a3; }
 .control-header .control-primary:focus-visible { outline-color: #ffffff; }
+
+/* Green platform overview cards. */
+.control-center .control-metric {
+  background: #e7f4ec;
+  border-color: #a9cfb8;
+  color: #174e32;
+}
+.control-center .control-metric:hover { border-color: #43865e; }
+.control-center .control-metric .control-metric-top { color: #174e32; }
+.control-center .control-metric small { color: #38664a; }
+.control-center .control-metric .control-icon {
+  background: #cce8d6;
+  color: #21643d;
+}
+:root.dark .control-center .control-metric {
+  background: #193c2b;
+  border-color: #39694e;
+  color: #def5e5;
+}
+:root.dark .control-center .control-metric .control-metric-top { color: #def5e5; }
+:root.dark .control-center .control-metric small { color: #b0d4bd; }
+:root.dark .control-center .control-metric .control-icon {
+  background: #28553c;
+  color: #b5e8c6;
+}

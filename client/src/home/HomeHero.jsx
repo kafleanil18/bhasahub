@@ -1,17 +1,6 @@
-import './HeroPracticeTools.css';
+import PracticeStudio from './PracticeStudio';
 
-const practiceTools = [
-  ['pinyin', '拼', 'Pinyin Chart', 'Start here: learn sounds and tones.'],
-  ['trace', '字', 'Trace Characters', 'Follow the strokes and write Chinese.'],
-  ['listening', '听', 'Listening Practice', 'Hear a word and choose its meaning.'],
-  ['sentences', '句', 'Sentence Builder', 'Arrange words into a sentence.'],
-  ['measures', '本', 'Measure Word Practice', 'Choose the word for counting things.'],
-  ['numbers', '数', 'Everyday Chinese Numbers', 'Practice prices, times, and dates.'],
-  ['dictation', '写', 'Listening Dictation', 'Listen to recordings and write what you hear.'],
-  ['tests', '测', 'Mock Tests', 'Check what you know with a practice test.'],
-];
-
-export default function HomeHero({ goHome, isPlayingAudio, playNihaoAudio, setShowDashboard, setShowPinyinPage, user, onOpenPractice }) {
+export default function HomeHero({ goHome, setShowDashboard, setShowPinyinPage, user, onOpenPractice }) {
   return (
     <section className="hero">
             <div className="container hero-grid">
@@ -100,57 +89,9 @@ export default function HomeHero({ goHome, isPlayingAudio, playNihaoAudio, setSh
               </div>
 
               <div className="hero-showcase">
-                <section className="hero-practice-tools" aria-labelledby="hero-practice-title">
-                  <div className="hero-practice-heading"><p className="hero-practice-kicker">Your practice studio</p><span className="hero-practice-count">8 ways to learn</span></div>
-                  <h2 id="hero-practice-title">What will you practice today?</h2>
-                  <p className="hero-practice-intro">{user ? 'Choose a skill and keep building your Chinese.' : 'Explore pinyin for free. Sign in to unlock the other practice tools.'}</p>
-                  <div className="hero-practice-list">
-                    {practiceTools.map(([id, glyph, title, description]) => (
-                      <button key={id} type="button" className={`hero-practice-link hero-practice-${id}`} onClick={() => onOpenPractice(id)}>
-                        <span className="hero-practice-glyph" lang={id === 'tests' ? undefined : 'zh-CN'} aria-hidden="true">{id === 'tests' ? <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M9 10l2 2 4-4M9 16h6"/></svg> : glyph}</span>
-                        <span className="hero-practice-copy">{id === 'pinyin' && <span className="hero-practice-start">START HERE · PRONUNCIATION</span>}{id === 'tests' && <span className="mock-test-kicker">READY FOR YOUR NEXT MILESTONE?</span>}<strong>{id === 'tests' ? 'HSK 1 Mock Test' : title}</strong><small>{id === 'tests' ? 'Explore HSK mock tests, check your score, and discover what to practice next.' : description}</small>{id === 'tests' && <span className="mock-test-cta">{user ? 'Explore mock tests' : 'Sign in to try mock tests'} <span aria-hidden="true">→</span></span>}</span>
-                        {id !== 'tests' && <span className="hero-practice-arrow" aria-hidden="true">↗</span>}
-                      </button>
-                    ))}
-                  </div>
-                </section>
+                <PracticeStudio user={user} onOpenPractice={onOpenPractice} />
 
-                <div className="hero-interactive-card">
-                  <div className="interactive-card-left">
-                    <div className="card-pinyin-tag">
-                      <span>nǐ hǎo</span>
-                      <span className="tone-indicator">3rd tone ˇ</span>
-                    </div>
-                    <div className="card-characters zh">你好</div>
-                    <div className="card-meaning-line">
-                      <span className="card-translation en">Hello</span>
-                      <span className="card-dot">•</span>
-                      <span className="card-english">a friendly greeting</span>
-                    </div>
-                  </div>
 
-                  <button
-                    type="button"
-                    className={`hero-audio-btn ${isPlayingAudio ? 'is-playing' : ''}`}
-                    onClick={playNihaoAudio}
-                    title="Click to hear native audio"
-                    aria-label="Listen to Chinese pronunciation"
-                  >
-                    <div className="audio-icon-box" aria-hidden="true">
-                      {isPlayingAudio ? (
-                        <span className="sound-wave">
-                          <span></span><span></span><span></span>
-                        </span>
-                      ) : (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                        </svg>
-                      )}
-                    </div>
-                    <span className="audio-btn-text">{isPlayingAudio ? 'Playing audio...' : 'Hear Pronunciation'}</span>
-                  </button>
-                </div>
               </div>
             </div>
           </section>
