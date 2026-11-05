@@ -27,6 +27,7 @@ const FeedbackInbox = lazy(() => import('./admin/FeedbackInbox'));
 const TestManager = lazy(() => import('./admin/TestManager'));
 const TestList = lazy(() => import('./tests/TestList'));
 const TestTaker = lazy(() => import('./tests/TestTaker'));
+const HskPortal = lazy(() => import('./tests/hsk1/HskPortal'));
 const TestimonialModal = lazy(() => import('./components/TestimonialModal'));
 const TestimonialManager = lazy(() => import('./admin/TestimonialManager'));
 const SubscriptionManager = lazy(() => import('./admin/SubscriptionManager'));
@@ -566,6 +567,8 @@ function AppContent() {
             setShowTestManager(false);
           }}
         />
+      ) : user && activeTestId === 'h11226' ? (
+        <HskPortal user={user} onBack={() => { setActiveTestId(null); setShowTests(true); }} />
       ) : user && activeTestId ? (
         <TestTaker
           testId={activeTestId}

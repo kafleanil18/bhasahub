@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
+import './hsk1/HskPortal.css';
 
 const API = window.API_BASE_URL + '/api';
 const LEVELS = ['HSK 1', 'HSK 2', 'HSK 3', 'HSK 4'];
@@ -26,6 +27,7 @@ function TestList({ onOpenTest, onBack }) {
       <button className="back-btn" onClick={onBack}>← Back to home</button>
       <h1 className="section-title">HSK Mock Tests</h1>
 
+      <div className="hsk-featured-test"><div><small>Complete practice paper · H11226</small><h2>HSK 1 · Listening & Reading</h2><p>Take the 40-question test with colorful illustrations, pinyin, and the full listening recording. Get your result and answer review when you finish.</p><span>20 listening + 20 reading · Timed sections · Saved results</span></div><button onClick={() => onOpenTest('h11226')}>Enter test portal →</button></div>
       {!loading && tests.length > 0 && (
         <div className="test-level-filter" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
           <button
@@ -51,7 +53,7 @@ function TestList({ onOpenTest, onBack }) {
       )}
 
       {loading && <p className="courses-empty">Loading tests...</p>}
-      {!loading && tests.length === 0 && <p className="courses-empty">No tests available yet.</p>}
+      {!loading && tests.length === 0 && <p className="courses-empty">No additional tests available yet.</p>}
       {!loading && tests.length > 0 && filteredTests.length === 0 && (
         <p className="courses-empty">No {levelFilter} tests found.</p>
       )}

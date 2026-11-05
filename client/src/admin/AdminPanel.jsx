@@ -1,786 +1,114 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
+import ControlIcon from './ControlIcon';
+import CourseEditor from './CourseEditor';
+import './CourseStudio.css';
 
 const API = window.API_BASE_URL + '/api/courses';
-
-function AdminPanel({ onBack, onManageLessons }) {
-  const [courses, setCourses] = useState([]);
-  const [error, setError] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [editingId, setEditingId] = useState(null);
-
-  // form fields
-  const [title, setTitle] = useState('');
-  const [language, setLanguage] = useState('chinese');
-  const [level, setLevel] = useState('');
-  const [description, setDescription] = useState('');
-  const [glyph, setGlyph] = useState('');
-  const [image, setImage] = useState('');
-  const [published, setPublished] = useState(false);
-
-  const token = localStorage.getItem('token');
-
-  const loadCourses = useCallback(async () => {
-    try {
-      const res = await fetch(`${API}/all`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || 'Could not load courses');
-      } else {
-        setCourses(data);
-      }
-    } catch {
-      setError('Could not reach the server');
-    }
-  }, [token]);
-
-  useEffect(() => {
-    loadCourses();
-  }, [loadCourses]);
-
-  const resetForm = () => {
-    setEditingId(null);
-    setTitle('');
-    setLanguage('chinese');
-    setLevel('');
-    setDescription('');
-    setGlyph('');
-    setImage('');
-    setPublished(false);
-  };
-
-  const startEdit = (c) => {
-    setEditingId(c._id);
-    setTitle(c.title);
-    setLanguage(c.language);
-    setLevel(c.level || '');
-    setDescription(c.description || '');
-    setGlyph(c.glyph || '');
-    setImage(c.image || '');
-    setPublished(c.published);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const uploadImage = async (file) => {
-    if (!file) return;
-    setError('');
-    const fd = new FormData();
-    fd.append('file', file);
-    try {
-      const res = await fetch(window.API_BASE_URL + '/api/upload', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: fd,
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setImage(data.url);
-      } else {
-        setError(data.error || 'Image upload failed');
-      }
-    } catch {
-      setError('Could not reach the server');
-    }
-  };
-
-  const handleSave = async () => {
-    setError('');
-    if (!title.trim()) {
-      setError('Title is required');
-      return;
-    }
-    setSaving(true);
-    try {
-      const isEditing = editingId !== null;
-      const res = await fetch(isEditing ? `${API}/${editingId}` : API, {
-        method: isEditing ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ title, language, level, description, glyph, image, published }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || 'Could not save course');
-      } else {
-        resetForm();
-        loadCourses();
-      }
-    } catch {
-      setError('Could not reach the server');
-    }
-    setSaving(false);
-  };
-
-  const handleDelete = async (id) => {
-    if (!confirm('Delete this course? This cannot be undone.')) return;
-    try {
-      const res = await fetch(`${API}/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.ok) {
-        if (editingId === id) resetForm();
-        loadCourses();
-      }
-    } catch {
-      setError('Could not reach the server');
-    }
-  };
-
-  const togglePublished = async (course) => {
-    try {
-      const res = await fetch(`${API}/${course._id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ published: !course.published }),
-      });
-      if (res.ok) loadCourses();
-    } catch {
-      setError('Could not reach the server');
-    }
-  };
-
-  // Metrics details
-  const stats = useMemo(() => {
-    const total = courses.length;
-    const chinese = courses.filter((c) => c.language === 'chinese').length;
-    const published = courses.filter((c) => c.published).length;
-    return { total, chinese, published };
-  }, [courses]);
-
-  return (
-    <section className="admin container">
-      {/* Dynamic Styling injected directly to customize layout safely */}
-      <style>{`
-        /* Overriding standard styles with premium designs */
-        .admin.container {
-          padding-top: 32px;
-          padding-bottom: 80px;
-        }
-
-        .admin-title-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          flex-wrap: wrap;
-          gap: 16px;
-          margin-bottom: 28px;
-          border-bottom: 1px solid var(--line);
-          padding-bottom: 20px;
-        }
-
-        .admin-metrics {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          gap: 20px;
-          margin-bottom: 32px;
-        }
-
-        .metric-card {
-          background: var(--card);
-          border: 1px solid var(--line);
-          border-radius: 16px;
-          padding: 20px;
-          display: flex;
-          align-items: center;
-          gap: 16px;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          box-shadow: 0 2px 8px rgba(42, 35, 32, 0.02);
-        }
-        .metric-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 10px 20px rgba(42, 35, 32, 0.06);
-          border-color: var(--mist);
-        }
-
-        .metric-icon {
-          width: 48px;
-          height: 48px;
-          border-radius: 12px;
-          background: rgba(46, 107, 87, 0.1);
-          color: var(--jade);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 22px;
-        }
-        .metric-icon.gold {
-          background: rgba(201, 154, 60, 0.1);
-          color: var(--gold);
-        }
-        .metric-icon.seal {
-          background: rgba(200, 54, 42, 0.1);
-          color: var(--seal);
-        }
-
-        .metric-details {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .metric-value {
-          font-family: 'Fraunces', serif;
-          font-size: 26px;
-          font-weight: 700;
-          color: var(--ink);
-          line-height: 1.1;
-        }
-
-        .metric-label {
-          font-size: 12px;
-          color: var(--mist);
-          font-weight: 600;
-          margin-top: 4px;
-        }
-
-        /* Form styling */
-        .admin-form {
-          background: var(--card);
-          border: 1px solid var(--line);
-          border-radius: 16px;
-          padding: 24px;
-          box-shadow: 0 4px 15px rgba(42, 35, 32, 0.02);
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-
-        .admin-form h2 {
-          font-family: 'Fraunces', serif;
-          font-size: 18px;
-          font-weight: 700;
-          color: var(--ink);
-          border-bottom: 1px solid var(--line);
-          padding-bottom: 12px;
-          margin: 0;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .admin-form-group {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-        }
-
-        .admin-form-group label {
-          font-size: 12px;
-          font-weight: 700;
-          color: var(--ink);
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-
-        .admin-form-group input,
-        .admin-form-group select,
-        .admin-form-group textarea {
-          width: 100%;
-          padding: 10px 14px;
-          font-size: 14px;
-          font-family: 'Inter', sans-serif;
-          border: 1px solid var(--line);
-          border-radius: 10px;
-          background: var(--paper);
-          color: var(--ink);
-          transition: all 0.2s ease;
-        }
-
-        .admin-form-group input:focus,
-        .admin-form-group select:focus,
-        .admin-form-group textarea:focus {
-          outline: none;
-          border-color: var(--jade);
-          background: #ffffff;
-          box-shadow: 0 0 0 4px rgba(46, 107, 87, 0.08);
-        }
-
-        /* Upload zone */
-        .admin-upload-zone {
-          background: var(--paper);
-          border: 2px dashed var(--line);
-          border-radius: 10px;
-          padding: 16px;
-          text-align: center;
-          transition: border-color 0.2s ease;
-          position: relative;
-          cursor: pointer;
-        }
-        .admin-upload-zone:hover {
-          border-color: var(--jade);
-        }
-
-        .admin-upload-btn-wrap {
-          position: relative;
-          overflow: hidden;
-          display: inline-block;
-          background: var(--rice);
-          color: var(--ink);
-          border: 1px solid var(--line);
-          padding: 8px 16px;
-          border-radius: 20px;
-          font-weight: 600;
-          font-size: 12px;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-        .admin-upload-btn-wrap:hover {
-          background: var(--line);
-        }
-
-        .admin-upload-btn-wrap input[type=file] {
-          position: absolute;
-          left: 0;
-          top: 0;
-          opacity: 0;
-          cursor: pointer;
-          font-size: 100px;
-        }
-
-        .admin-img-preview-card {
-          margin-top: 12px;
-          border-radius: 12px;
-          overflow: hidden;
-          border: 1px solid var(--line);
-          position: relative;
-          box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-        .admin-img-preview {
-          width: 100%;
-          height: auto;
-          display: block;
-          max-height: 160px;
-          object-fit: cover;
-        }
-        .admin-img-remove-btn {
-          position: absolute;
-          top: 8px;
-          right: 8px;
-          background: var(--seal);
-          color: white;
-          border: none;
-          padding: 4px 8px;
-          border-radius: 6px;
-          font-size: 11px;
-          cursor: pointer;
-          font-weight: 600;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-          transition: background 0.2s ease;
-        }
-        .admin-img-remove-btn:hover {
-          background: #a6281e;
-        }
-
-        .check-label {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          cursor: pointer;
-          user-select: none;
-          font-size: 13px;
-          font-weight: 600;
-          color: var(--ink);
-        }
-        .check-label input {
-          width: 18px;
-          height: 18px;
-          accent-color: var(--jade);
-          cursor: pointer;
-        }
-
-        .btn-primary-studio {
-          width: 100%;
-          background-color: var(--jade);
-          color: white;
-          border: none;
-          padding: 12px;
-          border-radius: 10px;
-          font-weight: 700;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          font-size: 14px;
-          box-shadow: 0 4px 14px rgba(46, 107, 87, 0.2);
-        }
-        .btn-primary-studio:hover:not(:disabled) {
-          background-color: #245444;
-          transform: translateY(-1px);
-          box-shadow: 0 6px 18px rgba(46, 107, 87, 0.3);
-        }
-        .btn-primary-studio:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-          box-shadow: none;
-        }
-
-        .cancel-edit {
-          width: 100%;
-          background-color: transparent;
-          color: var(--mist);
-          border: 1px solid var(--line);
-          padding: 11px;
-          border-radius: 10px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          font-size: 14px;
-          text-align: center;
-          display: block;
-          box-sizing: border-box;
-          margin-top: 8px;
-        }
-        .cancel-edit:hover {
-          background-color: var(--rice);
-          color: var(--ink);
-        }
-
-        /* Course List Card Override */
-        .admin-list {
-          background: var(--card);
-          border: 1px solid var(--line);
-          border-radius: 16px;
-          padding: 24px;
-          box-shadow: 0 4px 15px rgba(42, 35, 32, 0.02);
-        }
-
-        .admin-list h2 {
-          font-family: 'Fraunces', serif;
-          font-size: 18px;
-          font-weight: 700;
-          color: var(--ink);
-          border-bottom: 1px solid var(--line);
-          padding-bottom: 12px;
-          margin: 0 0 16px;
-        }
-
-        .admin-list-container {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-        }
-
-        .admin-row {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 16px;
-          padding: 16px;
-          border: 1px solid var(--line);
-          border-radius: 14px;
-          background: #ffffff;
-          transition: all 0.2s ease;
-        }
-
-        .admin-row:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 16px rgba(42, 35, 32, 0.04);
-          border-color: var(--jade);
-        }
-
-        .row-left-group {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          min-width: 0;
-          flex: 1;
-        }
-
-        .row-glyph {
-          width: 48px;
-          height: 48px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 18px;
-          min-width: 48px;
-          flex-shrink: 0;
-          border: 1px solid var(--line);
-        }
-
-        .row-glyph.zh {
-          background: linear-gradient(135deg, rgba(46, 107, 87, 0.08) 0%, rgba(201, 154, 60, 0.15) 100%);
-          color: var(--jade);
-          font-family: 'Noto Serif SC', serif;
-        }
-
-        .row-glyph.en {
-          background: linear-gradient(135deg, rgba(200, 54, 42, 0.08) 0%, rgba(122, 114, 102, 0.15) 100%);
-          color: var(--seal);
-          font-family: inherit;
-        }
-
-        .row-info {
-          min-width: 0;
-        }
-
-        .row-info strong {
-          font-family: 'Fraunces', serif;
-          font-size: 15px;
-          font-weight: 750;
-          color: var(--ink);
-          display: block;
-          margin-bottom: 2px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        .row-info span {
-          font-size: 12px;
-          font-weight: 600;
-          color: var(--mist);
-          text-transform: capitalize;
-        }
-
-        .row-actions-group {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          flex-wrap: wrap;
-        }
-
-        /* Status Pills */
-        .pill {
-          font-size: 11px;
-          font-weight: 700;
-          padding: 6px 12px;
-          border-radius: 12px;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          border: 1px solid transparent;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-
-        .pill-live {
-          background: rgba(46, 107, 87, 0.1);
-          color: var(--jade);
-          border-color: rgba(46, 107, 87, 0.2);
-        }
-        .pill-live:hover {
-          background: var(--jade);
-          color: #ffffff;
-        }
-
-        .pill-draft {
-          background: rgba(122, 114, 102, 0.1);
-          color: var(--mist);
-          border-color: rgba(122, 114, 102, 0.15);
-        }
-        .pill-draft:hover {
-          background: var(--mist);
-          color: #ffffff;
-        }
-
-        .nav-btn-studio {
-          background: var(--card);
-          color: var(--ink);
-          border: 1px solid var(--line);
-          padding: 6px 14px;
-          border-radius: 12px;
-          font-size: 12px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-        .nav-btn-studio:hover {
-          background: var(--rice);
-          border-color: var(--mist);
-        }
-
-        .row-delete-studio {
-          font-size: 12px;
-          font-weight: 600;
-          color: var(--seal);
-          background: rgba(200, 54, 42, 0.05);
-          border: 1px solid rgba(200, 54, 42, 0.1);
-          padding: 6px 14px;
-          border-radius: 12px;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-        .row-delete-studio:hover {
-          background: var(--seal);
-          color: #ffffff;
-          border-color: var(--seal);
-        }
-
-        .admin-empty {
-          color: var(--mist);
-          font-size: 13px;
-          font-style: italic;
-          text-align: center;
-          padding: 24px 0;
-        }
-      `}</style>
-
-      <button className="btn-back-pill" onClick={onBack}>← Back to control panel</button>
-      
-      <div className="admin-title-row">
-        <h1 style={{ margin: 0, marginTop: 12 }}>Course Studio</h1>
-        <p className="um-subtitle">Manage path tracks, curriculum targets, and status.</p>
-      </div>
-
-      {error && <p className="login-error" style={{ marginBottom: 20 }}>{error}</p>}
-
-      {/* Metrics Section */}
-      <div className="admin-metrics">
-        <div className="metric-card">
-          <div className="metric-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-            </svg>
-          </div>
-          <div className="metric-details">
-            <span className="metric-value">{stats.total}</span>
-            <span className="metric-label">Total Paths</span>
-          </div>
-        </div>
-        <div className="metric-card">
-          <div className="metric-icon gold">语</div>
-          <div className="metric-details">
-            <span className="metric-value">{stats.chinese}</span>
-            <span className="metric-label">Chinese Paths</span>
-          </div>
-        </div>
-        <div className="metric-card">
-          <div className="metric-icon seal">✓</div>
-          <div className="metric-details">
-            <span className="metric-value">{stats.published}</span>
-            <span className="metric-label">Published Paths</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="admin-grid">
-        {/* ----- Create / Edit form ----- */}
-        <div className="admin-form">
-          <h2>{editingId ? 'Edit path details' : 'New curriculum path'}</h2>
-
-          <div className="admin-form-group">
-            <label>Title</label>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Chinese for Beginners" />
-          </div>
-
-          <div className="admin-form-group">
-            <label>Language</label>
-            <select value={language} onChange={(e) => setLanguage(e.target.value)}>
-              <option value="chinese">Chinese</option>
-            </select>
-          </div>
-
-          <div className="admin-form-group">
-            <label>Level</label>
-            <input value={level} onChange={(e) => setLevel(e.target.value)} placeholder="HSK 1 · Beginner" />
-          </div>
-
-          <div className="admin-form-group">
-            <label>Description</label>
-            <textarea rows="3" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="What will students learn?" />
-          </div>
-
-          <div className="admin-form-group">
-            <label>Card glyph</label>
-            <input value={glyph} onChange={(e) => setGlyph(e.target.value)} placeholder="你好" />
-          </div>
-
-          <div className="admin-form-group">
-            <label>Course cover image</label>
-            <div className="admin-upload-zone">
-              <div className="admin-upload-btn-wrap">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: 6 }}>
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="17 8 12 3 7 8"></polyline>
-                  <line x1="12" y1="3" x2="12" y2="15"></line>
-                </svg>
-                Upload Cover Image
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => uploadImage(e.target.files[0])}
-                />
-              </div>
-            </div>
-          </div>
-
-          {image && (
-            <div className="admin-img-preview-card">
-              <img
-                src={mediaUrl(image)}
-                alt="Course preview"
-                className="admin-img-preview"
-              />
-              <button type="button" className="admin-img-remove-btn" onClick={() => setImage('')}>Remove</button>
-            </div>
-          )}
-
-          <label className="check-label" style={{ margin: '8px 0' }}>
-            <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
-            {editingId ? 'Published & Active' : 'Publish immediately'}
-          </label>
-
-          <button className="btn-primary-studio" onClick={handleSave} disabled={saving}>
-            {saving ? 'Saving...' : editingId ? 'Save changes' : 'Create course'}
-          </button>
-
-          {editingId && (
-            <button className="cancel-edit" onClick={resetForm}>
-              Cancel edit
-            </button>
-          )}
-        </div>
-
-        {/* ----- Course list ----- */}
-        <div className="admin-list">
-          <h2>All Registry Paths ({courses.length})</h2>
-          {courses.length === 0 && <p className="admin-empty">No courses yet — create your first one!</p>}
-          
-          <div className="admin-list-container">
-            {courses.map((c) => (
-              <div className="admin-row" key={c._id}>
-                <div className="row-left-group">
-                  <span className={`row-glyph ${c.language === 'chinese' ? 'zh' : 'en'}`}>
-                    {c.glyph && c.glyph.trim().length > 0 && c.glyph.trim().length <= 2 
-                      ? c.glyph 
-                      : (c.language === 'chinese' ? '中' : 'EN')}
-                  </span>
-                  
-                  <div className="row-info">
-                    <strong>{c.title}</strong>
-                    <span>{c.language} · {c.level || 'no level'}</span>
-                  </div>
-                </div>
-                
-                <div className="row-actions-group">
-                  <button className="nav-btn-studio" onClick={() => startEdit(c)}>Edit</button>
-                  <button className="nav-btn-studio" onClick={() => onManageLessons(c)}>Lessons</button>
-
-                  <button
-                    className={c.published ? 'pill pill-live' : 'pill pill-draft'}
-                    onClick={() => togglePublished(c)}
-                    title="Click to toggle status"
-                  >
-                    {c.published ? 'Live' : 'Draft'}
-                  </button>
-                  
-                  <button className="row-delete-studio" onClick={() => handleDelete(c._id)}>Delete</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-    
-  );
+const emptyDraft = () => ({ title: '', language: 'chinese', level: '', description: '', glyph: '', image: '', published: false });
+const courseDraft = course => Object.fromEntries(Object.entries(emptyDraft()).map(([key, fallback]) => [key, course[key] ?? fallback]));
+async function readResponse(response) {
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'The request failed. Please try again.');
+  return data;
 }
 
-export default AdminPanel;
+export default function AdminPanel({ onBack, onManageLessons }) {
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
+  const [busy, setBusy] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [draft, setDraft] = useState(emptyDraft);
+  const [baseline, setBaseline] = useState(emptyDraft);
+  const [query, setQuery] = useState('');
+  const [filter, setFilter] = useState('all');
+  const titleRef = useRef(null);
+  const headers = useMemo(() => ({ Authorization: `Bearer ${localStorage.getItem('token')}` }), []);
+  const dirty = JSON.stringify(draft) !== JSON.stringify(baseline);
+  const locked = busy !== null;
+
+  const loadCourses = useCallback(async () => {
+    setLoading(true); setLoadError('');
+    try { setCourses(await fetch(`${API}/all`, { headers }).then(readResponse)); }
+    catch (err) { setLoadError(err.message || 'Could not reach the server.'); }
+    finally { setLoading(false); }
+  }, [headers]);
+  useEffect(() => { loadCourses(); }, [loadCourses]);
+  useEffect(() => {
+    const warn = event => { if (dirty) { event.preventDefault(); event.returnValue = ''; } };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [dirty]);
+
+  const canLeave = () => !dirty || window.confirm('Discard your unsaved course changes?');
+  const resetForm = () => { setDraft(emptyDraft()); setBaseline(emptyDraft()); setEditingId(null); };
+  const openEditor = course => {
+    if (!canLeave()) return;
+    const next = course ? courseDraft(course) : emptyDraft();
+    setDraft(next); setBaseline(next); setEditingId(course?._id || null); setError('');
+    requestAnimationFrame(() => { titleRef.current?.focus(); titleRef.current?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' }); });
+  };
+  const uploadImage = async file => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { setError('Please choose an image file.'); return; }
+    setUploading(true); setError(''); setNotice('');
+    const body = new FormData(); body.append('file', file);
+    try {
+      const data = await fetch(window.API_BASE_URL + '/api/upload', { method: 'POST', headers, body }).then(readResponse);
+      setDraft(current => ({ ...current, image: data.url }));
+    } catch (err) { setError(err.message || 'Could not upload the image.'); }
+    finally { setUploading(false); }
+  };
+  const handleSave = async event => {
+    event.preventDefault();
+    if (locked || uploading) return;
+    if (!draft.title.trim()) { setError('Enter a course title.'); titleRef.current?.focus(); return; }
+    setBusy('save'); setError(''); setNotice('');
+    try {
+      await fetch(editingId ? `${API}/${editingId}` : API, { method: editingId ? 'PUT' : 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ ...draft, title: draft.title.trim() }) }).then(readResponse);
+      setNotice(`“${draft.title.trim()}” ${editingId ? 'updated' : 'created'} successfully.`);
+      resetForm(); await loadCourses();
+    } catch (err) { setError(err.message || 'Could not save the course.'); }
+    finally { setBusy(null); }
+  };
+  const updateCourse = async (course, remove = false) => {
+    if (locked || uploading) return;
+    if (course._id === editingId && !canLeave()) return;
+    if (remove && !window.confirm(`Delete “${course.title}”? This cannot be undone.`)) return;
+    setBusy(course._id); setError(''); setNotice('');
+    try {
+      await fetch(`${API}/${course._id}`, { method: remove ? 'DELETE' : 'PUT', headers: { ...headers, 'Content-Type': 'application/json' }, ...(remove ? {} : { body: JSON.stringify({ published: !course.published }) }) }).then(readResponse);
+      if (course._id === editingId) resetForm();
+      setNotice(`“${course.title}” ${remove ? 'deleted' : course.published ? 'moved to drafts' : 'published'}.`);
+      await loadCourses();
+    } catch (err) { setError(err.message || 'Could not update the course.'); }
+    finally { setBusy(null); }
+  };
+  const published = courses.filter(course => course.published).length;
+  const visible = courses.filter(course => (filter === 'all' || (filter === 'published' ? course.published : !course.published)) && `${course.title} ${course.level || ''} ${course.description || ''}`.toLowerCase().includes(query.trim().toLowerCase()));
+
+  return <section className="container course-studio" aria-labelledby="studio-title">
+    <button className="studio-back" onClick={() => { if (!locked && !uploading && canLeave()) onBack(); }} disabled={locked || uploading}>← Back to control center</button>
+    <div className="studio-hero"><div><p className="studio-eyebrow">Content workspace</p><h1 id="studio-title">Course Studio</h1><p>Build your courses. Organize your lessons. Help your students take the next step.</p></div><button className="studio-button studio-button-gold" onClick={() => openEditor()} disabled={locked || uploading}><span aria-hidden="true">＋</span> New course</button></div>
+    <div className="studio-summary" aria-label="Course summary">{[['Total courses', courses.length], ['Published', published], ['Drafts', courses.length - published]].map(([label, count]) => <div key={label}><span>{label}</span><strong>{loading || loadError ? '—' : count}</strong></div>)}</div>
+    {error && <div className="studio-message studio-message-error" role="alert">{error}</div>}
+    {notice && <div className="studio-message studio-message-success" role="status">{notice}</div>}
+    <div className="studio-layout">
+      <section className="studio-library" aria-labelledby="studio-library-title" aria-busy={loading}>
+        <div className="studio-library-heading"><div><p className="studio-eyebrow">Your content</p><h2 id="studio-library-title">Course library</h2></div><span>{visible.length} {visible.length === 1 ? 'course' : 'courses'}</span></div>
+        <label className="studio-search"><ControlIcon name="search"/><input type="search" aria-label="Search courses by title, level, or description" placeholder="Search courses…" value={query} onChange={e => setQuery(e.target.value)}/></label>
+        <div className="studio-filters" role="group" aria-label="Filter courses by status">{[['all', 'All courses', courses.length], ['published', 'Published', published], ['draft', 'Drafts', courses.length - published]].map(([value, label, count]) => <button key={value} aria-pressed={filter === value} onClick={() => setFilter(value)}>{label}<span>{loading || loadError ? '—' : count}</span></button>)}</div>
+        {loadError ? <div className="studio-empty" role="alert"><h3>Could not load the course library</h3><p>{loadError}</p><button className="studio-button" onClick={loadCourses}>Try again</button></div> : loading ? <div className="studio-skeleton" role="status" aria-label="Loading courses">{[0, 1, 2].map(i => <div key={i}/>)}</div> : visible.length ? <ul className="studio-course-list">{visible.map(course => <li key={course._id} className={editingId === course._id ? 'is-editing' : ''}>
+          <div className="studio-course-main">{course.image ? <img className="studio-course-cover" src={mediaUrl(course.image)} alt=""/> : <span className="studio-course-symbol" aria-hidden="true">{course.glyph?.trim().length <= 2 && course.glyph.trim() ? course.glyph : '中'}</span>}<div className="studio-course-info"><span className={`studio-status ${course.published ? 'is-published' : ''}`}><i aria-hidden="true"/>{course.published ? 'Published' : 'Draft'}</span><h3>{course.title}</h3><p>Chinese · {course.level || 'Level not set'}</p></div></div>
+          {course.description && <p className="studio-course-description">{course.description}</p>}
+          <div className="studio-course-actions"><button className="studio-button studio-button-primary" onClick={() => { if (canLeave()) onManageLessons(course); }} disabled={locked || uploading}>Manage lessons <span aria-hidden="true">→</span></button><button className="studio-button" onClick={() => openEditor(course)} disabled={locked || uploading} aria-label={`Edit ${course.title}`}>{editingId === course._id ? 'Editing' : 'Edit details'}</button><details className="studio-more"><summary aria-label={`More actions for ${course.title}`}>•••</summary><div><button onClick={() => updateCourse(course)} disabled={locked || uploading}>{course.published ? 'Move to draft' : 'Publish course'}</button><button className="studio-delete" onClick={() => updateCourse(course, true)} disabled={locked || uploading}>Delete course</button></div></details>{busy === course._id && <span className="studio-hint" role="status">Updating…</span>}</div>
+        </li>)}</ul> : <div className="studio-empty"><ControlIcon name="courses"/><h3>{courses.length ? 'No matching courses' : 'Your first course starts here'}</h3><p>{courses.length ? 'Try another search or choose a different status.' : 'Create a draft, then add lessons at your own pace.'}</p><button className="studio-button" onClick={() => { if (courses.length) { setQuery(''); setFilter('all'); } else openEditor(); }} disabled={locked || uploading}>{courses.length ? 'Clear filters' : 'Create your first course'}</button></div>}
+      </section>
+      <CourseEditor draft={draft} setDraft={setDraft} editingId={editingId} titleRef={titleRef} saving={busy === 'save'} uploading={uploading} locked={locked} onUpload={uploadImage} onSave={handleSave} onCancel={() => { if (canLeave()) { resetForm(); setError(''); } }}/>
+    </div>
+  </section>;
+}

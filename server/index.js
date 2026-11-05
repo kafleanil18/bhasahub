@@ -44,6 +44,7 @@ app.use('/api/enrollments', enrollmentRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/tests', testRoutes);
+app.use('/api/hsk1', require('./routes/hsk1'));
 app.use('/api/testimonials', testimonialRoutes);
 app.use('/api/team', teamRoutes);
 app.use('/api/access-requests', accessRequestRoutes);
