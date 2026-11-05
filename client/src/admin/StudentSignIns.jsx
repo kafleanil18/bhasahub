@@ -11,6 +11,7 @@ export default function StudentSignIns() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(0);
+  const [sort, setSort] = useState({ key: 'lastSignIn', direction: 'desc' });
   useEffect(() => {
     const controller = new AbortController();
     setLoading(true); setError(''); setData(null);
@@ -25,6 +26,18 @@ export default function StudentSignIns() {
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
   }, [date, page, refresh]);
+  const sortedStudents = data ? [...data.students].sort((a, b) => {
+    const left = a[sort.key];
+    const right = b[sort.key];
+    const comparison = sort.key === 'name'
+      ? String(left || '').localeCompare(String(right || ''), undefined, { sensitivity: 'base' })
+      : sort.key.includes('SignIn')
+        ? new Date(left) - new Date(right)
+        : Number(left) - Number(right);
+    return sort.direction === 'asc' ? comparison : -comparison;
+  }) : [];
+  const sortBy = (key) => setSort((current) => ({ key, direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc' }));
+  const sortHeading = (key, label) => <button type="button" className="sign-ins-sort" onClick={() => sortBy(key)}>{label}<span aria-hidden="true">{sort.key === key ? sort.direction === 'asc' ? '↑' : '↓' : '↕'}</span></button>;
   return <section className="student-sign-ins admin-list" aria-labelledby="student-sign-ins-title">
     <div className="sign-ins-heading"><div><h2 id="student-sign-ins-title">Student sign-ins</h2><p>Successful email and Google sign-ins · Nepal time (UTC+05:45)</p></div><button className="btn-secondary" disabled={loading} onClick={() => setRefresh(value => value + 1)}>Refresh</button></div>
     <label className="sign-ins-date">View date<input type="date" value={date} max={today()} onChange={event => { if (event.target.value) { setDate(event.target.value); setPage(1); } }} /></label>
@@ -34,7 +47,7 @@ export default function StudentSignIns() {
     {data && <>
       <div className="sign-ins-totals" aria-live="polite"><div><strong>{data.uniqueStudents}</strong><span>Unique students</span></div><div><strong>{data.totalSignIns}</strong><span>Total sign-ins</span></div></div>
       {!data.uniqueStudents ? <p className="admin-empty">No student sign-ins recorded for this date.</p> : <>
-        <div className="sign-ins-table-wrap"><table><caption>Student sign-ins for {date} · All times in Nepal time</caption><thead><tr><th scope="col">Student</th><th scope="col">Sign-ins</th><th scope="col">First sign-in</th><th scope="col">Latest sign-in</th></tr></thead><tbody>{data.students.map(student => <tr key={student._id}><th scope="row"><strong>{student.name}</strong><span>{student.email}</span></th><td>{student.count}</td><td>{time(student.firstSignIn)}</td><td>{time(student.lastSignIn)}</td></tr>)}</tbody></table></div>
+        <div className="sign-ins-table-wrap" role="region" aria-label="Student sign-ins table" tabIndex="0"><table><caption>Student sign-ins for {date} · All times in Nepal time</caption><thead><tr><th scope="col" aria-sort={sort.key === 'name' ? sort.direction === 'asc' ? 'ascending' : 'descending' : 'none'}>{sortHeading('name', 'Student')}</th><th scope="col" aria-sort={sort.key === 'count' ? sort.direction === 'asc' ? 'ascending' : 'descending' : 'none'}>{sortHeading('count', 'Sign-ins')}</th><th scope="col" aria-sort={sort.key === 'firstSignIn' ? sort.direction === 'asc' ? 'ascending' : 'descending' : 'none'}>{sortHeading('firstSignIn', 'First sign-in')}</th><th scope="col" aria-sort={sort.key === 'lastSignIn' ? sort.direction === 'asc' ? 'ascending' : 'descending' : 'none'}>{sortHeading('lastSignIn', 'Latest sign-in')}</th></tr></thead><tbody>{sortedStudents.map(student => <tr key={student._id}><th scope="row"><strong>{student.name || 'Unnamed student'}</strong><span>{student.email}</span></th><td className="sign-ins-count-cell">{student.count}</td><td className="sign-ins-time-cell">{time(student.firstSignIn)}</td><td className="sign-ins-time-cell">{time(student.lastSignIn)}</td></tr>)}</tbody></table></div>
         <div className="sign-ins-pagination"><button className="btn-secondary" disabled={page === 1} onClick={() => setPage(value => value - 1)}>Previous</button><span>Page {page} of {Math.ceil(data.uniqueStudents / data.pageSize)}</span><button className="btn-secondary" disabled={page * data.pageSize >= data.uniqueStudents} onClick={() => setPage(value => value + 1)}>Next</button></div>
       </>}
     </>}

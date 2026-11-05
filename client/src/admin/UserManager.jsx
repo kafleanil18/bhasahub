@@ -2,12 +2,12 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 
 const API = window.API_BASE_URL + '/api';
 
-function UserManager({ onBack }) {
+function UserManager({ initialSearch = '', onBack }) {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(initialSearch);
   const [roleFilter, setRoleFilter] = useState('all');
 
   const load = useCallback(async () => {

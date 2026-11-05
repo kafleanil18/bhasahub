@@ -31,6 +31,31 @@
 .home-page .courses-section { padding: 64px 0 72px; background: var(--card); border-bottom: 1px solid var(--line); scroll-margin-top: 96px; }
 .home-page .section-header-center { text-align: left; margin-bottom: 28px; }
 .home-page .section-kicker { color: var(--jade); font-size: clamp(12px, calc(11px + 0.4vw), 14px); letter-spacing: .16em; text-transform: uppercase; }
+.home-page .student-review-title { color: var(--seal); font-size: clamp(18px, 1.7vw, 22px); font-weight: 800; letter-spacing: .14em; line-height: 1.3; text-transform: uppercase; margin: 0; }
+.home-page .site-footer.home-footer { overflow: hidden; padding: 0; color: #f8f1df; background: #24201c; border-top: 1px solid #4a4034; }
+.home-page .home-footer .footer-inner { position: relative; text-align: left; }
+.home-page .home-footer .footer-inner::before { content: ''; position: absolute; width: 300px; height: 180px; top: -90px; right: 6%; border-radius: 50%; background: radial-gradient(ellipse, rgba(177,138,59,.17), transparent 70%); pointer-events: none; }
+.home-page .home-footer .footer-main { display: grid; grid-template-columns: 1.2fr 1fr auto; align-items: center; gap: 40px; padding: 44px 0 32px; }
+.home-page .home-footer .logo { display: inline-flex; align-items: center; gap: 2px; color: #fffaf0 !important; font-size: 28px; }
+.home-page .home-footer .logo > span:first-child { color: #dfc27d; }
+.home-page .home-footer .footer-brand-mark { display: inline-grid; place-items: center; width: 29px; height: 29px; margin-left: 9px; border: 1px solid rgba(223,194,125,.5); border-radius: 8px; color: #dfc27d !important; font-family: 'Noto Serif SC', serif; font-size: 17px; }
+.home-page .home-footer .footer-tag { margin: 8px 0 0; color: #d5c9b5; font-size: 14px; }
+.home-page .footer-quick-links { display: flex; flex-wrap: wrap; gap: 10px 24px; }
+.home-page .footer-quick-links a { color: #f8f1df; text-decoration: none; font-size: 14px; transition: color .18s ease; }
+.home-page .footer-quick-links a span { color: #dfc27d; margin-left: 4px; }
+.home-page .footer-quick-links a:hover { color: #dfc27d; }
+.home-page .footer-social-wrap { justify-self: end; }
+.home-page .footer-social-label { color: #c8baa4; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+.home-page .home-footer .footer-social { justify-content: flex-start; gap: 8px; margin: 10px 0 0; }
+.home-page .home-footer .social-link { width: 38px; height: 38px; border: 1px solid #51483d; border-radius: 11px; background: #302a24; color: #f8f1df; }
+.home-page .home-footer .social-link:hover { border-color: #dfc27d; background: #dfc27d; color: #24201c; transform: translateY(-2px); }
+.home-page .home-footer .footer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 15px 0 18px; border-top: 1px solid #494137; color: #bfb3a0; font-size: 12px; }
+.home-page .home-footer .footer-bottom .status { margin: 0; color: #c8baa4; }
+@media (max-width: 760px) {
+  .home-page .home-footer .footer-main { grid-template-columns: 1fr; gap: 24px; padding: 34px 0 26px; }
+  .home-page .footer-social-wrap { justify-self: start; }
+  .home-page .home-footer .footer-bottom { align-items: flex-start; flex-direction: column; }
+}
 .home-page .section-title { font-size: clamp(28px, 3vw, 38px); line-height: 1.3; letter-spacing: -.035em; margin-top: 12px; }
 .home-page .section-sublead { max-width: 560px; margin: 12px 0 0; font-size: 15px; line-height: 1.8; }
 .home-page .level-pills { justify-content: flex-start; gap: 8px; margin: 28px 0; flex-wrap: wrap; }

@@ -10,14 +10,30 @@
 .sign-ins-totals > div { display: grid; gap: 10px; flex: 1 1 200px; padding: 24px; background: var(--rice); border: 1px solid var(--line); border-radius: 8px; }
 .sign-ins-totals strong { font-size: 32px; }
 .sign-ins-totals span { color: var(--mist); font-size: 15px; }
-.sign-ins-table-wrap { overflow-x: auto; }
-.student-sign-ins table { width: 100%; border-collapse: collapse; text-align: left; font-size: 15px; }
-.student-sign-ins caption { text-align: left; color: var(--mist); padding-bottom: 18px; font-size: 14px; line-height: 1.6; }
-.student-sign-ins th, .student-sign-ins td { padding: 18px 14px; border-bottom: 1px solid var(--line); }
-.student-sign-ins td { white-space: nowrap; }
-.student-sign-ins tbody th { font-weight: 400; min-width: 180px; }
-.student-sign-ins tbody th span { display: block; color: var(--mist); font-size: 14px; margin-top: 6px; overflow-wrap: anywhere; }
+.sign-ins-table-wrap { max-width: 100%; overflow: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--card); scrollbar-color: var(--mist) var(--rice); }
+.sign-ins-table-wrap:focus-visible { outline: 3px solid var(--seal); outline-offset: 3px; }
+.student-sign-ins table { width: 100%; min-width: 760px; border-collapse: separate; border-spacing: 0; text-align: left; font-size: 15px; }
+.student-sign-ins caption { text-align: left; color: var(--mist); padding: 16px 18px; font-size: 14px; line-height: 1.6; }
+.student-sign-ins thead th { position: sticky; top: 0; z-index: 2; padding: 0; border-bottom: 1px solid var(--line); background: var(--rice); color: var(--mist); font-size: 13px; font-weight: 750; letter-spacing: .045em; text-transform: uppercase; white-space: nowrap; }
+.student-sign-ins thead th:first-child { left: 0; z-index: 3; }
+.sign-ins-sort { display: inline-flex; align-items: center; gap: 8px; width: 100%; min-height: 48px; padding: 12px 16px; border: 0; background: transparent; color: inherit; font: inherit; font-weight: inherit; letter-spacing: inherit; text-align: left; text-transform: inherit; cursor: pointer; }
+.sign-ins-sort:hover { color: var(--seal); }
+.sign-ins-sort span { color: var(--seal); font-size: 15px; }
+.student-sign-ins tbody tr { background: var(--card); transition: background .15s ease; }
+.student-sign-ins tbody tr:nth-child(even) { background: color-mix(in srgb, var(--rice) 38%, var(--card)); }
+.student-sign-ins tbody tr:hover { background: color-mix(in srgb, var(--seal) 7%, var(--card)); }
+.student-sign-ins th, .student-sign-ins td { padding: 17px 16px; border-bottom: 1px solid var(--line); }
+.student-sign-ins tbody tr:last-child th, .student-sign-ins tbody tr:last-child td { border-bottom: 0; }
+.student-sign-ins tbody td { white-space: nowrap; color: var(--ink); }
+.student-sign-ins tbody th[scope="row"] { position: sticky; left: 0; z-index: 1; min-width: 230px; background: inherit; font-weight: 400; }
+.student-sign-ins tbody th strong { display: block; color: var(--ink); font-size: 16px; line-height: 1.4; }
+.student-sign-ins tbody th span { display: block; color: var(--mist); font-size: 14px; margin-top: 4px; overflow-wrap: anywhere; }
+.student-sign-ins .sign-ins-count-cell { width: 112px; color: var(--seal); font-size: 17px; font-weight: 750; font-variant-numeric: tabular-nums; text-align: center; }
+.student-sign-ins .sign-ins-time-cell { min-width: 180px; font-variant-numeric: tabular-nums; }
 .sign-ins-pagination { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 28px; font-size: 15px; }
 .student-sign-ins button:disabled { opacity: .5; cursor: default; }
-.student-sign-ins :is(button, input):focus-visible { outline: 3px solid var(--seal); outline-offset: 3px; }
-@media (max-width: 480px) { .student-sign-ins { padding: 20px 16px; }.student-sign-ins th, .student-sign-ins td { padding: 14px 10px; } }
+.student-sign-ins :is(button, input):focus-visible { outline: 3px solid var(--seal); outline-offset: -3px; }
+:root.dark .student-sign-ins thead th { background: #302b25; }
+:root.dark .student-sign-ins tbody tr:nth-child(even) { background: color-mix(in srgb, var(--rice) 16%, var(--card)); }
+:root.dark .student-sign-ins tbody tr:hover { background: color-mix(in srgb, var(--seal) 18%, var(--card)); }
+@media (max-width: 480px) { .student-sign-ins { padding: 20px 16px; }.student-sign-ins th, .student-sign-ins td { padding: 14px 10px; }.sign-ins-sort { padding: 12px 10px; } }

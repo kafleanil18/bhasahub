@@ -48,7 +48,7 @@ function extForMimeType(mimeType) {
   return 'webm';
 }
 
-function LessonManager({ course, onBack }) {
+function LessonManager({ course, focusLessonId, onBack }) {
   const token = localStorage.getItem('token');
 
   const [lessons, setLessons] = useState([]);
@@ -110,6 +110,18 @@ function LessonManager({ course, onBack }) {
   useEffect(() => {
     loadLessons();
   }, [loadLessons]);
+
+  useEffect(() => {
+    if (!focusLessonId || !lessons.length) return;
+    const lesson = lessons.find((item) => item._id === focusLessonId);
+    if (!lesson) return;
+    setActiveLesson(lesson);
+    setWords([]);
+    fetch(`${API}/lessons/${lesson._id}/vocabulary`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => res.json())
+      .then((data) => { if (Array.isArray(data)) setWords(data); })
+      .catch(() => setError('Could not load vocabulary for this lesson'));
+  }, [focusLessonId, lessons, token]);
 
   const visibleLessons = lessons.filter((l) => (l.category || 'vocabulary') === lessonCategory);
 

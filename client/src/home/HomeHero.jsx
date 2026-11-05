@@ -27,7 +27,7 @@ export default function HomeHero({ goHome, setShowDashboard, setShowPinyinPage, 
     catch { setAudioError('The greeting couldn’t play. Try again or explore pinyin practice below.'); }
   };
   return <>
-    <section className="home-hero" aria-labelledby="home-hero-title">
+    <section className={`home-hero${!user ? ' is-logged-out' : ''}`} aria-labelledby="home-hero-title">
       <div className="container home-hero-grid">
         <div className="home-hero-intro">
           <p className="home-hero-eyebrow"><span aria-hidden="true"/>{user ? `Welcome back, ${user.name}.` : 'A new language. A new beginning.'}</p>

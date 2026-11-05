@@ -47,10 +47,15 @@ function GoogleAuthButton({ mode = 'signin', onSuccess, onError, setLoading }) {
     }
 
     let intervalId = null;
+    let renderedWidth = 0;
 
     const setupGsi = () => {
       if (window.google?.accounts?.id && containerRef.current) {
         try {
+          const buttonWidth = Math.min(400, Math.floor(containerRef.current.clientWidth));
+          if (!buttonWidth) return false;
+          if (buttonWidth === renderedWidth && containerRef.current.childElementCount) return true;
+
           window.google.accounts.id.initialize({
             client_id: clientId,
             callback: (res) => handleCredentialResponseRef.current(res),
@@ -69,8 +74,9 @@ function GoogleAuthButton({ mode = 'signin', onSuccess, onError, setLoading }) {
             text: mode === 'signup' ? 'signup_with' : 'signin_with',
             shape: 'rectangular',
             logo_alignment: 'left',
-            width: 320,
+            width: buttonWidth,
           });
+          renderedWidth = buttonWidth;
         } catch (e) {
           console.error('Error initializing Google Sign-In:', e);
         }
@@ -87,8 +93,14 @@ function GoogleAuthButton({ mode = 'signin', onSuccess, onError, setLoading }) {
       }, 300);
     }
 
+    const resizeObserver = containerRef.current && typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(() => setupGsi())
+      : null;
+    if (resizeObserver && containerRef.current) resizeObserver.observe(containerRef.current);
+
     return () => {
       if (intervalId) clearInterval(intervalId);
+      resizeObserver?.disconnect();
     };
   }, [clientId, isConfigured, mode]);
 

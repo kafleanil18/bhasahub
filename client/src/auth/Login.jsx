@@ -81,21 +81,24 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
   }, []);
 
   return (
-    <section className="login signin-page" aria-labelledby="signin-title">
+    <section className="login signin-page" aria-labelledby={verificationRequired ? 'signin-title' : undefined} aria-label={verificationRequired ? undefined : 'Sign in'}>
       <div className="login-layout">
         
         {/* Left Column: Portrait & Heading */}
         <div className="login-welcome-panel">
+          <button type="button" className="login-brand" onClick={onBack} aria-label="HanziGo home">
+            <span className="login-brand-seal" aria-hidden="true">汉</span>
+            <span>Hanzi<span>Go</span></span>
+          </button>
           <div className="login-welcome-content">
-            <p className="signin-welcome-note">HanziGo · Chinese Made Simple</p>
-            <h2 className="signin-welcome-title">A little practice.<br />A world of possibility.</h2>
-            <p className="signin-welcome-description">Pick up where you left off, one word and one conversation at a time.</p>
-          
-            
+            <h2 className="signin-welcome-title">We guarantee<br />your HSK exam.</h2>
+            <div className="signin-pass-badge" aria-label="Pass with confidence">
+              <span>PASS</span>
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m5 12 4 4L19 6" />
+              </svg>
+            </div>
           </div>
-          
-
-          
         </div>
 
         {/* Right Column: Sign In Form */}
@@ -110,10 +113,12 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
             </button>
           </div>
 
-          <div className="login-form-header">
-            <h1 id="signin-title">{verificationRequired ? 'Verify your email' : 'Welcome back'}</h1>
-            <p>{verificationRequired ? `Enter the code sent to ${email}. You only need to verify once.` : 'Sign in to continue your learning journey.'}</p>
-          </div>
+          {verificationRequired && (
+            <div className="login-form-header">
+              <h1 id="signin-title">Verify your email</h1>
+              <p>{`Enter the code sent to ${email}. You only need to verify once.`}</p>
+            </div>
+          )}
 
           {!verificationRequired && <>
           <GoogleAuthButton
@@ -124,7 +129,7 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
           />
 
           <div className="auth-divider">
-            <span>or sign in with email</span>
+            <span>or</span>
           </div>
 
           </>}
@@ -146,7 +151,6 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
                   autoComplete="username"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
                   required
                 />
               </div>
@@ -167,7 +171,6 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
                   className="password-field"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Your password"
                   required
                 />
                 <button

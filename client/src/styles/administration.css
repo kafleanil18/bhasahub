@@ -94,6 +94,10 @@ section{
 animation:
 fadeUp .8s ease;
 }
+
+.super-admin-layout section {
+  animation: none !important;
+}
 /* ---------- User / admin management ---------- */
 .pill-super {
   background: #4a2d7a;
@@ -1380,6 +1384,101 @@ fadeUp .8s ease;
 
 .super-admin-layout .admin-sidebar-nav {
   flex-shrink: 0;
+}
+
+/* Superadmin navigation: grouped tools with a color cue for each area. */
+.super-admin-layout .admin-sidebar-nav {
+  display: flex !important;
+  flex-direction: column;
+  gap: 16px !important;
+  padding: 20px 0 24px;
+}
+
+.admin-sidebar-group {
+  --sidebar-accent: var(--seal);
+  display: grid;
+  gap: 4px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-sidebar-group:last-child { border-bottom: 0; padding-bottom: 0; }
+.admin-sidebar-group--overview { --sidebar-accent: #8a5a23; }
+.admin-sidebar-group--learning { --sidebar-accent: #a92316; }
+.admin-sidebar-group--community { --sidebar-accent: #2e6b57; }
+.admin-sidebar-group--access { --sidebar-accent: #355f8a; }
+
+.admin-sidebar-group-title {
+  margin: 0 10px 5px;
+  color: var(--sidebar-accent);
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: .09em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.admin-sidebar-group .nav-svg-icon { color: var(--sidebar-accent); }
+.admin-sidebar-group > button {
+  min-height: 44px;
+  font-size: 15px;
+}
+.admin-sidebar-group > button:hover {
+  background: color-mix(in srgb, var(--sidebar-accent) 9%, var(--card)) !important;
+  color: var(--sidebar-accent) !important;
+  border-left-color: var(--sidebar-accent) !important;
+}
+.admin-sidebar-group > button:hover .nav-svg-icon { color: var(--sidebar-accent); }
+.admin-sidebar-group > button.is-current,
+.admin-sidebar-group > button.is-current:hover {
+  background: color-mix(in srgb, var(--sidebar-accent) 13%, var(--card)) !important;
+  color: var(--sidebar-accent) !important;
+  border-left-color: var(--sidebar-accent) !important;
+  font-weight: 700;
+  transform: none;
+}
+.admin-sidebar-group > button.is-current .nav-svg-icon { color: var(--sidebar-accent); }
+
+:root.dark .admin-sidebar-group--overview { --sidebar-accent: #e4b972; }
+:root.dark .admin-sidebar-group--learning { --sidebar-accent: #ed8278; }
+:root.dark .admin-sidebar-group--community { --sidebar-accent: #84c7a8; }
+:root.dark .admin-sidebar-group--access { --sidebar-accent: #9abde4; }
+
+/* Warm paper header to match the superadmin control center. */
+.site-header.paper-header {
+  background: color-mix(in srgb, var(--card) 96%, transparent);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 6px 22px rgba(42, 35, 32, .07);
+}
+.site-header.paper-header .brand-title { color: var(--ink); }
+.site-header.paper-header .brand-tagline { color: var(--mist); }
+.site-header.paper-header .brand-accent { color: var(--seal); }
+.site-header.paper-header .nav-link { color: var(--mist); }
+.site-header.paper-header .nav-link:hover,
+.site-header.paper-header .nav-link.active { color: var(--ink); background: var(--rice); }
+.site-header.paper-header .nav-link .nav-svg-icon { color: currentColor; }
+.site-header.paper-header .user-menu-trigger { border-color: var(--line); background: var(--paper); color: var(--ink); }
+.site-header.paper-header .user-menu-trigger:hover { border-color: color-mix(in srgb, var(--seal) 35%, var(--line)); background: var(--rice); }
+.site-header.paper-header .user-menu-trigger .caret { color: var(--mist); }
+.site-header.paper-header .user-menu-dropdown { background: var(--card); border-color: var(--line); box-shadow: 0 16px 40px rgba(42,35,32,.16); }
+.site-header.paper-header .user-menu-header-name { color: var(--ink); }
+.site-header.paper-header .user-menu-header-role { color: var(--mist); }
+.site-header.paper-header .theme-toggle-compact { border-color: var(--line); background: var(--paper); color: var(--seal); box-shadow: none; }
+.site-header.paper-header .theme-toggle-compact:hover { border-color: var(--seal); background: var(--rice); color: var(--seal); box-shadow: none; }
+.site-header.paper-header .admin-nav-toggle { background: color-mix(in srgb, var(--seal) 8%, var(--card)); border-color: color-mix(in srgb, var(--seal) 22%, var(--line)); color: var(--seal); }
+.site-header.paper-header .admin-nav-toggle:hover { background: var(--seal); color: #fff; border-color: var(--seal); }
+:root.dark .site-header.paper-header { background: color-mix(in srgb, var(--card) 96%, transparent); border-bottom-color: var(--line); box-shadow: 0 6px 22px rgba(0,0,0,.28); }
+:root.dark .site-header.paper-header .user-role-badge.super { background: color-mix(in srgb, var(--seal) 18%, var(--card)); color: #f0a197; }
+
+@media (max-width: 1099px) {
+  .site-header.paper-header .main-nav { background: var(--card); border-color: var(--line); box-shadow: 0 20px 48px rgba(42,35,32,.18); }
+  .site-header.paper-header .nav-links .nav-link { color: var(--ink); }
+  .site-header.paper-header .nav-links .nav-link:hover { background: var(--rice); color: var(--seal); }
+  .site-header.paper-header .mobile-drawer-actions { border-top-color: var(--line); }
+  .site-header.paper-header .mobile-drawer-theme-row { color: var(--ink); }
+  .site-header.paper-header .mobile-admin-btn { color: var(--seal); }
+  .site-header.paper-header .hamburger { border-color: var(--line); background: var(--paper); }
+  .site-header.paper-header .hamburger span { background: var(--ink); }
 }
 
 @media (min-width: 1100px) {

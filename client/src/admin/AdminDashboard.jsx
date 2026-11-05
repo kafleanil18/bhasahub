@@ -6,6 +6,7 @@ import './AdminDashboard.css';
 const API = window.API_BASE_URL + '/api';
 const shortcuts = [
   ['courses', 'courses', 'Courses & lessons', 'Create, edit, and publish learning content.'],
+  ['conversations', 'lessons', 'Conversation lessons', 'Edit the HSK 1 conversation practice content.'],
   ['tests', 'tests', 'Mock tests', 'Build assessments and manage published tests.'],
   ['subscriptions', 'subscriptions', 'Students & access', 'Manage enrollments and subscriptions.'],
   ['pinyin', 'audio', 'Pinyin audio', 'Record pronunciation for individual sounds.'],
@@ -81,23 +82,22 @@ export default function AdminDashboard({ onNavigate, user }) {
       <button className="control-refresh" disabled={loading} onClick={() => setAttempt(value => value + 1)}><ControlIcon name="refresh"/>{loading ? 'Refreshing…' : 'Refresh data'}</button>
     </div>
     {error && <div className="control-error" role="alert"><strong>{stats ? 'Showing the last available snapshot.' : 'Dashboard data is unavailable.'}</strong><p>{error}</p><button disabled={loading} onClick={() => setAttempt(value => value + 1)}>Try again</button></div>}
+    <section className={`control-review-hub ${pending ? 'has-pending' : ''}`} id="control-review-queue" aria-labelledby="control-queue-title" aria-busy={loading}>
+      <div className="control-review-heading"><div><p className="control-eyebrow">Admin follow-up</p><h2 id="control-queue-title">Review tasks</h2><p>{!stats ? 'Pending items will appear when dashboard data is available.' : pending ? `${pending} ${pending === 1 ? 'item needs' : 'items need'} your attention.` : 'You’re all caught up. New requests will appear here.'}</p></div>{stats && <span className={`control-count ${pending ? 'has-pending' : ''}`}>{pending}<span className="visually-hidden"> pending tasks</span></span>}</div>
+      <div className="control-review-items">{queue.map(([target, icon, label, count, action]) => <button className={`control-review-item review-${target}`} key={target} onClick={() => onNavigate(target)}><span className="control-review-icon"><ControlIcon name={icon}/></span><span className="control-review-copy"><strong>{label}</strong><small>{stats ? count ? `${count} ${target === 'inbox' ? 'unread messages' : 'awaiting review'}` : 'No pending items' : 'Count unavailable'}</small></span><span className={`control-review-number ${count ? 'is-pending' : ''}`}>{stats ? count : '—'}</span><span className="control-review-action">{count ? action : 'Open'} <span aria-hidden="true">→</span></span></button>)}</div>
+      {stats?.subscriptions.expiringSoon > 0 && <button className="control-expiry" onClick={() => onNavigate('subscriptions')}><ControlIcon name="subscriptions"/><span><strong>{stats.subscriptions.expiringSoon} subscriptions expiring soon</strong><small>Review access ending within the next 7 days.</small></span><span aria-hidden="true">→</span></button>}
+    </section>
     <section aria-labelledby="control-overview-title" aria-busy={loading}>
       <div className="control-section-heading"><h2 id="control-overview-title">Platform overview</h2><span>All-time totals</span></div>
       {!stats && loading ? <div className="control-metrics control-loading" role="status" aria-label="Loading platform overview">{Array.from({ length: 4 }, (_, i) => <div key={i}><span/><span/><span/></div>)}</div> : stats ? <>
         <div className="control-metrics">{metrics.map(([icon, label, value, note], index) => <div className={`control-metric metric-${index}`} key={label}><span className="control-metric-top"><strong>{label}</strong><span className="control-icon"><ControlIcon name={icon}/></span></span><span className="control-metric-value">{value.toLocaleString()}</span><small>{note}</small></div>)}</div>
-        <div className="control-details-strip">{[['Total enrollments', stats.enrollments.total, 'subscriptions'], ['Published mock tests', `${stats.tests.published} of ${stats.tests.total}`, 'tests'], ['Admins & staff', stats.admins.total, 'admins']].map(([label, value, target]) => <button key={label} onClick={() => onNavigate(target)}><span>{label}</span><strong>{value} <span aria-hidden="true">→</span></strong></button>)}</div>
+        <div className="control-details-strip">{[['Total enrollments', stats.enrollments.total, 'subscriptions'], ['Bundled HSK 1 mock tests', stats.tests.bundled, 'tests'], ['Admins & staff', stats.admins.total, 'admins']].map(([label, value, target]) => <button key={label} onClick={() => onNavigate(target)}><span>{label}</span><strong>{value} <span aria-hidden="true">→</span></strong></button>)}</div>
       </> : <p className="control-unavailable">Refresh to load your platform overview. You can still open the management tools below.</p>}
     </section>
     <div className="control-work-grid">
       <section className="control-tools" id="control-admin-tools" aria-labelledby="control-tools-title"><div className="control-panel-heading"><div><p className="control-eyebrow">Your teaching studio</p><h2 id="control-tools-title">What will you work on today?</h2></div></div><p className="control-section-description">Choose a tool and make a little progress.</p><div className="control-shortcuts">{shortcuts.map(([target, icon, label, description]) => <button key={target} onClick={() => onNavigate(target)}><ControlIcon name={icon}/><span><strong>{label}</strong><small>{description}</small></span><span className="control-shortcut-arrow" aria-hidden="true">↗</span></button>)}</div></section>
-      <section className="control-queue" id="control-review-queue" aria-labelledby="control-queue-title">
-        <div className="control-panel-heading"><div><p className="control-eyebrow">Start here</p><h2 id="control-queue-title">Needs attention</h2></div>{stats && <span className={`control-count ${pending ? 'has-pending' : ''}`}>{pending}<span className="visually-hidden"> items to review</span></span>}</div>
-        <p className="control-section-description">{!stats ? 'Review counts will appear when data is available.' : pending ? `${pending} ${pending === 1 ? 'item is' : 'items are'} waiting for your review.` : 'You’re all caught up. New requests will appear here.'}</p>
-        <div className="control-queue-items">{queue.map(([target, icon, label, count, action]) => <button key={target} onClick={() => onNavigate(target)}><span className="control-icon"><ControlIcon name={icon}/></span><span><strong>{label}</strong><small>{stats ? count ? `${count} ${target === 'inbox' ? 'unread messages' : 'awaiting review'}` : 'Nothing pending' : 'Count unavailable'}</small></span><span className="control-queue-action">{action}<span aria-hidden="true"> →</span></span></button>)}</div>
-        {stats?.subscriptions.expiringSoon > 0 && <button className="control-expiry" onClick={() => onNavigate('subscriptions')}><ControlIcon name="subscriptions"/><span><strong>{stats.subscriptions.expiringSoon} subscriptions expiring soon</strong><small>Review access ending within the next 7 days.</small></span><span aria-hidden="true">→</span></button>}
-      </section>
     </div>
     {stats && <><div className="control-section-heading"><h2>Learning activity</h2><span>Growth & engagement</span></div><ControlCharts stats={stats}/></>}
-    <nav className="control-footer" aria-label="More administration tools"><span>More tools</span><button onClick={() => onNavigate('admins')}>Manage admins <span aria-hidden="true">→</span></button><button onClick={() => onNavigate('team')}>Team profiles <span aria-hidden="true">→</span></button></nav>
+    <nav className="control-footer" aria-label="More administration tools"><span>More tools</span><button onClick={() => onNavigate('admins')}>Manage admins <span aria-hidden="true">→</span></button></nav>
   </section>;
 }

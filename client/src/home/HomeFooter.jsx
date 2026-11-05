@@ -1,16 +1,22 @@
 
 export default function HomeFooter({ goHome, isSuperAdmin, serverOk }) {
   return (
-    <footer className="site-footer">
-            <div className="container footer-inner">
-
-              <button className="logo" onClick={goHome}>
-                Hanzi<span>Go</span>
-              </button>
-
-              <p className="footer-tag">Chinese Made Simple</p>
-
-              <div className="footer-social">
+    <footer className="site-footer home-footer">
+      <div className="container footer-inner">
+        <div className="footer-main">
+          <div className="footer-brand-block">
+            <button className="logo" onClick={goHome} aria-label="HanziGo home">
+              Hanzi<span>Go</span><span className="footer-brand-mark" aria-hidden="true">好</span>
+            </button>
+            <p className="footer-tag">Small steps. Real conversations.</p>
+          </div>
+          <nav className="footer-quick-links" aria-label="Footer navigation">
+            <a href="#courses">Explore courses <span aria-hidden="true">↗</span></a>
+            <a href="#practice-studio">Practice studio <span aria-hidden="true">↗</span></a>
+          </nav>
+          <div className="footer-social-wrap">
+            <span className="footer-social-label">Keep in touch</span>
+            <div className="footer-social">
                 <a href="#facebook" aria-label="Facebook" className="social-link">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.99 3.66 9.13 8.44 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99C18.34 21.13 22 16.99 22 12z"/></svg>
                 </a>
@@ -23,20 +29,21 @@ export default function HomeFooter({ goHome, isSuperAdmin, serverOk }) {
                 <a href="#linkedin" aria-label="LinkedIn" className="social-link">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zm1.78 13.02H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
                 </a>
-              </div>
-
-              {isSuperAdmin && (
-                <p className="status">
-                  {serverOk === null && <span>Checking server...</span>}
-                  {serverOk === true && (
-                    <span><span className="dot"></span>Server connected</span>
-                  )}
-                  {serverOk === false && (
-                    <span><span className="dot offline"></span>Server offline</span>
-                  )}
-                </p>
-              )}
             </div>
-          </footer>
+          </div>
+        </div>
+
+        <div className="footer-bottom">
+          <span>© {new Date().getFullYear()} HanziGo · Learn Chinese, one step at a time.</span>
+          {isSuperAdmin && (
+            <p className="status">
+              {serverOk === null && <span>Checking server...</span>}
+              {serverOk === true && <span><span className="dot"></span>Server connected</span>}
+              {serverOk === false && <span><span className="dot offline"></span>Server offline</span>}
+            </p>
+          )}
+        </div>
+      </div>
+    </footer>
   );
 }

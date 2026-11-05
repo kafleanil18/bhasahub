@@ -9,15 +9,16 @@ const practiceTools = [
   ['measures', 'Measure Word Practice', 'Choose the word for counting things.'],
   ['numbers', 'Everyday Chinese Numbers', 'Practice prices, times, and dates.'],
   ['dictation', 'Listening Dictation', 'Listen to recordings and write what you hear.'],
+  ['conversation', 'Conversation', 'Build confidence with guided Chinese conversations.'],
   ['tests', 'Mock Tests', 'Check what you know with a practice test.'],
 ];
-const practiceCharacters = { pinyin: '拼', trace: '字', listening: '听', sentences: '句', measures: '本', numbers: '数', dictation: '写', tests: '测' };
+const practiceCharacters = { pinyin: '拼', trace: '字', listening: '听', sentences: '句', measures: '本', numbers: '数', dictation: '写', conversation: '聊', tests: '测' };
 
 export default function PracticeStudio({ user, onOpenPractice, standalone = false }) {
   const Heading = standalone ? 'h1' : 'h2';
   return (
 <section className="hero-practice-tools" aria-labelledby="hero-practice-title">
-  <div className="hero-practice-heading"><p className="hero-practice-kicker">Your practice studio</p><span className="hero-practice-count">8 ways to learn</span></div>
+  <div className="hero-practice-heading"><p className="hero-practice-kicker">Your practice studio</p><span className="hero-practice-count">9 ways to learn</span></div>
   <Heading id="hero-practice-title">What will you practice today?</Heading>
   <p className="hero-practice-intro">{user ? 'Choose a skill and keep building your Chinese.' : 'Explore pinyin for free. Sign in to unlock the other practice tools.'}</p>
   <div className="hero-practice-list">

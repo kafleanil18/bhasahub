@@ -79,7 +79,8 @@
 .home-page .home-practice-directory .hero-practice-link :is(.hero-practice-start,.mock-test-kicker) { display: none; }
 .home-page .home-practice-directory .hero-practice-link strong { font-size: 16px; line-height: 1.45; color: var(--ink); }
 .home-page .home-practice-directory .hero-practice-link small { font-size: clamp(12px, calc(13px + 0.4vw), 14px); line-height: 1.65; margin-top: 8px; color: var(--mist); opacity: 1; }
-.home-page .home-practice-directory .hero-practice-pinyin, .home-page .home-practice-directory .hero-practice-tests { grid-column: auto; }
+.home-page .home-practice-directory .hero-practice-pinyin { grid-column: auto; }
+.home-page .home-practice-directory .hero-practice-tests { grid-column: 1 / -1; }
 .home-page .home-practice-directory .hero-practice-pinyin::after { display: none; }
 .home-page .home-practice-directory .hero-practice-arrow {
  position: absolute; right: 8px; top: 7px; display: grid; place-items: center; width: 30px; height: 30px;
@@ -111,3 +112,7 @@
  .home-hero-actions { align-items: stretch; flex-direction: column; gap: 8px; }.home-hero-primary { min-height: 52px; }.home-hero-secondary { justify-content: center; border-bottom: 0; }.home-hero-greeting { padding: 16px; }.home-hero-hanzi { font-size: 52px; }.home-hero-eyebrow { font-size: clamp(12px, calc(9px + 0.4vw), 14px); }.home-page .home-practice-directory .hero-practice-link { padding: 16px; min-height: 88px; gap: 12px; }.home-page .home-practice-directory .hero-practice-glyph { width: 44px; height: 48px; font-size: 32px; }.home-page .home-practice-directory .hero-practice-link strong { font-size: 16px; }.home-hero-art-caption { font-size: clamp(12px, calc(8px + 0.4vw), 14px); left: 12px; bottom: 12px; }
 }
 @media (prefers-reduced-motion: reduce) { .home-hero *, .home-hero *::before, .home-hero *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+.home-page .home-hero.is-logged-out { position: relative; isolation: isolate; }
+.home-page .home-hero.is-logged-out::before { content: ''; position: absolute; z-index: 0; inset: 0 auto 0 0; width: min(54%, 640px); background: url('/images/panda-ink-wash.png') left bottom / contain no-repeat; opacity: .38; pointer-events: none; }
+.home-page .home-hero.is-logged-out .home-hero-grid { position: relative; z-index: 1; }
+@media (max-width: 767px) { .home-page .home-hero.is-logged-out::before { inset: auto auto 0 0; width: min(84%, 520px); height: 48%; opacity: .25; } }

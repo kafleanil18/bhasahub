@@ -8,6 +8,7 @@ const Subscription = require('../models/Subscription');
 const Testimonial = require('../models/Testimonial');
 const Test = require('../models/Test');
 const Feedback = require('../models/Feedback');
+const bundledHskPapers = require('../data/hskPapers');
 const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
 
 const router = express.Router();
@@ -78,7 +79,11 @@ router.get('/', requireAuth, requireSuperAdmin, async (req, res) => {
       accessRequests: { pending: pendingAccessRequests },
       subscriptions: { active: activeSubscriptions, expiringSoon: expiringSoonSubscriptions },
       testimonials: { pending: pendingTestimonials },
-      tests: { published: publishedTests, total: totalTests },
+      tests: {
+        published: publishedTests,
+        total: totalTests,
+        bundled: Object.keys(bundledHskPapers).length,
+      },
       feedback: { unread: unreadFeedback },
     });
   } catch (err) {

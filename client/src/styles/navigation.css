@@ -1608,3 +1608,38 @@ h1, h2, h3, h4, h5, h6,
   html { font-size: 18px; }
   body { font-size: 1rem; }
 }
+
+/* Keep the superadmin header warm and light; the default site header is dark. */
+.site-header.paper-header {
+  background: #f8f1df !important;
+  background-image: none !important;
+  border-bottom: 1px solid #e6dcc6 !important;
+  box-shadow: 0 6px 22px rgba(42, 35, 32, .08) !important;
+}
+:root.dark .site-header.paper-header {
+  --ink: #2a2320;
+  --paper: #faf6ec;
+  --rice: #f3ebd8;
+  --mist: #70675b;
+  --card: #fffdf8;
+  --line: #e6dcc6;
+  background: #f8f1df !important;
+  border-bottom-color: #e6dcc6 !important;
+}
+.site-header.paper-header .nav-link:hover,
+.site-header.paper-header .nav-link:focus-visible,
+.site-header.paper-header .nav-link.active,
+.site-header.paper-header .nav-link[aria-current="page"] {
+  background: #eee4ca !important;
+  border-color: #d8c79f !important;
+  color: var(--ink) !important;
+  box-shadow: none;
+}
+.site-header.paper-header .nav-link:hover .nav-svg-icon,
+.site-header.paper-header .nav-link:focus-visible .nav-svg-icon,
+.site-header.paper-header .nav-link.active .nav-svg-icon { color: #9a752f !important; }
+.site-header.paper-header .brand-tagline,
+.site-header.paper-header .nav-link { color: #000 !important; }
+.site-header.paper-header .user-menu-dropdown button,
+.site-header.paper-header .user-menu-dropdown button:hover,
+.site-header.paper-header .user-menu-dropdown button.logout-item:hover { color: #000 !important; }
