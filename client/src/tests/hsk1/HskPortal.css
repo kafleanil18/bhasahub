@@ -39,6 +39,11 @@
 @media print { body:has(.hsk-result) * { visibility: hidden; }.hsk-result, .hsk-result * { visibility: visible; }.hsk-result { position: absolute; inset: 0; border: 0; background: #fff; color: #161616; }.hsk-result * { color: #161616 !important; }.hsk-result .hsk-actions { display: none; } }
 
 .hsk-example { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; padding: 16px 24px; margin: 0; background: var(--rice); border-bottom: 1px solid var(--line); font-size: 12px; line-height: 1.8; }.hsk-example > strong { color: var(--mist); font-size: 10px; }
+.hsk-example span { white-space: pre-line; }
+.hsk-example-with-image { flex-direction: column; align-items: flex-start; }
+.hsk-example-with-image img { display: block; width: 100%; max-width: 640px; height: auto; background: white; border: 1px solid var(--line); }
+.hsk-example-with-image img.is-compact { width: 160px; max-width: 100%; }
+.hsk-example-with-image p { margin: 0; white-space: pre-line; }
 
 /* Navigation improvements at the original exam scale. */
 .hsk-exam-heading { position: sticky; top: 72px; z-index: 8; padding: 12px 0; background: var(--paper); border-bottom: 1px solid var(--line); }

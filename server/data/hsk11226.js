@@ -61,4 +61,17 @@ const groups = [
     { number: 40, text: '男：星期日去看电影（　）？\n女：好。', pinyin: 'Nán: Xīngqīrì qù kàn diànyǐng ( )? Nǚ: Hǎo.', options: letters(6), correctIndex: 1, explanation: '怎么样 asks “how about it?”: How about going to see a movie on Sunday?' },
   ] },
 ];
+// Worked examples from the supplied PDF; separate from the forty scored questions.
+const examples = {
+  l1: { example: '很高兴 (hěn gāoxìng, very happy) matches the smiling woman (✓). 看电影 (kàn diànyǐng, watch a film) does not match the man reading a newspaper (✕).', exampleImageAlt: 'Original examples: a smiling woman marked ✓ and a man reading a newspaper marked ✕.' },
+  l2: { example: '这是我买的书。 (Zhè shì wǒ mǎi de shū.) → A · “These are the books I bought.” B shows a telephone; C shows apples.', exampleImageAlt: 'Original picture choices: A books, marked correct; B telephone; C apples.' },
+  l3: { exampleImageAlt: 'Picture C from the original example: two people shaking hands.', exampleImageCompact: true },
+  l4: { example: '下午我去商店，我想买一些水果。\nXiàwǔ wǒ qù shāngdiàn, wǒ xiǎng mǎi yìxiē shuǐguǒ.\n问：他下午去哪儿？(Tā xiàwǔ qù nǎr?)\nA 商店 (shāngdiàn) ✓ · B 医院 (yīyuàn) · C 学校 (xuéxiào)\nAnswer: A · The speaker is going to the shop to buy fruit.' },
+  r1: { example: '电视 (diànshì, television) does not match the laptop (✕). 飞机 (fēijī, airplane) matches the airplane (✓).', exampleImageAlt: 'Original examples: a laptop labelled television and marked ✕; an airplane labelled airplane and marked ✓.' },
+  r2: { exampleImageAlt: 'Picture E from the original example: a woman reading a book.', exampleImageCompact: true },
+};
+for (const group of groups) {
+  if (examples[group.id]) Object.assign(group, examples[group.id]);
+  if (['l1', 'l2', 'l3', 'r1', 'r2'].includes(group.id)) group.exampleImage = `/hsk1/h11226/examples/${group.id}.png`;
+}
 module.exports = { id: 'h11226', title: 'HSK 1 · H11226', audioUrl: '/hsk1/h11226/listening.m4a', listeningSeconds: 910, transferSeconds: 180, readingSeconds: 1020, groups };

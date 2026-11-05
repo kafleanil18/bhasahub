@@ -1,0 +1,90 @@
+// Transcribed from the user-supplied H10901_1.pdf. Printed answer key: page 14.
+// Original color photos are cropped from the question pages, in printed choice order.
+const asset = name => `/hsk1/h10901/${name}.jpg`;
+const letters = count => Array.from({ length: count }, (_, i) => ({ text: String.fromCharCode(65 + i) }));
+const trueFalse = [{ text: '✓ Matches' }, { text: '✕ Does not match' }];
+const word = (text, pinyin) => ({ text, pinyin });
+const groups = [
+  { id: 'l1', section: 'listening', title: 'Part 1 · Listen & match', instruction: 'Listen to each phrase twice. Does it match the picture?',
+    example: '很高兴 (hěn gāoxìng, very happy) matches the smiling woman (✓). 看电影 (kàn diànyǐng, watch a film) does not match the man reading a newspaper (✕).',
+    exampleImage: asset('example-l1'), exampleImageAlt: 'Original examples: a smiling woman marked ✓ and a man reading a newspaper marked ✕.',
+    questions: [
+      { number: 1, image: asset('l1-1'), options: trueFalse, correctIndex: 0, listeningText: '打电话', explanation: '打电话 means “make a phone call”; the man is speaking on a phone.' },
+      { number: 2, image: asset('l1-2'), options: trueFalse, correctIndex: 1, listeningText: '我和儿子', explanation: '我和儿子 means “my son and I”; the picture shows a woman and a girl.' },
+      { number: 3, image: asset('l1-3'), options: trueFalse, correctIndex: 1, listeningText: '开车', explanation: '开车 means “drive a car”; the person is riding a bicycle.' },
+      { number: 4, image: asset('l1-4'), options: trueFalse, correctIndex: 1, listeningText: '吃米饭', explanation: '吃米饭 means “eat rice”; the woman is drinking from a glass.' },
+      { number: 5, image: asset('l1-5'), options: trueFalse, correctIndex: 0, listeningText: '下雨了', explanation: '下雨了 means “it is raining”; the people have umbrellas in the rain.' },
+    ] },
+  { id: 'l2', section: 'listening', title: 'Part 2 · Choose a picture', instruction: 'Listen to each sentence twice. Choose the matching picture: A, B, or C.',
+    example: '这是我的书。 (Zhè shì wǒ de shū.) → A · “These are my books.” B shows a telephone; C shows apples.',
+    exampleImage: asset('example-l2'), exampleImageAlt: 'Example choices: A books, marked correct; B telephone; C apples.',
+    questions: [
+      { number: 6, image: asset('l2-6'), options: letters(3), correctIndex: 0, listeningText: '今天天气很冷。', explanation: '“The weather is very cold today.” Choose A, the woman in a warm coat.' },
+      { number: 7, image: asset('l2-7'), options: letters(3), correctIndex: 0, listeningText: '现在是十点十分。', explanation: '“It is ten past ten now.” Clock A shows 10:10.' },
+      { number: 8, image: asset('l2-8'), options: letters(3), correctIndex: 2, listeningText: '她后面有几个人。', explanation: '“There are several people behind her.” Picture C shows a woman with several people behind her.' },
+      { number: 9, image: asset('l2-9'), options: letters(3), correctIndex: 0, listeningText: '我今年12岁了。', explanation: '“I am twelve years old this year.” Choose A, the school-age boy.' },
+      { number: 10, image: asset('l2-10'), options: letters(3), correctIndex: 2, listeningText: '他下个月去中国。', explanation: '“He is going to China next month.” Choose C, the Great Wall in China.' },
+    ] },
+  { id: 'l3', section: 'listening', title: 'Part 3 · Match the dialogues', instruction: 'Listen to each dialogue twice. Choose its picture from A–F. Picture C is used in the example.',
+    image: asset('listening-pictures'), imageCaption: 'A–F picture choices from the original H10901 paper. C is the worked example.',
+    example: '女：你好！男：你好！很高兴认识你。 (Nǐ hǎo! Hěn gāoxìng rènshi nǐ.) → C · Two people greeting each other.',
+    exampleImage: asset('example-l3'), exampleImageAlt: 'Example picture C: two people shaking hands.', exampleImageCompact: true,
+    questions: [
+      { number: 11, options: letters(6), correctIndex: 3, listeningText: '男：你看见我的小猫了吗？女：在那儿，在椅子上。', explanation: '“Have you seen my kitten?” — “Over there, on the chair.” Picture D shows a cat on a chair.' },
+      { number: 12, options: letters(6), correctIndex: 1, listeningText: '女：我们中午去买，好吗？男：你看，我没钱了。', explanation: '“Shall we go and buy it at noon?” — “Look, I have no money left.” Picture B shows an empty wallet.' },
+      { number: 13, options: letters(6), correctIndex: 0, listeningText: '男：你住在哪儿？女：我和妈妈都住在一零二。', explanation: '“Where do you live?” — “My mother and I both live in 102.” Picture A shows a mother and child at door 102.' },
+      { number: 14, options: letters(6), correctIndex: 4, listeningText: '女：这个汉字怎么读？男：对不起，我不会。', explanation: '“How do you read this Chinese character?” — “Sorry, I don’t know.” Picture E shows two people reading together.' },
+      { number: 15, options: letters(6), correctIndex: 5, listeningText: '男：谢谢你们！女：不客气。再见。', explanation: '“Thank you!” — “You’re welcome. Goodbye.” Picture F shows people waving from a car.' },
+    ] },
+  { id: 'l4', section: 'listening', title: 'Part 4 · Listen & answer', instruction: 'Listen to each short passage and question twice. Choose the best answer.',
+    example: '下午我去商店，我想买一些水果。\nXiàwǔ wǒ qù shāngdiàn, wǒ xiǎng mǎi yìxiē shuǐguǒ.\n问：她下午去哪里？(Tā xiàwǔ qù nǎlǐ?)\nA 商店 (shāngdiàn) ✓ · B 医院 (yīyuàn) · C 学校 (xuéxiào)\nAnswer: A · She is going to the shop to buy fruit.',
+    questions: [
+      { number: 16, options: [word('他的', 'tā de'), word('我的', 'wǒ de'), word('同学的', 'tóngxué de')], correctIndex: 1, listeningText: '我的电脑在他的桌子上。问：那是谁的电脑？', explanation: '“My computer is on his desk.” The computer belongs to the speaker: 我的, “mine”, B.' },
+      { number: 17, options: [word('星期三', 'xīngqīsān'), word('星期五', 'xīngqīwǔ'), word('星期六', 'xīngqīliù')], correctIndex: 1, listeningText: '今天星期四，我们明天去看电影。问：我们什么时候去看电影？', explanation: 'Today is Thursday and they will see a film tomorrow, so the answer is Friday: 星期五, B.' },
+      { number: 18, options: [word('5', ''), word('15', ''), word('50', '')], correctIndex: 2, listeningText: '他是老师，他有50个学生。问：他有多少个学生？', explanation: 'The teacher has 五十个学生, fifty students. Choose C, 50.' },
+      { number: 19, options: [word('茶', 'chá'), word('苹果', 'píngguǒ'), word('杯子', 'bēizi')], correctIndex: 2, listeningText: '小姐，你好，你这儿有杯子吗？问：他想买什么？', explanation: 'He asks whether the shop has cups: 杯子. Choose C.' },
+      { number: 20, options: [word('爱学习', 'ài xuéxí'), word('很漂亮', 'hěn piàoliang'), word('想回家', 'xiǎng huí jiā')], correctIndex: 1, listeningText: '这是你的朋友吗？很漂亮。问：朋友怎么样？', explanation: 'The friend is described as 很漂亮, “very pretty”. Choose B.' },
+    ] },
+  { id: 'r1', section: 'reading', title: 'Part 1 · Words & pictures', instruction: 'Does the word match the picture? Choose matches or does not match.',
+    example: '电视 (diànshì, television) does not match the laptop (✕). 飞机 (fēijī, airplane) matches the airplane (✓).',
+    exampleImage: asset('example-r1'), exampleImageAlt: 'Original examples: a laptop labelled television and marked ✕; an airplane labelled airplane and marked ✓.',
+    questions: [
+      { number: 21, text: '写', pinyin: 'xiě', image: asset('r1-21'), options: trueFalse, correctIndex: 0, explanation: '写 means “write”; the boy is writing at a desk.' },
+      { number: 22, text: '听', pinyin: 'tīng', image: asset('r1-22'), options: trueFalse, correctIndex: 0, explanation: '听 means “listen”; the woman is listening through headphones.' },
+      { number: 23, text: '菜', pinyin: 'cài', image: asset('r1-23'), options: trueFalse, correctIndex: 1, explanation: '菜 means “vegetables” or “a dish”; the picture shows a cup of tea.' },
+      { number: 24, text: '他', pinyin: 'tā', image: asset('r1-24'), options: trueFalse, correctIndex: 1, explanation: '他 means “he”; the picture shows a woman, for whom 她 is used.' },
+      { number: 25, text: '狗', pinyin: 'gǒu', image: asset('r1-25'), options: trueFalse, correctIndex: 0, explanation: '狗 means “dog”; the picture shows a dog.' },
+    ] },
+  { id: 'r2', section: 'reading', title: 'Part 2 · Match sentences to pictures', instruction: 'Choose the matching picture from A–F. Picture E is used in the example.',
+    image: asset('reading-pictures'), imageCaption: 'A–F picture choices from the original H10901 paper. E is the worked example.',
+    example: '我很喜欢这本书。 (Wǒ hěn xǐhuan zhè běn shū.) → E · “I like this book very much.”',
+    exampleImage: asset('example-r2'), exampleImageAlt: 'Example picture E: a woman reading a book.', exampleImageCompact: true,
+    questions: [
+      { number: 26, text: '你好，我能吃一块儿吗？', pinyin: 'Nǐ hǎo, wǒ néng chī yí kuàir ma?', options: letters(6), correctIndex: 3, explanation: '“Hello, may I have a piece?” Picture D shows someone taking a piece of food.' },
+      { number: 27, text: '她们在买衣服呢。', pinyin: 'Tāmen zài mǎi yīfu ne.', options: letters(6), correctIndex: 5, explanation: '“They are buying clothes.” Picture F shows women shopping for clothes.' },
+      { number: 28, text: '天气太热了，多吃些水果。', pinyin: 'Tiānqì tài rè le, duō chī xiē shuǐguǒ.', options: letters(6), correctIndex: 2, explanation: '“It’s very hot; eat more fruit.” Picture C shows a woman holding fruit.' },
+      { number: 29, text: '来，我们看看里面是什么东西。', pinyin: 'Lái, wǒmen kànkan lǐmiàn shì shénme dōngxi.', options: letters(6), correctIndex: 0, explanation: '“Come, let’s see what’s inside.” Picture A shows a gift being opened.' },
+      { number: 30, text: '喂，你睡觉了吗？', pinyin: 'Wéi, nǐ shuìjiào le ma?', options: letters(6), correctIndex: 1, explanation: '“Hello, have you gone to sleep?” Picture B shows a woman lying down while speaking on the phone.' },
+    ] },
+  { id: 'r3', section: 'reading', title: 'Part 3 · Match questions & replies', instruction: 'Choose the reply that best completes each exchange. Reply F is used in the example.',
+    example: '你喝水吗？ (Nǐ hē shuǐ ma?) → F · 好的，谢谢！ (Hǎo de, xièxie!)',
+    choices: [word('医院。', 'Yīyuàn.'), word('下雨了。', 'Xià yǔ le.'), word('我不认识她。', 'Wǒ bú rènshi tā.'), word('7岁。', 'Qī suì.'), word('下个月。', 'Xià ge yuè.'), word('好的，谢谢！', 'Hǎo de, xièxie!')],
+    questions: [
+      { number: 31, text: '那个人是谁？', pinyin: 'Nàge rén shì shéi?', options: letters(6), correctIndex: 2, explanation: '“Who is that person?” — 我不认识她, “I don’t know her.” Choose C.' },
+      { number: 32, text: '他女儿多大了？', pinyin: 'Tā nǚ’ér duō dà le?', options: letters(6), correctIndex: 3, explanation: '“How old is his daughter?” — 7岁, “Seven years old.” Choose D.' },
+      { number: 33, text: '你的同学在哪儿工作？', pinyin: 'Nǐ de tóngxué zài nǎr gōngzuò?', options: letters(6), correctIndex: 0, explanation: '“Where does your classmate work?” — 医院, “At a hospital.” Choose A.' },
+      { number: 34, text: '昨天上午天气怎么样？', pinyin: 'Zuótiān shàngwǔ tiānqì zěnmeyàng?', options: letters(6), correctIndex: 1, explanation: '“What was the weather like yesterday morning?” — 下雨了, “It rained.” Choose B.' },
+      { number: 35, text: '爸爸什么时候来北京呢？', pinyin: 'Bàba shénme shíhou lái Běijīng ne?', options: letters(6), correctIndex: 4, explanation: '“When is Dad coming to Beijing?” — 下个月, “Next month.” Choose E.' },
+    ] },
+  { id: 'r4', section: 'reading', title: 'Part 4 · Fill in the missing word', instruction: 'Choose a word from A–F to fill each blank. Word D is used in the example.',
+    example: '你叫什么（D）？ (Nǐ jiào shénme míngzi?) · D = 名字 (míngzi, name)',
+    choices: [word('坐', 'zuò'), word('前面', 'qiánmiàn'), word('没关系', 'méi guānxi'), word('名字', 'míngzi'), word('汉语', 'Hànyǔ'), word('月', 'yuè')],
+    questions: [
+      { number: 36, text: '昨天是8（　）19日。', pinyin: 'Zuótiān shì bā ( ) shíjiǔ rì.', options: letters(6), correctIndex: 5, explanation: '8月19日 is August 19. 月 means “month”. Choose F.' },
+      { number: 37, text: '那个饭馆儿在火车站（　）。', pinyin: 'Nàge fànguǎnr zài huǒchēzhàn ( ).', options: letters(6), correctIndex: 1, explanation: '“That restaurant is in front of the railway station.” 前面 means “in front”. Choose B.' },
+      { number: 38, text: '你会说（　）吗？', pinyin: 'Nǐ huì shuō ( ) ma?', options: letters(6), correctIndex: 4, explanation: '“Can you speak Chinese?” 汉语 means “Chinese”. Choose E.' },
+      { number: 39, text: '男：你好！王先生在吗？\n女：在，请（　），我去叫他。', pinyin: 'Nán: Nǐ hǎo! Wáng xiānsheng zài ma?\nNǚ: Zài, qǐng ( ), wǒ qù jiào tā.', options: letters(6), correctIndex: 0, explanation: '请坐 means “please sit down”: “Yes, please sit down; I’ll go and get him.” Choose A.' },
+      { number: 40, text: '女：对不起，我不会做饭。\n男：（　），我会。', pinyin: 'Nǚ: Duìbuqǐ, wǒ bú huì zuò fàn.\nNán: ( ), wǒ huì.', options: letters(6), correctIndex: 2, explanation: '“Sorry, I can’t cook.” — “It doesn’t matter; I can.” 没关系 means “it doesn’t matter”. Choose C.' },
+    ] },
+];
+module.exports = { id: 'h10901', code: 'H10901', title: 'HSK 1 · H10901', audioUrl: '/hsk1/h10901/listening.mp3', listeningSeconds: 874, transferSeconds: 180, readingSeconds: 1020, groups };

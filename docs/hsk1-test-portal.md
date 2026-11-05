@@ -30,6 +30,10 @@ The replacement artwork uses a consistent warm editorial illustration style, wit
 
 ## Reading comfort and navigation
 
+All eight parts include worked examples, separate from the forty scored questions. Original example images from the supplied PDF appear in listening parts 1–3 and reading parts 1–2, including demonstrated answers and the example-only pictures from the shared banks. Listening part 4 includes the Chinese passage, pinyin, choices, and its demonstrated answer. Images are stored in `client/public/hsk1/h11226/examples/` and use the same example layout as H10901.
+
+Resumed attempts for bundled reference papers receive the latest unscored example guidance, even if the attempt snapshot predates those examples. Saved questions, answer choices, grading, section durations, and browser deadlines remain unchanged; custom paper snapshots retain their authored examples.
+
 The portal uses its original 1,200-pixel desktop maximum width and original text, picture, spacing, and control sizes. The timer remains visible while scrolling. Desktop has a scrollable question navigation panel; mobile uses compact part tabs and an expandable question map. Part buttons show answered counts. The next-unanswered shortcut focuses the target question, and the explicit Start listening button starts playback and unlocks answers. Image dimensions reserve space while pictures load.
 
 ## Manually authored complete papers

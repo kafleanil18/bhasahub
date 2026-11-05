@@ -9,9 +9,37 @@ const HskAttempt = require('../models/HskAttempt');
 const PracticePaper = require('../models/PracticePaper');
 const AuditLog = require('../models/AuditLog');
 const paper = require('../data/hsk11226');
+const h10901 = require('../data/hsk10901');
 const { publicPaper, grade, result } = require('../utils/hsk11226');
 // Independently transcribed from the PDF's printed answer key, A=0 and ✓=0.
 const key = [1,1,1,0,0, 0,2,2,0,1, 3,0,4,1,5, 2,1,1,2,0, 0,1,0,0,1, 2,0,1,5,3, 2,3,1,0,4, 2,4,5,0,1];
+// H10901_1.pdf page 14, independently transcribed; A=0 and ✓=0.
+const h10901Key = [0,1,1,1,0, 0,0,2,0,2, 3,1,0,4,5, 1,1,2,2,1, 0,0,1,1,0, 3,5,2,0,1, 2,3,0,1,4, 5,1,4,0,2];
+
+test('H10901 preserves the printed key, original pictures, examples, and its own recording', () => {
+  const questions = h10901.groups.flatMap(group => group.questions);
+  assert.equal(h10901.groups.length, 8);
+  assert.ok(h10901.groups.every(group => group.questions.length === 5 && group.example));
+  assert.deepEqual(questions.map(q => q.number), Array.from({ length: 40 }, (_, i) => i + 1));
+  assert.deepEqual(questions.map(q => q.correctIndex), h10901Key);
+  assert.ok(questions.slice(0, 20).every(q => q.listeningText));
+  assert.ok(questions.slice(20).every(q => q.text && q.pinyin));
+  for (const image of [...h10901.groups, ...questions].flatMap(row => [row.image, row.exampleImage]).filter(Boolean)) {
+    assert.ok(image.startsWith('/hsk1/h10901/'));
+    assert.ok(fs.statSync(path.join(__dirname, '../../client/public', image)).size > 1000, image);
+  }
+  assert.deepEqual(h10901.groups.filter(group => group.exampleImage).map(group => group.id), ['l1', 'l2', 'l3', 'r1', 'r2']);
+  assert.equal(h10901.audioUrl, '/hsk1/h10901/listening.mp3');
+  assert.equal(fs.statSync(path.join(__dirname, '../../client/public', h10901.audioUrl)).size, 20974992);
+  assert.equal(h10901.listeningSeconds, 874);
+  assert.equal(h10901.transferSeconds, 180);
+  assert.equal(h10901.readingSeconds, 1020);
+  const tools = require('../utils/hsk11226').createPaperTools(h10901);
+  assert.deepEqual(tools.grade(h10901Key), { listening: 20, reading: 20, score: 40 });
+  assert.deepEqual(tools.grade(Array(40).fill(null)), { listening: 0, reading: 0, score: 0 });
+  const publicJson = JSON.stringify(tools.publicPaper());
+  for (const privateField of ['correctIndex', 'explanation', 'listeningText']) assert.ok(!publicJson.includes(privateField));
+});
 
 test('all forty questions agree with the printed answer key and every picture exists', () => {
   const questions = paper.groups.flatMap(group => group.questions);
@@ -19,7 +47,9 @@ test('all forty questions agree with the printed answer key and every picture ex
   assert.ok(paper.groups.every(group => group.questions.length === 5));
   assert.deepEqual(questions.map(q => q.number), Array.from({ length: 40 }, (_, i) => i + 1));
   assert.deepEqual(questions.map(q => q.correctIndex), key);
-  for (const image of [...paper.groups, ...questions].map(row => row.image).filter(Boolean)) {
+  assert.ok(paper.groups.every(group => group.example), 'Every part includes its worked example');
+  assert.deepEqual(paper.groups.filter(group => group.exampleImage).map(group => group.id), ['l1', 'l2', 'l3', 'r1', 'r2']);
+  for (const image of [...paper.groups, ...questions].flatMap(row => [row.image, row.exampleImage]).filter(Boolean)) {
     assert.ok(fs.existsSync(path.join(__dirname, '../../client/public', image)), image);
   }
   const audio = fs.readFileSync(path.join(__dirname, '../../client/public', paper.audioUrl));
@@ -94,6 +124,70 @@ test('authenticated owner gets a server-graded result; retries cannot change the
   assert.equal((await (await fetch(url, { headers })).json()).score, 40);
 });
 
+test('resuming an older H11226 snapshot includes new examples without changing its questions or timer', async () => {
+  const { base, headers } = await setup();
+  const snapshot = structuredClone(paper);
+  for (const group of snapshot.groups) {
+    for (const field of ['example', 'exampleImage', 'exampleImageAlt', 'exampleImageCompact']) delete group[field];
+  }
+  snapshot.listeningSeconds = 901;
+  snapshot.groups[0].questions[0].text = 'Original saved question';
+  const answers = Array(40).fill(null); answers[0] = 1;
+  mock(HskAttempt, 'findOne', async () => ({ _id: '507f1f77bcf86cd799439013', paper: 'h11226', user: 'private-id', status: 'started', startedAt: '2026-11-05T00:00:00.000Z', answers, paperSnapshot: snapshot }));
+  const response = await fetch(`${base}/attempts/507f1f77bcf86cd799439013`, { headers });
+  assert.equal(response.status, 200);
+  const resumed = await response.json();
+  assert.deepEqual(resumed.answers, answers);
+  assert.equal(resumed.startedAt, '2026-11-05T00:00:00.000Z');
+  assert.equal(resumed.paperDefinition.listeningSeconds, 901);
+  assert.equal(resumed.paperDefinition.groups[0].questions[0].text, 'Original saved question');
+  for (const group of resumed.paperDefinition.groups) {
+    assert.equal(group.example, paper.groups.find(current => current.id === group.id).example);
+  }
+  assert.equal(resumed.paperDefinition.groups[0].exampleImage, '/hsk1/h11226/examples/l1.png');
+  assert.ok(!JSON.stringify(resumed).includes('correctIndex'));
+  assert.ok(!JSON.stringify(resumed).includes('explanation'));
+  assert.ok(!resumed.user);
+  assert.ok(!snapshot.groups[0].example, 'Stored snapshot remains unchanged');
+});
+
+test('H10901 uses the shared portal with isolated attempts, publication, and immutable reference content', async () => {
+  const { base, headers, other, admin, superadmin } = await setup();
+  const root = base.replace('/h11226', '');
+  const url = `${root}/h10901`;
+  assert.equal((await fetch(url)).status, 401);
+  const listing = await (await fetch(root, { headers })).json();
+  assert.deepEqual(listing.map(row => row.id), ['h11226', 'h10901']);
+  assert.ok(listing.every(row => !row.custom && row.published));
+  const response = await fetch(url, { headers });
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  const content = await response.json();
+  assert.equal(content.code, 'H10901');
+  assert.equal(content.groups.flatMap(g => g.questions).length, 40);
+  assert.ok(!JSON.stringify(content).includes('listeningText'));
+  const created = await (await fetch(`${url}/attempts`, { method: 'POST', headers })).json();
+  assert.equal(created.paper, 'h10901');
+  assert.equal(created.paperDefinition.id, 'h10901');
+  const attemptUrl = `${url}/attempts/${created._id}`;
+  assert.equal((await fetch(attemptUrl, { headers: other })).status, 404);
+  assert.equal((await fetch(`${base}/attempts/${created._id}`, { headers })).status, 404);
+  const submitted = await (await fetch(`${attemptUrl}/submit`, { method: 'POST', headers, body: JSON.stringify({ answers: h10901Key }) })).json();
+  assert.equal(submitted.score, 40);
+  assert.equal(submitted.review.length, 40);
+  const retry = await (await fetch(`${attemptUrl}/submit`, { method: 'POST', headers, body: JSON.stringify({ answers: Array(40).fill(null) }) })).json();
+  assert.equal(retry.score, 40);
+  assert.equal((await fetch(`${url}/editor`, { headers: superadmin })).status, 400);
+  assert.equal((await fetch(`${url}/content`, { method: 'PUT', headers: superadmin, body: JSON.stringify(h10901) })).status, 400);
+  const hidden = await fetch(`${url}/publication`, { method: 'PUT', headers: admin, body: JSON.stringify({ published: false }) });
+  assert.equal(hidden.status, 200);
+  assert.equal((await fetch(url, { headers })).status, 404);
+  assert.equal((await fetch(url, { headers: admin })).status, 200);
+  assert.equal((await fetch(base, { headers })).status, 200);
+  assert.deepEqual((await (await fetch(root, { headers })).json()).map(row => row.id), ['h11226']);
+  assert.equal((await fetch(attemptUrl, { headers })).status, 200);
+});
+
 test('admins control publication; hidden papers block students but allow staff preview', async () => {
   const { base, headers, admin, superadmin } = await setup();
   const url = `${base}/publication`;
@@ -153,8 +247,8 @@ test('superadmin creates and edits complete papers; incomplete drafts cannot be 
   assert.equal((await send(`${url}/publication`, admin, { published: true }, 'PUT')).status, 400);
   assert.equal((await send(`${url}/attempts`, superadmin, {})).status, 400);
   assert.equal((await fetch(url, { headers })).status, 404);
-  assert.equal((await (await fetch(root, { headers })).json()).length, 1);
-  assert.equal((await (await fetch(root, { headers: superadmin })).json()).length, 2);
+  assert.equal((await (await fetch(root, { headers })).json()).length, 2);
+  assert.equal((await (await fetch(root, { headers: superadmin })).json()).length, 3);
   assert.equal((await send(`${url}/content`, superadmin, content, 'PUT')).status, 200);
   assert.equal((await send(`${url}/publication`, admin, { published: true }, 'PUT')).status, 200);
   const publicResponse = await fetch(url, { headers });

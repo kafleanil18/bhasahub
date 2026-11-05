@@ -539,7 +539,7 @@ function AppContent() {
             setShowTestManager(false);
           }}
         />
-      ) : user && (activeTestId === 'h11226' || /^paper-[a-f0-9]{24}$/.test(activeTestId || '')) ? (
+      ) : user && (['h11226', 'h10901'].includes(activeTestId) || /^paper-[a-f0-9]{24}$/.test(activeTestId || '')) ? (
         <HskPortal key={activeTestId} paperId={activeTestId} user={user} onBack={() => {
           setActiveTestId(null);
           if (testTakerBackToManager) {
