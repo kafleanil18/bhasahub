@@ -88,7 +88,7 @@
  transition: transform .22s cubic-bezier(.2,.8,.2,1),background .22s cubic-bezier(.2,.8,.2,1),color .22s cubic-bezier(.2,.8,.2,1);
 }
 .home-page .home-practice-directory .hero-practice-link:is(:hover,:focus-visible) .hero-practice-arrow { background: var(--tool-color); color: white; transform: translate(1px,-1px); }
-.home-page .home-practice-directory .mock-test-cta { display: none; }
+.home-page .home-practice-directory .hero-practice-tests .mock-test-cta { display: inline-flex; align-self: center; }
 .dark .home-page .home-practice-directory .hero-practice-tools { --ink: #f6f5ed; --mist: #c6cdc8; --line: #46504a; background: radial-gradient(ellipse at 95% 5%,#263c34,transparent 60%),#252928; border-color: #495148; }
 .dark .home-page .home-practice-directory .hero-practice-kicker { color: #f5ba9b; }
 .dark .home-page .home-practice-directory .hero-practice-count { background: #ffffff0a; color: #d0dbd3; border-color: #ffffff22; }

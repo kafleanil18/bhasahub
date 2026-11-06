@@ -27,13 +27,20 @@
 .home-page .hero-practice-pinyin .hero-practice-copy strong { font-size: 22px; color: white; }
 .home-page .hero-practice-pinyin .hero-practice-copy small { color: white; opacity: .9; font-size: clamp(12px, calc(12px + 0.4vw), 14px); }
 .home-page .hero-practice-pinyin .hero-practice-arrow { position: static; color: white; font-size: 24px; margin-left: auto; }
-.home-page .hero-practice-tests { grid-column: 1 / -1; align-items: flex-start; gap: 16px; padding: 24px; background: var(--practice-red); border-color: var(--practice-red); color: #fff; animation: mock-test-pulse 2s ease-out infinite; }
+.home-page .hero-practice-tests { grid-column: 1 / -1; justify-self: center; width: min(100%, 520px); flex-direction: column; align-items: center; gap: 14px; padding: 24px; background: var(--practice-red); border-color: var(--practice-red); color: #fff; text-align: center; animation: mock-test-pulse 2s ease-out infinite; }
+.home-page .hero-practice-tests .hero-practice-copy { flex: 0 1 auto; width: 100%; text-align: center; }
+.home-page .hero-practice-tests .mock-test-kicker,
+.home-page .hero-practice-tests .hero-practice-copy strong,
+.home-page .hero-practice-tests .hero-practice-copy small { text-align: center; }
 .home-page .mock-test-kicker { display: block; color: var(--practice-gold); font-size: clamp(12px, calc(9px + 0.4vw), 14px); font-weight: 800; letter-spacing: .09em; line-height: 1.5; margin-bottom: 8px; }
 .home-page .hero-practice-tests .hero-practice-copy strong { font-size: 22px; line-height: 1.25; max-width: 300px; }
 .home-page .hero-practice-tests .hero-practice-copy small { font-size: clamp(12px, calc(12px + 0.4vw), 14px); line-height: 1.65; margin-top: 10px; max-width: 340px; }
-.home-page .mock-test-cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 44px; margin-top: 18px; padding: 10px 14px; border-radius: 6px; background: #fff; color: var(--practice-red); font-size: clamp(12px, calc(12px + 0.4vw), 14px); font-weight: 800; }
+.home-page .mock-test-cta { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 44px; margin-top: 18px; padding: 8px 18px; border: 0; border-radius: 999px; background: var(--accent-red); color: #fff; font-size: clamp(12px, calc(12px + 0.4vw), 14px); font-weight: 700; box-shadow: 0 4px 14px rgba(var(--accent-red-rgb), .4); transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s ease; }
+.home-page .mock-test-cta:hover { transform: translateY(-1.5px); box-shadow: 0 6px 20px rgba(var(--accent-red-rgb), .55); }
 .home-page .mock-test-cta > span { font-size: 18px; transition: transform .18s ease; }
-.home-page .hero-practice-tests:hover .mock-test-cta > span { transform: translateX(3px); }
+.home-page .mock-test-cta .mock-test-try-now { font-size: inherit; animation: mock-test-try-pulse 1.6s ease-in-out infinite; }
+.home-page .mock-test-cta > span:last-child { font-size: 18px; }
+.home-page .hero-practice-tests:hover .mock-test-cta > span:last-child { transform: translateX(3px); }
 .home-page .hero-practice-tests .hero-practice-copy small,
 .home-page .hero-practice-tests .hero-practice-arrow,
 .home-page .hero-practice-tests:hover strong { color: #fff; }
@@ -45,7 +52,8 @@
   0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--practice-red) 45%, transparent); }
   70%, 100% { box-shadow: 0 0 0 10px transparent; }
 }
-@media (prefers-reduced-motion: reduce) { .home-page .hero-practice-tests { animation: none; } .home-page .mock-test-cta > span { transition: none; } .home-page .hero-practice-tests:hover .mock-test-cta > span { transform: none; } }
+@keyframes mock-test-try-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .78; transform: scale(1.05); } }
+@media (prefers-reduced-motion: reduce) { .home-page .hero-practice-tests { animation: none; } .home-page .mock-test-cta > span { transition: none; } .home-page .mock-test-cta .mock-test-try-now { animation: none; } .home-page .hero-practice-tests:hover .mock-test-cta > span:last-child { transform: none; } }
 @media (max-width: 1100px) and (min-width: 901px) { .home-page .hero-grid { gap: 32px; } .home-page .hero-practice-link { gap: 6px; padding-inline: 8px; } }
 @media (max-width: 480px) {
   .home-page .hero-practice-tools { padding: 16px; border-radius: 16px; }
