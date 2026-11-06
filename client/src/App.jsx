@@ -465,7 +465,7 @@ function AppContent() {
       )}
 
       <SiteHeader adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} hideForAuth={!user && showLogin && authView === 'login'} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowSubscriptions={setShowSubscriptions} setShowTestManager={setShowTestManager} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
-      {user?.role === 'student' && !showLogin && <LearningAssistant />}
+      {user && !showLogin && <LearningAssistant />}
 
       {!user && showLogin ? (
         <div>

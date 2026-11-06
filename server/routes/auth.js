@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const rateLimit = require('express-rate-limit');
 const User = require('../models/User');
 const { requireAuth } = require('../middleware/auth');
-const { sendPasswordResetEmail, sendPasswordResetOtpEmail, sendEmailVerificationOtp } = require('../utils/email');
+const { sendPasswordResetEmail, sendPasswordResetOtpEmail } = require('../utils/email');
 
 const { recordStudentSignIn } = require('../utils/studentSignIns');
 
@@ -48,7 +48,7 @@ router.post('/register', authLimiter, async (req, res) => {
 
     const role = adminCode && process.env.ADMIN_CODE && adminCode === process.env.ADMIN_CODE ? 'admin' : 'student';
 
-    const user = await User.create({ name, email, password: hashedPassword, role, emailVerified: false });
+    const user = await User.create({ name, email, password: hashedPassword, role });
 
     res.status(201).json({ message: 'Account created', user: { id: user._id, name: user.name, role: user.role } });
   } catch (err) {
@@ -59,7 +59,7 @@ router.post('/register', authLimiter, async (req, res) => {
 // POST /api/auth/login
 router.post('/login', authLimiter, async (req, res) => {
   try {
-    const { password, otp } = req.body;
+    const { password } = req.body;
     const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : '';
     if (!email || typeof password !== 'string') return res.status(400).json({ error: 'Email and password are required' });
 
@@ -71,43 +71,6 @@ router.post('/login', authLimiter, async (req, res) => {
     const passwordOk = await bcrypt.compare(password, user.password || '');
     if (!passwordOk) {
       return res.status(401).json({ error: 'Invalid email or password' });
-    }
-
-    // Only newly registered email accounts require this first-login check.
-    if (user.emailVerified === false) {
-      if (otp !== undefined) {
-        if (typeof otp !== 'string' || !/^\d{6}$/.test(otp)) {
-          return res.status(400).json({ error: 'Enter the six-digit verification code' });
-        }
-        // Atomically consume the code so concurrent requests cannot reuse it.
-        const verified = await User.findOneAndUpdate({
-          _id: user._id,
-          emailVerified: false,
-          emailVerificationHash: crypto.createHash('sha256').update(otp).digest('hex'),
-          emailVerificationExpires: { $gt: new Date() },
-        }, {
-          $set: { emailVerified: true },
-          $unset: { emailVerificationHash: '', emailVerificationExpires: '', emailVerificationSentAt: '' },
-        });
-        if (!verified) return res.status(400).json({ error: 'Invalid or expired verification code. Request a new code if needed.' });
-      } else {
-        if (!user.emailVerificationSentAt || Date.now() - user.emailVerificationSentAt.getTime() >= 60000) {
-          const code = crypto.randomInt(100000, 1000000).toString();
-          user.emailVerificationHash = crypto.createHash('sha256').update(code).digest('hex');
-          user.emailVerificationExpires = new Date(Date.now() + 10 * 60 * 1000);
-          user.emailVerificationSentAt = new Date();
-          await user.save();
-          try {
-            await sendEmailVerificationOtp(user.email, code);
-          } catch {
-            await User.updateOne({ _id: user._id, emailVerificationHash: user.emailVerificationHash }, {
-              $unset: { emailVerificationHash: '', emailVerificationExpires: '', emailVerificationSentAt: '' },
-            });
-            return res.status(502).json({ error: 'Could not send your verification email. Please try again.' });
-          }
-        }
-        return res.json({ verificationRequired: true, message: 'Check your email for a six-digit code. It expires in 10 minutes.', retryAfter: Math.max(0, Math.ceil((60000 - (Date.now() - user.emailVerificationSentAt.getTime())) / 1000)) });
-      }
     }
 
     const token = jwt.sign(
