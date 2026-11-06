@@ -43,5 +43,130 @@
 .conversation-editor-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 4px 2px; }
 .conversation-editor-footer > span { color: #70675b; font-size: 13px; }
 .conversation-manager :is(button, input, textarea, select):focus-visible { outline: 3px solid #a92316; outline-offset: 2px; }
+.conversation-manager-lesson-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+.conversation-manager-lesson-head h2 { margin: 0; }
+.conversation-manager-lesson-head > button { flex: 0 0 auto; padding: 7px 9px; border: 1px solid #e6dcc6; border-radius: 8px; background: #fbf5e8; color: #2a2320; font: inherit; font-size: 12px; font-weight: 750; cursor: pointer; }
+.conversation-turn-voice { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; margin-top: 12px; padding: 11px; border: 1px solid #e9e0d4; border-radius: 8px; background: #fcfaf5; }
+.conversation-turn-voice > div { display: grid; flex: 1 1 220px; gap: 3px; }
+.conversation-turn-voice > div strong { color: #2a2320; font-size: 13px; }
+.conversation-turn-voice > div span, .conversation-turn-voice > span { color: #70675b; font-size: 12px; }
+.conversation-turn-voice audio { width: min(100%, 300px); height: 38px; }
+.conversation-voice-upload { position: relative; display: inline-flex; align-items: center; min-height: 38px; padding: 7px 12px; border: 1px solid #e6dcc6; border-radius: 8px; background: white; color: #2a2320; font-size: 13px; font-weight: 700; cursor: pointer; }
+.conversation-voice-upload input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.conversation-voice-upload:focus-within { outline: 3px solid #a92316; outline-offset: 2px; }
+.conversation-turn-voice .conversation-add-turn { margin: 0; }
+.conversation-manager-hero-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+.conversation-manager-new { min-height: 46px; padding: 0 17px; border: 1px solid #cbb887; border-radius: 9px; background: #fbf5e8; color: #493c27; font: inherit; font-weight: 750; cursor: pointer; }
+.conversation-manager-lesson-head { display: block; margin-bottom: 12px; padding: 0 4px 13px; border-bottom: 1px solid #eee5d8; }
+.conversation-manager-lesson-head p { margin: 0 0 5px; color: #a92316; font-size: 10px; font-weight: 800; letter-spacing: .13em; }
+.conversation-manager-lesson-head h2 { display: flex; align-items: center; gap: 8px; margin: 0; font-family: 'Fraunces', Georgia, serif; font-size: 20px; }
+.conversation-manager-lesson-head h2 span { display: inline-grid; min-width: 24px; height: 24px; place-items: center; border-radius: 99px; background: #f4eddd; color: #70675b; font: 700 12px/1 sans-serif; }
+.conversation-library-draft { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; padding: 10px; border: 1px dashed #cbb887; border-radius: 8px; background: #fcf8ed; }
+.conversation-library-draft > span { color: #a92316; font-size: 13px; font-weight: 800; }
+.conversation-library-draft > div { display: grid; gap: 2px; }
+.conversation-library-draft strong { font-size: 13px; }
+.conversation-library-draft small { color: #70675b; font-size: 11px; }
+.conversation-editor-section.conversation-step { padding: 25px; }
+.conversation-step-heading { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.conversation-step-heading > span:first-child { display: grid; flex: 0 0 40px; width: 40px; height: 40px; place-items: center; border-radius: 50%; background: #f5ead0; color: #8f671c; font: 800 17px/1 sans-serif; }
+.conversation-step-heading > div { min-width: 0; }
+.conversation-step-heading p { margin: 0 0 4px; color: #a92316; font-size: 10px; font-weight: 800; letter-spacing: .13em; }
+.conversation-step-heading h2 { margin: 0; font: 700 25px/1.2 'Fraunces', Georgia, serif; }
+.conversation-step-heading small { display: block; margin-top: 5px; color: #70675b; font-size: 13px; font-weight: 450; }
+.conversation-step-heading .conversation-lesson-badge { margin-left: auto; padding: 7px 10px; border-radius: 99px; background: #f5f1e9; color: #70675b; font-size: 10px; letter-spacing: .08em; }
+.conversation-basics-fields small { color: #82796d; font-size: 11px; font-weight: 450; }
+.conversation-advanced-details { margin-top: 16px; border-top: 1px solid #eee5d8; padding-top: 13px; }
+.conversation-advanced-details summary { width: fit-content; color: #71685d; font-size: 13px; font-weight: 650; cursor: pointer; }
+.conversation-advanced-details[open] .conversation-editor-fields { margin-top: 14px; }
+.conversation-edit-exchange { margin-top: 15px; padding: 18px; border-color: #e8dece; background: #fbf9f4; }
+.conversation-edit-exchange-head { grid-template-columns: minmax(0, 1fr) 110px auto; align-items: end; }
+.conversation-exchange-title { display: grid; gap: 7px; }
+.conversation-exchange-title > span { color: #99876a; font-size: 10px; font-weight: 800; letter-spacing: .12em; }
+.conversation-accent-label { display: flex; flex-direction: column; gap: 6px; color: #62594f; font-size: 12px; font-weight: 700; }
+.conversation-add-exchange { display: flex; align-items: center; gap: 11px; width: 100%; margin-top: 15px; padding: 13px 15px; border: 1px dashed #c9b98f; border-radius: 10px; background: #fffdf8; color: #493c27; text-align: left; cursor: pointer; }
+.conversation-add-exchange:hover { border-style: solid; background: #fbf5e8; }
+.conversation-add-exchange > span:first-child { display: grid; flex: 0 0 32px; height: 32px; place-items: center; border-radius: 50%; background: #f2e8cf; font-size: 20px; }
+.conversation-add-exchange > span:last-child { display: grid; gap: 3px; }
+.conversation-add-exchange strong { font-size: 13px; }
+.conversation-add-exchange small { color: #70675b; font-size: 11px; }
+.conversation-editor .conversation-edit-turn-title { padding-bottom: 8px; border-bottom: 1px solid #f0e9df; text-transform: uppercase; letter-spacing: .08em; }
+.conversation-editor .conversation-edit-turn-title select { margin-left: 6px; padding: 3px 6px; border-radius: 6px; text-transform: none; }
+.conversation-editor .conversation-edit-turn-title button { text-transform: none; letter-spacing: 0; }
+.conversation-editor input::placeholder, .conversation-editor textarea::placeholder { color: #aaa093; }
+.conversation-step-heading > button { flex: 0 0 auto; margin-left: auto; }
+.conversation-editor-footer { padding: 16px; border: 1px solid #e6dcc6; border-radius: 12px; background: #fffdf8; }
+.conversation-edit-exchange.is-hello { --edit-accent: #ad5948; }
+.conversation-edit-exchange.is-polite { --edit-accent: #a77b28; }
+.conversation-edit-exchange.is-sorry { --edit-accent: #477667; }
+.conversation-edit-exchange.is-ocean { --edit-accent: #536f8b; }
+.conversation-edit-exchange.is-plum { --edit-accent: #88677e; }
+.conversation-edit-exchange[class*="is-"] { border-left: 4px solid var(--edit-accent, #ad5948); background: color-mix(in srgb, var(--edit-accent, #ad5948) 3%, #fffdf8); }
+.conversation-edit-exchange[class*="is-"] .conversation-edit-turn { border-color: color-mix(in srgb, var(--edit-accent, #ad5948) 32%, #e9e0d4); background: color-mix(in srgb, var(--edit-accent, #ad5948) 17%, #fffdf8); }
+.conversation-exchange-title > span { color: var(--edit-accent, #ad5948); }
+.conversation-exchange-title input:focus-visible, .conversation-accent-label select:focus-visible { border-color: var(--edit-accent, #ad5948); }
+:root.dark .conversation-manager { --cm-ink: #f2eee5; --cm-muted: #c2bbae; --cm-line: #464139; --cm-paper: #191816; --cm-surface: #211f1b; color: var(--cm-ink); }
+:root.dark .conversation-manager-back,
+:root.dark .conversation-manager-hero,
+:root.dark .conversation-manager-lessons,
+:root.dark .conversation-editor-section,
+:root.dark .conversation-editor-footer { border-color: var(--cm-line); background: var(--cm-surface); color: var(--cm-ink); }
+:root.dark .conversation-manager-hero p:last-child,
+:root.dark .conversation-manager-lessons > button small,
+:root.dark .conversation-editor-footer > span,
+:root.dark .conversation-step-heading small,
+:root.dark .conversation-library-draft small { color: var(--cm-muted); }
+:root.dark .conversation-manager-lesson-head { border-color: var(--cm-line); }
+:root.dark .conversation-manager-lesson-head h2,
+:root.dark .conversation-editor-heading h2,
+:root.dark .conversation-step-heading h2,
+:root.dark .conversation-library-draft strong { color: var(--cm-ink); }
+:root.dark .conversation-manager-lesson-head h2 span,
+:root.dark .conversation-step-heading > span:first-child { background: #393329; color: #e6c77e; }
+:root.dark .conversation-manager-lessons > button { color: var(--cm-ink); }
+:root.dark .conversation-manager-lessons > button.is-selected { border-color: #766644; background: #30291f; }
+:root.dark .conversation-library-draft { border-color: #766644; background: #28231b; }
+:root.dark .conversation-manager-new,
+:root.dark .conversation-manager-lesson-head > button,
+:root.dark .conversation-editor-heading > button,
+:root.dark .conversation-add-turn,
+:root.dark .conversation-voice-upload,
+:root.dark .conversation-undo-notice button { border-color: #5a5143; background: #2b2823; color: var(--cm-ink); }
+:root.dark .conversation-editor-fields label,
+:root.dark .conversation-edit-exchange-head label,
+:root.dark .conversation-word-edit-row label,
+:root.dark .conversation-accent-label { color: var(--cm-muted); }
+:root.dark .conversation-editor input,
+:root.dark .conversation-editor textarea,
+:root.dark .conversation-editor select { border-color: #4a453d; background: #171614; color: var(--cm-ink); color-scheme: dark; }
+:root.dark .conversation-editor input::placeholder,
+:root.dark .conversation-editor textarea::placeholder { color: #938b7f; }
+:root.dark .conversation-advanced-details { border-color: var(--cm-line); }
+:root.dark .conversation-advanced-details summary { color: var(--cm-muted); }
+:root.dark .conversation-edit-exchange { border-color: #464139; background: #1c1a17; }
+:root.dark .conversation-edit-exchange.is-hello { --edit-accent: #e28b7b; }
+:root.dark .conversation-edit-exchange.is-polite { --edit-accent: #d8b463; }
+:root.dark .conversation-edit-exchange.is-sorry { --edit-accent: #83c3a1; }
+:root.dark .conversation-edit-exchange.is-ocean { --edit-accent: #91b2d1; }
+:root.dark .conversation-edit-exchange.is-plum { --edit-accent: #c49bb8; }
+:root.dark .conversation-edit-exchange[class*="is-"] { border-color: #464139; border-left-color: var(--edit-accent); background: color-mix(in srgb, var(--edit-accent) 9%, #1c1a17); }
+:root.dark .conversation-edit-turn { border-color: #403b34; background: #201e1a; }
+:root.dark .conversation-edit-exchange[class*="is-"] .conversation-edit-turn { border-color: color-mix(in srgb, var(--edit-accent) 30%, #403b34); background: color-mix(in srgb, var(--edit-accent) 17%, #201e1a); }
+:root.dark .conversation-edit-turn-title { border-color: #403b34; color: var(--cm-muted); }
+:root.dark .conversation-edit-turn-title button { color: #e28b7b; }
+:root.dark .conversation-turn-voice { border-color: #403b34; background: #191816; }
+:root.dark .conversation-turn-voice > div strong { color: var(--cm-ink); }
+:root.dark .conversation-turn-voice > div span,
+:root.dark .conversation-turn-voice > span { color: var(--cm-muted); }
+:root.dark .conversation-word-edit-row { border-color: #403b34; }
+:root.dark .conversation-remove { border-color: #62423e; background: #30211f; color: #f0a197; }
+:root.dark .conversation-undo-notice { border-color: #615438; background: #29251b; color: var(--cm-ink); }
+:root.dark .conversation-undo-notice small { color: var(--cm-muted); }
+:root.dark .conversation-voice-upload:focus-within { outline-color: #ee9386; }
+.conversation-undo-notice { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; padding: 11px 14px; border: 1px solid #d8c89f; border-radius: 9px; background: #fbf5e8; color: #453b2c; font-size: 14px; }
+.conversation-undo-notice small { margin-left: 6px; color: #756a58; }
+.conversation-undo-notice button { padding: 6px 12px; border: 1px solid #bda66e; border-radius: 7px; background: #fffdf8; color: #493c27; font: inherit; font-weight: 750; cursor: pointer; }
+.conversation-undo-notice button:disabled { opacity: .55; cursor: default; }
 @media (max-width: 950px) { .conversation-manager-layout { grid-template-columns: 1fr; } .conversation-manager-lessons { position: static; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); max-height: none; } .conversation-manager-lessons h2 { grid-column: 1 / -1; } .conversation-manager-lessons > button + button { margin-top: 0; } .conversation-word-edit-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 620px) { .conversation-manager { padding: 18px 14px 48px; } .conversation-manager-hero { align-items: flex-start; flex-direction: column; padding: 23px; } .conversation-manager-lessons { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 14px; } .conversation-editor-section { padding: 16px; } .conversation-editor-heading { align-items: flex-start; } .conversation-editor-heading h2 { font-size: 21px; } .conversation-editor-fields, .conversation-edit-exchange-head { grid-template-columns: 1fr; } .conversation-editor-fields label.is-wide { grid-column: auto; } .conversation-word-edit-row { grid-template-columns: 1fr; } .conversation-editor-footer { align-items: flex-start; flex-direction: column; } }
+@media (max-width: 950px) { .conversation-manager-lesson-head { grid-column: 1 / -1; } }
+@media (max-width: 620px) { .conversation-manager { padding: 18px 14px 48px; } .conversation-manager-hero { align-items: flex-start; flex-direction: column; padding: 23px; } .conversation-manager-lessons { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 14px; } .conversation-manager-lesson-head { align-items: flex-start; } .conversation-editor-section { padding: 16px; } .conversation-editor-heading { align-items: flex-start; } .conversation-editor-heading h2 { font-size: 21px; } .conversation-editor-fields, .conversation-edit-exchange-head { grid-template-columns: 1fr; } .conversation-editor-fields label.is-wide { grid-column: auto; } .conversation-word-edit-row { grid-template-columns: 1fr; } .conversation-editor-footer { align-items: flex-start; flex-direction: column; } .conversation-turn-voice audio { width: 100%; } }
+@media (max-width: 620px) { .conversation-manager-hero-actions { width: 100%; justify-content: flex-start; } .conversation-manager-hero-actions > button { flex: 1 1 140px; } .conversation-manager-lessons { display: grid; } .conversation-step-heading { align-items: flex-start; } .conversation-step-heading h2 { font-size: 21px; } .conversation-step-heading .conversation-lesson-badge { margin-left: auto; } .conversation-step-heading > button { margin-left: 0; } .conversation-editor-section.conversation-step { padding: 17px; } .conversation-add-exchange { align-items: flex-start; } }

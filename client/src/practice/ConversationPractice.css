@@ -6,6 +6,11 @@
   --conv-card: var(--card, #fffdf8);
   --conv-red: var(--seal, #a92316);
   --conv-gold: var(--gold, #c99a3c);
+  --conv-terracotta: #ad5948;
+  --conv-saffron: #a77b28;
+  --conv-jade: #477667;
+  --conv-slate: #536f8b;
+  --conv-mulberry: #88677e;
   max-width: 1200px;
   padding-top: 24px;
   padding-bottom: 72px;
@@ -27,15 +32,21 @@
 .conversation-picker-count { padding: 7px 11px; border: 1px solid var(--conv-line); border-radius: 999px; background: var(--conv-card); color: var(--conv-muted); font-size: 13px; font-weight: 650; white-space: nowrap; }
 .conversation-lesson-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .conversation-lesson-option { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; align-items: center; gap: 14px; min-height: 88px; padding: 14px 16px; border: 1px solid var(--conv-line); border-radius: 12px; background: var(--conv-card); color: var(--conv-ink); text-align: left; cursor: pointer; transition: border-color .18s ease, background .18s ease, transform .18s ease; }
-.conversation-lesson-option:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--conv-gold) 70%, var(--conv-line)); }
-.conversation-lesson-option.is-selected { border-color: var(--conv-gold); background: color-mix(in srgb, var(--conv-gold) 8%, var(--conv-card)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--conv-gold) 35%, transparent); }
-.conversation-option-number { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 10px; background: color-mix(in srgb, var(--conv-gold) 16%, var(--conv-paper)); color: #876622; font-size: 14px; font-weight: 800; }
+.conversation-lesson-option { --option-accent: #a77b28; }
+.conversation-lesson-option:nth-child(5n + 1) { --option-accent: var(--conv-terracotta); }
+.conversation-lesson-option:nth-child(5n + 2) { --option-accent: var(--conv-saffron); }
+.conversation-lesson-option:nth-child(5n + 3) { --option-accent: var(--conv-jade); }
+.conversation-lesson-option:nth-child(5n + 4) { --option-accent: var(--conv-slate); }
+.conversation-lesson-option:nth-child(5n + 5) { --option-accent: var(--conv-mulberry); }
+.conversation-lesson-option:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--option-accent) 70%, var(--conv-line)); }
+.conversation-lesson-option.is-selected { border-color: var(--option-accent); background: color-mix(in srgb, var(--option-accent) 7%, var(--conv-card)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--option-accent) 25%, transparent); }
+.conversation-option-number { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 10px; background: color-mix(in srgb, var(--option-accent) 13%, var(--conv-paper)); color: var(--option-accent); font-size: 14px; font-weight: 800; }
 .conversation-option-copy { display: flex; min-width: 0; flex-direction: column; gap: 3px; }
 .conversation-option-copy strong { display: flex; align-items: flex-start; flex-direction: column; gap: 2px; font-family: 'Noto Serif SC', 'Fraunces', Georgia, serif; font-size: 17px; line-height: 1.2; }
 .conversation-option-copy strong small { color: var(--conv-muted); font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; }
 .conversation-option-copy > span { overflow: hidden; color: var(--conv-muted); font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
 .conversation-option-detail { display: flex; align-items: center; gap: 12px; color: var(--conv-muted); font-size: 12px; white-space: nowrap; }
-.conversation-option-detail > span { display: grid; width: 28px; height: 28px; place-items: center; border: 1px solid var(--conv-line); border-radius: 50%; background: var(--conv-card); color: var(--conv-red); font-size: 15px; font-weight: 700; }
+.conversation-option-detail > span { display: grid; width: 28px; height: 28px; place-items: center; border: 1px solid color-mix(in srgb, var(--option-accent) 22%, var(--conv-line)); border-radius: 50%; background: color-mix(in srgb, var(--option-accent) 7%, var(--conv-card)); color: color-mix(in srgb, var(--option-accent) 78%, #29231e); font-size: 15px; font-weight: 700; }
 .conversation-page-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
 .conversation-eyebrow { margin: 0 0 8px; color: var(--conv-red); font-size: 12px; font-weight: 800; letter-spacing: .14em; line-height: 1.5; }
 .conversation-page-heading h2 { margin: 0; font-family: 'Fraunces', Georgia, serif; font-size: clamp(36px, 4.2vw, 52px); font-weight: 600; letter-spacing: -.045em; line-height: 1.1; }
@@ -69,16 +80,18 @@
 .conversation-jump-links a span { color: var(--conv-gold); font-size: 11px; font-weight: 800; }
 .conversation-translation-toggle { min-height: 40px; padding: 8px 12px; border: 1px solid var(--conv-line); border-radius: 8px; background: var(--conv-card); color: var(--conv-ink); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
 .conversation-translation-toggle:hover { border-color: var(--conv-red); color: var(--conv-red); }
-.conversation-exchange { overflow: hidden; margin-bottom: 14px; border: 1px solid var(--conv-line); border-radius: 12px; background: var(--conv-card); }
-.conversation-exchange-heading { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--conv-line); background: color-mix(in srgb, var(--exchange-accent, var(--conv-red)) 5%, var(--conv-card)); }
+.conversation-exchange { overflow: hidden; margin-bottom: 14px; border: 1px solid color-mix(in srgb, var(--exchange-accent, var(--conv-red)) 22%, var(--conv-line)); border-radius: 12px; background: color-mix(in srgb, var(--exchange-accent, var(--conv-red)) 3%, var(--conv-card)); }
+.conversation-exchange-heading { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid color-mix(in srgb, var(--exchange-accent, var(--conv-red)) 16%, var(--conv-line)); background: color-mix(in srgb, var(--exchange-accent, var(--conv-red)) 9%, var(--conv-card)); }
 .conversation-exchange-number { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 7px; background: var(--exchange-accent, var(--conv-red)); color: #fff; font-size: 13px; font-weight: 750; }
 .conversation-exchange-heading h3 { margin: 0; font-size: 15px; font-weight: 700; }
-.conversation-exchange.is-hello { --exchange-accent: #a92316; }
-.conversation-exchange.is-polite { --exchange-accent: #94712f; }
-.conversation-exchange.is-sorry { --exchange-accent: #3b7160; }
+.conversation-exchange.is-hello { --exchange-accent: var(--conv-terracotta); }
+.conversation-exchange.is-polite { --exchange-accent: var(--conv-saffron); }
+.conversation-exchange.is-sorry { --exchange-accent: var(--conv-jade); }
+.conversation-exchange.is-ocean { --exchange-accent: var(--conv-slate); }
+.conversation-exchange.is-plum { --exchange-accent: var(--conv-mulberry); }
 .conversation-turns { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 12px; }
-.conversation-turn { display: flex; align-items: flex-start; gap: 10px; min-width: 0; padding: 12px; border: 1px solid var(--conv-line); border-radius: 9px; background: var(--conv-paper); }
-.conversation-turn.turn-b { background: color-mix(in srgb, var(--exchange-accent) 5%, var(--conv-card)); }
+.conversation-turn { display: flex; align-items: flex-start; gap: 10px; min-width: 0; padding: 12px; border: 1px solid color-mix(in srgb, var(--exchange-accent, var(--conv-red)) 14%, var(--conv-line)); border-radius: 9px; background: color-mix(in srgb, var(--exchange-accent, var(--conv-red)) 5%, var(--conv-card)); }
+.conversation-turn.turn-b { background: color-mix(in srgb, var(--exchange-accent, var(--conv-red)) 9%, var(--conv-card)); }
 .conversation-speaker { display: grid; flex: 0 0 auto; width: 26px; height: 26px; place-items: center; border-radius: 50%; background: var(--conv-card); color: var(--exchange-accent, var(--conv-red)); font-size: 12px; font-weight: 800; }
 .conversation-turn-copy { display: flex; flex: 1; flex-direction: column; min-width: 0; gap: 3px; }
 .conversation-turn-copy strong { font-family: 'Noto Serif SC', serif; font-size: 22px; line-height: 1.25; }
@@ -105,6 +118,37 @@
 .conversation-vocabulary-note { margin: 14px 0 0; color: var(--conv-muted); font-size: 12px; line-height: 1.6; }
 .conversation-page :is(button, a):focus-visible { outline: 3px solid var(--conv-red); outline-offset: 3px; }
 .conversation-page select:focus-visible { outline: 3px solid var(--conv-red); outline-offset: 3px; }
+
+:root.dark .conversation-page {
+  --conv-ink: #f2eee5;
+  --conv-muted: #c2bbae;
+  --conv-line: #464139;
+  --conv-paper: #211f1b;
+  --conv-card: #191816;
+  --conv-red: #ee9386;
+  --conv-gold: #d9b66d;
+  --conv-terracotta: #e28b7b;
+  --conv-saffron: #d8b463;
+  --conv-jade: #83c3a1;
+  --conv-slate: #91b2d1;
+  --conv-mulberry: #c49bb8;
+}
+:root.dark .conversation-lesson-option.is-selected { background: color-mix(in srgb, var(--option-accent) 14%, var(--conv-card)); }
+:root.dark .conversation-lesson-option:hover { background: color-mix(in srgb, var(--option-accent) 10%, var(--conv-card)); }
+:root.dark .conversation-lesson-option.is-selected .conversation-option-number { background: color-mix(in srgb, var(--option-accent) 20%, var(--conv-card)); }
+:root.dark .conversation-option-detail > span { color: var(--option-accent); }
+:root.dark .conversation-lesson-stepper button:disabled { color: #8d877d; }
+:root.dark .conversation-hero-image { background: #24211c; }
+:root.dark .conversation-image-caption { border-color: #ffffff22; background: #211f1beb; color: #f2eee5; }
+:root.dark .conversation-exchange { background: color-mix(in srgb, var(--exchange-accent) 8%, var(--conv-card)); }
+:root.dark .conversation-exchange-heading { background: color-mix(in srgb, var(--exchange-accent) 16%, var(--conv-card)); }
+:root.dark .conversation-exchange-number { color: #1b1916; }
+:root.dark .conversation-turn { background: color-mix(in srgb, var(--exchange-accent) 11%, var(--conv-paper)); }
+:root.dark .conversation-turn.turn-b { background: color-mix(in srgb, var(--exchange-accent) 16%, var(--conv-card)); }
+:root.dark .conversation-speaker { background: color-mix(in srgb, var(--exchange-accent) 18%, var(--conv-card)); color: var(--exchange-accent); }
+:root.dark .conversation-listen.is-playing { background: color-mix(in srgb, var(--exchange-accent) 19%, var(--conv-card)); }
+:root.dark .conversation-vocabulary-heading > span { background: color-mix(in srgb, var(--conv-gold) 17%, var(--conv-paper)); color: var(--conv-gold); }
+:root.dark .conversation-page audio { color-scheme: dark; }
 
 @media (max-width: 900px) {
   .conversation-content-grid { grid-template-columns: 1fr; }

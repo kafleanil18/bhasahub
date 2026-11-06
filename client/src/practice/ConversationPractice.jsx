@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { bookLessons } from './conversationLessons';
+import { mediaUrl } from '../utils/mediaUrl';
 import './ConversationPractice.css';
 
 const lessons = [
@@ -99,20 +100,35 @@ function ConversationPracticePage({ onBack }) {
   const [selectedLessonId, setSelectedLessonId] = useState(lessons[0].id);
   const [translationsVisible, setTranslationsVisible] = useState(true);
   const [playingPhrase, setPlayingPhrase] = useState('');
+  const audioRef = useRef(null);
 
-  useEffect(() => () => window.speechSynthesis?.cancel(), []);
+  useEffect(() => () => { window.speechSynthesis?.cancel(); audioRef.current?.pause(); }, []);
   useEffect(() => {
     fetch(`${window.API_BASE_URL}/api/settings`).then(response => response.json()).then(settings => {
       if (!Array.isArray(settings.conversationLessons)) return;
-      setAvailableLessons(current => current.map(item => settings.conversationLessons.find(saved => saved.id === item.id) || item));
+      setAvailableLessons(current => {
+        const stored = settings.conversationLessons;
+        const merged = current.map(item => stored.find(saved => saved.id === item.id) || item);
+        return [...merged, ...stored.filter(saved => !current.some(item => item.id === saved.id))]
+          .sort((a, b) => Number(a.number) - Number(b.number));
+      });
     }).catch(() => {});
   }, []);
 
   const lesson = availableLessons.find((item) => item.id === selectedLessonId) || availableLessons[0];
 
-  const playPhrase = (phrase) => {
+  const playPhrase = (phrase, audioUrl) => {
+    if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+    window.speechSynthesis?.cancel();
+    if (audioUrl) {
+      const audio = new Audio(mediaUrl(audioUrl));
+      audioRef.current = audio;
+      audio.onplay = () => setPlayingPhrase(phrase);
+      audio.onended = audio.onerror = () => { setPlayingPhrase(''); audioRef.current = null; };
+      audio.play().catch(() => { audioRef.current = null; playPhrase(phrase); });
+      return;
+    }
     if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
-    window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(phrase);
     utterance.lang = 'zh-CN';
     utterance.rate = 0.86;
@@ -124,6 +140,7 @@ function ConversationPracticePage({ onBack }) {
 
   const selectLesson = (id) => {
     window.speechSynthesis?.cancel();
+    audioRef.current?.pause(); audioRef.current = null;
     setPlayingPhrase('');
     setSelectedLessonId(id);
   };
@@ -158,7 +175,7 @@ function ConversationPracticePage({ onBack }) {
           <p className="conversation-hero-kicker">{lesson.kicker}</p>
           <h3>{lesson.heroTitle}</h3>
           <p>Listen to a sample phrase, then practice each exchange below.</p>
-        <div className="conversation-hero-phrase"><span className="conversation-phrase-stack"><b lang="zh-Latn">{lesson.exchanges[0].turns[0].pinyin.replace(/[！!]/g, '')}</b><strong lang="zh-CN">{lesson.exchanges[0].turns[0].chinese.replace(/[！!]/g, '')}</strong><small>{lesson.exchanges[0].turns[0].english}</small></span><button type="button" onClick={() => playPhrase(lesson.exchanges[0].turns[0].chinese)} aria-label={`Listen to ${lesson.exchanges[0].turns[0].pinyin}`}>{playingPhrase === lesson.exchanges[0].turns[0].chinese ? '♫' : '▶'}</button></div>
+        <div className="conversation-hero-phrase"><span className="conversation-phrase-stack"><b lang="zh-Latn">{lesson.exchanges[0].turns[0].pinyin.replace(/[！!]/g, '')}</b><strong lang="zh-CN">{lesson.exchanges[0].turns[0].chinese.replace(/[！!]/g, '')}</strong><small>{lesson.exchanges[0].turns[0].english}</small></span><button type="button" onClick={() => playPhrase(lesson.exchanges[0].turns[0].chinese, lesson.exchanges[0].turns[0].audioUrl)} aria-label={`Listen to ${lesson.exchanges[0].turns[0].pinyin}`}>{playingPhrase === lesson.exchanges[0].turns[0].chinese ? '♫' : '▶'}</button></div>
         </div>
       </section>
 
@@ -185,7 +202,7 @@ function ConversationPracticePage({ onBack }) {
                       <strong lang="zh-CN">{turn.chinese}</strong>
                       {translationsVisible && <small>{turn.english}</small>}
                     </div>
-                    <button className={`conversation-listen${playingPhrase === turn.chinese ? ' is-playing' : ''}`} type="button" onClick={() => playPhrase(turn.chinese)} aria-label={`${playingPhrase === turn.chinese ? 'Playing' : 'Listen to'} ${turn.pinyin}`} aria-pressed={playingPhrase === turn.chinese}>
+                    <button className={`conversation-listen${playingPhrase === turn.chinese ? ' is-playing' : ''}`} type="button" onClick={() => playPhrase(turn.chinese, turn.audioUrl)} aria-label={`${playingPhrase === turn.chinese ? 'Playing' : 'Listen to'} ${turn.pinyin}`} aria-pressed={playingPhrase === turn.chinese}>
                       <span aria-hidden="true">{playingPhrase === turn.chinese ? '♫' : '▶'}</span><span>{playingPhrase === turn.chinese ? 'Playing' : 'Listen'}</span>
                     </button>
                   </div>
