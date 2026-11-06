@@ -157,7 +157,7 @@ test('H10901 uses the shared portal with isolated attempts, publication, and imm
   const url = `${root}/h10901`;
   assert.equal((await fetch(url)).status, 401);
   const listing = await (await fetch(root, { headers })).json();
-  assert.deepEqual(listing.map(row => row.id), ['h11226', 'h10901']);
+  assert.deepEqual(listing.map(row => row.id), ['h11226', 'h10901', 'h11556']);
   assert.ok(listing.every(row => !row.custom && row.published));
   const response = await fetch(url, { headers });
   assert.equal(response.status, 200);
@@ -184,7 +184,7 @@ test('H10901 uses the shared portal with isolated attempts, publication, and imm
   assert.equal((await fetch(url, { headers })).status, 404);
   assert.equal((await fetch(url, { headers: admin })).status, 200);
   assert.equal((await fetch(base, { headers })).status, 200);
-  assert.deepEqual((await (await fetch(root, { headers })).json()).map(row => row.id), ['h11226']);
+  assert.deepEqual((await (await fetch(root, { headers })).json()).map(row => row.id), ['h11226', 'h11556']);
   assert.equal((await fetch(attemptUrl, { headers })).status, 200);
 });
 
