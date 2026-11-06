@@ -55,17 +55,56 @@ function AccuracyRows({ rows, labelKey }) {
   );
 }
 
+function CourseLessonProgress({ rows }) {
+  const courses = rows.reduce((groups, row) => {
+    (groups[row.courseId] ||= { title: row.courseTitle, level: row.courseLevel, categories: [] }).categories.push(row);
+    return groups;
+  }, {});
+  return (
+    <section className="analytics-course-progress" aria-labelledby="analytics-course-progress-title">
+      <div className="analytics-course-progress-heading"><div><span className="dash-eyebrow">COURSE COMPLETION</span><h2 id="analytics-course-progress-title">Vocabulary & grammar progress</h2><p>See how many published lessons you’ve completed in each part of your course.</p></div><span className="analytics-course-progress-symbol" aria-hidden="true">✓</span></div>
+      <div className="analytics-course-progress-grid">
+        {Object.entries(courses).map(([courseId, course]) => (
+          <article className="analytics-course-progress-card" key={courseId}>
+            <div className="analytics-course-progress-title"><div><h3>{course.title}</h3><span>{course.level || 'Course progress'}</span></div><span className="analytics-course-progress-total">{course.categories.reduce((sum, row) => sum + row.completed, 0)}<small> complete</small></span></div>
+            <div className="analytics-category-progress-list">
+              {course.categories.map((row) => (
+                <div className="analytics-category-progress" key={`${courseId}-${row.category}`}>
+                  <div className="analytics-category-progress-label"><span>{row.category}</span><strong>{row.completed} <small>of {row.total}</small></strong></div>
+                  <progress value={row.completed} max={row.total || 1} aria-label={`${course.title} ${row.category}: ${row.completed} of ${row.total} lessons completed`}/>
+                  <span className="analytics-category-progress-percent">{row.percent}% complete</span>
+                </div>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function ProgressAnalytics({ user, onBack }) {
   const [data, setData] = useState(null);
   const [activeTab, setActiveTab] = useState('');
   const [hoveredBar, setHoveredBar] = useState(null);
   const [revealedWords, setRevealedWords] = useState({});
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    fetch(`${API}/analytics/me`, { headers: { Authorization: `Bearer ${token}` } })
-      .then((res) => res.json())
+    const controller = new AbortController();
+    setLoading(true);
+    setError('');
+    fetch(`${API}/analytics/me`, { headers: { Authorization: `Bearer ${token}` }, signal: controller.signal })
+      .then(async (res) => {
+        const resData = await res.json();
+        if (!res.ok) throw new Error(resData.error || 'Could not load your learning analytics.');
+        return resData;
+      })
       .then((resData) => {
+        if (controller.signal.aborted) return;
         setData(resData);
         // Set initial active tab based on available data
         const hasCourseData = resData.accuracyByCourse && resData.accuracyByCourse.length > 0;
@@ -75,19 +114,12 @@ function ProgressAnalytics({ user, onBack }) {
         else if (hasLessonData) setActiveTab('lessons');
         else if (hasTestData) setActiveTab('tests');
       })
-      .catch(() =>
-        setData({
-          streak: 0,
-          overallAccuracy: 0,
-          totalAttempts: 0,
-          scoreTrend: [],
-          accuracyByLesson: [],
-          accuracyByCourse: [],
-          accuracyByTest: [],
-          weakestWords: [],
-        })
-      );
-  }, [token]);
+      .catch((err) => {
+        if (!controller.signal.aborted) setError(err.message || 'Could not load your learning analytics. Check your connection and try again.');
+      })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [token, refreshKey]);
 
   const exportCsv = () => {
     if (!data) return;
@@ -127,19 +159,16 @@ function ProgressAnalytics({ user, onBack }) {
     }
   };
 
-  if (!data) {
+  if (loading && !data) {
     return (
-      <section className="course-page container">
-        <p className="courses-empty">Loading your progress analytics...</p>
+      <section className="course-page container analytics-page">
+        <div className="analytics-state"><span className="analytics-state-mark" aria-hidden="true">↗</span><p>Gathering your learning activity…</p></div>
       </section>
     );
   }
-
-  // Radial progress calculations
-  const radius = 36;
-  const strokeWidth = 6;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - ((data.overallAccuracy || 0) / 100) * circumference;
+  if (error && !data) {
+    return <section className="course-page container analytics-page"><div className="analytics-state analytics-error-state" role="alert"><span className="analytics-state-mark" aria-hidden="true">!</span><h1>We couldn’t load your progress</h1><p>{error}</p><div><button className="btn-primary" onClick={() => setRefreshKey(value => value + 1)}>Try again</button><button className="btn-back-pill" onClick={onBack}>← Back to dashboard</button></div></div></section>;
+  }
 
   // Custom SVG Chart calculations
   const chartHeight = 180;
@@ -160,109 +189,40 @@ function ProgressAnalytics({ user, onBack }) {
   const hasTestData = data.accuracyByTest && data.accuracyByTest.length > 0;
   const showTabs = hasCourseData || hasLessonData || hasTestData;
 
-  // Proficiency Rating calculation
-  const accuracy = data.overallAccuracy || 0;
-  let skillRating = 'Beginner';
-  if (accuracy >= 90) skillRating = 'Mastered 🎯';
-  else if (accuracy >= 75) skillRating = 'Proficient ⭐️';
-  else if (accuracy >= 50) skillRating = 'Developing 📈';
-  else skillRating = 'Needs Focus 💡';
-
   return (
-    <section className="course-page container" style={{ paddingTop: 32, paddingBottom: 64 }}>
+    <section className="course-page container analytics-page">
       {/* Header Banner */}
       <div className="analytics-hero">
         <div className="analytics-hero-header">
           <button className="btn-back-pill" onClick={onBack}>
             ← Back to Dashboard
           </button>
+          <div className="analytics-hero-actions">
+          <button className="btn-back-pill analytics-refresh" onClick={() => setRefreshKey(value => value + 1)} disabled={loading} aria-label="Refresh learning analytics">{loading ? 'Refreshing…' : '↻ Refresh'}</button>
           {data.scoreTrend.length > 0 && (
             <button className="btn-export-csv" onClick={exportCsv}>
               ⬇ Export CSV Report
             </button>
           )}
+          </div>
         </div>
         <div className="analytics-hero-body">
           <span className="dash-eyebrow">Learning Analytics</span>
-          <h1 className="analytics-hero-title">Your Learning Journey, {user ? user.name : 'Learner'} 🏆</h1>
-          <p className="analytics-hero-subtext">Track your accuracy, study streak, performance trends, and master your vocabulary focus deck.</p>
+          <h1 className="analytics-hero-title">Your progress, at a glance</h1>
+          <p className="analytics-hero-subtext">A clear picture of the lessons you’ve completed, your practice results, and what to review next.</p>
         </div>
       </div>
 
-      {/* Grid of Key Metrics */}
-      <div className="analytics-overview-grid">
-        {/* Streak card */}
-        <div className="analytics-metric-card streak-card">
-          <div className="metric-icon-wrap streak-card-glow">
-            <span className="streak-icon-fire">🔥</span>
-          </div>
-          <div className="analytics-metric-content">
-            <div className="metric-number-wrap">
-              <span className="metric-number">{data.streak}</span>
-              <span className="metric-unit">{data.streak === 1 ? 'day' : 'days'}</span>
-            </div>
-            <span className="metric-label">Active streak! Practice daily to protect your momentum.</span>
-          </div>
-        </div>
+      {error && <div className="analytics-inline-error" role="alert"><span>{error}</span><button className="listening-secondary" onClick={() => setRefreshKey(value => value + 1)}>Try again</button></div>}
 
-        {/* Overall Accuracy dial card */}
-        <div className="analytics-metric-card">
-          <div className="metric-icon-wrap" style={{ background: 'transparent', padding: 0 }}>
-            <div style={{ position: 'relative', width: 88, height: 88, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="88" height="88" className="radial-progress-svg">
-                <circle
-                  cx="44"
-                  cy="44"
-                  r={radius}
-                  strokeWidth={strokeWidth}
-                  fill="transparent"
-                  className="radial-bg"
-                />
-                <circle
-                  cx="44"
-                  cy="44"
-                  r={radius}
-                  strokeWidth={strokeWidth}
-                  fill="transparent"
-                  strokeDasharray={circumference}
-                  strokeDashoffset={strokeDashoffset}
-                  className="radial-fill"
-                />
-              </svg>
-              <span style={{ position: 'absolute', fontFamily: 'Fraunces, serif', fontSize: '18px', fontWeight: 'bold', color: 'var(--ink)' }}>
-                {data.overallAccuracy}%
-              </span>
-            </div>
-          </div>
-          <div className="analytics-metric-content">
-            <div className="metric-number-wrap">
-              <span className="metric-number">{data.overallAccuracy}%</span>
-            </div>
-            <span className="metric-label">Average accuracy score — <strong>{skillRating}</strong></span>
-          </div>
-        </div>
-
-        {/* Quizzes taken card */}
-        <div className="analytics-metric-card">
-          <div className="metric-icon-wrap">
-            <span>📝</span>
-          </div>
-          <div className="analytics-metric-content">
-            <div className="metric-number-wrap">
-              <span className="metric-number">{data.totalAttempts}</span>
-              <span className="metric-unit">quizzes</span>
-            </div>
-            <span className="metric-label">Total vocabulary quizzes and mock test attempts completed.</span>
-          </div>
-        </div>
-      </div>
+      {data.courseProgress?.length > 0 && <CourseLessonProgress rows={data.courseProgress} />}
 
       {/* SVG score trend chart */}
       {data.scoreTrend.length > 0 && (
         <div className="chart-card">
           <div className="chart-header">
-            <h3 className="chart-title">Recent Performance Trend</h3>
-            <span className="analytics-subtitle" style={{ margin: 0 }}>Hover bars to view score details</span>
+              <h3 className="chart-title">Recent learning activity</h3>
+              <span className="analytics-subtitle" style={{ margin: 0 }}>Quiz and mock test scores, plus completed lessons · latest {N} events</span>
           </div>
           <div className="chart-container-relative">
             <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="chart-svg-main">
@@ -292,15 +252,16 @@ function ProgressAnalytics({ user, onBack }) {
 
               {/* Chart Bars */}
               {data.scoreTrend.map((a, i) => {
+                const isLessonCompletion = a.type === 'lesson-completion';
                 const percent = Math.max(a.percent, 3);
-                const barHeightVal = (percent / 100) * graphHeight;
+                const barHeightVal = isLessonCompletion ? 0 : (percent / 100) * graphHeight;
                 const xVal =
                   paddingLeft +
                   i * (graphWidth / N) +
                   (graphWidth / N - barWidth) / 2;
                 const yVal = paddingTop + graphHeight - barHeightVal;
                 
-                let fill = 'var(--jade)';
+                let fill = isLessonCompletion ? 'var(--jade)' : 'var(--jade)';
                 if (a.percent < 50) fill = 'var(--seal)';
                 else if (a.percent < 75) fill = 'var(--gold)';
 
@@ -308,7 +269,7 @@ function ProgressAnalytics({ user, onBack }) {
 
                 return (
                   <g key={a.id || i}>
-                    <rect
+                    {!isLessonCompletion && <rect
                       x={xVal}
                       y={yVal}
                       width={barWidth}
@@ -317,18 +278,25 @@ function ProgressAnalytics({ user, onBack }) {
                       fill={fill}
                       opacity={isActive ? 1 : 0.85}
                       className={`chart-bar-rect ${isActive ? 'active' : ''}`}
-                    />
+                    />}
+                    {isLessonCompletion && <g className="analytics-completion-marker" aria-hidden="true"><line x1={xVal + barWidth / 2} y1={paddingTop + graphHeight - 13} x2={xVal + barWidth / 2} y2={paddingTop + graphHeight} /><circle cx={xVal + barWidth / 2} cy={paddingTop + graphHeight - 13} r="5" /></g>}
                     <rect
                       x={paddingLeft + i * (graphWidth / N)}
                       y={paddingTop}
                       width={graphWidth / N}
                       height={graphHeight}
                       className="chart-bar-hover-zone"
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`${a.type === 'lesson-completion' ? `Completed ${a.category} lesson: ${a.label}` : `${a.type === 'hsk-mock-test' || a.type === 'test' ? 'Mock test' : 'Vocabulary quiz'}: ${a.score} of ${a.total}`} on ${new Date(a.date).toLocaleDateString()}`}
+                      onClick={() => setHoveredBar({ index: i, x: xVal + barWidth / 2, y: isLessonCompletion ? paddingTop + graphHeight - 13 : yVal, data: a })}
+                      onFocus={() => setHoveredBar({ index: i, x: xVal + barWidth / 2, y: isLessonCompletion ? paddingTop + graphHeight - 13 : yVal, data: a })}
+                      onBlur={() => setHoveredBar(null)}
                       onMouseEnter={() => {
                         setHoveredBar({
                           index: i,
                           x: xVal + barWidth / 2,
-                          y: yVal,
+                          y: isLessonCompletion ? paddingTop + graphHeight - 13 : yVal,
                           data: a,
                         });
                       }}
@@ -338,6 +306,8 @@ function ProgressAnalytics({ user, onBack }) {
                 );
               })}
             </svg>
+
+            <div className="analytics-chart-legend" aria-label="Chart legend"><span><i className="analytics-legend-score"/>Assessment score</span><span><i className="analytics-legend-completion"/>Lesson completed</span></div>
 
             {/* Custom Tooltip */}
             {hoveredBar && (
@@ -349,19 +319,18 @@ function ProgressAnalytics({ user, onBack }) {
                 }}
               >
                 <div className="chart-tooltip-title">
-                  <span>{hoveredBar.data.type === 'test' ? 'Mock Test' : 'Quiz'}</span>
-                  <span>{hoveredBar.data.percent}%</span>
+                  <span>{hoveredBar.data.type === 'lesson-completion' ? 'Lesson completed' : hoveredBar.data.type === 'test' || hoveredBar.data.type === 'hsk-mock-test' ? 'Mock test' : 'Vocabulary quiz'}</span>
+                  {hoveredBar.data.type !== 'lesson-completion' && <span>{hoveredBar.data.percent}%</span>}
                 </div>
+                {hoveredBar.data.type !== 'lesson-completion' && <div className="chart-tooltip-row"><span>Score:</span><strong>{hoveredBar.data.score}/{hoveredBar.data.total}</strong></div>}
                 <div className="chart-tooltip-row">
-                  <span>Score:</span>
-                  <strong>{hoveredBar.data.score}/{hoveredBar.data.total}</strong>
-                </div>
-                <div className="chart-tooltip-row">
-                  <span>Topic:</span>
-                  <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: 80 }}>
+                  <span>{hoveredBar.data.type === 'lesson-completion' ? 'Lesson:' : 'Topic:'}</span>
+                  <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: 130 }}>
                     {hoveredBar.data.label || 'N/A'}
                   </span>
                 </div>
+                {hoveredBar.data.type === 'lesson-completion' && <div className="chart-tooltip-row"><span>Type:</span><span>{hoveredBar.data.category}</span></div>}
+                {hoveredBar.data.type === 'lesson-completion' && hoveredBar.data.course && <div className="chart-tooltip-row"><span>Course:</span><span>{hoveredBar.data.course}</span></div>}
                 <div className="chart-tooltip-row">
                   <span>Date:</span>
                   <span>{new Date(hoveredBar.data.date).toLocaleDateString()}</span>
@@ -490,14 +459,11 @@ function ProgressAnalytics({ user, onBack }) {
         </div>
       )}
 
-      {data.totalAttempts === 0 && (
-        <div className="dash-empty" style={{ padding: '60px 24px', textAlign: 'center' }}>
-          <p style={{ fontSize: '16px', color: 'var(--mist)', marginBottom: 20 }}>
-            No progress data found yet. Take a vocabulary quiz or complete a mock test to start building your learning profile!
-          </p>
-          <button className="btn-primary" onClick={onBack}>
-            Get Started
-          </button>
+      {data.totalAttempts === 0 && !data.completedLessons && (
+        <div className="analytics-first-step">
+          <span className="analytics-first-step-icon" aria-hidden="true">✦</span>
+          <div><h2>Your learning record starts here</h2><p>Complete a lesson or a short vocabulary quiz and your progress will appear on this page.</p></div>
+          <button className="btn-primary" onClick={onBack}>Explore my courses</button>
         </div>
       )}
     </section>
