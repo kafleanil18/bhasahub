@@ -32,7 +32,6 @@ const conversationPracticeRoutes = require('./routes/conversationPractice');
 const helmet = require('helmet');
 
 const aiToneRoutes = require('./routes/aiTone');
-const chatbotRoutes = require('./routes/chatbot');
 
 const app = express();
 app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: 'cross-origin' } }));
@@ -62,7 +61,6 @@ app.use('/api/attempts', attemptRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/hanzi-trace', hanziTraceRoutes);
 app.use('/api/ai', aiToneRoutes);
-app.use('/api/chatbot', chatbotRoutes);
 
 
 const TeamMember = require('./models/TeamMember');
