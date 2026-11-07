@@ -1,34 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Register.css';
+import './Login.css';
 import GoogleAuthButton from './GoogleAuthButton';
-
-const WIDGET_WORDS = {
-  zh: [
-    { word: '你好', phonetic: 'nǐ hǎo', meaning: 'Hello' },
-    { word: '谢谢', phonetic: 'xiè xie', meaning: 'Thank you' },
-    { word: '学习', phonetic: 'xué xí', meaning: 'To learn' },
-    { word: '朋友', phonetic: 'péng you', meaning: 'Friend' },
-    { word: '家', phonetic: 'jiā', meaning: 'Home / Family' },
-    {word: '再见', phonetic: 'zài jiàn', meaning: 'Goodbye' },
-    {word: '请', phonetic: 'qǐng', meaning: 'Please'},
-    {word: '对不起', phonetic: 'duì bù qǐ', meaning: 'Sorry'},
-    {word: '是', phonetic: 'shì', meaning: 'To be'},
-    {word: '不是', phonetic: 'bù shì', meaning: 'Not to be'},
-    {word: '我', phonetic: 'wǒ', meaning: 'I / Me'},
-    {word: '你', phonetic: 'nǐ', meaning: 'You'},
-    {word: '他', phonetic: 'tā', meaning: 'He / Him'},
-    {word: '她', phonetic: 'tā', meaning: 'She / Her'},
-    {word: '我们', phonetic: 'wǒ men', meaning: 'We / Us'},
-    {word: '他们', phonetic: 'tā men', meaning: 'They / Them'},
-    {word: '这', phonetic: 'zhè', meaning: 'This'},
-    {word: '那', phonetic: 'nà', meaning: 'That'},
-    {word: '哪里', phonetic: 'nǎ lǐ', meaning: 'Where'},
-    {word: '什么', phonetic: 'shén me', meaning: 'What'},
-
-  ],
-
-};
-WIDGET_WORDS.en = WIDGET_WORDS.zh.map(item => ({ word: item.meaning, phonetic: item.word, meaning: item.phonetic }));
 
 function Register({ onRegistered, onBack, onSwitch, onLogin }) {
   const [name, setName] = useState('');
@@ -44,10 +17,6 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [showAdminCode, setShowAdminCode] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
-
-  // Interactive widget states
-  const [widgetLang, setWidgetLang] = useState('zh');
-  const [widgetIndex, setWidgetIndex] = useState(0);
 
   // Password strength calculation
   const [passwordStrength, setPasswordStrength] = useState({ score: 0, text: 'Very Weak' });
@@ -70,20 +39,6 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
 
     setPasswordStrength({ score, text });
   }, [password]);
-
-  const nextWidgetWord = () => {
-    const list = WIDGET_WORDS[widgetLang];
-    setWidgetIndex((prev) => (prev + 1) % list.length);
-  };
-
-  const prevWidgetWord = () => {
-    const list = WIDGET_WORDS[widgetLang];
-    setWidgetIndex((prev) => (prev - 1 + list.length) % list.length);
-  };
-
-  const handleLangToggle = (lang) => {
-    setWidgetLang(lang);
-  };
 
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
@@ -130,65 +85,26 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
     setLoading(false);
   };
 
-  const currentWord = WIDGET_WORDS[widgetLang][widgetIndex];
 
   return (
-    <section className="login" style={{ padding: '40px 16px' }}>
-      <div className="register-layout">
-        
-        {/* Left Column: Welcome & Interactive vocabulary widget */}
-        <div className="register-welcome-panel">
-          <div className="welcome-header">
-            <h2>Learn <span>中文</span></h2>
-            <p className="welcome-subtitle">
-              Start learning Chinese with interactive lessons and exercises. Build your vocabulary, practice pronunciation, and learn useful sentence patterns.
-            </p>
-            <br></br>
-            <p className="welcome-subtitle">
-              Whether you are a complete beginner or building on what you know, follow clear English explanations and practice at your own pace.
-            </p>
+    <section className="login signin-page signup-page" aria-labelledby="signup-title">
+      <div className="login-layout">
+
+        <div className="login-welcome-panel">
+          <button type="button" className="login-brand" onClick={onBack} aria-label="HanziGo home">
+            <span className="login-brand-seal" aria-hidden="true">汉</span>
+            <span>Hanzi<span>Go</span></span>
+          </button>
+          <div className="login-welcome-content">
+            <h2 className="signin-welcome-title">Your Chinese<br />journey starts here.</h2>
+            <p className="signin-welcome-description">Learn at your own pace, one lesson at a time.</p>
           </div>
-
-          {/* Interactive widget */}
-          
-          <div className="interactive-widget">
-            <div className="widget-tabs">
-              <button 
-                type="button"
-                className={`widget-tab zh-tab ${widgetLang === 'zh' ? 'active' : ''}`}
-                onClick={() => handleLangToggle('zh')}
-              >
-                Chinese 中文
-              </button>
-              <button 
-                type="button"
-                className={`widget-tab en-tab ${widgetLang === 'en' ? 'active' : ''}`}
-                onClick={() => handleLangToggle('en')}
-              >
-                English
-              </button>
-            </div>
-
-            <div className="widget-word-container">
-              <div className={`word-main ${widgetLang === 'zh' ? 'zh' : 'en'} ${widgetLang === 'zh' ? 'zh-color' : 'en-color'}`}>
-                {currentWord.word}
-              </div>
-              <div className="word-phonetic">{currentWord.phonetic}</div>
-              <div className="word-meaning">{currentWord.meaning}</div>
-            </div>
-
-            <div className="widget-nav">
-              <button type="button" onClick={prevWidgetWord}>← Prev</button>
-              <button type="button" onClick={nextWidgetWord}>Next →</button>
-            </div>
-          </div>
-
         </div>
 
         {/* Right Column: Interactive Form */}
-        <div className="register-form-panel">
+        <div className="login-form-panel">
           <div className="back-btn-container">
-            <button type="button" className="register-back-link" onClick={onBack}>
+            <button type="button" className="login-back-link" onClick={onBack}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
@@ -197,9 +113,9 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
             </button>
           </div>
 
-          <div className="register-form-header">
-            <h3>Sign Up</h3>
-            <p>Start your language adventure today</p>
+          <div className="login-form-header">
+            <h1 id="signup-title">Create an account</h1>
+            <p>Start learning Chinese with HanziGo.</p>
           </div>
 
           <GoogleAuthButton
@@ -213,8 +129,8 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
             <span>or sign up with email</span>
           </div>
 
-          <form onSubmit={handleSubmit} className="register-form" noValidate>
-            
+          <form onSubmit={handleSubmit} className="login-form" noValidate>
+
             {/* Name Input */}
             <div className="form-group">
               <label htmlFor="reg-name">Full Name</label>
@@ -229,6 +145,7 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your full name"
+                  autoComplete="name"
                   required
                 />
               </div>
@@ -248,6 +165,7 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
+                  autoComplete="email"
                   required
                 />
               </div>
@@ -265,6 +183,7 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
                   id="reg-password"
                   type={showPassword ? 'text' : 'password'}
                   className="password-field"
+                  autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="At least 8 characters"
@@ -321,6 +240,7 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
                   id="reg-confirm"
                   type={showConfirm ? 'text' : 'password'}
                   className="password-field"
+                  autoComplete="new-password"
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                   placeholder="Repeat your password"
@@ -352,11 +272,13 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
               <button
                 type="button"
                 className="instructor-code-toggle"
+                aria-expanded={showAdminCode}
+                aria-controls="signup-instructor-code"
                 onClick={() => setShowAdminCode(!showAdminCode)}
               >
                 <span>{showAdminCode ? '−' : '+'}</span> Have an invite or instructor code?
               </button>
-              <div className={`instructor-code-field ${showAdminCode ? 'expanded' : ''}`}>
+              <div id="signup-instructor-code" inert={!showAdminCode} className={`instructor-code-field ${showAdminCode ? 'expanded' : ''}`}>
                 <div className="input-wrapper" style={{ marginTop: '6px' }}>
                   <svg className="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -367,28 +289,29 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
                     value={adminCode}
                     onChange={(e) => setAdminCode(e.target.value)}
                     placeholder="Enter teacher/admin invitation code"
+                    aria-label="Instructor invitation code"
                   />
                 </div>
               </div>
             </div>
 
             {/* Terms and conditions Checkbox */}
-            <div className="checkbox-group" onClick={() => setAgreedToTerms(!agreedToTerms)}>
+            <div className="checkbox-group">
               <input
                 type="checkbox"
                 checked={agreedToTerms}
-                onChange={() => {}} /* Handled by parent div click */
+                onChange={(event) => setAgreedToTerms(event.target.checked)}
                 id="agree-checkbox"
               />
-              <span className="checkbox-label">
+              <label htmlFor="agree-checkbox" className="checkbox-label">
                 I agree to the <a href="#terms" onClick={(e) => e.stopPropagation()}>Terms of Service</a> &{' '}
                 <a href="#privacy" onClick={(e) => e.stopPropagation()}>Privacy Policy</a>.
-              </span>
+              </label>
             </div>
 
             {/* Error Banner */}
             {error && (
-              <div className="register-error-banner" role="alert">
+              <div className="login-error-banner" role="alert">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10"></circle>
                   <line x1="12" y1="8" x2="12" y2="12"></line>
@@ -399,9 +322,9 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
             )}
 
             {/* Submit Button */}
-            <button 
-              type="submit" 
-              className="submit-register-btn" 
+            <button
+              type="submit"
+              className="submit-login-btn"
               disabled={loading}
             >
               {loading ? (
@@ -415,7 +338,7 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
             </button>
 
             {onSwitch && (
-              <div className="register-switch-view">
+              <div className="login-switch-view">
                 Already have an account?{' '}
                 <button type="button" onClick={onSwitch}>Sign in</button>
               </div>

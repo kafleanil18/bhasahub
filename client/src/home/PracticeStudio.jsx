@@ -2,15 +2,15 @@ import './HeroPracticeTools.css';
 import PracticeToolIcon from './PracticeToolIcon';
 
 const practiceTools = [
-  ['pinyin', 'Pinyin Chart', 'Start here: learn sounds and tones.'],
+  ['tests', 'Mock Tests', 'Check what you know with a practice test.'],
+  ['pinyin', 'Pinyin & tones', 'Build a clear foundation in Chinese sounds.'],
   ['trace', 'Trace Characters', 'Follow the strokes and write Chinese.'],
   ['listening', 'Listening Practice', 'Hear a word and choose its meaning.'],
   ['sentences', 'Sentence Builder', 'Arrange words into a sentence.'],
   ['measures', 'Measure Word Practice', 'Choose the word for counting things.'],
-  ['numbers', 'Everyday Chinese Numbers', 'Practice prices, times, and dates.'],
+  ['numbers', 'Everyday Numbers', 'Use numbers for prices, times, and dates.'],
   ['dictation', 'Listening Dictation', 'Listen to recordings and write what you hear.'],
   ['conversation', 'Conversation', 'Build confidence with guided Chinese conversations.'],
-  ['tests', 'Mock Tests', 'Check what you know with a practice test.'],
 ];
 const practiceCharacters = { pinyin: '拼', trace: '字', listening: '听', sentences: '句', measures: '本', numbers: '数', dictation: '写', conversation: '聊', tests: '测' };
 
@@ -24,8 +24,13 @@ export default function PracticeStudio({ user, onOpenPractice, standalone = fals
   <div className="hero-practice-list">
     {practiceTools.map(([id, title, description]) => (
       <button key={id} type="button" className={`hero-practice-link hero-practice-${id}`} onClick={() => onOpenPractice(id)}>
-        <span className="hero-practice-glyph" aria-hidden="true"><span className="practice-symbol-flip"><span className="practice-symbol-face"><PracticeToolIcon tool={id}/></span><span className="practice-symbol-face is-back" lang="zh-CN">{practiceCharacters[id]}</span></span></span>
-        <span className="hero-practice-copy">{id === 'pinyin' && <span className="hero-practice-start">START HERE · PRONUNCIATION</span>}{id === 'tests' && <span className="mock-test-kicker">READY FOR YOUR NEXT MILESTONE?</span>}<strong>{id === 'tests' ? 'HSK 1 Mock Test' : title}</strong><small>{id === 'tests' ? 'Explore HSK mock tests, check your score, and discover what to practice next.' : description}</small>{id === 'tests' && <span className="mock-test-cta"><span className="mock-test-try-now">Try now</span><span aria-hidden="true">→</span></span>}</span>
+        {id !== 'tests' && <span className="hero-practice-glyph" aria-hidden="true"><span className="practice-symbol-flip"><span className="practice-symbol-face"><PracticeToolIcon tool={id}/></span><span className="practice-symbol-face is-back" lang="zh-CN">{practiceCharacters[id]}</span></span></span>}
+        <span className="hero-practice-copy">
+          {id === 'tests' && <span className="studio-test-label">READY FOR YOUR HSK EXAM?</span>}
+          <strong>{id === 'tests' ? 'HSK Mock Tests' : title}</strong>
+          <small>{description}</small>
+        </span>
+        {id === 'tests' && <span className="studio-test-action" aria-hidden="true">Take a mock test <span>→</span></span>}
         {id !== 'tests' && <span className="hero-practice-arrow" aria-hidden="true">↗</span>}
       </button>
     ))}

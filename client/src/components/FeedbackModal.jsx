@@ -1,12 +1,30 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-function FeedbackModal({ user, onClose }) {
+function FeedbackModal({ user, onClose, liveClasses = false }) {
   const [name, setName] = useState(user ? user.name : '');
   const [email, setEmail] = useState(user ? user.email : '');
   const [message, setMessage] = useState('');
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
   const [sending, setSending] = useState(false);
+
+  const cardRef = useRef(null);
+  useEffect(() => {
+    const previousFocus = document.activeElement;
+    const card = cardRef.current;
+    card?.querySelector('input, button')?.focus();
+    const handleKey = (event) => {
+      if (event.key === 'Escape') { event.preventDefault(); onClose(); }
+      if (event.key !== 'Tab') return;
+      const elements = [...card.querySelectorAll('button:not(:disabled), input, textarea')];
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
+    card?.addEventListener('keydown', handleKey);
+    return () => { card?.removeEventListener('keydown', handleKey); previousFocus?.focus(); };
+  }, [onClose]);
 
   const handleSubmit = async () => {
     setError('');
@@ -16,7 +34,7 @@ function FeedbackModal({ user, onClose }) {
       const res = await fetch(window.API_BASE_URL + '/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, message }),
+        body: JSON.stringify({ name, email, message: liveClasses ? `Live classes enquiry\n\n${message}` : message }),
       });
       if (res.ok) {
         setSent(true);
@@ -51,6 +69,8 @@ function FeedbackModal({ user, onClose }) {
         .fb-card {
           background: var(--card);
           width: 90%;
+          max-height: 90svh;
+          overflow-y: auto;
           max-width: 460px;
           padding: 2.25rem;
           border-radius: 16px;
@@ -219,7 +239,7 @@ function FeedbackModal({ user, onClose }) {
         @keyframes fbSlideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
 
-      <div className="fb-card" onClick={(e) => e.stopPropagation()}>
+      <div ref={cardRef} className="fb-card" role="dialog" aria-modal="true" aria-label={liveClasses ? 'Live classes enquiry' : 'Message us'} onClick={(e) => e.stopPropagation()}>
         <button className="fb-close-btn" onClick={onClose} aria-label="Close modal">×</button>
 
         {sent ? (
@@ -227,17 +247,17 @@ function FeedbackModal({ user, onClose }) {
             <span className="fb-success-icon">🙏</span>
             <h1 className="fb-title">Thank you!</h1>
             <p className="fb-sub" style={{ marginBottom: 0 }}>
-              Your feedback has been successfully shared. We sincerely appreciate you taking the time to help us improve.
+              {liveClasses ? 'Your live classes enquiry has been sent. Thank you for getting in touch.' : 'Your feedback has been successfully shared. We sincerely appreciate you taking the time to help us improve.'}
             </p>
             <button className="fb-btn-close" onClick={onClose}>Close</button>
           </div>
         ) : (
           <>
-            <h1 className="fb-title">Message us</h1>
-            <p className="fb-sub">Questions, suggestions, or feedback — we'd love to hear from you.</p>
+            <h1 className="fb-title" id="feedback-title">{liveClasses ? 'Enquire about live classes' : 'Message us'}</h1>
+            <p className="fb-sub">{liveClasses ? 'Tell us about your goals and availability, and how we can help.' : "Questions, suggestions, or feedback — we'd love to hear from you."}</p>
 
             {error && (
-              <div className="fb-error">
+              <div className="fb-error" role="alert">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10"></circle>
                   <line x1="12" y1="8" x2="12" y2="12"></line>
@@ -248,9 +268,11 @@ function FeedbackModal({ user, onClose }) {
             )}
 
             <div className="fb-group">
-              <label className="fb-label">Name</label>
+              <label className="fb-label" htmlFor="feedback-name">Name</label>
               <input
+                id="feedback-name"
                 className="fb-input"
+                autoComplete="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your name"
@@ -258,8 +280,10 @@ function FeedbackModal({ user, onClose }) {
             </div>
 
             <div className="fb-group">
-              <label className="fb-label">Email Address</label>
+              <label className="fb-label" htmlFor="feedback-email">Email Address</label>
               <input
+                id="feedback-email"
+                autoComplete="email"
                 className="fb-input"
                 type="email"
                 value={email}
@@ -269,18 +293,19 @@ function FeedbackModal({ user, onClose }) {
             </div>
 
             <div className="fb-group">
-              <label className="fb-label">Message</label>
+              <label className="fb-label" htmlFor="feedback-message">Message</label>
               <textarea
+                id="feedback-message"
                 className="fb-textarea"
                 rows="4"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Write your message here..."
+                placeholder={liveClasses ? "I’d like to know more about live classes…" : "Write your message here..."}
               />
             </div>
 
             <button className="fb-btn-submit" onClick={handleSubmit} disabled={sending}>
-              {sending ? 'Sending Message...' : 'Send message'}
+              {sending ? 'Sending...' : liveClasses ? 'Send enquiry' : 'Send message'}
             </button>
           </>
         )}

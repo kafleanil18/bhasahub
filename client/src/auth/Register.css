@@ -618,3 +618,9 @@
 }
 
 .word-main.en { font-family: inherit; font-size: clamp(26px, 3.5vw, 40px); overflow-wrap: anywhere; }
+
+/* Keep registration details consistent with the shared sign-in form. */
+.signup-page .checkbox-group input { flex-shrink: 0; accent-color: var(--seal); }
+.signup-page .checkbox-group .checkbox-label { color: var(--mist); font-size: 13px; font-weight: 400; line-height: 1.6; }
+.signup-page .instructor-code-toggle { min-height: 40px; color: var(--mist); }
+.signup-page .login-error-banner { animation: none; }

@@ -439,7 +439,7 @@ function AppContent() {
 
 
       {showChangePassword && <ChangePassword onClose={() => setShowChangePassword(false)} />}
-      {showFeedback && <FeedbackModal user={user} onClose={() => setShowFeedback(false)} />}
+      {showFeedback && <FeedbackModal user={user} liveClasses={showFeedback === 'live-classes'} onClose={() => setShowFeedback(false)} />}
       {showTestimonial && <TestimonialModal user={user} onClose={() => { setShowTestimonial(false); loadTestimonials(); }} />}
 
       {lockedNotice && (
@@ -463,7 +463,7 @@ function AppContent() {
         </>
       )}
 
-      <SiteHeader adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} hideForAuth={!user && showLogin && authView === 'login'} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowSubscriptions={setShowSubscriptions} setShowTestManager={setShowTestManager} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
+      <SiteHeader adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} hideForAuth={!user && showLogin && (authView === 'login' || authView === 'register')} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} setShowAnalytics={setShowAnalytics} setShowChangePassword={setShowChangePassword} setShowDashboard={setShowDashboard} setShowFeedback={setShowFeedback} setShowSubscriptions={setShowSubscriptions} setShowTestManager={setShowTestManager} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
 
       {!user && showLogin ? (
         <div>
@@ -594,13 +594,13 @@ function AppContent() {
         />
       ) : user?.role === 'admin' ? (
         <main className="home-page">
-          <HomeHero goHome={goHome} setShowDashboard={setShowDashboard} setShowPinyinPage={setShowPinyinPage} user={user} onOpenPractice={openPractice}/>
+          <HomeHero onEnquireLiveClasses={() => setShowFeedback('live-classes')} goHome={goHome} setShowDashboard={setShowDashboard} setShowPinyinPage={setShowPinyinPage} user={user} onOpenPractice={openPractice}/>
           <HomeCourses filteredCourses={filteredCourses} hskLevels={hskLevels} levelFilter={levelFilter} openLogin={openLogin} setActiveCourse={setActiveCourse} setLevelFilter={setLevelFilter} user={user} />
           <HomeFooter goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk}/>
         </main>
       ) : (
         <main className="home-page">
-          <HomeHero goHome={goHome} setShowDashboard={setShowDashboard} setShowPinyinPage={setShowPinyinPage} user={user} hasStartedCourse={Object.values(access).some(course => course.completed > 0)} onOpenPractice={openPractice} />
+          <HomeHero onEnquireLiveClasses={() => setShowFeedback('live-classes')} goHome={goHome} setShowDashboard={setShowDashboard} setShowPinyinPage={setShowPinyinPage} user={user} hasStartedCourse={Object.values(access).some(course => course.completed > 0)} onOpenPractice={openPractice} />
 
           <HomeCourses access={access} filteredCourses={filteredCourses} hskLevels={hskLevels} levelFilter={levelFilter} openLogin={openLogin} setActiveCourse={setActiveCourse} setLevelFilter={setLevelFilter} setLockedNotice={setLockedNotice} user={user} />
 
