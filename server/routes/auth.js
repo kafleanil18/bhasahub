@@ -6,6 +6,7 @@ const rateLimit = require('express-rate-limit');
 const User = require('../models/User');
 const { requireAuth } = require('../middleware/auth');
 const { sendPasswordResetEmail, sendPasswordResetOtpEmail, sendEmailVerificationOtp } = require('../utils/email');
+const { isEmailConfigured } = require('../utils/emailTransport');
 
 const { recordStudentSignIn } = require('../utils/studentSignIns');
 
@@ -335,8 +336,8 @@ router.post('/send-otp', forgotPasswordLimiter, async (req, res) => {
       success: true
     };
 
-    // If Resend API key is not configured, provide devOtp for seamless local development
-    if (!process.env.RESEND_API_KEY) {
+    // Only expose the local development code when no email provider is configured.
+    if (process.env.NODE_ENV !== 'production' && !await isEmailConfigured()) {
       response.devOtp = otp;
     }
 

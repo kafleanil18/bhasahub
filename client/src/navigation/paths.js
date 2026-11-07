@@ -7,7 +7,7 @@ export const adminPaths = {
   dashboard: '/admin', courses: '/admin/courses', conversations: '/admin/conversations', tests: '/admin/tests',
   subscriptions: '/admin/subscriptions', pinyin: '/admin/pinyin', trace: '/admin/characters',
   'sentence-audio': '/admin/sentence-audio', testimonials: '/admin/testimonials', inbox: '/admin/inbox',
-  admins: '/admin/users', audit: '/admin/audit',
+  admins: '/admin/users', audit: '/admin/audit', settings: '/admin/settings/email', reminders: '/admin/reminders',
 };
 export const homePath = user => user?.role === 'superadmin' ? '/admin' : '/';
 export const coursePath = id => `/courses/${encodeURIComponent(id)}`;

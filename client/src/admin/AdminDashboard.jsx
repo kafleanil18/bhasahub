@@ -12,6 +12,8 @@ const shortcuts = [
   ['pinyin', 'audio', 'Pinyin audio', 'Record pronunciation for individual sounds.'],
   ['sentence-audio', 'audio', 'Sentence audio', 'Add teacher recordings to sentence practice.'],
   ['audit', 'audit', 'Activity & sign-ins', 'Review recent platform activity.'],
+  ['settings', 'inbox', 'Email settings', 'Connect Google SMTP for system emails.'],
+  ['reminders', 'inbox', 'Practice reminders', 'Encourage subscribed students to practice Chinese.'],
 ];
 
 export default function AdminDashboard({ onNavigate, user }) {

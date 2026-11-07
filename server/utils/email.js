@@ -1,36 +1,23 @@
-const { Resend } = require('resend');
-
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+const { sendEmail } = require('./emailTransport');
 
 async function sendPasswordResetEmail(to, resetUrl) {
-  if (!resend) {
-    // Lets local dev work without a Resend account configured.
-    console.warn('RESEND_API_KEY not set; skipping email. Reset URL:', resetUrl);
-    return;
-  }
-
-  await resend.emails.send({
-    from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+  await sendEmail({
     to,
     subject: 'Reset your password',
+    text: `Reset your password: ${resetUrl}\nThis link expires in 1 hour. If you did not request this, ignore this email.`,
     html: `
       <p>We received a request to reset your password.</p>
       <p><a href="${resetUrl}">Click here to reset your password</a></p>
       <p>This link expires in 1 hour. If you didn't request this, you can safely ignore this email.</p>
     `,
-  });
+  }, `Email delivery is not configured. Password reset URL: ${resetUrl}`);
 }
 
 async function sendPasswordResetOtpEmail(to, otp) {
-  if (!resend) {
-    console.warn(`\n========================================\n🔑 PASSWORD RESET OTP for ${to}: [ ${otp} ]\n(Expires in 10 minutes)\n========================================\n`);
-    return;
-  }
-
-  await resend.emails.send({
-    from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+  await sendEmail({
     to,
     subject: `Your Xiao Ao Verification Code: ${otp}`,
+    text: `Your Xiao Ao password reset code is ${otp}. It expires in 10 minutes. If you did not request this, ignore this email.`,
     html: `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px; border: 1px solid #e2dcd2; border-radius: 12px; background: #faf7f0;">
         <h2 style="color: #c2402a; margin-top: 0;">Xiao Ao Password Reset</h2>
@@ -45,22 +32,15 @@ async function sendPasswordResetOtpEmail(to, otp) {
         <p style="font-size: 12px; color: #999; margin-bottom: 0;">Xiao Ao · Chinese Made Simple</p>
       </div>
     `,
-  });
+  }, `Password reset code for ${to}: ${otp} (expires in 10 minutes)`);
 }
 
 async function sendEmailVerificationOtp(to, otp) {
-  if (!resend) {
-    if (process.env.NODE_ENV === 'production') throw new Error('Email delivery is not configured');
-    console.warn(`Email verification code for ${to}: ${otp} (expires in 10 minutes)`);
-    return;
-  }
-  const { error } = await resend.emails.send({
-    from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+  await sendEmail({
     to,
     subject: 'Verify your Xiao Ao email',
     text: `Your Xiao Ao verification code is ${otp}. It expires in 10 minutes. Enter it to complete your first sign-in. If you did not request this, ignore this email.`,
-  });
-  if (error) throw new Error('Verification email delivery failed');
+  }, `Email verification code for ${to}: ${otp} (expires in 10 minutes)`);
 }
 
 module.exports = { sendPasswordResetEmail, sendPasswordResetOtpEmail, sendEmailVerificationOtp };

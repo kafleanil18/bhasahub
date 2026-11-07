@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
+    "smtp:check": "node scripts/checkSmtp.js",
     "test": "node --test test/*.test.js"
   },
   "keywords": [],
@@ -23,6 +24,7 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.7.3",
     "multer": "^2.2.0",
+    "nodemailer": "^10.3.1",
     "resend": "^6.18.0"
   },
   "devDependencies": {

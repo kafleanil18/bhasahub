@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema(
     authProvider: { type: String, enum: ['local', 'google'], default: 'local' },
     // Missing on legacy accounts; only new local registrations are explicitly unverified.
     emailVerified: { type: Boolean },
+    practiceReminderOptOut: { type: Boolean, default: false },
     emailVerificationHash: { type: String },
     emailVerificationExpires: { type: Date },
     emailVerificationSentAt: { type: Date },

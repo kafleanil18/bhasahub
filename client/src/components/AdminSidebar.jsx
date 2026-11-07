@@ -134,6 +134,17 @@ export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen,
                 )}
               </button>
               </div>
+              {isSuperAdmin && <div className="admin-sidebar-group">
+                <p className="admin-sidebar-group-title">Email & settings</p>
+                <button className={activeView === 'reminders' ? 'is-current' : undefined} aria-current={activeView === 'reminders' ? 'page' : undefined} onClick={() => onNavigate('reminders')}>
+                  <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+                  Practice reminders
+                </button>
+                <button className={activeView === 'settings' ? 'is-current' : undefined} aria-current={activeView === 'settings' ? 'page' : undefined} onClick={() => onNavigate('settings')}>
+                  <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg>
+                  Email settings
+                </button>
+              </div>}
             </nav>
 
 

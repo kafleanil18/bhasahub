@@ -1,4 +1,6 @@
 require('dotenv').config();
+const { setEmailSettingsLoader } = require('./utils/emailTransport');
+setEmailSettingsLoader(require('./utils/googleSmtpSettings').loadGoogleSmtpDelivery);
 const express = require('express');
 const mongoose = require('mongoose');
 const { startWhenReady, databaseHealth, requireDatabase } = require('./utils/serverReadiness');
@@ -59,6 +61,8 @@ app.use('/api/pinyin-table', pinyinTableRoutes);
 app.use('/api/admin-stats', adminStatsRoutes);
 app.use('/api/audit-log', auditLogRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/settings/email', require('./routes/emailSettings'));
+app.use('/api/practice-reminders', require('./routes/practiceReminders'));
 app.use('/api/srs', srsRoutes);
 app.use('/api/attempts', attemptRoutes);
 app.use('/api/analytics', analyticsRoutes);
@@ -117,13 +121,13 @@ if (fs.existsSync(clientDist)) {
 
 async function start() {
   const port = process.env.PORT || 5001;
-  return startWhenReady({
+  const server = await startWhenReady({
     connect: () => mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/language-lms', {
       serverSelectionTimeoutMS: 10000,
     }),
     initialize: async () => {
       console.log('✅ MongoDB connected');
-      await Promise.all([seedTeam(), ensureHanziTraceSeeded()]);
+      await Promise.all([seedTeam(), ensureHanziTraceSeeded(), require('./models/PracticeReminder').init()]);
     },
     listen: () => new Promise((resolve, reject) => {
       const server = app.listen(port);
@@ -136,6 +140,9 @@ async function start() {
     }),
     disconnect: () => mongoose.disconnect(),
   });
+  const reminders = require('./utils/practiceReminderWorker').startPracticeReminderWorker();
+  server.once('close', () => reminders.stop());
+  return server;
 }
 
 if (require.main === module) {

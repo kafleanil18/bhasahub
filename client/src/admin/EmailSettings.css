@@ -1,0 +1,40 @@
+.email-settings { max-width: 1120px; padding-block: 32px 64px; color: var(--ink); }
+.email-settings .email-back { padding: 8px 0; border: 0; background: transparent; color: var(--ink); min-height: 44px; cursor: pointer; }
+.email-heading { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin: 24px 0 32px; flex-wrap: wrap; }
+.email-heading h1 { font-size: clamp(28px, 4vw, 40px); line-height: 1.2; margin: 0 0 12px; }
+.email-heading p { margin: 0; color: var(--mist); line-height: 1.7; }
+.email-status { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-size: 13px; background: var(--card); }
+.email-layout { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); align-items: start; gap: 24px; }
+.email-form, .email-guide { border: 1px solid var(--line); border-radius: 12px; background: var(--card); padding: 28px; min-width: 0; }
+.email-form fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.email-form legend, .email-guide h2 { font-family: inherit; font-weight: 650; font-size: 20px; line-height: 1.4; color: var(--ink); margin: 0 0 24px; padding: 0; }
+.email-toggle { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 24px; margin-bottom: 24px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.email-toggle strong, .email-toggle small { display: block; }
+.email-toggle small { color: var(--mist); line-height: 1.6; margin-top: 4px; font-size: 13px; }
+.email-settings .email-toggle input { appearance: auto; width: 24px; height: 24px; flex: 0 0 24px; accent-color: var(--seal); margin: 0; }
+.email-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.email-field label { font-size: 14px; font-weight: 600; }
+.email-settings .email-field :is(input, select) { box-sizing: border-box; width: 100%; min-width: 0; padding: 12px; min-height: 48px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--ink); font: inherit; font-size: 15px; }
+.email-field small, .email-footnote, .email-unsaved { color: var(--mist); line-height: 1.7; font-size: 13px; }
+.email-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.email-settings .email-button { border: 1px solid var(--line); background: var(--paper); color: var(--ink); padding: 12px 16px; min-height: 48px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.email-settings .email-primary { color: var(--card); background: var(--ink); border-color: var(--ink); }
+.email-settings button:disabled, .email-settings fieldset:disabled .email-button { opacity: .65; cursor: wait; }
+.email-settings :is(button, a, input, select):focus-visible { outline: 3px solid var(--seal); outline-offset: 3px; }
+.email-settings .email-button:hover:not(:disabled), .email-settings .email-back:hover:not(:disabled) { border-color: var(--seal); }
+.email-footnote { margin: 20px 0 0; }
+.email-guide { background: var(--paper); }
+.email-guide ol { padding-left: 20px; margin: 0 0 24px; }
+.email-guide li { padding-left: 4px; margin-bottom: 16px; line-height: 1.75; }
+.email-guide p { color: var(--mist); font-size: 14px; line-height: 1.75; }
+.email-guide a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.email-guide hr { border: 0; border-top: 1px solid var(--line); margin: 24px 0; }
+.email-message { margin-bottom: 24px; padding: 16px; border: 1px solid var(--line); border-left: 4px solid var(--ink); background: var(--card); color: var(--ink); border-radius: 8px; line-height: 1.7; overflow-wrap: anywhere; }
+.email-error { border-left-color: var(--seal); }
+.email-loading { padding: 32px 0; color: var(--mist); }
+@media (max-width: 760px) {
+  .email-layout { grid-template-columns: minmax(0, 1fr); }
+  .email-form, .email-guide { padding: 20px; }
+  .email-heading { gap: 16px; }
+  .email-actions .email-button { flex: 1 1 160px; }
+}

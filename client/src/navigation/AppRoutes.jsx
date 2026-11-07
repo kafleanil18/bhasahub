@@ -31,6 +31,9 @@ const NumberTrainer = lazy(() => import('../practice/NumberTrainer'));
 const MeasureWordPractice = lazy(() => import('../practice/MeasureWordPractice'));
 const SentenceAudioManager = lazy(() => import('../admin/SentenceAudioManager'));
 const ConversationManager = lazy(() => import('../admin/ConversationManager'));
+const EmailSettings = lazy(() => import('../admin/EmailSettings'));
+const PracticeReminders = lazy(() => import('../admin/PracticeReminders'));
+const ReminderUnsubscribe = lazy(() => import('../ReminderUnsubscribe'));
 
 
 function HomeRoute({ user, home }) {
@@ -106,6 +109,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
   const staff = ['admin', 'superadmin'].includes(user?.role);
   return <Routes>
     <Route element={<PublicLayout />}>
+      <Route path="/email/reminders/unsubscribe" element={<ReminderUnsubscribe />} />
       <Route path="/" element={<HomeRoute user={user} home={home} />} />
       <Route path="/practice/pinyin" element={<PinyinPage onBack={onHome} isSuperAdmin={staff} backLabel="← Back to home" />} />
     </Route>
@@ -148,6 +152,8 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
           <Route path="pinyin" element={<PinyinPage isSuperAdmin onBack={onHome} backLabel="← Back to Admin Dashboard" />} />
           <Route path="inbox" element={<FeedbackInbox onBack={onHome} />} />
           <Route path="audit" element={<AuditLog onBack={onHome} />} />
+          <Route path="settings/email" element={<EmailSettings onBack={onHome} />} />
+          <Route path="reminders" element={<PracticeReminders onBack={onHome} />} />
         </Route>
       </Route>
     </Route>

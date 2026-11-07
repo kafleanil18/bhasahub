@@ -1,0 +1,38 @@
+.practice-reminders .email-heading a { color: var(--ink); text-underline-offset: 4px; }
+.reminder-audience { display: flex; align-items: center; gap: 24px; margin-bottom: 24px; border: 1px solid var(--line); border-radius: 12px; padding: 24px; background: var(--paper); }
+.reminder-audience > strong { font-size: 40px; line-height: 1; }
+.reminder-audience h2 { font-size: 18px; margin: 0 0 8px; }
+.reminder-audience p { color: var(--mist); line-height: 1.7; margin: 0; font-size: 14px; }
+.reminder-compose { margin-block: 24px 40px; }
+.reminder-compose-selection { margin: 0 0 24px; font-size: 14px; color: var(--mist); }
+.practice-reminders .email-field textarea { box-sizing: border-box; padding: 16px; width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--ink); font: inherit; line-height: 1.8; resize: vertical; min-height: 200px; }
+.practice-reminders textarea:focus-visible { outline: 3px solid var(--seal); outline-offset: 3px; }
+.reminder-history-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.reminder-history h2 { font-size: 24px; margin: 0; }
+.reminder-history > ul { list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 16px; }
+.reminder-campaign { border: 1px solid var(--line); border-radius: 12px; padding: 24px; background: var(--card); display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; justify-content: space-between; }
+.reminder-campaign h3 { font-size: 17px; line-height: 1.5; margin: 0 0 8px; overflow-wrap: anywhere; }
+.reminder-campaign span { color: var(--mist); font-size: 13px; }
+.reminder-campaign > strong { font-size: 13px; border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; }
+.reminder-campaign > p { flex-basis: 100%; margin: 0; line-height: 1.7; }
+dialog.reminder-review { box-sizing: border-box; width: min(680px, calc(100% - 32px)); max-height: calc(100dvh - 48px); overflow-y: auto; border: 1px solid var(--line); border-radius: 12px; padding: 32px; background: var(--card); color: var(--ink); }
+.reminder-review::backdrop { background: #0008; }
+.reminder-review h2 { font-size: 24px; line-height: 1.4; margin: 0 0 16px; }
+.reminder-review > p { font-size: 15px; line-height: 1.7; }
+.reminder-email-preview { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 20px; margin: 24px 0; overflow-wrap: anywhere; }
+.reminder-email-preview p { white-space: pre-wrap; line-height: 1.8; }
+.reminder-email-preview small { color: var(--mist); }
+.reminder-recipient-list { margin-bottom: 24px; }
+.reminder-recipient-list summary { cursor: pointer; padding: 12px 0; }
+.reminder-recipient-list ul { list-style: none; padding: 0; max-height: 200px; overflow-y: auto; }
+.reminder-recipient-list li { border-bottom: 1px solid var(--line); padding: 12px 0; overflow-wrap: anywhere; }
+.reminder-recipient-list li > * { display: block; line-height: 1.7; }
+.reminder-recipient-list span { color: var(--mist); font-size: 14px; }
+@media (max-width: 760px) {
+  .reminder-audience { align-items: flex-start; padding: 20px; gap: 16px; }
+  .reminder-audience > strong { font-size: 32px; }
+  dialog.reminder-review { padding: 20px; }
+  .reminder-review .email-actions { flex-direction: column; align-items: stretch; }
+  .reminder-review .email-actions .email-button { flex: 0 0 auto; }
+  .reminder-campaign { padding: 20px; }
+}
