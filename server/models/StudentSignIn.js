@@ -8,4 +8,5 @@ const schema = new mongoose.Schema({
   signedInAt: { type: Date, default: Date.now, required: true },
 });
 schema.index({ signedInAt: -1, student: 1 });
+schema.index({ student: 1 });
 module.exports = mongoose.model('StudentSignIn', schema);

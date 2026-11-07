@@ -18,6 +18,8 @@ function setup(flag = false, failDelivery = false) {
   mock(bcrypt, 'compare', async () => true);
   const user = { _id: 'user', name: 'Student', email: 'student@example.com', role: 'student', password: 'hash', emailVerified: flag, save: async () => {} };
   mock(User, 'findOne', async () => user);
+  mock(User, 'findOneAndUpdate', async () => ({ signInCount: 1 }));
+  mock(StudentSignIn, 'exists', async () => null);
   let sent;
   mock(email, 'sendEmailVerificationOtp', async (to, code) => {
     if (failDelivery) throw new Error('delivery failed');
@@ -50,6 +52,7 @@ test('valid OTP is atomically consumed before issuing a session', async () => {
   const { run } = setup();
   let consumed = false;
   mock(User, 'findOneAndUpdate', async (filter, update) => {
+    if (update.$inc) return { signInCount: 1 };
     assert.equal(filter.emailVerified, false);
     assert.equal(filter.emailVerificationHash, crypto.createHash('sha256').update('123456').digest('hex'));
     assert.ok(filter.emailVerificationExpires.$gt instanceof Date);

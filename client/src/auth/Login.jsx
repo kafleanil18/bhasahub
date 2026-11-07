@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Login.css';
 import GoogleAuthButton from './GoogleAuthButton';
+import { loadRememberedEmail, saveRememberedEmail } from './rememberedEmail';
 
 function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
   const [email, setEmail] = useState('');
@@ -51,13 +52,7 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         
-        if (rememberMe) {
-          localStorage.setItem('remembered_email', email);
-          localStorage.setItem('remembered_password', password);
-        } else {
-          localStorage.removeItem('remembered_email');
-          localStorage.removeItem('remembered_password');
-        }
+        saveRememberedEmail(localStorage, rememberMe ? email : '');
 
         onLogin(data.user);
       }
@@ -67,16 +62,12 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
     setLoading(false);
   };
 
-  // Pre-fill email and password if remembered
+  // Remember only the email; passwords belong in the browser's password manager.
   useEffect(() => {
-    const savedEmail = localStorage.getItem('remembered_email');
-    const savedPassword = localStorage.getItem('remembered_password');
+    const savedEmail = loadRememberedEmail(localStorage);
     if (savedEmail) {
       setEmail(savedEmail);
       setRememberMe(true);
-    }
-    if (savedPassword) {
-      setPassword(savedPassword);
     }
   }, []);
 
@@ -86,9 +77,9 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
         
         {/* Left Column: Portrait & Heading */}
         <div className="login-welcome-panel">
-          <button type="button" className="login-brand" onClick={onBack} aria-label="HanziGo home">
-            <span className="login-brand-seal" aria-hidden="true">汉</span>
-            <span>Hanzi<span>Go</span></span>
+          <button type="button" className="login-brand" onClick={onBack} aria-label="Xiao Ao home">
+            <span className="login-brand-seal" aria-hidden="true">XA</span>
+            <span>Xiao <span>Ao</span></span>
           </button>
           <div className="login-welcome-content">
             <h2 className="signin-welcome-title">We guarantee<br />your HSK exam.</h2>
@@ -203,7 +194,7 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
                 />
-                <span>Remember me</span>
+                <span>Remember my email</span>
               </label>
               <a href="#forgot" className="forgot-password-link" onClick={(e) => { e.preventDefault(); onForgotPassword?.(); }}>
                 Forgot password?

@@ -5,8 +5,8 @@ export default function HomeFooter({ goHome, isSuperAdmin, serverOk }) {
       <div className="container footer-inner">
         <div className="footer-main">
           <div className="footer-brand-block">
-            <button className="logo" onClick={goHome} aria-label="HanziGo home">
-              Hanzi<span>Go</span><span className="footer-brand-mark" aria-hidden="true">好</span>
+            <button className="logo" onClick={goHome} aria-label="Xiao Ao home">
+              Xiao <span>Ao</span><span className="footer-brand-mark" aria-hidden="true">XA</span>
             </button>
             <p className="footer-tag">Small steps. Real conversations.</p>
           </div>
@@ -34,7 +34,7 @@ export default function HomeFooter({ goHome, isSuperAdmin, serverOk }) {
         </div>
 
         <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} HanziGo · Learn Chinese, one step at a time.</span>
+          <span>© {new Date().getFullYear()} Xiao Ao · Learn Chinese, one step at a time.</span>
           {isSuperAdmin && (
             <p className="status">
               {serverOk === null && <span>Checking server...</span>}

@@ -1,3 +1,5 @@
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { coursePath } from '../navigation/paths';
 import { supportsConversation } from '../utils/courseFeatures';
 import { useState, useEffect, useCallback } from 'react';
 import CourseOverview from './CourseOverview';
@@ -8,7 +10,8 @@ import { useCourseAccess } from '../hooks/useCourseAccess';
 const API = window.API_BASE_URL + '/api';
 
 function CoursePage({ course, onBack, user }) {
-  const [activeLesson, setActiveLesson] = useState(null);
+  const { lessonId } = useParams();
+  const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
   const { lessons: allLessons, loading, error: lessonsError } = useLessons(course._id, token);
@@ -61,17 +64,22 @@ function CoursePage({ course, onBack, user }) {
   // gate: admins always allowed; students need active access
   const canOpenLessons = isAdmin || hasAccess;
 
+  const activeLesson = canOpenLessons ? lessons.find(lesson => lesson._id === lessonId) : null;
   const activeIndex = lessons.findIndex((l) => l._id === (activeLesson ? activeLesson._id : ''));
   const nextLesson = activeIndex !== -1 && activeIndex + 1 < lessons.length ? lessons[activeIndex + 1] : null;
 
   const handleLessonClick = (lesson) => {
     if (canOpenLessons) {
-      setActiveLesson(lesson);
+      navigate(`${coursePath(course._id)}/lessons/${encodeURIComponent(lesson._id)}`);
     } else {
       setShowAccessMsg(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
+
+  if (lessonId && (loading || !accessChecked)) return <div className="container" role="status">Loading lesson…</div>;
+  if (lessonId && (lessonsError || accessError)) return <section className="container" role="alert"><p>{lessonsError || accessError}</p><Link to={coursePath(course._id)}>Back to course</Link></section>;
+  if (lessonId && !activeLesson && canOpenLessons) return <section className="container"><h1>Lesson not found</h1><Link to={coursePath(course._id)}>Back to course</Link></section>;
 
   if (activeLesson) {
     return (
@@ -84,7 +92,7 @@ function CoursePage({ course, onBack, user }) {
         token={token}
         isCompleted={completedIds.includes(activeLesson._id)}
         completeError={completeError}
-        onBack={() => setActiveLesson(null)}
+        onBack={() => navigate(coursePath(course._id))}
         onToggleComplete={() => toggleComplete(activeLesson._id)}
         onNextLesson={nextLesson ? () => handleLessonClick(nextLesson) : undefined}
       />

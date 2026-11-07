@@ -247,8 +247,9 @@ test('superadmin creates and edits complete papers; incomplete drafts cannot be 
   assert.equal((await send(`${url}/publication`, admin, { published: true }, 'PUT')).status, 400);
   assert.equal((await send(`${url}/attempts`, superadmin, {})).status, 400);
   assert.equal((await fetch(url, { headers })).status, 404);
-  assert.equal((await (await fetch(root, { headers })).json()).length, 2);
-  assert.equal((await (await fetch(root, { headers: superadmin })).json()).length, 3);
+  const bundledCount = Object.keys(require('../data/hskPapers')).length;
+  assert.equal((await (await fetch(root, { headers })).json()).length, bundledCount);
+  assert.equal((await (await fetch(root, { headers: superadmin })).json()).length, bundledCount + 1);
   assert.equal((await send(`${url}/content`, superadmin, content, 'PUT')).status, 200);
   assert.equal((await send(`${url}/publication`, admin, { published: true }, 'PUT')).status, 200);
   const publicResponse = await fetch(url, { headers });
@@ -306,7 +307,10 @@ test('manual paper validation rejects broken sections, unsafe media, and missing
 test('superadmin can upload question pictures and audio; students cannot upload', async () => {
   const { app, base, headers, superadmin } = await setup();
   const cloud = require('../utils/cloudinary');
-  mock(cloud, 'uploadBufferToCloudinary', async () => ({ secure_url: 'https://example.com/uploaded-file' }));
+  mock(cloud, 'uploadFileToCloudinary', async filePath => {
+    assert.equal(fs.readFileSync(filePath, 'utf8'), 'uploaded fixture');
+    return { secure_url: 'https://example.com/uploaded-file' };
+  });
   app.use('/api/upload', require('../routes/upload'));
   const url = base.replace('/api/hsk1/h11226', '/api/upload');
   for (const [name, mime] of [['question.png', 'image/png'], ['listening.mp3', 'audio/mpeg']]) {

@@ -1,23 +1,23 @@
-export default function SiteHeader({ adminSidebarOpen, darkMode, goHome, handleLogout, hideForAuth = false, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, setShowAnalytics, setShowChangePassword, setShowDashboard, setShowFeedback, setShowSubscriptions, setShowTestManager, setShowUserMenu, showUserMenu, unreadFeedbackCount, user }) {
+export default function SiteHeader({ adminSidebarOpen, darkMode, goHome, handleLogout, hideForAuth = false, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, onNavigate, setShowChangePassword, setShowUserMenu, showUserMenu, unreadFeedbackCount, user }) {
   if (hideForAuth) return null;
   return (
     <header className={`site-header${isSuperAdmin || !user ? ' paper-header' : ''}`}>
         <div className="container header-row">
           <div className="header-left">
             <button className="logo brand-logo" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); }}>
-              <span className="brand-seal" aria-hidden="true">汉</span>
+              <span className="brand-seal" aria-hidden="true">XA</span>
               <span className="brand-lockup"><span className="brand-title">
-                Hanzi<span className="brand-accent">Go</span>
+                Xiao <span className="brand-accent">Ao</span>
               </span><span className="brand-tagline">Chinese Made Simple</span></span>
             </button>
           </div>
 
           <nav id="site-navigation" aria-label="Main navigation" className={`main-nav ${mobileMenuOpen ? 'open' : ''}`}>
             <div className="nav-links">
-              {isAdmin && !isSuperAdmin && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowTestManager(true); }}>Manage tests</button>}
+              {isAdmin && !isSuperAdmin && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/admin/tests'); }}>Manage tests</button>}
               {isSuperAdmin ? null : user ? (
                 <>
-                  <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowDashboard(true); }}>
+                  <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/my-courses'); }}>
                     <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                       <polyline points="2 17 12 22 22 17"></polyline>
@@ -26,37 +26,18 @@ export default function SiteHeader({ adminSidebarOpen, darkMode, goHome, handleL
                     <span>My Courses</span>
                   </button>
 
-                  <button className="nav-link" onClick={() => { setMobileMenuOpen(false); goHome(); setShowAnalytics(true); }}>
+                  <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/progress'); }}>
                     <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                     </svg>
                     <span>My Progress</span>
                   </button>
 
-                  <a className="nav-link" href="#courses" onClick={() => { setMobileMenuOpen(false); goHome(); }}>
-                    <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"></path>
-                      <path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"></path>
-                    </svg>
-                    <span>All Courses</span>
-                  </a>
-                </>
-              ) : (
-                <a className="nav-link" href="#courses" onClick={() => { setMobileMenuOpen(false); goHome(); }}>
-                  <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M2 4h6a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H2z"></path>
-                    <path d="M22 4h-6a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5H22z"></path>
-                  </svg>
-                  <span>Courses</span>
-                </a>
-              )}
 
-              {!isSuperAdmin && <button className="nav-link nav-support-link" onClick={() => { setMobileMenuOpen(false); setShowFeedback(true); }}>
-                <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                </svg>
-                <span>Message us</span>
-              </button>}
+                </>
+              ) : null}
+
+
 
 
             </div>
@@ -88,7 +69,7 @@ export default function SiteHeader({ adminSidebarOpen, darkMode, goHome, handleL
                 </button>
               )}
               {isAdmin && !isSuperAdmin && (
-                <button className="nav-link mobile-admin-btn" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowSubscriptions(true); }}>
+                <button className="nav-link mobile-admin-btn" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); onNavigate('/admin/subscriptions'); }}>
                   <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
                     <line x1="2" y1="10" x2="22" y2="10"></line>
@@ -157,7 +138,7 @@ export default function SiteHeader({ adminSidebarOpen, darkMode, goHome, handleL
             )}
 
             {isAdmin && !isSuperAdmin && (
-              <button className="nav-link nav-desktop-only" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); setShowSubscriptions(true); }} style={{ position: 'relative' }}>
+              <button className="nav-link nav-desktop-only" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); onNavigate('/admin/subscriptions'); }} style={{ position: 'relative' }}>
                 <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
                   <line x1="2" y1="10" x2="22" y2="10"></line>

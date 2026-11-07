@@ -21,6 +21,8 @@ test('Nepal date boundaries and malformed dates', () => {
 });
 
 test('only students are recorded; logging outages do not prevent login', async () => {
+  mock(User, 'findOneAndUpdate', async () => ({ signInCount: 1 }));
+  mock(StudentSignIn, 'exists', async () => ({ _id: 'older-login' }));
   const events = [];
   mock(StudentSignIn, 'create', async event => events.push(event));
   const user = { _id: 'student', name: 'Learner', email: 'learner@example.com', role: 'student' };
@@ -34,6 +36,8 @@ test('only students are recorded; logging outages do not prevent login', async (
 
 test('only completed email and Google authentication record events', async () => {
   mock(process.env, 'JWT_SECRET', 'test-secret');
+  mock(User, 'findOneAndUpdate', async () => ({ signInCount: 1 }));
+  mock(StudentSignIn, 'exists', async () => ({ _id: 'older-login' }));
   const events = [];
   mock(StudentSignIn, 'create', async event => events.push(event));
   const user = { _id: 'student', name: 'Learner', email: 'learner@example.com', role: 'student', password: 'hash', emailVerified: true, googleId: 'google' };
@@ -49,10 +53,10 @@ test('only completed email and Google authentication record events', async () =>
   assert.equal(res.body.verificationRequired, true); assert.equal(events.length, 0);
   user.emailVerified = true;
   res = response(); await login({ body: { email: user.email, password: 'right' } }, res);
-  assert.ok(res.body.token); assert.equal(events.length, 1); assert.equal(events[0].method, 'email');
+  assert.ok(res.body.token); assert.equal(res.body.user.isFirstLogin, false); assert.equal(events.length, 1); assert.equal(events[0].method, 'email');
   mock(global, 'fetch', async () => ({ ok: true, json: async () => ({ sub: 'google', email: user.email, email_verified: true, aud: process.env.GOOGLE_CLIENT_ID }) }));
   res = response(); await handlers('../routes/auth', '/google', 'post').at(-1)({ body: { credential: 'credential' } }, res);
-  assert.ok(res.body.token); assert.equal(events.length, 2); assert.equal(events[1].method, 'google');
+  assert.ok(res.body.token); assert.equal(res.body.user.isFirstLogin, false); assert.equal(events.length, 2); assert.equal(events[1].method, 'google');
 });
 
 test('report requires a current superadmin role even with a stale superadmin token', async () => {
@@ -84,4 +88,36 @@ test('daily aggregation groups students and paginates without limiting daily tot
   }
   mock(StudentSignIn, 'aggregate', async () => [{ summary: [], students: [] }]);
   const empty = response(); await report({ query: {} }, empty); assert.equal(empty.body.uniqueStudents, 0);
+});
+
+test('only the first successful student session receives the first-login greeting', async () => {
+  const user = { _id: 'student', name: 'New Student', email: 'new@example.com', role: 'student', signInCount: 0 };
+  mock(StudentSignIn, 'exists', async () => null);
+  mock(StudentSignIn, 'create', async () => ({}));
+  let count = 0;
+  mock(User, 'findOneAndUpdate', async (filter, update, options) => {
+    assert.deepEqual(filter, { _id: user._id });
+    assert.deepEqual(update, { $inc: { signInCount: 1 } });
+    assert.equal(options.new, false);
+    return { signInCount: count++ };
+  });
+  assert.deepEqual(await Promise.all([recordStudentSignIn(user, 'email'), recordStudentSignIn(user, 'google')]), [true, false]);
+});
+
+test('existing audit history recognizes students whose accounts predate the sign-in counter', async () => {
+  mock(StudentSignIn, 'exists', async () => ({ _id: 'prior-sign-in' }));
+  mock(StudentSignIn, 'create', async () => ({}));
+  mock(User, 'findOneAndUpdate', async () => ({}));
+  assert.equal(await recordStudentSignIn({ _id: 'old-student', role: 'student' }, 'email'), false);
+});
+
+test('returning students skip historical lookups and tracking failures do not block sign-in', async () => {
+  const user = { _id: 'student', role: 'student', signInCount: 2 };
+  mock(StudentSignIn, 'exists', () => assert.fail('Returning students do not need a history lookup'));
+  mock(User, 'findOneAndUpdate', async () => ({ signInCount: 2 }));
+  mock(StudentSignIn, 'create', async () => ({}));
+  assert.equal(await recordStudentSignIn(user, 'google'), false);
+  mock(User, 'findOneAndUpdate', async () => { throw new Error('unavailable'); });
+  mock(console, 'error', () => {});
+  assert.equal(await recordStudentSignIn(user, 'email'), false);
 });

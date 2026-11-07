@@ -1,6 +1,6 @@
 import { mediaUrl } from '../utils/mediaUrl';
 
-export default function HomeCourses({ filteredCourses, hskLevels, levelFilter, openLogin, setActiveCourse, setLevelFilter, user }) {
+export default function HomeCourses({ filteredCourses, hskLevels, levelFilter, onOpenCourse, setLevelFilter }) {
   return (
     <section className="courses-section" id="courses" aria-label="Courses">
             <div className="container">
@@ -31,8 +31,7 @@ export default function HomeCourses({ filteredCourses, hskLevels, levelFilter, o
                         aria-label={`${c.title}, view course`}
                         onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.currentTarget.click(); } }}
                         onClick={() => {
-                          if (!user) { openLogin(); return; }
-                          setActiveCourse(c);
+                          onOpenCourse(c);
                         }}
                       >
                         {c.image ? (

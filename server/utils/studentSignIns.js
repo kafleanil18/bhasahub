@@ -1,4 +1,5 @@
 const StudentSignIn = require('../models/StudentSignIn');
+const User = require('../models/User');
 const TIME_ZONE = 'Asia/Kathmandu';
 
 function nepalDate(now = new Date()) {
@@ -12,12 +13,23 @@ function dayRange(day) {
   return { start, end: new Date(start.getTime() + 86400000) };
 }
 async function recordStudentSignIn(user, method) {
-  if (user.role !== 'student') return;
+  if (user.role !== 'student') return false;
+  let isFirstLogin = false;
+  try {
+    // Check older audit history before recording this session, then atomically
+    // claim the first sign-in so concurrent logins cannot both be first.
+    const hasHistory = user.signInCount > 0 || !!await StudentSignIn.exists({ student: user._id });
+    const previous = await User.findOneAndUpdate({ _id: user._id }, { $inc: { signInCount: 1 } }, { new: false });
+    isFirstLogin = !!previous && !(previous.signInCount > 0) && !hasHistory;
+  } catch (err) {
+    console.error('Student welcome tracking failed:', err.message);
+  }
   try {
     await StudentSignIn.create({ student: user._id, name: user.name, email: user.email, method });
   } catch (err) {
     // A reporting outage must not prevent an authenticated student signing in.
     console.error('Student sign-in logging failed:', err.message);
   }
+  return isFirstLogin;
 }
 module.exports = { nepalDate, dayRange, recordStudentSignIn, TIME_ZONE };

@@ -4,12 +4,12 @@ import PracticeToolIcon from './PracticeToolIcon';
 const practiceTools = [
   ['tests', 'Mock Tests', 'Check what you know with a practice test.'],
   ['pinyin', 'Pinyin & tones', 'Build a clear foundation in Chinese sounds.'],
-  ['trace', 'Trace Characters', 'Follow the strokes and write Chinese.'],
-  ['listening', 'Listening Practice', 'Hear a word and choose its meaning.'],
-  ['sentences', 'Sentence Builder', 'Arrange words into a sentence.'],
-  ['measures', 'Measure Word Practice', 'Choose the word for counting things.'],
-  ['numbers', 'Everyday Numbers', 'Use numbers for prices, times, and dates.'],
-  ['dictation', 'Listening Dictation', 'Listen to recordings and write what you hear.'],
+  ['trace', 'Trace characters', 'Follow the strokes and write Chinese.'],
+  ['listening', 'Listening practice', 'Hear a word and choose its meaning.'],
+  ['sentences', 'Sentence builder', 'Arrange words into a sentence.'],
+  ['measures', 'Measure words', 'Choose the word for counting things.'],
+  ['numbers', 'Everyday numbers', 'Use numbers for prices, times, and dates.'],
+  ['dictation', 'Listening dictation', 'Listen to recordings and write what you hear.'],
   ['conversation', 'Conversation', 'Build confidence with guided Chinese conversations.'],
 ];
 const practiceCharacters = { pinyin: '拼', trace: '字', listening: '听', sentences: '句', measures: '本', numbers: '数', dictation: '写', conversation: '聊', tests: '测' };
@@ -27,7 +27,7 @@ export default function PracticeStudio({ user, onOpenPractice, standalone = fals
         {id !== 'tests' && <span className="hero-practice-glyph" aria-hidden="true"><span className="practice-symbol-flip"><span className="practice-symbol-face"><PracticeToolIcon tool={id}/></span><span className="practice-symbol-face is-back" lang="zh-CN">{practiceCharacters[id]}</span></span></span>}
         <span className="hero-practice-copy">
           {id === 'tests' && <span className="studio-test-label">READY FOR YOUR HSK EXAM?</span>}
-          <strong>{id === 'tests' ? 'HSK Mock Tests' : title}</strong>
+          <strong>{id === 'tests' ? 'HSK mock tests' : title}</strong>
           <small>{description}</small>
         </span>
         {id === 'tests' && <span className="studio-test-action" aria-hidden="true">Take a mock test <span>→</span></span>}

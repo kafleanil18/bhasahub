@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema(
     role: { type: String, enum: ['student', 'admin', 'superadmin'], default: 'student' },
     googleId: { type: String, sparse: true, unique: true },
     avatar: { type: String },
+    signInCount: { type: Number, default: 0 },
     authProvider: { type: String, enum: ['local', 'google'], default: 'local' },
     // Missing on legacy accounts; only new local registrations are explicitly unverified.
     emailVerified: { type: Boolean },

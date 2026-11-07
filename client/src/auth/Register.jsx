@@ -91,9 +91,9 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
       <div className="login-layout">
 
         <div className="login-welcome-panel">
-          <button type="button" className="login-brand" onClick={onBack} aria-label="HanziGo home">
-            <span className="login-brand-seal" aria-hidden="true">汉</span>
-            <span>Hanzi<span>Go</span></span>
+          <button type="button" className="login-brand" onClick={onBack} aria-label="Xiao Ao home">
+            <span className="login-brand-seal" aria-hidden="true">XA</span>
+            <span>Xiao <span>Ao</span></span>
           </button>
           <div className="login-welcome-content">
             <h2 className="signin-welcome-title">Your Chinese<br />journey starts here.</h2>
@@ -115,7 +115,7 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
 
           <div className="login-form-header">
             <h1 id="signup-title">Create an account</h1>
-            <p>Start learning Chinese with HanziGo.</p>
+            <p>Start learning Chinese with Xiao Ao.</p>
           </div>
 
           <GoogleAuthButton

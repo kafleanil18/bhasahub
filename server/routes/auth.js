@@ -116,11 +116,11 @@ router.post('/login', authLimiter, async (req, res) => {
       { expiresIn: '7d' }
     );
 
-    await recordStudentSignIn(user, 'email');
+    const isFirstLogin = await recordStudentSignIn(user, 'email');
     res.json({
       message: 'Logged in',
       token,
-      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+      user: { id: user._id, name: user.name, email: user.email, role: user.role, isFirstLogin },
     });
   } catch (err) {
     res.status(500).json({ error: 'Something went wrong' });
@@ -197,7 +197,7 @@ router.post('/google', authLimiter, async (req, res) => {
       { expiresIn: '7d' }
     );
 
-    await recordStudentSignIn(user, 'google');
+    const isFirstLogin = await recordStudentSignIn(user, 'google');
     res.json({
       message: 'Logged in with Google',
       token,
@@ -207,6 +207,7 @@ router.post('/google', authLimiter, async (req, res) => {
         email: user.email,
         role: user.role,
         avatar: user.avatar,
+        isFirstLogin,
       },
     });
   } catch (err) {

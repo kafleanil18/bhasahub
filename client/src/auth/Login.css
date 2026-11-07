@@ -589,7 +589,7 @@
   }
 }
 
-/* HanziGo sign-in: match the warm paper and seal-red site palette. */
+/* Xiao Ao sign-in: match the warm paper and seal-red site palette. */
 .signin-page {
   min-height: calc(100vh - 76px);
   align-items: center;
@@ -807,7 +807,7 @@
 }
 
 .signin-page .login-brand > span:last-child > span { color: var(--seal); }
-.signin-page .login-brand-seal { display: grid; width: 36px; height: 36px; place-items: center; border: 1.5px solid var(--seal); border-radius: 10px 10px 10px 3px; color: var(--seal); font-family: 'Noto Serif SC', Georgia, serif; font-size: 21px; }
+.signin-page .login-brand-seal { display: grid; width: 36px; height: 36px; place-items: center; border: 1.5px solid var(--seal); border-radius: 10px 10px 10px 3px; color: var(--seal); font-family: 'Fraunces', Georgia, serif; font-size: 15px; }
 .signin-page .login-welcome-content { position: relative; z-index: 1; max-width: 600px; }
 .signin-page .signin-welcome-title { max-width: 660px; font-size: clamp(42px, 5.6vw, 76px); }
 .signin-page .login-form-panel { justify-content: center; padding: clamp(36px, 5vw, 80px); background: var(--signin-form-surface); }

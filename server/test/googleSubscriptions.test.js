@@ -33,6 +33,8 @@ test('a Google student requests access and receives it only after super admin ap
     sub: 'google-student', email: student.email, name: student.name, email_verified: true, aud: 'test-client',
   }) }));
   mock(User, 'findOne', async () => null);
+  mock(User, 'findOneAndUpdate', async () => ({ signInCount: 0 }));
+  mock(StudentSignIn, 'exists', async () => null);
   mock(User, 'create', async data => {
     assert.equal(data.role, 'student');
     assert.equal(data.googleId, 'google-student');
@@ -42,6 +44,7 @@ test('a Google student requests access and receives it only after super admin ap
   await route('../routes/auth', '/google', 'post').at(-1).handle({ body: { credential: 'google-credential' } }, login);
   assert.equal(login.code, 200);
   assert.ok(login.body.token);
+  assert.equal(login.body.user.isFirstLogin, true);
 
   mock(User, 'findById', () => ({ select: async () => student }));
   const req = { headers: { authorization: `Bearer ${login.body.token}` }, body: { courseId: course._id } };

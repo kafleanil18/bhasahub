@@ -68,11 +68,11 @@ header .container {
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--accent-red) 0%, var(--accent-red) 100%);
+  background: var(--accent-red);
   color: #fff;
-  font-family: 'Noto Serif SC', 'KaiTi', 'SimSun', serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-weight: 700;
-  font-size: 19px;
+  font-size: 15px;
   line-height: 1;
   box-shadow: 0 2px 10px rgba(var(--accent-red-rgb), 0.45), inset 0 0 0 1.5px rgba(255, 255, 255, 0.5);
   letter-spacing: 0;
@@ -1571,7 +1571,7 @@ h1, h2, h3, h4, h5, h6,
 
 .nav-language-note { color: #ffffff; font-size: clamp(12px, calc(12px + 0.4vw), 14px); white-space: nowrap; padding: 10px 12px; opacity: .8; }
 
-/* HanziGo wordmark and tagline. */
+/* Xiao Ao wordmark and tagline. */
 .brand-lockup { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; line-height: 1.15; gap: 3px; }
 .brand-tagline { color: #faf6ec; font-family: 'Inter', sans-serif; font-size: clamp(12px, calc(10px + 0.4vw), 14px); font-weight: 500; letter-spacing: .03em; white-space: nowrap; }
 .practice-signin-note { margin: 4px 12px 8px; max-width: 220px; color: var(--mist); font-size: clamp(12px, calc(12px + 0.4vw), 14px); line-height: 1.5; }

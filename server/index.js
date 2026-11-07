@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const { startWhenReady, databaseHealth, requireDatabase } = require('./utils/serverReadiness');
 const cors = require('cors');
 const uploadRoutes = require('./routes/upload');
 const path = require('path');
@@ -37,6 +38,8 @@ const app = express();
 app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(cors());
 app.use(express.json());
+app.get('/api/health', databaseHealth(mongoose.connection));
+app.use('/api', requireDatabase(mongoose.connection));
 app.use('/api/upload', uploadRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/enrollments', enrollmentRoutes);
@@ -96,22 +99,10 @@ const seedTeam = async () => {
   }
 };
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/language-lms')
-  .then(() => {
-    console.log('✅ MongoDB connected');
-    seedTeam();
-    ensureHanziTraceSeeded();
-  })
-  .catch(err => console.error('❌ MongoDB error:', err));
-
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/conversation-practice', conversationPracticeRoutes);
-
-app.get('/api/health', (req, res) => {
-  res.json({ message: 'Language LMS API is running!' });
-});
 
 // In production the client is built into client/dist and served by this
 // same process, so the app is reachable at a single origin with no CORS
@@ -124,5 +115,34 @@ if (fs.existsSync(clientDist)) {
   });
 }
 
-const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+async function start() {
+  const port = process.env.PORT || 5001;
+  return startWhenReady({
+    connect: () => mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/language-lms', {
+      serverSelectionTimeoutMS: 10000,
+    }),
+    initialize: async () => {
+      console.log('✅ MongoDB connected');
+      await Promise.all([seedTeam(), ensureHanziTraceSeeded()]);
+    },
+    listen: () => new Promise((resolve, reject) => {
+      const server = app.listen(port);
+      server.once('error', reject);
+      server.once('listening', () => {
+        server.removeListener('error', reject);
+        console.log(`🚀 Server running on http://localhost:${port}`);
+        resolve(server);
+      });
+    }),
+    disconnect: () => mongoose.disconnect(),
+  });
+}
+
+if (require.main === module) {
+  start().catch(() => {
+    console.error('Server startup failed. Check database connectivity and server configuration.');
+    process.exitCode = 1;
+  });
+}
+
+module.exports = { app, start };
