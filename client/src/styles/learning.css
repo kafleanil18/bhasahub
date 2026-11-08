@@ -15,7 +15,7 @@
 }
 
 .login-card h1 {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 28px;
   margin-bottom: 4px;
 }
@@ -184,7 +184,7 @@
 
 .admin-form h2,
 .admin-list h2 {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 20px;
   margin-bottom: 20px;
 }
@@ -349,7 +349,7 @@
 }
 
 .lessons-heading {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 22px;
   margin-bottom: 16px;
 }
@@ -383,7 +383,7 @@
 }
 
 .lesson-num {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-weight: 600;
   color: var(--seal);
   min-width: 24px;
@@ -465,7 +465,7 @@
 }
 
 .section-header-center .section-title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 34px;
   font-weight: 700;
   color: var(--ink);

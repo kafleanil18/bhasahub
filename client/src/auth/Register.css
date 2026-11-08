@@ -45,7 +45,7 @@
 }
 
 .welcome-header h2 {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 36px;
   line-height: 1.2;
   color: var(--ink);
@@ -274,7 +274,7 @@
 }
 
 .register-form-header h3 {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 28px;
   color: var(--ink);
   margin-bottom: 4px;

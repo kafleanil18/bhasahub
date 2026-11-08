@@ -9,7 +9,7 @@
 .home-page .hero-badge { padding: 0; border: 0; background: none; box-shadow: none; margin-bottom: 28px; }
 .home-page .hero-badge-dot { animation: none; box-shadow: none; background: var(--jade); flex-shrink: 0; }
 .home-page .hero-badge-text { color: var(--jade); font-size: clamp(12px, calc(13px + 0.4vw), 14px); }
-.home-page .hero-title { font-family: 'Fraunces', serif; font-size: clamp(32px, 3.5vw, 48px); line-height: 1.2; letter-spacing: -.035em; text-wrap: balance; }
+.home-page .hero-title { font-family: var(--font-body); font-size: clamp(32px, 3.5vw, 48px); line-height: 1.2; letter-spacing: -.035em; text-wrap: balance; }
 .home-page .hero-highlight { background: none; color: var(--seal); -webkit-text-fill-color: currentColor; }
 .home-page .hero-subtitle { font-size: 16px; line-height: 1.85; color: var(--ink); opacity: .8; margin: 16px 0 28px; }
 .home-page .hero-actions { gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
@@ -38,7 +38,7 @@
 .home-page .home-footer .footer-main { display: grid; grid-template-columns: 1.2fr 1fr auto; align-items: center; gap: 40px; padding: 44px 0 32px; }
 .home-page .home-footer .logo { display: inline-flex; align-items: center; gap: 2px; color: #fffaf0 !important; font-size: 28px; }
 .home-page .home-footer .logo > span:first-child { color: #dfc27d; }
-.home-page .home-footer .footer-brand-mark { display: inline-grid; place-items: center; width: 29px; height: 29px; margin-left: 9px; border: 1px solid rgba(223,194,125,.5); border-radius: 8px; color: #dfc27d !important; font-family: 'Fraunces', Georgia, serif; font-size: 13px; }
+.home-page .home-footer .footer-brand-mark { display: inline-grid; place-items: center; width: 29px; height: 29px; margin-left: 9px; border: 1px solid rgba(223,194,125,.5); border-radius: 8px; color: #dfc27d !important; font-family: var(--font-body); font-size: 13px; }
 .home-page .home-footer .footer-tag { margin: 8px 0 0; color: #d5c9b5; font-size: 14px; }
 .home-page .footer-quick-links { display: flex; flex-wrap: wrap; gap: 10px 24px; }
 .home-page .footer-quick-links a { color: #f8f1df; text-decoration: none; font-size: 14px; transition: color .18s ease; }

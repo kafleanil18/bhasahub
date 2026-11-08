@@ -28,7 +28,7 @@
 .conversation-lesson-stepper button:disabled { color: #aaa196; cursor: not-allowed; }
 .conversation-lesson-picker { margin-bottom: 30px; }
 .conversation-picker-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
-.conversation-picker-heading h1 { margin: 0; font-family: 'Fraunces', Georgia, serif; font-size: clamp(27px, 3vw, 34px); font-weight: 600; letter-spacing: -.035em; line-height: 1.15; }
+.conversation-picker-heading h1 { margin: 0; font-family: var(--font-body); font-size: clamp(27px, 3vw, 34px); font-weight: 600; letter-spacing: -.035em; line-height: 1.15; }
 .conversation-picker-count { padding: 7px 11px; border: 1px solid var(--conv-line); border-radius: 999px; background: var(--conv-card); color: var(--conv-muted); font-size: 13px; font-weight: 650; white-space: nowrap; }
 .conversation-lesson-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .conversation-lesson-option { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; align-items: center; gap: 14px; min-height: 88px; padding: 14px 16px; border: 1px solid var(--conv-line); border-radius: 12px; background: var(--conv-card); color: var(--conv-ink); text-align: left; cursor: pointer; transition: border-color .18s ease, background .18s ease, transform .18s ease; }
@@ -42,14 +42,14 @@
 .conversation-lesson-option.is-selected { border-color: var(--option-accent); background: color-mix(in srgb, var(--option-accent) 7%, var(--conv-card)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--option-accent) 25%, transparent); }
 .conversation-option-number { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 10px; background: color-mix(in srgb, var(--option-accent) 13%, var(--conv-paper)); color: var(--option-accent); font-size: 14px; font-weight: 800; }
 .conversation-option-copy { display: flex; min-width: 0; flex-direction: column; gap: 3px; }
-.conversation-option-copy strong { display: flex; align-items: flex-start; flex-direction: column; gap: 2px; font-family: 'Noto Serif SC', 'Fraunces', Georgia, serif; font-size: 17px; line-height: 1.2; }
+.conversation-option-copy strong { display: flex; align-items: flex-start; flex-direction: column; gap: 2px; font-family: var(--font-chinese); font-size: 17px; line-height: 1.2; }
 .conversation-option-copy strong small { color: var(--conv-muted); font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; }
 .conversation-option-copy > span { overflow: hidden; color: var(--conv-muted); font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
 .conversation-option-detail { display: flex; align-items: center; gap: 12px; color: var(--conv-muted); font-size: 12px; white-space: nowrap; }
 .conversation-option-detail > span { display: grid; width: 28px; height: 28px; place-items: center; border: 1px solid color-mix(in srgb, var(--option-accent) 22%, var(--conv-line)); border-radius: 50%; background: color-mix(in srgb, var(--option-accent) 7%, var(--conv-card)); color: color-mix(in srgb, var(--option-accent) 78%, #29231e); font-size: 15px; font-weight: 700; }
 .conversation-page-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
 .conversation-eyebrow { margin: 0 0 8px; color: var(--conv-red); font-size: 12px; font-weight: 800; letter-spacing: .14em; line-height: 1.5; }
-.conversation-page-heading h2 { margin: 0; font-family: 'Fraunces', Georgia, serif; font-size: clamp(36px, 4.2vw, 52px); font-weight: 600; letter-spacing: -.045em; line-height: 1.1; }
+.conversation-page-heading h2 { margin: 0; font-family: var(--font-body); font-size: clamp(36px, 4.2vw, 52px); font-weight: 600; letter-spacing: -.045em; line-height: 1.1; }
 .conversation-page-heading h2 span { color: var(--conv-muted); font-family: 'Inter', sans-serif; font-size: .48em; font-weight: 550; letter-spacing: -.02em; vertical-align: .18em; }
 .conversation-lead { margin: 12px 0 0; color: var(--conv-muted); font-size: 16px; line-height: 1.65; }
 .conversation-lesson-meta { display: flex; flex-shrink: 0; gap: 8px; padding-bottom: 3px; }
@@ -61,7 +61,7 @@
 .conversation-image-caption { position: absolute; left: 16px; bottom: 16px; padding: 7px 11px; border: 1px solid #ffffff80; border-radius: 6px; background: #fffdf0e8; color: #3a332c; font-size: 12px; font-weight: 650; }
 .conversation-hero-copy { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: clamp(24px, 3vw, 40px); }
 .conversation-hero-kicker { margin: 0 0 10px; color: var(--conv-gold); font-size: 12px; font-weight: 800; letter-spacing: .14em; }
-.conversation-hero-copy h3 { max-width: 360px; margin: 0; font-family: 'Fraunces', Georgia, serif; font-size: clamp(25px, 2.5vw, 32px); letter-spacing: -.035em; line-height: 1.2; }
+.conversation-hero-copy h3 { max-width: 360px; margin: 0; font-family: var(--font-body); font-size: clamp(25px, 2.5vw, 32px); letter-spacing: -.035em; line-height: 1.2; }
 .conversation-hero-copy > p:not(.conversation-hero-kicker) { margin: 12px 0 20px; color: var(--conv-muted); font-size: 14px; line-height: 1.75; }
 .conversation-hero-phrase { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 1px solid var(--conv-line); border-radius: 10px; background: var(--conv-paper); }
 .conversation-phrase-stack { display: flex; flex: 1; flex-direction: column; align-items: flex-start; gap: 3px; }
@@ -72,7 +72,7 @@
 
 .conversation-content-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(280px, .8fr); align-items: start; gap: 24px; }
 .conversation-section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
-.conversation-section-heading h2, .conversation-vocabulary-heading h2 { margin: 0; font-family: 'Fraunces', Georgia, serif; font-size: 26px; letter-spacing: -.025em; line-height: 1.2; }
+.conversation-section-heading h2, .conversation-vocabulary-heading h2 { margin: 0; font-family: var(--font-body); font-size: 26px; letter-spacing: -.025em; line-height: 1.2; }
 .conversation-dialogue-guide { margin: 6px 0 0; color: var(--conv-muted); font-size: 13px; line-height: 1.45; }
 .conversation-jump-links { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
 .conversation-jump-links a { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 6px 10px; border: 1px solid var(--conv-line); border-radius: 999px; background: var(--conv-card); color: var(--conv-ink); font-size: 12px; font-weight: 650; text-decoration: none; }

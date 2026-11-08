@@ -394,7 +394,7 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
           text-align: center;
           color: var(--seal);
           margin-bottom: 5px;
-          font-family: 'Fraunces', serif;
+          font-family: var(--font-body);
         }
         .pinyin-subtitle {
           text-align: center;

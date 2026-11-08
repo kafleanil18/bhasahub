@@ -248,7 +248,7 @@
 }
 
 .dash-greeting {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 32px;
   font-weight: 700;
   margin-bottom: 8px;
@@ -343,7 +343,7 @@
 }
 
 .dash-section-header h2 {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 24px;
   font-weight: 600;
   color: var(--ink);
@@ -382,7 +382,7 @@
 }
 
 .dash-empty-card h3 {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 22px;
   font-weight: 600;
   margin-bottom: 10px;
@@ -475,7 +475,7 @@
 }
 
 .dash-card-title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 8px;
@@ -560,7 +560,7 @@
 }
 
 .analytics-hero-title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 30px;
   font-weight: 700;
   margin-bottom: 8px;
@@ -600,7 +600,7 @@
 }
 
 .tone-title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 32px;
   font-weight: 700;
   margin: 8px 0;
@@ -893,7 +893,7 @@
 }
 
 .result-score-num {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 26px;
   font-weight: 700;
   line-height: 1;
@@ -907,7 +907,7 @@
 }
 
 .result-details h3 {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 20px;
   font-weight: 600;
   color: var(--ink);

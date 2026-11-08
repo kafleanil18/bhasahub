@@ -75,7 +75,7 @@ function TestimonialModal({ user, onClose }) {
           position: fixed; inset: 0;
           background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(8px);
           display: flex; align-items: center; justify-content: center; z-index: 1000;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          font-family: var(--font-body);
           animation: tmFadeIn 0.25s ease-out;
         }
         .tm-card {

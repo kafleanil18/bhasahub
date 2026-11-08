@@ -106,7 +106,7 @@ function FeedbackModal({ user, onClose, liveClasses = false }) {
         }
 
         .fb-title {
-          font-family: 'Fraunces', serif;
+          font-family: var(--font-body);
           font-size: 1.6rem;
           font-weight: 700;
           color: var(--ink);

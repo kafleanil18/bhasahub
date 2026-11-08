@@ -230,7 +230,7 @@ function TeamManager({ onBack }) {
         }
 
         .tmg-header h1 {
-          font-family: 'Fraunces', Georgia, serif;
+          font-family: var(--font-body);
           font-size: 2.5rem;
           font-weight: 800;
           margin: 0;
@@ -302,7 +302,7 @@ function TeamManager({ onBack }) {
         }
 
         .tmg-name {
-          font-family: 'Fraunces', serif;
+          font-family: var(--font-body);
           font-size: 1.15rem;
           font-weight: 700;
         }

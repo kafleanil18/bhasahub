@@ -250,7 +250,7 @@ function AppContent() {
   </main>;
   const sidebar = isSuperAdmin ? <>
     <div className={`admin-sidebar-backdrop ${adminSidebarOpen ? 'is-visible' : ''}`} onClick={() => setAdminSidebarOpen(false)} aria-hidden="true" />
-    <AdminSidebar activeView={activeAdminView} onNavigate={view => navigate(adminPaths[view] || '/admin')} adminSidebarOpen={desktopAdminNavigation || adminSidebarOpen} isSuperAdmin={isSuperAdmin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} unreadFeedbackCount={unreadFeedbackCount} user={user} />
+    <AdminSidebar activeView={activeAdminView} onNavigate={view => navigate(adminPaths[view] || '/admin')} adminSidebarOpen={desktopAdminNavigation || adminSidebarOpen} isSuperAdmin={isSuperAdmin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} unreadFeedbackCount={unreadFeedbackCount} />
   </> : null;
 
   return <div className={isSuperAdmin && adminArea ? 'super-admin-layout' : undefined}>

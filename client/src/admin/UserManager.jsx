@@ -162,7 +162,7 @@ function UserManager({ initialSearch = '', onBack }) {
         }
 
         .um-metric-value {
-          font-family: 'Fraunces', serif;
+          font-family: var(--font-body);
           font-size: 26px;
           font-weight: 700;
           color: var(--ink);
@@ -297,7 +297,7 @@ function UserManager({ initialSearch = '', onBack }) {
         }
 
         .card-name-text {
-          font-family: 'Fraunces', serif;
+          font-family: var(--font-body);
           font-size: 16px;
           font-weight: 700;
           color: var(--ink);

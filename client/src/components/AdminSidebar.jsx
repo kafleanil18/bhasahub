@@ -1,10 +1,11 @@
-export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen, isSuperAdmin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, unreadFeedbackCount, user }) {
+export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen, isSuperAdmin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, unreadFeedbackCount }) {
   return (
     <aside
             id="super-admin-navigation"
             className={`admin-sidebar ${adminSidebarOpen ? 'is-open' : ''}`}
             aria-label="Super admin navigation"
             aria-hidden={!adminSidebarOpen}
+            inert={!adminSidebarOpen}
           >
             <div className="admin-sidebar-head">
               <div>
@@ -13,25 +14,10 @@ export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen,
               <button className="admin-sidebar-close" onClick={() => setAdminSidebarOpen(false)} aria-label="Close admin navigation">×</button>
             </div>
 
-            {/* Profile info block */}
-            <div className="admin-sidebar-profile">
-              <div className="admin-profile-avatar">
-                SA
-              </div>
-              <div className="admin-profile-details">
-                <span className="admin-profile-name">{user ? user.name : 'Administrator'}</span>
-                <span className="admin-profile-status">
-                  <span className="status-dot-blink"></span>
-                  Active Session
-                </span>
-              </div>
-            </div>
-
             <nav className="admin-sidebar-nav">
-              <div className="admin-sidebar-group admin-sidebar-group--overview">
-                <p className="admin-sidebar-group-title">Overview</p>
+              <div className="admin-sidebar-group">
               <button className={activeView === 'dashboard' ? 'is-current' : undefined} aria-current={activeView === 'dashboard' ? 'page' : undefined} onClick={() => onNavigate('dashboard')}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <rect x="3" y="3" width="7" height="9"></rect>
                   <rect x="14" y="3" width="7" height="5"></rect>
                   <rect x="14" y="12" width="7" height="9"></rect>
@@ -40,28 +26,30 @@ export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen,
                 Dashboard
               </button>
               <button className={activeView === 'audit' ? 'is-current' : undefined} aria-current={activeView === 'audit' ? 'page' : undefined} onClick={() => onNavigate('audit')}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <circle cx="12" cy="12" r="10"></circle>
                   <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
                 Activity & sign-ins
               </button>
               </div>
-              <div className="admin-sidebar-group admin-sidebar-group--learning">
+              <div className="admin-sidebar-group">
                 <p className="admin-sidebar-group-title">Learning content</p>
               <button className={activeView === 'courses' ? 'is-current' : undefined} aria-current={activeView === 'courses' ? 'page' : undefined} onClick={() => onNavigate('courses')}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
                   <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
                 </svg>
                 Manage courses
               </button>
               {isSuperAdmin && <button className={activeView === 'conversations' ? 'is-current' : undefined} aria-current={activeView === 'conversations' ? 'page' : undefined} onClick={() => onNavigate('conversations')}>
-                <span className="nav-svg-icon" aria-hidden="true">对</span>
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M14 14H7l-4 4V3h14v7"/><path d="M10 10h11v11l-3-3h-8z"/>
+                </svg>
                 Conversation lessons
               </button>}
               <button className={activeView === 'tests' ? 'is-current' : undefined} aria-current={activeView === 'tests' ? 'page' : undefined} onClick={() => onNavigate('tests')}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
                   <path d="m9 12 2 2 4-4"></path>
                 </svg>
@@ -69,7 +57,7 @@ export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen,
               </button>
               {isSuperAdmin && (
                 <button className={activeView === 'trace' ? 'is-current' : undefined} aria-current={activeView === 'trace' ? 'page' : undefined} onClick={() => onNavigate('trace')}>
-                  <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M12 20h9"></path>
                     <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
                   </svg>
@@ -77,7 +65,7 @@ export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen,
                 </button>
               )}
               <button className={activeView === 'pinyin' ? 'is-current' : undefined} aria-current={activeView === 'pinyin' ? 'page' : undefined} onClick={() => onNavigate('pinyin')}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
                   <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
                   <line x1="12" y1="19" x2="12" y2="23"></line>
@@ -86,14 +74,16 @@ export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen,
                 Pinyin voice studio
               </button>
               {isSuperAdmin && <button className={activeView === 'sentence-audio' ? 'is-current' : undefined} aria-current={activeView === 'sentence-audio' ? 'page' : undefined} onClick={() => onNavigate('sentence-audio')}>
-                <span className="nav-svg-icon" aria-hidden="true">句</span>
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M4 4h11v16H4zM7 8h5M7 12h5M7 16h3M18 8a6 6 0 0 1 0 8M20 5a10 10 0 0 1 0 14"/>
+                </svg>
                 Sentence audio
               </button>}
               </div>
-              <div className="admin-sidebar-group admin-sidebar-group--community">
+              <div className="admin-sidebar-group">
                 <p className="admin-sidebar-group-title">Community</p>
               <button className={activeView === 'testimonials' ? 'is-current' : undefined} aria-current={activeView === 'testimonials' ? 'page' : undefined} onClick={() => onNavigate('testimonials')}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                 </svg>
                 Testimonials
@@ -102,7 +92,7 @@ export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen,
                 )}
               </button>
               <button className={activeView === 'inbox' ? 'is-current' : undefined} aria-current={activeView === 'inbox' ? 'page' : undefined} onClick={() => onNavigate('inbox')}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
                   <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
                 </svg>
@@ -112,10 +102,10 @@ export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen,
                 )}
               </button>
               </div>
-              <div className="admin-sidebar-group admin-sidebar-group--access">
+              <div className="admin-sidebar-group">
                 <p className="admin-sidebar-group-title">People & access</p>
               <button className={activeView === 'admins' ? 'is-current' : undefined} aria-current={activeView === 'admins' ? 'page' : undefined} onClick={() => onNavigate('admins')}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                   <circle cx="9" cy="7" r="4"></circle>
                   <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -124,7 +114,7 @@ export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen,
                 Manage admins
               </button>
               <button className={activeView === 'subscriptions' ? 'is-current' : undefined} aria-current={activeView === 'subscriptions' ? 'page' : undefined} onClick={() => onNavigate('subscriptions')}>
-                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
                   <line x1="2" y1="10" x2="22" y2="10"></line>
                 </svg>
@@ -137,11 +127,11 @@ export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen,
               {isSuperAdmin && <div className="admin-sidebar-group">
                 <p className="admin-sidebar-group-title">Email & settings</p>
                 <button className={activeView === 'reminders' ? 'is-current' : undefined} aria-current={activeView === 'reminders' ? 'page' : undefined} onClick={() => onNavigate('reminders')}>
-                  <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+                  <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
                   Practice reminders
                 </button>
                 <button className={activeView === 'settings' ? 'is-current' : undefined} aria-current={activeView === 'settings' ? 'page' : undefined} onClick={() => onNavigate('settings')}>
-                  <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg>
+                  <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg>
                   Email settings
                 </button>
               </div>}

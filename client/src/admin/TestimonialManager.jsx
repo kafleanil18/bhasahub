@@ -85,7 +85,7 @@ function TestimonialManager({ onBack }) {
         }
 
         .tmm-title-container h1 {
-          font-family: 'Fraunces', Georgia, serif;
+          font-family: var(--font-body);
           font-size: 2.5rem;
           font-weight: 800;
           color: var(--ink, #2a2320);
@@ -151,7 +151,7 @@ function TestimonialManager({ onBack }) {
         }
 
         .tmm-metric-value {
-          font-family: 'Fraunces', serif;
+          font-family: var(--font-body);
           font-size: 1.5rem;
           font-weight: 700;
           color: var(--ink, #2a2320);
@@ -239,7 +239,7 @@ function TestimonialManager({ onBack }) {
         }
 
         .tmm-name {
-          font-family: 'Fraunces', serif;
+          font-family: var(--font-body);
           font-size: 1.15rem;
           font-weight: 750;
           color: var(--ink, #2a2320);
@@ -287,7 +287,7 @@ function TestimonialManager({ onBack }) {
         
         .tmm-text::before {
           content: '"';
-          font-family: Georgia, serif;
+          font-family: var(--font-body);
           font-size: 1.5rem;
           color: var(--line, #e6dcc6);
           position: absolute;

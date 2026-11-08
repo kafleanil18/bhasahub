@@ -43,7 +43,7 @@
 }
 
 .hsk-mock-title {
-  font-family: 'Playfair Display', Georgia, serif !important;
+  font-family: var(--font-body) !important;
   font-size: 44px;
   font-weight: 800;
   line-height: 1.1;
@@ -110,7 +110,7 @@
 }
 
 .login-form-header h3 {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 28px;
   color: var(--ink);
   margin-bottom: 4px;
@@ -416,12 +416,14 @@
 .signin-welcome-title {
   margin: 0;
   color: #fff;
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: var(--font-body);
   font-size: clamp(28px, 3vw, 40px);
   font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.025em;
 }
+
+#signin-welcome-title { font-family: 'Fraunces', Georgia, serif !important; }
 
 .signin-welcome-description {
   max-width: 320px;
@@ -454,7 +456,7 @@
 .signin-page .login-form-header h1 {
   margin: 0 0 8px;
   color: var(--ink);
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: var(--font-body);
   font-size: 36px;
   font-weight: 500;
   line-height: 1.2;
@@ -711,6 +713,17 @@
 .signin-page .login-form-panel > *:nth-child(4) { animation-delay: .24s; }
 .signin-page .login-form-panel > *:nth-child(5) { animation-delay: .32s; }
 
+/* Show the mobile sign-in page immediately, without entrance fades or slides. */
+@media (max-width: 767px) {
+  .signin-page,
+  .signin-page .login-layout,
+  .signin-page .login-welcome-panel,
+  .signin-page .login-form-panel > * {
+    animation: none !important;
+  }
+  .signin-page .login-layout { transition: none; }
+}
+
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .signin-page .submit-login-btn { transition: transform .2s ease, filter .2s ease, box-shadow .2s ease; }
   .signin-page .submit-login-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(var(--accent-red-rgb), .18); }
@@ -800,14 +813,14 @@
   border: 0;
   background: transparent;
   color: var(--ink);
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: var(--font-body);
   font-size: 21px;
   font-weight: 700;
   cursor: pointer;
 }
 
 .signin-page .login-brand > span:last-child > span { color: var(--seal); }
-.signin-page .login-brand-seal { display: grid; width: 36px; height: 36px; place-items: center; border: 1.5px solid var(--seal); border-radius: 10px 10px 10px 3px; color: var(--seal); font-family: 'Fraunces', Georgia, serif; font-size: 15px; }
+.signin-page .login-brand-seal { display: grid; width: 36px; height: 36px; place-items: center; border: 1.5px solid var(--seal); border-radius: 10px 10px 10px 3px; color: var(--seal); font-family: var(--font-body); font-size: 15px; }
 .signin-page .login-welcome-content { position: relative; z-index: 1; max-width: 600px; }
 .signin-page .signin-welcome-title { max-width: 660px; font-size: clamp(42px, 5.6vw, 76px); }
 .signin-page .login-form-panel { justify-content: center; padding: clamp(36px, 5vw, 80px); background: var(--signin-form-surface); }

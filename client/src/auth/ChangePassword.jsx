@@ -145,7 +145,7 @@ function ChangePassword({ onClose }) {
         }
 
         .cp-card h1 {
-          font-family: 'Fraunces', serif;
+          font-family: var(--font-body);
           font-size: 1.6rem;
           font-weight: 750;
           color: var(--ink, #2a2320);

@@ -391,7 +391,7 @@ function ProgressAnalytics({ user, onBack }) {
       {/* Smart Review Vocabulary Deck */}
       {data.weakestWords.length > 0 && (
         <div className="analytics-section" style={{ marginTop: 44 }}>
-          <h3 className="analytics-heading" style={{ fontSize: '20px', fontFamily: 'Fraunces, serif', marginBottom: 6 }}>
+          <h3 className="analytics-heading" style={{ fontSize: '20px', fontFamily: 'var(--font-body)', marginBottom: 6 }}>
             Vocabulary Focus Deck 🎴
           </h3>
           <p className="review-cards-intro">

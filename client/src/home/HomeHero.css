@@ -3,7 +3,7 @@
 .home-hero-intro { min-width: 0; padding-block: 20px; }
 .home-hero-eyebrow { display: flex; align-items: center; gap: 10px; color: var(--hero-red); font-size: clamp(12px, calc(10px + 0.4vw), 14px); font-weight: 650; letter-spacing: .08em; text-transform: uppercase; overflow-wrap: anywhere; }
 .home-hero-eyebrow > span { width: 6px; height: 6px; border-radius: 50%; background: var(--hero-red); flex-shrink: 0; }
-.home-hero h1 { overflow-wrap: anywhere; font-family: 'Fraunces',serif; font-size: clamp(44px,5.3vw,72px); font-weight: 550; line-height: 1.08; letter-spacing: -.055em; margin: 24px 0; text-wrap: balance; }
+.home-hero h1 { overflow-wrap: anywhere; font-family: 'Fraunces',serif !important; font-size: clamp(44px,5.3vw,72px); font-weight: 550; line-height: 1.08; letter-spacing: -.055em; margin: 24px 0; text-wrap: balance; }
 .home-hero h1 em { color: var(--hero-red); font-weight: inherit; }
 .home-hero-description { color: var(--hero-muted); font-size: 14px; line-height: 1.85; max-width: 420px; }
 .home-hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 20px; margin-top: 28px; }
@@ -38,6 +38,7 @@
 .home-page .home-hero.is-logged-out { position: relative; isolation: isolate; }
 .home-page .home-hero.is-logged-out::before { content: ''; position: absolute; inset: 0 auto 0 0; width: min(54%, 640px); background: url('/images/panda-ink-wash.png') left bottom / contain no-repeat; opacity: .38; pointer-events: none; }
 .home-page .home-hero.is-logged-out .home-hero-grid { position: relative; z-index: 1; }
+@media (max-width: 1023px) { .home-page .home-hero.is-logged-out::before { content: none; background-image: none; } }
 
 /* Practice studio: compact cards with generous illustrations. */
 .home-page .home-practice-directory { padding-block: 40px 48px; scroll-margin-top: 96px; }
@@ -93,7 +94,6 @@
  .home-hero-landscape { aspect-ratio: 1.65; }
  .home-hero.is-logged-out .home-hero-actions { gap: 6px; }
  .home-hero.is-logged-out .home-hero-actions > * { min-height: 56px; padding: 8px 4px; font-size: 13px; }
- .home-page .home-hero.is-logged-out::before { inset: auto auto 0 0; width: min(84%, 520px); height: 48%; opacity: .25; }
  .home-page .home-practice-directory { padding-block: 32px 40px; }
  .home-page .home-practice-directory .hero-practice-tools { padding: 24px 16px; }
  .home-page .home-practice-directory .hero-practice-tests { flex-direction: column; align-items: stretch; gap: 18px; padding: 24px 20px; }

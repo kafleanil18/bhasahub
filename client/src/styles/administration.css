@@ -184,7 +184,7 @@ fadeUp .8s ease;
 .admin-sidebar-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 80;
+  z-index: 200;
   background: rgba(42, 35, 32, 0.32);
   opacity: 0;
   pointer-events: none;
@@ -201,7 +201,7 @@ fadeUp .8s ease;
   top: 0;
   bottom: 0;
   left: 0;
-  z-index: 81;
+  z-index: 201;
   display: flex;
   flex-direction: column;
   width: min(320px, calc(100% - 44px));
@@ -219,7 +219,7 @@ fadeUp .8s ease;
 
 .admin-sidebar-head {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
   padding: 0 8px 20px;
@@ -236,16 +236,17 @@ fadeUp .8s ease;
 }
 
 .admin-sidebar h2 {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 24px;
   line-height: 1.2;
 }
 
 .admin-sidebar-close {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
   border: 1px solid var(--line);
-  border-radius: 50%;
+  border-radius: 6px;
   background: transparent;
   color: var(--ink);
   font-size: 24px;
@@ -432,7 +433,7 @@ fadeUp .8s ease;
   background: var(--rice);
 }
 
-/* ---------- Premium Super Admin Sidebar Override ---------- */
+/* ---------- Super admin navigation surface ---------- */
 .admin-sidebar-backdrop {
   background: rgba(26, 23, 20, 0.4) !important;
   backdrop-filter: blur(8px);
@@ -443,7 +444,7 @@ fadeUp .8s ease;
   background: var(--card) !important;
   border-right: 1px solid var(--line) !important;
   box-shadow: 16px 0 40px rgba(0, 0, 0, 0.08) !important;
-  padding: 24px 20px !important;
+  padding: 20px 16px !important;
   width: 300px !important;
   display: flex;
   flex-direction: column;
@@ -452,7 +453,7 @@ fadeUp .8s ease;
 .admin-sidebar-head {
   padding-bottom: 16px !important;
   border-bottom: 1px solid var(--line) !important;
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }
 
 .admin-sidebar-kicker {
@@ -465,83 +466,10 @@ fadeUp .8s ease;
 }
 
 .admin-sidebar h2 {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 26px;
   font-weight: 600;
   color: var(--ink);
-}
-
-/* Sidebar profile card */
-.admin-sidebar-profile {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--paper);
-  border: 1px solid var(--line);
-  padding: 12px 14px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);
-}
-
-.admin-profile-avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--seal) 0%, var(--gold) 100%);
-  color: #fff;
-  font-weight: 700;
-  font-size: clamp(12px, calc(13px + 0.4vw), 14px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 8px rgba(var(--accent-red-rgb), 0.15);
-}
-
-.admin-profile-details {
-  display: flex;
-  flex-direction: column;
-}
-
-.admin-profile-name {
-  font-size: 14px;
-  font-weight: 650;
-  color: var(--ink);
-  line-height: 1.2;
-}
-
-.admin-profile-status {
-  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
-  color: var(--jade);
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 2px;
-}
-
-.status-dot-blink {
-  width: 7px;
-  height: 7px;
-  background: var(--jade);
-  border-radius: 50%;
-  display: inline-block;
-  animation: pulse-green 2s infinite;
-}
-
-@keyframes pulse-green {
-  0% {
-    transform: scale(0.9);
-    box-shadow: 0 0 0 0 rgba(46, 107, 87, 0.5);
-  }
-  70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 6px rgba(46, 107, 87, 0);
-  }
-  100% {
-    transform: scale(0.9);
-    box-shadow: 0 0 0 0 rgba(46, 107, 87, 0);
-  }
 }
 
 /* Sidebar navigation links */
@@ -553,20 +481,19 @@ fadeUp .8s ease;
   display: flex !important;
   align-items: center;
   gap: 12px;
-  padding: 12px 14px !important;
-  border-radius: 10px !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
   background: transparent !important;
   color: var(--ink) !important;
   border-left: 3px solid transparent !important;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition: background-color 0.15s ease, color 0.15s ease !important;
   text-align: left;
 }
 
 .admin-sidebar-nav button:hover {
   background: var(--paper) !important;
-  color: var(--seal) !important;
-  border-left-color: var(--seal) !important;
-  transform: translateX(4px);
+  color: var(--ink) !important;
+  border-left-color: transparent !important;
 }
 
 .nav-svg-icon {
@@ -668,13 +595,15 @@ fadeUp .8s ease;
 
 .sidebar-badge {
   margin-left: auto;
-  background: var(--seal);
-  color: #fff;
-  font-size: clamp(12px, calc(11px + 0.4vw), 14px);
-  font-weight: 700;
-  padding: 2px 7px;
-  border-radius: 12px;
-  box-shadow: 0 2px 5px rgba(var(--accent-red-rgb), 0.25);
+  min-width: 24px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -735,7 +664,7 @@ fadeUp .8s ease;
 }
 
 .subs-stat-number {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 28px;
   font-weight: 700;
   color: var(--ink);
@@ -1158,7 +1087,7 @@ fadeUp .8s ease;
 }
 
 .lesson-card-title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 18px;
   font-weight: 700;
   color: var(--ink);
@@ -1386,63 +1315,36 @@ fadeUp .8s ease;
   flex-shrink: 0;
 }
 
-/* Superadmin navigation: grouped tools with a color cue for each area. */
+/* Neutral groups; the selected destination carries the red accent. */
 .super-admin-layout .admin-sidebar-nav {
   display: flex !important;
   flex-direction: column;
   gap: 16px !important;
-  padding: 20px 0 24px;
+  padding: 20px 0 8px;
 }
 
-.admin-sidebar-group {
-  --sidebar-accent: var(--seal);
-  display: grid;
-  gap: 4px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--line);
-}
-
-.admin-sidebar-group:last-child { border-bottom: 0; padding-bottom: 0; }
-.admin-sidebar-group--overview { --sidebar-accent: #8a5a23; }
-.admin-sidebar-group--learning { --sidebar-accent: #a92316; }
-.admin-sidebar-group--community { --sidebar-accent: #2e6b57; }
-.admin-sidebar-group--access { --sidebar-accent: #355f8a; }
-
+.admin-sidebar-group { display: grid; gap: 4px; }
 .admin-sidebar-group-title {
-  margin: 0 10px 5px;
-  color: var(--sidebar-accent);
+  margin: 0 12px 4px;
+  color: var(--mist);
   font-size: 12px;
-  font-weight: 750;
-  letter-spacing: .09em;
-  line-height: 1.4;
-  text-transform: uppercase;
+  font-weight: 600;
+  line-height: 1.5;
 }
-
-.admin-sidebar-group .nav-svg-icon { color: var(--sidebar-accent); }
-.admin-sidebar-group > button {
-  min-height: 44px;
-  font-size: 15px;
-}
-.admin-sidebar-group > button:hover {
-  background: color-mix(in srgb, var(--sidebar-accent) 9%, var(--card)) !important;
-  color: var(--sidebar-accent) !important;
-  border-left-color: var(--sidebar-accent) !important;
-}
-.admin-sidebar-group > button:hover .nav-svg-icon { color: var(--sidebar-accent); }
+.admin-sidebar-group .nav-svg-icon { width: 18px; height: 18px; color: var(--mist); }
+.admin-sidebar-group > button { min-height: 44px; font-size: 14px; line-height: 1.5; }
+.admin-sidebar-group > button:hover .nav-svg-icon { color: var(--mist); }
 .admin-sidebar-group > button.is-current,
 .admin-sidebar-group > button.is-current:hover {
-  background: color-mix(in srgb, var(--sidebar-accent) 13%, var(--card)) !important;
-  color: var(--sidebar-accent) !important;
-  border-left-color: var(--sidebar-accent) !important;
-  font-weight: 700;
+  background: color-mix(in srgb, var(--seal) 8%, var(--card)) !important;
+  color: var(--seal) !important;
+  border-left-color: var(--seal) !important;
+  font-weight: 600;
   transform: none;
 }
-.admin-sidebar-group > button.is-current .nav-svg-icon { color: var(--sidebar-accent); }
-
-:root.dark .admin-sidebar-group--overview { --sidebar-accent: #e4b972; }
-:root.dark .admin-sidebar-group--learning { --sidebar-accent: #ed8278; }
-:root.dark .admin-sidebar-group--community { --sidebar-accent: #84c7a8; }
-:root.dark .admin-sidebar-group--access { --sidebar-accent: #9abde4; }
+.admin-sidebar-group > button.is-current .nav-svg-icon { color: var(--seal); }
+.admin-sidebar :is(button, a):focus-visible { outline: 2px solid var(--seal); outline-offset: -2px; }
+@media (prefers-reduced-motion: reduce) { .admin-sidebar-nav button { transition: none !important; } }
 
 /* Warm paper header to match the superadmin control center. */
 .site-header.paper-header {

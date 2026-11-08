@@ -3,7 +3,7 @@
 .hsk-portal button { font: inherit; cursor: pointer; }
 .hsk-portal :is(button, input, audio):focus-visible { outline: 3px solid var(--seal); outline-offset: 4px; }
 .hsk-portal button:disabled { opacity: .5; cursor: default; }
-.hsk-portal h1 { font-family: 'Fraunces', serif; font-size: clamp(28px,4vw,42px); line-height: 1.2; color: var(--ink); margin: 0 0 16px; letter-spacing: -.035em; }
+.hsk-portal h1 { font-family: var(--font-body); font-size: clamp(28px,4vw,42px); line-height: 1.2; color: var(--ink); margin: 0 0 16px; letter-spacing: -.035em; }
 .hsk-portal h2 { font-family: inherit; font-weight: 700; font-size: 20px; line-height: 1.4; color: var(--ink); margin: 0 0 12px; }
 .hsk-portal .hsk-eyebrow { font-size: clamp(12px, calc(10px + 0.4vw), 14px); font-weight: 750; letter-spacing: .12em; text-transform: uppercase; margin: 0 0 12px; color: var(--seal); }
 .hsk-back { min-height: 44px; padding: 8px 0; margin-bottom: 16px; background: none; border: 0; font-size: clamp(12px, calc(12px + 0.4vw), 14px) !important; color: var(--mist); }

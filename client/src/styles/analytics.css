@@ -125,7 +125,7 @@
 }
 
 .metric-number {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 32px;
   font-weight: 700;
   color: var(--ink);
@@ -199,7 +199,7 @@
 }
 
 .chart-title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 18px;
   font-weight: 600;
   color: var(--ink);
@@ -552,7 +552,7 @@
 }
 
 .hanzi-hero-title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 34px;
   font-weight: 700;
   color: var(--ink);
@@ -667,7 +667,7 @@
 .analytics-hero::after { content: ''; position: absolute; width: 320px; height: 320px; right: -90px; bottom: -210px; border: 1px solid color-mix(in srgb, var(--jade) 20%, transparent); border-radius: 50%; box-shadow: 0 0 0 22px color-mix(in srgb, var(--jade) 4%, transparent), 0 0 0 48px color-mix(in srgb, var(--jade) 3%, transparent); pointer-events: none; }
 .analytics-hero-header, .analytics-hero-body { position: relative; z-index: 1; }
 .analytics-page .analytics-hero-header { margin-bottom: 25px; }
-.analytics-page .analytics-hero-title { color: var(--ink); font-family: 'Fraunces', serif; font-size: clamp(32px, 4vw, 46px); font-weight: 550; letter-spacing: -.045em; }
+.analytics-page .analytics-hero-title { color: var(--ink); font-family: var(--font-body); font-size: clamp(32px, 4vw, 46px); font-weight: 550; letter-spacing: -.045em; }
 .analytics-page .analytics-hero-subtext { color: var(--mist); font-size: clamp(16px, 1.5vw, 18px); max-width: 650px; line-height: 1.6; }
 .analytics-hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .analytics-hero .btn-back-pill, .analytics-hero .btn-export-csv { border-radius: 9px; color: var(--ink); background: var(--card); border-color: var(--line); }
@@ -681,7 +681,7 @@
 .analytics-metric-card .metric-label { font-size: 13px; line-height: 1.45; }
 .analytics-metric-card .metric-icon-wrap[style] { flex-basis: 54px; width: 54px; height: 54px; }
 .chart-card { border-radius: 14px; padding: 24px; box-shadow: none; }
-.chart-title { margin: 0; font-family: 'Fraunces', serif; font-size: 22px; font-weight: 550; letter-spacing: -.02em; }
+.chart-title { margin: 0; font-family: var(--font-body); font-size: 22px; font-weight: 550; letter-spacing: -.02em; }
 .analytics-section { padding: 22px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
 .analytics-heading { margin-top: 0 !important; }
 .analytics-inline-error { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin: -8px 0 20px; padding: 12px 16px; border: 1px solid color-mix(in srgb, var(--seal) 35%, var(--line)); border-radius: 10px; color: var(--ink); background: color-mix(in srgb, var(--seal) 6%, var(--card)); }
@@ -700,7 +700,7 @@
 .analytics-course-progress { margin: 0 0 26px; }
 .analytics-course-progress-heading { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 14px; }
 .analytics-course-progress-heading .dash-eyebrow { color: var(--seal); font-size: 11px; font-weight: 750; letter-spacing: .12em; }
-.analytics-course-progress-heading h2 { margin: 4px 0; font-family: 'Fraunces', serif; font-size: clamp(23px, 2.4vw, 30px); font-weight: 550; letter-spacing: -.035em; }
+.analytics-course-progress-heading h2 { margin: 4px 0; font-family: var(--font-body); font-size: clamp(23px, 2.4vw, 30px); font-weight: 550; letter-spacing: -.035em; }
 .analytics-course-progress-heading p { margin: 0; color: var(--mist); }
 .analytics-course-progress-symbol { display: grid; place-items: center; flex: 0 0 42px; height: 42px; border-radius: 12px; background: color-mix(in srgb, var(--jade) 11%, var(--card)); color: var(--jade); font-size: 22px; font-weight: 700; }
 .analytics-course-progress-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 14px; }
@@ -733,7 +733,7 @@
 .tab-btn-pill.active:hover { color: #fff; background: var(--accent-red); }
 .vocab-review-card { border-radius: 10px; box-shadow: none; }
 .vocab-review-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -16px rgba(42,35,32,.32); }
-.vocab-word-text { font-family: 'Fraunces', serif; }
+.vocab-word-text { font-family: var(--font-body); }
 .dark .analytics-page .analytics-hero { background: var(--card); border-color: var(--line); }
 @media (max-width: 1000px) { .analytics-overview-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) {
@@ -773,7 +773,7 @@
 }
 
 .hanzi-modal-header h2 {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 20px;
   font-weight: 700;
   color: var(--ink);

@@ -1,6 +1,7 @@
 :root {
   --font-body: 'Inter', sans-serif;
-  --font-display: 'Fraunces', Georgia, serif;
+  --font-display: var(--font-body);
+  --font-chinese: 'Noto Serif SC', serif;
   --text-body: 1rem;
   --text-meta: .875rem;
   --text-caption: .75rem;
@@ -253,7 +254,7 @@ header .container {
 }
 
 .logo {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 22px;
   font-weight: 600;
   background: none;
@@ -354,7 +355,7 @@ header .container {
 
 /* Titles */
 .hero-title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 44px;
   font-weight: 750;
   line-height: 1.18;
@@ -748,7 +749,7 @@ header .container {
 }
 
 .features-intro .section-title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 34px;
   font-weight: 700;
   color: var(--ink);
@@ -819,7 +820,7 @@ header .container {
 }
 
 .feature-card h3 {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 21px;
   font-weight: 650;
   color: var(--ink);
@@ -1191,7 +1192,7 @@ header .container {
 }
 
 .section-title {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 30px;
   font-weight: 600;
   margin-bottom: 28px;
@@ -1225,7 +1226,7 @@ header .container {
 }
 
 .card h2 {
-  font-family: 'Fraunces', serif;
+  font-family: var(--font-body);
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 8px;

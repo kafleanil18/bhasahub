@@ -1,0 +1,153 @@
+/* Shared UI typography and rhythm. Loaded after the base theme; scoped selectors
+   keep lazy route styles and legacy embedded styles on the same scale. */
+:root {
+  font-size: 100%;
+  --text-page-title: 1.75rem;
+  --text-section-title: 1.125rem;
+  --text-card-title: 1rem;
+  --text-body: .875rem;
+  --text-reading: 1rem;
+  --text-meta: .8125rem;
+  --text-caption: .75rem;
+  --space-12: 3rem;
+  --page-width: 1200px;
+  --page-gutter: 24px;
+  --page-start: 32px;
+  --page-end: 48px;
+  --section-gap: var(--space-6);
+  --panel-padding: var(--space-6);
+  --grid-gap: var(--space-4);
+  --field-gap: var(--space-4);
+}
+
+body { font-family: var(--font-body); font-size: var(--text-body); line-height: 1.6; }
+#root :where(button, input, select, textarea) { font-family: var(--font-body); }
+
+/* Heading sizes follow meaning, so management pages and learning pages share
+   the same hierarchy. Chinese glyphs, exercise prompts and paper images retain
+   their component-specific teaching sizes. */
+#root :where(h1:not(#home-hero-title), h2:not(#signin-welcome-title), h3, h4, h5, h6) {
+  font-family: var(--font-body) !important;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: -.015em;
+  overflow-wrap: anywhere;
+}
+#root :where(h1:not(#home-hero-title)) { font-size: var(--text-page-title) !important; line-height: 1.25; }
+#root :where(h2:not(#signin-welcome-title)) { font-size: var(--text-section-title) !important; line-height: 1.5; }
+#root :where(h3) { font-size: var(--text-card-title) !important; line-height: 1.5; }
+#root :where(h4, h5, h6) { font-size: var(--text-body) !important; line-height: 1.5; }
+#root :where(.brand-title, .logo, .login-brand, .footer-brand-mark) { font-family: var(--font-body) !important; }
+#root .site-header .container { max-width: var(--page-width); padding-inline: var(--page-gutter); }
+#root .site-header :where(.nav-link, .user-menu-trigger) { font-size: var(--text-body); }
+#root :where(
+  .home-hero-description, .hero-subtitle, .section-sublead, .course-card-desc,
+  .learning-description, .learning-course-description, .overview-description
+) { font-size: var(--text-body); line-height: 1.6; }
+
+/* Route gutters and page spacing. The exam PDF workspace keeps its wider layout. */
+#root .site-content > :where(
+  .container:not(.test-pdf-layout), .sentence-page, .listening-page,
+  .pinyin-table-page, .hsk-portal, .tmm-dashboard, .tmg-dashboard
+) {
+  width: 100%;
+  max-width: var(--page-width);
+  margin-inline: auto;
+  padding: var(--page-start) var(--page-gutter) var(--page-end) !important;
+}
+
+/* Header-to-content spacing is shared across every page family. */
+#root :where(
+  .access-page-heading, .email-heading, .test-studio-heading, .um-header-section,
+  .tmm-header, .tmg-header, .audit-page-heading, .sentence-heading,
+  .listening-heading, .conversation-page-heading, .conversation-picker-heading,
+  .hanzi-header, .analytics-header-section, .lesson-study-heading
+) { margin-block: 0 var(--section-gap); }
+#root :where(
+  .access-page-heading, .email-heading, .test-studio-heading, .um-header-section,
+  .tmm-header, .tmg-header, .audit-page-heading, .sentence-heading,
+  .listening-heading, .conversation-page-heading, .conversation-picker-heading,
+  .hanzi-header, .analytics-header-section, .lesson-study-heading
+) :where(h1, h2) { margin-block: 0 var(--space-2); }
+#root :where(
+  .access-page-heading, .email-heading, .test-studio-heading, .um-header-section,
+  .tmm-header, .tmg-header, .audit-page-heading, .sentence-heading,
+  .listening-heading, .conversation-page-heading, .conversation-picker-heading,
+  .hanzi-header, .analytics-header-section, .lesson-study-heading
+) :where(p) { line-height: 1.6; }
+
+/* Page-level panels and libraries share padding, while their internal controls,
+   canvases, audio players and media keep the dimensions required by each tool. */
+#root :where(
+  .studio-hero, .studio-library, .studio-editor, .overview-hero,
+  .overview-lesson-library, .learning-welcome, .learning-course-library,
+  .admin-form, .admin-list, .email-form, .email-guide,
+  .sentence-card, .listening-card, .number-voice-settings,
+  .analytics-section, .analytics-hero, .conversation-hero-copy,
+  .conversation-editor-section, .conversation-manager-lessons,
+  .tmm-card, .tmg-card, .access-dialog, .reminder-review
+) { padding: var(--panel-padding); }
+#root :where(
+  .studio-hero, .overview-hero, .learning-welcome, .analytics-hero,
+  .sentence-heading, .listening-heading, .conversation-manager-hero
+) { margin-bottom: var(--section-gap); }
+#root :where(
+  .studio-layout, .email-layout, .conversation-manager-layout,
+  .conversation-content-grid, .admin-grid, .course-cards,
+  .learning-course-grid, .overview-lesson-grid, .sentence-topics,
+  .analytics-course-progress-grid, .tmm-metrics-grid, .um-metrics-grid,
+  .admin-directory-deck, .tmm-feed
+) { gap: var(--grid-gap); }
+#root :where(
+  .learning-overview, .access-overview, .studio-summary, .tmm-metrics-grid,
+  .um-metrics-grid, .analytics-overview-grid, .number-voice-settings,
+  .measure-voice-label, .learning-course-filters, .overview-lesson-filters
+) { margin-bottom: var(--section-gap); }
+#root :where(.learning-library-heading, .overview-library-heading, .studio-library-heading) {
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+/* Form rhythm is independent of input type; checkboxes, radio buttons and
+   pronunciation/character choices retain their existing interaction layouts. */
+#root :where(.login-form, .register-form, .access-grant-form, .email-form fieldset) { gap: var(--field-gap); }
+#root :where(.form-group, .studio-field, .email-field) { margin-bottom: var(--field-gap); }
+#root :where(.login-form, .register-form) > .form-group { margin-bottom: 0; }
+#root :where(.form-group, .studio-field, .email-field) > label { margin-bottom: var(--space-2); }
+#root :where(.login-form-panel, .register-form-panel) { padding: var(--panel-padding); }
+#root :where(.login-form-header, .register-form-header) { margin-bottom: var(--section-gap); }
+#root :where(.login-form-header, .register-form-header) :where(h1, h2) { margin-bottom: var(--space-2); }
+#root :where(.modal-overlay, .cp-modal-overlay) :where(.modal, .modal-content, .cp-modal) { padding: var(--panel-padding); }
+
+/* Public sections use the same gutters and heading scale, with a larger outer
+   section interval to preserve the homepage's full-width artwork and backgrounds. */
+#root .home-page .container { max-width: var(--page-width); padding-inline: var(--page-gutter); }
+#root .home-page :where(.home-hero, .hero, .courses-section, .features, .worlds, .team-section, .testimonials, .home-practice-directory) {
+  padding-block: var(--space-12);
+}
+#root .home-page :where(.home-hero-grid, .hero-grid) { gap: var(--section-gap); }
+#root .home-page :where(.hero-practice-tools, .course-card-body, .feature-card, .testimonial-card) { padding: var(--panel-padding); }
+#root .home-page :where(.home-hero-intro) { padding-block: 0; }
+#root .home-page :where(.home-hero h1, .hero-title) { margin-block: var(--space-4); }
+#root .home-page :where(.home-hero-actions, .hero-actions, .level-pills) { gap: var(--space-3); margin-block: var(--section-gap) 0; }
+#root .home-page :where(.level-pills) { margin-bottom: var(--section-gap); }
+#root .home-page :where(.section-header-center, .features-intro) { margin-bottom: var(--section-gap); }
+#root .home-page :where(.section-title, .student-review-title) { margin-top: 0; letter-spacing: -.015em; }
+#root .home-page :where(.footer-main) { gap: var(--section-gap); padding-block: var(--space-8); }
+
+/* Long-form explanations remain comfortable to read; specialized Chinese text
+   retains its serif face and larger sizes for tone, stroke and character work. */
+#root :where(.grammar-explanation-text, .gs-explanation, .lesson-dialogue, .vocab-meaning) {
+  font-size: var(--text-reading);
+  line-height: 1.75;
+}
+#root :where(.zh, [lang='zh'], [lang='zh-CN'], .gs-tile) { font-family: var(--font-chinese) !important; }
+#root .measure-reference h2 { font-family: var(--font-chinese) !important; font-size: 30px !important; }
+
+@media (max-width: 767px) {
+  :root {
+    --page-gutter: 16px;
+    --page-start: 24px;
+    --panel-padding: var(--space-4);
+  }
+}

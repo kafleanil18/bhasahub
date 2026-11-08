@@ -8,7 +8,7 @@ export function RequireSession({ user, roles }) {
   return <Outlet />;
 }
 
-export function PublicLayout() { return <Outlet />; }
-export function StudentLayout() { return <div className="student-layout"><Outlet /></div>; }
-export function AdminLayout({ sidebar }) { return <>{sidebar}<div className="admin-route-content"><Outlet /></div></>; }
-export function AuthLayout() { return <Outlet />; }
+export function PublicLayout() { return <div className="public-layout site-content"><Outlet /></div>; }
+export function StudentLayout() { return <div className="student-layout site-content"><Outlet /></div>; }
+export function AdminLayout({ sidebar }) { return <>{sidebar}<div className="admin-route-content site-content"><Outlet /></div></>; }
+export function AuthLayout() { return <div className="auth-layout"><Outlet /></div>; }

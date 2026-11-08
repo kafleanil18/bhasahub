@@ -62,14 +62,12 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
     setLoading(false);
   };
 
-  // Remember only the email; passwords belong in the browser's password manager.
-  useEffect(() => {
-    const savedEmail = loadRememberedEmail(localStorage);
-    if (savedEmail) {
-      setEmail(savedEmail);
-      setRememberMe(true);
-    }
-  }, []);
+  // Open with a blank field; use a saved email only after an explicit choice.
+  const handleRememberEmail = (checked) => {
+    setRememberMe(checked);
+    if (checked && !email) setEmail(loadRememberedEmail(localStorage));
+    if (!checked) saveRememberedEmail(localStorage, '');
+  };
 
   return (
     <section className="login signin-page" aria-labelledby={verificationRequired ? 'signin-title' : undefined} aria-label={verificationRequired ? undefined : 'Sign in'}>
@@ -82,7 +80,7 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
             <span>Xiao <span>Ao</span></span>
           </button>
           <div className="login-welcome-content">
-            <h2 className="signin-welcome-title">We guarantee<br />your HSK exam.</h2>
+            <h2 id="signin-welcome-title" className="signin-welcome-title">We guarantee<br />your HSK exam.</h2>
             <div className="signin-pass-badge" aria-label="Pass with confidence">
               <span>PASS</span>
               <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -192,7 +190,7 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
                 <input
                   type="checkbox"
                   checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
+                  onChange={(e) => handleRememberEmail(e.target.checked)}
                 />
                 <span>Remember my email</span>
               </label>
