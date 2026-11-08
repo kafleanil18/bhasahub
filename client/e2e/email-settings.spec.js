@@ -2,6 +2,8 @@ import { test, expect } from '@playwright/test';
 
 async function prepare(page, role = 'superadmin') {
   await page.addInitScript(role => {
+    if (sessionStorage.getItem('email-settings-seeded')) return;
+    sessionStorage.setItem('email-settings-seeded', 'true');
     localStorage.setItem('token', 'fixture-token');
     localStorage.setItem('user', JSON.stringify({ id: 'owner', name: 'Owner', role }));
   }, role);
@@ -72,7 +74,7 @@ test('ordinary admins and students cannot open email settings', async ({ page })
   await page.goto('/admin/settings/email');
   await expect(page).toHaveURL(/\/$/);
   await expect(page.getByRole('heading', { name: 'Email settings', exact: true })).toHaveCount(0);
-  await page.evaluate(() => localStorage.setItem('user', JSON.stringify({ id: 'student', role: 'student' })));
+  await page.evaluate(() => localStorage.setItem('user', JSON.stringify({ id: 'student', name: 'Student', email: 'student@example.com', role: 'student' })));
   await page.goto('/admin/settings/email');
   await expect(page).toHaveURL(/\/$/);
 });
@@ -95,4 +97,26 @@ test('email settings fit phones and desktops and support keyboard input', async 
     if ([320, 1440].includes(width)) await page.screenshot({ path: testInfo.outputPath(`email-settings-${width}.png`), fullPage: true });
   }
   expect(errors).toEqual([]);
+});
+
+test('a stale session shows the actual access problem and offers a fresh sign-in', async ({ page }) => {
+  await prepare(page);
+  await page.route('**/api/settings/email', route => route.fulfill({ status: 403, json: { error: 'Super admin access required' } }));
+  await page.goto('/admin/settings/email');
+  await expect(page.getByRole('alert')).toContainText('This account does not have super admin access');
+  await page.getByRole('button', { name: 'Sign in again', exact: true }).click();
+  await expect(page).toHaveURL(/\/sign-in\?next=/);
+  expect(await page.evaluate(() => localStorage.getItem('token'))).toBeNull();
+});
+
+test('expired authentication and server failures remain distinguishable', async ({ page }) => {
+  await prepare(page);
+  let status = 401;
+  await page.route('**/api/settings/email', route => route.fulfill({ status, contentType: 'text/html', body: 'Unavailable' }));
+  await page.goto('/admin/settings/email');
+  await expect(page.getByRole('alert')).toContainText('Your session expired or is invalid');
+  status = 502;
+  await page.getByRole('button', { name: 'Try again', exact: true }).click();
+  await expect(page.getByRole('alert')).toContainText('HTTP 502');
+  await expect(page.getByRole('button', { name: 'Sign in again', exact: true })).toHaveCount(0);
 });

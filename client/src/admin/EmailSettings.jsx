@@ -5,8 +5,14 @@ import './EmailSettings.css';
 const API = `${window.API_BASE_URL}/api/settings/email`;
 const headers = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json' });
 async function readResponse(response) {
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error || 'Could not complete the request. Please try again.');
+  const data = await response.json().catch(() => null);
+  if (!response.ok) {
+    const message = response.status === 401 ? 'Your session expired or is invalid. Sign in again to load email settings.'
+      : response.status === 403 ? 'This account does not have super admin access. Sign in with your super admin account.'
+        : data?.error || `Could not load email settings (HTTP ${response.status}). Please try again.`;
+    throw Object.assign(new Error(message), { status: response.status });
+  }
+  if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('The email settings service returned an unexpected response. Please try again.');
   return data;
 }
 
@@ -19,14 +25,19 @@ export default function EmailSettings({ onBack }) {
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const [authError, setAuthError] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
-    setLoading(true); setError('');
-    fetch(API, { headers: headers(), signal: AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]) })
+    setLoading(true); setError(''); setAuthError(false);
+    fetch(API, { headers: headers(), signal: AbortSignal.any([controller.signal, AbortSignal.timeout(45000)]) })
       .then(readResponse)
       .then(data => { if (!controller.signal.aborted) { setSaved(data); setDraft(data); } })
-      .catch(() => { if (!controller.signal.aborted) setError('Could not load email settings. Please try again.'); })
+      .catch(err => {
+        if (controller.signal.aborted) return;
+        setAuthError(err.status === 401 || err.status === 403);
+        setError(err.name === 'TimeoutError' ? 'The email settings service took too long to respond. It may be starting up. Please try again.' : err instanceof TypeError ? 'Could not reach the email settings service. Check your connection and try again.' : err.message);
+      })
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
   }, [retry]);
@@ -53,7 +64,7 @@ export default function EmailSettings({ onBack }) {
   return <section className="container email-settings" aria-labelledby="email-settings-title">
     <button className="email-back" disabled={Boolean(busy)} onClick={onBack}>← Back to control center</button>
     <div className="email-heading"><div><h1 id="email-settings-title">Email settings</h1><p>Connect Google to send account emails and Chinese practice reminders.</p></div>{saved && <span className="email-status">{saved.enabled ? 'Google SMTP enabled' : 'Google SMTP disabled'}</span>}</div>
-    {error && <div className="email-message email-error" role="alert">{error}</div>}
+    {error && <div className="email-message email-error" role="alert">{error}{authError && <p><button className="email-button" onClick={() => { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.assign('/sign-in?next=%2Fadmin%2Fsettings%2Femail'); }}>Sign in again</button></p>}</div>}
     {notice && <div className="email-message" role="status">{notice}</div>}
     {loading ? <p role="status" className="email-loading">Loading email settings…</p> : !draft ? <button className="email-button" onClick={() => setRetry(value => value + 1)}>Try again</button> : <div className="email-layout">
       <form className="email-form" onSubmit={event => { event.preventDefault(); run('save'); }}>
