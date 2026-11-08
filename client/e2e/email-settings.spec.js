@@ -120,3 +120,24 @@ test('expired authentication and server failures remain distinguishable', async 
   await expect(page.getByRole('alert')).toContainText('HTTP 502');
   await expect(page.getByRole('button', { name: 'Sign in again', exact: true })).toHaveCount(0);
 });
+
+test('a connection failure can save a new setup as an inactive draft across reloads', async ({ page }) => {
+  await prepare(page);
+  let saved = { enabled: false, email: '', senderName: 'Xiao Ao', port: 465, hasAppPassword: false, connectionError: '' };
+  await page.route('**/api/settings/email', async route => {
+    if (route.request().method() === 'PUT') saved = { ...saved, email: 'owner@gmail.com', hasAppPassword: true, connectionError: 'Settings saved, but Google SMTP could not be reached or verified. SMTP remains disabled.' };
+    await route.fulfill({ json: saved });
+  });
+  await page.goto('/admin/settings/email');
+  await page.getByLabel('Google email address', { exact: true }).fill('owner@gmail.com');
+  await page.getByLabel('Google app password', { exact: true }).fill('abcdefghijklmnop');
+  await page.getByRole('switch', { name: /Enable Google SMTP/ }).check();
+  await page.getByRole('button', { name: 'Save settings', exact: true }).click();
+  await expect(page.getByRole('alert')).toContainText('Settings saved');
+  await expect(page.getByRole('switch', { name: /Enable Google SMTP/ })).not.toBeChecked();
+  await page.reload();
+  await expect(page.getByRole('alert')).toContainText('SMTP remains disabled');
+  await expect(page.getByLabel('Google email address', { exact: true })).toHaveValue('owner@gmail.com');
+  await expect(page.getByLabel('Google app password', { exact: true })).toHaveValue('');
+  await expect(page.getByText('A password is saved.', { exact: false })).toBeVisible();
+});

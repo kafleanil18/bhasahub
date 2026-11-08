@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const emailSettingsSchema = new mongoose.Schema({
   key: { type: String, default: 'google-smtp', unique: true },
   enabled: { type: Boolean, default: false },
+  connectionError: { type: String, default: '' },
   email: { type: String, default: '' },
   senderName: { type: String, default: 'Xiao Ao' },
   port: { type: Number, enum: [465, 587], default: 465 },

@@ -25,8 +25,19 @@ function fail(res, error) {
 
 router.put('/', async (req, res) => {
   try {
-    const draft = settings.prepareSettings(req.body, await settings.readSettings());
-    if (draft.enabled) await nodemailer.createTransport(settings.googleDelivery(draft).options).verify();
+    const current = await settings.readSettings();
+    const draft = { ...settings.prepareSettings(req.body, current), connectionError: '' };
+    if (draft.enabled) {
+      try { await nodemailer.createTransport(settings.googleDelivery(draft).options).verify(); }
+      catch (error) {
+        // Preserve a working configuration, but retain a new setup as an inactive draft.
+        if (current?.enabled) throw error;
+        draft.enabled = false;
+        draft.connectionError = error.code === 'EAUTH'
+          ? 'Settings saved, but Google rejected authentication. Check your Google email and app password, then enable SMTP and save again.'
+          : 'Settings saved, but Google SMTP could not be reached or verified. SMTP remains disabled. Check that your hosting plan allows outbound ports 465 or 587, then enable SMTP and save again.';
+      }
+    }
     await EmailSettings.findOneAndUpdate({ key: 'google-smtp' }, { $set: draft }, { upsert: true, new: true, runValidators: true });
     logActivity(req, { action: 'update', resourceType: 'email-settings', label: `Google SMTP ${draft.enabled ? 'enabled' : 'disabled'}` });
     res.json(settings.publicSettings(draft));

@@ -111,6 +111,21 @@ test('failed verification preserves active settings and hides provider details',
   assert.equal(EmailSettings.findOneAndUpdate.mock.callCount(), 0);
 });
 
+test('failed verification of a new setup saves encrypted credentials while keeping SMTP disabled', async () => {
+  nodemailer.createTransport.mock.restore();
+  mock.method(nodemailer, 'createTransport', () => ({ verify: async () => { const error = new Error('private SMTP response'); error.code = 'ETIMEDOUT'; throw error; } }));
+  const res = response();
+  await handler('put')({ body: draft }, res);
+  assert.equal(res.code, 200);
+  assert.equal(stored.enabled, false);
+  assert.equal(settings.decryptPassword(stored.appPasswordEncrypted), 'abcdefghijklmnop');
+  assert.equal(res.body.hasAppPassword, true);
+  assert.match(res.body.connectionError, /Settings saved/);
+  assert.equal(JSON.stringify(res.body).includes('private SMTP response'), false);
+  const loaded = response(); await handler('get')({}, loaded);
+  assert.equal(loaded.body.connectionError, res.body.connectionError);
+});
+
 test('Google SMTP can be disabled without contacting Google or decrypting credentials', async () => {
   stored = { ...settings.prepareSettings(draft, null), appPasswordEncrypted: 'old-key.invalid.secret' };
   const res = response();

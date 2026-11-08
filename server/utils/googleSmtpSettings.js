@@ -30,6 +30,7 @@ function readSettings() {
 function publicSettings(settings) {
   return {
     enabled: Boolean(settings?.enabled),
+    connectionError: settings?.connectionError || '',
     email: settings?.email || '',
     senderName: settings?.senderName ?? 'Xiao Ao',
     port: settings?.port || 465,

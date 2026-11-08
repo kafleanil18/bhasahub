@@ -10,6 +10,8 @@ Encryption uses `EMAIL_SETTINGS_KEY`, falling back to `JWT_SECRET`. Keep the cho
 
 The command-line connection check below tests environment configuration. Use the admin page to test saved Google settings.
 
+If a new Google setup fails its connection check during Save, its credentials are still encrypted and saved as a disabled draft. The page preserves a connection warning after reload. Resolve the authentication or hosting connection problem, enable the switch, and save again; a blank password keeps the saved credential. A failed change to an already enabled setup preserves the previous active configuration.
+
 Add your provider's settings to `server/.env` for local development, or to your hosting service's environment variables:
 
 ```dotenv

@@ -32,7 +32,7 @@ export default function EmailSettings({ onBack }) {
     setLoading(true); setError(''); setAuthError(false);
     fetch(API, { headers: headers(), signal: AbortSignal.any([controller.signal, AbortSignal.timeout(45000)]) })
       .then(readResponse)
-      .then(data => { if (!controller.signal.aborted) { setSaved(data); setDraft(data); } })
+      .then(data => { if (!controller.signal.aborted) { setSaved(data); setDraft(data); setError(data.connectionError || ''); } })
       .catch(err => {
         if (controller.signal.aborted) return;
         setAuthError(err.status === 401 || err.status === 403);
@@ -55,6 +55,7 @@ export default function EmailSettings({ onBack }) {
       }).then(readResponse);
       if (action === 'save') {
         setSaved(data); setDraft(data); setAppPassword('');
+        setError(data.connectionError || '');
         setNotice(data.enabled ? 'Google SMTP is enabled. Verification and password-reset emails will use this account.' : 'Settings saved. Google SMTP is disabled.');
       } else setNotice(data.message);
     } catch (err) { setError(err.name === 'TimeoutError' ? 'The connection took too long. Please try again.' : err.message || 'Could not reach the server. Please try again.'); }
@@ -77,7 +78,7 @@ export default function EmailSettings({ onBack }) {
           <div className="email-field"><label htmlFor="smtp-port">Secure connection</label><select id="smtp-port" value={draft.port} onChange={event => update('port', Number(event.target.value))}><option value={465}>SSL/TLS · Port 465</option><option value={587}>STARTTLS · Port 587</option></select><small>Server: smtp.gmail.com. Both options use encryption.</small></div>
           <div className="email-actions"><button className="email-button email-primary" type="submit">{busy === 'save' ? draft.enabled ? 'Verifying and saving…' : 'Saving…' : 'Save settings'}</button><button className="email-button" type="button" onClick={() => run('test')}>{busy === 'test' ? 'Testing connection…' : 'Test connection'}</button>{dirty && <span className="email-unsaved">Unsaved changes</span>}</div>
         </fieldset>
-        <p className="email-footnote">Connection tests do not send email or save changes. Enabling Google SMTP verifies your credentials before saving.</p>
+        <p className="email-footnote">Connection tests do not send email or save changes. If a new setup cannot connect, its settings are saved securely with SMTP disabled so you can retry without re-entering the password.</p>
         <p className="email-footnote"><Link to="/admin/reminders">Send practice reminders to subscribed students →</Link></p>
       </form>
       <aside className="email-guide" aria-labelledby="google-setup-title"><h2 id="google-setup-title">Set up your Google account</h2><ol><li>Turn on 2-Step Verification for the Google account you want to send from.</li><li><a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener noreferrer">Create an app password</a> for this system.</li><li>Enter the email address and app password here, enable Google SMTP, and save.</li></ol><p>Your app password is encrypted when saved and is never shown again.</p><p>If app passwords are unavailable, check your Google account or Workspace policies.</p><a href="https://support.google.com/accounts/answer/185833" target="_blank" rel="noopener noreferrer">Google’s app password guide ↗</a><hr /><p>Changes apply immediately. Turning Google SMTP off restores the server’s default email service, if configured.</p></aside>
