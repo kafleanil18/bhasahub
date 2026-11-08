@@ -12,6 +12,7 @@ async function prepare(page, role = 'superadmin') {
   let fail = false;
   await page.route('**/api/**', async route => {
     const path = new URL(route.request().url()).pathname.replace('/api', '');
+    if (path === '/settings/email-api') return route.fulfill({ json: { provider: 'resend', enabled: false, senderEmail: '', senderName: 'Xiao Ao', hasApiKey: false, connectionError: '' } });
     if (path.startsWith('/settings/email')) {
       const method = route.request().method();
       if (method === 'GET') return route.fulfill({ json: saved });

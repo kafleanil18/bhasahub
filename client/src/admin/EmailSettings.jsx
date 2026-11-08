@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import EmailApiSettings from './EmailApiSettings';
 import './EmailSettings.css';
 
 const API = `${window.API_BASE_URL}/api/settings/email`;
@@ -64,7 +65,9 @@ export default function EmailSettings({ onBack }) {
 
   return <section className="container email-settings" aria-labelledby="email-settings-title">
     <button className="email-back" disabled={Boolean(busy)} onClick={onBack}>← Back to control center</button>
-    <div className="email-heading"><div><h1 id="email-settings-title">Email settings</h1><p>Connect Google to send account emails and Chinese practice reminders.</p></div>{saved && <span className="email-status">{saved.enabled ? 'Google SMTP enabled' : 'Google SMTP disabled'}</span>}</div>
+    <div className="email-heading"><div><h1 id="email-settings-title">Email settings</h1><p>Choose HTTPS email delivery for free hosting, or configure Google SMTP below.</p></div></div>
+    <EmailApiSettings />
+    <div className="email-heading"><h2>Google SMTP (optional)</h2>{saved && <span className="email-status">{saved.enabled ? 'Google SMTP enabled' : 'Google SMTP disabled'}</span>}</div>
     {error && <div className="email-message email-error" role="alert">{error}{authError && <p><button className="email-button" onClick={() => { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.assign('/sign-in?next=%2Fadmin%2Fsettings%2Femail'); }}>Sign in again</button></p>}</div>}
     {notice && <div className="email-message" role="status">{notice}</div>}
     {loading ? <p role="status" className="email-loading">Loading email settings…</p> : !draft ? <button className="email-button" onClick={() => setRetry(value => value + 1)}>Try again</button> : <div className="email-layout">

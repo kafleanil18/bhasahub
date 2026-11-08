@@ -23,6 +23,7 @@ function booleanSetting(name, fallback) {
 
 async function getDelivery() {
   const google = await emailSettingsLoader();
+  if (google?.send) return google;
   if (google) return { provider: 'Google SMTP', from: google.from, smtp: nodemailer.createTransport(google.options) };
   const { SMTP_HOST, SMTP_USER, SMTP_PASS, EMAIL_FROM } = process.env;
   if (SMTP_HOST || SMTP_USER || SMTP_PASS) {
@@ -66,6 +67,7 @@ async function sendEmail(message, developmentMessage, { requireDelivery = false 
     return;
   }
   const payload = { ...message, from: delivery.from };
+  if (delivery.send) return delivery.send(message);
   if (delivery.smtp) {
     const info = await delivery.smtp.sendMail(payload);
     if (info.rejected?.length) throw new Error('SMTP server rejected the email recipient');

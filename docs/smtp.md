@@ -1,5 +1,7 @@
 SMTP sends first-login verification codes, password reset codes, and password reset links through the same server configuration.
 
+For free hosting that blocks SMTP ports, use [HTTPS email delivery with Resend or Brevo](email-api.md) from the same Email settings page. Hosting plans remain unchanged; provider sender verification and sending limits still apply.
+
 The same service also sends [manual practice reminders to subscribed students](practice-reminders.md) from the super admin page.
 
 Super admins can configure Google SMTP from **Settings → Email settings** (`/admin/settings/email`). Enter the Google email address, sender name, and a Google app password, enable Google SMTP, and save. The server verifies the connection before enabling it. **Test connection** verifies the form without sending mail or saving changes. Both Gmail and Google Workspace addresses are accepted; the Google account must permit app passwords. See [Google's app password instructions](https://support.google.com/accounts/answer/185833), including the 2-Step Verification requirement and account restrictions.

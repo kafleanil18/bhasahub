@@ -1,6 +1,6 @@
 require('dotenv').config();
 const { setEmailSettingsLoader } = require('./utils/emailTransport');
-setEmailSettingsLoader(require('./utils/googleSmtpSettings').loadGoogleSmtpDelivery);
+setEmailSettingsLoader(require('./utils/emailApiSettings').loadSavedEmailDelivery);
 const express = require('express');
 const mongoose = require('mongoose');
 const { startWhenReady, databaseHealth, requireDatabase } = require('./utils/serverReadiness');
@@ -62,6 +62,7 @@ app.use('/api/admin-stats', adminStatsRoutes);
 app.use('/api/audit-log', auditLogRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/settings/email', require('./routes/emailSettings'));
+app.use('/api/settings/email-api', require('./routes/emailApiSettings'));
 app.use('/api/practice-reminders', require('./routes/practiceReminders'));
 app.use('/api/srs', srsRoutes);
 app.use('/api/attempts', attemptRoutes);
@@ -127,7 +128,7 @@ async function start() {
     }),
     initialize: async () => {
       console.log('✅ MongoDB connected');
-      await Promise.all([seedTeam(), ensureHanziTraceSeeded(), require('./models/PracticeReminder').init()]);
+      await Promise.all([seedTeam(), ensureHanziTraceSeeded(), require('./models/PracticeReminder').init(), require('./models/EmailApiSettings').init()]);
     },
     listen: () => new Promise((resolve, reject) => {
       const server = app.listen(port);

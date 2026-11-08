@@ -32,6 +32,9 @@
 .email-message { margin-bottom: 24px; padding: 16px; border: 1px solid var(--line); border-left: 4px solid var(--ink); background: var(--card); color: var(--ink); border-radius: 8px; line-height: 1.7; overflow-wrap: anywhere; }
 .email-error { border-left-color: var(--seal); }
 .email-loading { padding: 32px 0; color: var(--mist); }
+.email-api-settings { margin-bottom: 40px; padding-bottom: 32px; border-bottom: 1px solid var(--line); }
+.email-api-settings .email-heading h2 { margin: 0 0 12px; font-size: 26px; line-height: 1.4; }
+.email-api-settings .email-guide h3 { margin-top: 0; font-size: 20px; }
 @media (max-width: 760px) {
   .email-layout { grid-template-columns: minmax(0, 1fr); }
   .email-form, .email-guide { padding: 20px; }
