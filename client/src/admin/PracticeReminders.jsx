@@ -10,7 +10,7 @@ import './PracticeReminders.css';
 const defaultMessage = 'A little Chinese practice every day makes a big difference. Take 10 minutes today to review your vocabulary, listen to a conversation, or practice speaking aloud.\n\nKeep going — one small step at a time. We look forward to seeing your progress!';
 
 export default function PracticeReminders({ onBack }) {
-  const { audience, campaigns, loading, error: loadError, refresh } = usePracticeReminders();
+  const { audience, campaigns, loading, error: loadError, audienceError, refresh } = usePracticeReminders();
   const studentData = useReminderStudents();
   const [selectedIds, setSelectedIds] = useState([]);
   const [subject, setSubject] = useState('Don’t forget your Chinese practice today');
@@ -25,6 +25,15 @@ export default function PracticeReminders({ onBack }) {
   const selectedSet = new Set(selectedIds);
   const selectedCount = studentData.students.filter(student => selectedSet.has(student.user)).length;
   const unavailableSelections = selectedIds.length !== selectedCount;
+  const blockedReason = busy ? 'Please wait for the current request to finish.'
+    : audienceError ? audienceError
+      : loading || studentData.loading ? 'Loading eligible students and recorded activity…'
+        : studentData.error ? 'Refresh students successfully before reviewing a reminder.'
+          : !audience ? 'Refresh reminder data before reviewing.'
+            : !audience.emailConfigured ? 'Enable and save an email service in Email settings before reviewing.'
+              : audience.count === 0 ? 'There are no eligible students with active course access.'
+                : unavailableSelections ? 'Remove unavailable selections from the student list before reviewing.'
+                  : !selectedCount ? 'Select at least one student above, or click Select all matching, to enable Review reminder.' : '';
 
   const review = async event => {
     event.preventDefault();
@@ -64,13 +73,14 @@ export default function PracticeReminders({ onBack }) {
       requestAnimationFrame(() => { subjectInput.current?.focus({ preventScroll: true }); subjectInput.current?.scrollIntoView({ behavior: 'auto', block: 'center' }); });
     }} />
     <form className="email-form reminder-compose" onSubmit={review}>
-      <fieldset disabled={Boolean(busy) || !audience || !audience.emailConfigured || audience.count === 0 || Boolean(loadError) || studentData.loading || Boolean(studentData.error)}>
+      <fieldset disabled={Boolean(busy) || !audience || !audience.emailConfigured || audience.count === 0 || Boolean(audienceError) || studentData.loading || Boolean(studentData.error)}>
         <legend>Write a reminder</legend>
         <p className="reminder-compose-selection" role="status">{selectedCount} {selectedCount === 1 ? 'student' : 'students'} selected to receive this reminder.</p>
         <div className="email-field"><label htmlFor="reminder-subject">Subject</label><input ref={subjectInput} id="reminder-subject" required maxLength={160} value={subject} onChange={event => { setSubject(event.target.value); setNotice(''); }} /></div>
         <div className="email-field"><label htmlFor="reminder-message">Message</label><textarea id="reminder-message" required maxLength={5000} rows={8} value={message} onChange={event => { setMessage(event.target.value); setNotice(''); }} /><small>A personal greeting, a link to the student’s courses, and an unsubscribe link are added automatically.</small></div>
-        <button ref={reviewButton} className="email-button email-primary" type="submit" disabled={!selectedCount || unavailableSelections}>{busy === 'review' ? 'Preparing preview…' : 'Review reminder'}</button>
+        <button ref={reviewButton} className="email-button email-primary" type="submit" disabled={Boolean(blockedReason)} aria-describedby="reminder-review-help">{busy === 'review' ? 'Preparing preview…' : 'Review reminder'}</button>
       </fieldset>
+      <p id="reminder-review-help" className="email-footnote" role="status">{blockedReason || `Ready to review your reminder for ${selectedCount} selected ${selectedCount === 1 ? 'student' : 'students'}.`}</p>
     </form>
     <section className="reminder-history" aria-labelledby="reminder-history-title"><div className="reminder-history-heading"><h2 id="reminder-history-title">Recent reminders</h2><button className="email-button" onClick={refresh}>Refresh progress</button></div>
       {!loading && !campaigns.length && <p>No reminders have been sent yet. Review your first message above.</p>}

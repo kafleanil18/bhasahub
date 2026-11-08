@@ -17,6 +17,7 @@ export default function usePracticeReminders() {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [audienceError, setAudienceError] = useState('');
   const [version, setVersion] = useState(0);
   useEffect(() => {
     const controller = new AbortController();
@@ -30,6 +31,7 @@ export default function usePracticeReminders() {
       if (results[0].status === 'fulfilled') setAudience(results[0].value);
       if (results[1].status === 'fulfilled') setCampaigns(results[1].value);
       const failed = results.some(result => result.status === 'rejected');
+      setAudienceError(results[0].status === 'rejected' ? results[0].reason.message || 'Could not load eligible students.' : '');
       setError(failed ? 'Some reminder data could not be refreshed. Please try again.' : '');
       setLoading(false);
       if (failed || results[1].value?.some(campaign => !campaign.complete)) timer = setTimeout(load, 4000);
@@ -37,5 +39,5 @@ export default function usePracticeReminders() {
     load();
     return () => { controller.abort(); clearTimeout(timer); };
   }, [version]);
-  return { audience, campaigns, loading, error, refresh: () => setVersion(value => value + 1) };
+  return { audience, campaigns, loading, error, audienceError, refresh: () => setVersion(value => value + 1) };
 }

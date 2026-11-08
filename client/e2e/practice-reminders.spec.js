@@ -230,3 +230,22 @@ test('activity outages block review and refreshing eligibility requires removing
   await expect(page.getByRole('alert')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Review reminder', exact: true })).toBeDisabled();
 });
+
+test('review explains missing selections and remains available when only old reminder history fails', async ({ page }) => {
+  await prepare(page);
+  await page.route('**/api/practice-reminders/campaigns', route => route.fulfill({ status: 503, json: { error: 'History temporarily unavailable' } }));
+  await page.goto('/admin/reminders');
+  await expect(page.locator('#reminder-review-help')).toContainText('Select at least one student');
+  await page.getByRole('button', { name: 'Select all matching', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Review reminder', exact: true })).toBeEnabled();
+  await page.getByRole('button', { name: 'Review reminder', exact: true }).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+});
+
+test('review explains when the live email service has not been configured', async ({ page }) => {
+  await prepare(page, { emailConfigured: false });
+  await page.goto('/admin/reminders');
+  await page.getByRole('button', { name: 'Select all matching', exact: true }).click();
+  await expect(page.locator('#reminder-review-help')).toContainText('Enable and save an email service');
+  await expect(page.getByRole('button', { name: 'Review reminder', exact: true })).toBeDisabled();
+});
