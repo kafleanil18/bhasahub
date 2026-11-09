@@ -8,7 +8,8 @@ const { logActivity } = require('../utils/auditLog');
 const router = express.Router();
 router.use(requireAuth, requireSuperAdmin);
 router.use((_req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
-const fail = (res, error) => res.status(error instanceof SettingsValidationError ? 400 : 502).json({ error: error instanceof SettingsValidationError ? error.message : 'Could not check or save the email API settings. Check your API key, sender verification, and provider account.' });
+const safeError = error => error instanceof SettingsValidationError || error instanceof settings.EmailProviderError;
+const fail = (res, error) => res.status(error instanceof SettingsValidationError ? 400 : 502).json({ error: safeError(error) ? error.message : 'Could not check or save the email API settings. Check your API key, sender verification, and provider account.' });
 
 router.get('/', async (_req, res) => {
   try { res.json(settings.publicSettings(await settings.readSettings())); }
@@ -23,7 +24,7 @@ router.put('/', async (req, res) => {
       catch (error) {
         if (current?.enabled) return fail(res, error);
         draft.enabled = false;
-        draft.connectionError = error instanceof SettingsValidationError ? error.message : 'Settings saved, but provider verification failed. Check your API key permissions, verified sender, and account status, then enable and save again.';
+        draft.connectionError = safeError(error) ? error.message : 'Settings saved, but provider verification failed. Check your API key permissions, verified sender, and account status, then enable and save again.';
       }
     }
     await EmailApiSettings.findOneAndUpdate({ key: 'main' }, { $set: draft }, { upsert: true, new: true, runValidators: true });

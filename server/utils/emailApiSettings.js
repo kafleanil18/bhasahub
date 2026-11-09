@@ -2,6 +2,10 @@ const EmailApiSettings = require('../models/EmailApiSettings');
 const google = require('./googleSmtpSettings');
 const { SettingsValidationError } = google;
 
+// Only messages authored here are safe to return to the admin. Provider response
+// bodies and encryption errors can contain secrets and must remain private.
+class EmailProviderError extends Error {}
+
 function readSettings() {
   return EmailApiSettings.findOne({ key: 'main' }).select('+apiKeyEncrypted').lean();
 }
@@ -32,7 +36,9 @@ function prepareSettings(body, current) {
 
 async function request(settings, path, body) {
   const resend = settings.provider === 'resend';
-  const key = google.decryptPassword(settings.apiKeyEncrypted);
+  let key;
+  try { key = google.decryptPassword(settings.apiKeyEncrypted); }
+  catch { throw new EmailProviderError('The saved API key cannot be decrypted. Re-enter your current provider API key and save again.'); }
   let response;
   try {
     response = await fetch((resend ? 'https://api.resend.com' : 'https://api.brevo.com/v3') + path, {
@@ -40,14 +46,15 @@ async function request(settings, path, body) {
       headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...(resend ? { Authorization: `Bearer ${key}` } : { 'api-key': key }) },
       ...(body ? { body: JSON.stringify(body) } : {}),
     });
-  } catch { throw new Error('The email provider could not be reached over HTTPS. Please try again.'); }
+  } catch { throw new EmailProviderError('The email provider could not be reached over HTTPS. Please try again.'); }
   const data = await response.json().catch(() => null);
   if (!response.ok) {
-    if ([401, 403].includes(response.status)) throw new Error('The provider rejected this API key or its permissions. Check the key and sender verification.');
-    if (response.status === 429) throw new Error('The provider sending or request limit has been reached. Try again later.');
-    throw new Error('The email provider rejected the request. Check your verified sender and account status.');
+    if (response.status === 401) throw new EmailProviderError('The provider rejected the API key. Replace it with an active API key, not an SMTP key, and save again.');
+    if (response.status === 403) throw new EmailProviderError('The provider denied API access. Check API key permissions, account approval, and any provider IP restrictions.');
+    if (response.status === 429) throw new EmailProviderError('The provider sending or request limit has been reached. Try again later.');
+    throw new EmailProviderError('The email provider rejected the request. Check your verified sender and account status.');
   }
-  if (!data || data.error) throw new Error('The email provider returned an invalid response.');
+  if (!data || data.error) throw new EmailProviderError('The email provider returned an invalid response.');
   return data;
 }
 
@@ -90,4 +97,4 @@ async function loadSavedEmailDelivery() {
   return google.loadGoogleSmtpDelivery();
 }
 
-module.exports = { readSettings, publicSettings, prepareSettings, verifySettings, send, loadSavedEmailDelivery };
+module.exports = { EmailProviderError, readSettings, publicSettings, prepareSettings, verifySettings, send, loadSavedEmailDelivery };

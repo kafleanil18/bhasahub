@@ -96,3 +96,51 @@ test('provider checks do not save or send mail; provider rejection cannot be rep
   global.fetch.mock.restore(); mock.method(global, 'fetch', async () => ({ ok: true, status: 200, json: async () => ({}) }));
   await assert.rejects(api.send(api.prepareSettings(draft, null), { to: 'student@example.com', subject: 'Practice', text: 'Today' }), /did not confirm/);
 });
+
+test('provider failures show actionable safe messages in checks and persisted drafts', async () => {
+  const cases = [
+    [401, /active API key, not an SMTP key/],
+    [403, /permissions, account approval.*IP restrictions/],
+    [429, /limit has been reached/],
+  ];
+  for (const [status, expected] of cases) {
+    stored = null;
+    global.fetch.mock.restore();
+    mock.method(global, 'fetch', async () => ({ ok: false, status, json: async () => ({ message: draft.apiKey }) }));
+    const check = response();
+    await handler('post', '/check')({ body: { ...draft, provider: 'brevo' } }, check);
+    assert.equal(check.code, 502);
+    assert.match(check.body.error, expected);
+    assert.equal(JSON.stringify(check.body).includes(draft.apiKey), false);
+    const save = response();
+    await handler('put')({ body: { ...draft, provider: 'brevo' } }, save);
+    assert.equal(save.body.enabled, false);
+    assert.match(save.body.connectionError, expected);
+    assert.equal(JSON.stringify(save.body).includes(draft.apiKey), false);
+  }
+});
+
+test('an unreadable saved key explains how to recover without exposing ciphertext', async () => {
+  stored = api.prepareSettings({ ...draft, provider: 'brevo' }, null);
+  process.env.JWT_SECRET = 'changed-server-secret';
+  const res = response();
+  await handler('post', '/check')({ body: { ...draft, provider: 'brevo', apiKey: '' } }, res);
+  assert.equal(res.code, 502);
+  assert.match(res.body.error, /cannot be decrypted.*Re-enter/);
+  assert.equal(JSON.stringify(res.body).includes(stored.apiKeyEncrypted), false);
+  assert.equal(requests.length, 0);
+});
+
+test('HTTPS connection failures are actionable and unexpected errors remain private', async () => {
+  global.fetch.mock.restore();
+  mock.method(global, 'fetch', async () => { throw new Error(draft.apiKey); });
+  let res = response();
+  await handler('post', '/check')({ body: draft }, res);
+  assert.match(res.body.error, /could not be reached over HTTPS/);
+  assert.equal(JSON.stringify(res.body).includes(draft.apiKey), false);
+  mock.method(api, 'verifySettings', async () => { throw new Error(draft.apiKey); });
+  res = response();
+  await handler('post', '/check')({ body: draft }, res);
+  assert.equal(res.code, 502);
+  assert.equal(JSON.stringify(res.body).includes(draft.apiKey), false);
+});
