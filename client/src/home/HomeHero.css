@@ -30,10 +30,12 @@
 .home-hero.is-logged-out .home-hero-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; align-items: stretch; }
 .home-hero.is-logged-out .home-hero-actions > * { box-sizing: border-box; min-width: 0; min-height: 60px; padding: 10px 8px; border: 1px solid transparent; border-radius: 8px; justify-content: center; text-align: center; font-size: 14px; line-height: 1.4; }
 .home-hero.is-logged-out .home-hero-actions > * > span { display: none; }
-.home-hero.is-logged-out a[href='#courses'] { background: #28624f; color: #fff; }
-.home-hero.is-logged-out a[href='#practice-studio'] { background: #e9c875; color: #352912; }
-.home-hero.is-logged-out .home-hero-actions > *:hover { filter: brightness(.94); }
-.home-hero-live-classes { display: inline-block; border: 0; padding: 2px 8px; border-radius: 5px; background: rgba(var(--accent-red-rgb), .12); color: var(--hero-red); font: inherit; font-weight: 700; cursor: pointer; animation: hero-live-pulse 2s ease-in-out infinite; }
+.home-hero.is-logged-out :is(a[href='#courses'], a[href='#practice-studio']) { background: transparent; border-color: var(--hero-line); color: var(--hero-ink); }
+.home-hero.is-logged-out .home-hero-primary:hover { filter: brightness(.94); }
+.home-hero.is-logged-out :is(a[href='#courses'], a[href='#practice-studio']):hover { border-color: var(--hero-red); color: var(--hero-red); }
+.home-hero-live-classes { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; border: 1px solid rgba(var(--accent-red-rgb), .25); padding: 6px 12px; border-radius: 999px; background: rgba(var(--accent-red-rgb), .08); color: var(--hero-red); font: inherit; font-size: clamp(12px, calc(10px + 0.4vw), 14px); font-weight: 700; cursor: pointer; transition: background .2s ease, border-color .2s ease; }
+.home-hero-live-classes:hover { background: rgba(var(--accent-red-rgb), .14); border-color: rgba(var(--accent-red-rgb), .4); }
+.home-hero-live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--hero-red); flex-shrink: 0; animation: hero-live-pulse 2s ease-in-out infinite; }
 @keyframes hero-live-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(var(--accent-red-rgb), 0); } 50% { box-shadow: 0 0 0 5px rgba(var(--accent-red-rgb), .18); } }
 .home-page .home-hero.is-logged-out { position: relative; isolation: isolate; }
 .home-page .home-hero.is-logged-out::before { content: ''; position: absolute; inset: 0 auto 0 0; width: min(54%, 640px); background: url('/images/panda-ink-wash.png') left bottom / contain no-repeat; opacity: .38; pointer-events: none; }
