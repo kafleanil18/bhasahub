@@ -1,0 +1,96 @@
+{
+  "style": "Use case: scientific-educational. Asset type: HSK 1 exam illustration for an existing learning app. Create a fresh warm editorial illustration with crisp readable shapes, soft ivory background, subtle paper texture, natural faces and hands, restrained coral, teal and mustard accents. No watermark, no logos, no question number, no Chinese text, no answer hints. Match the described action exactly; no unrelated props. Landscape 4:3 composition with generous margins.",
+  "assets": [
+    {
+      "name": "l1-1",
+      "scene": "A smiling adult man in a gray business suit, waist-up, holding his right hand out palm UP at waist height as if welcoming or inviting someone. He is NOT waving goodbye; fingers relaxed, arm extended toward viewer. Single person."
+    },
+    {
+      "name": "l1-2",
+      "scene": "A smiling adult woman, waist-up, making a clear thumbs-up gesture toward viewer. Single person."
+    },
+    {
+      "name": "l1-3",
+      "scene": "An adult woman viewed from high above, looking UP toward viewer and pointing her index finger UP. The upward direction must be unmistakable. Single person."
+    },
+    {
+      "name": "l1-4",
+      "scene": "An adult man holding a black-and-white soccer ball in both hands directly in front of his face, chest-up. Ball large and unmistakable. No book."
+    },
+    {
+      "name": "l1-5",
+      "scene": "A smiling adult man in a suit, waist-up, holding up exactly ONE index finger, all other fingers folded."
+    },
+    {
+      "name": "l2-6",
+      "scene": "Wide horizontal THREE equal framed panels with large black labels A, B, C beneath their pictures. A: a woman holding one index finger vertically against her lips, asking for silence. B: a woman covering her eyes with both hands. C: a woman looking through binoculars held up to her eyes. Same approximate scale, no correct-answer marks."
+    },
+    {
+      "name": "l2-7",
+      "scene": "Wide horizontal THREE equal framed panels with large black labels A, B, C beneath their pictures. A: a woman standing beside a bicycle and holding its handlebars. B: a woman walking carrying a shoulder handbag. C: rear view from inside a car showing a person DRIVING, hands on steering wheel and road through windscreen. No correct-answer marks."
+    },
+    {
+      "name": "l2-8",
+      "scene": "Wide horizontal THREE equal framed panels with large black labels A, B, C beneath pictures. A: exactly FOUR students standing together holding schoolbooks, clearly four visible distinct people. B: exactly two adult women carrying shopping bags. C: exactly three adult women standing around a desktop computer. Clearly distinct scenes, no correct-answer marks."
+    },
+    {
+      "name": "l2-9",
+      "scene": "Wide horizontal THREE equal framed panels with large black labels A, B, C beneath pictures. Same adult woman in each panel with different expression. A: smiling happily. B: unhappy and worried, hand resting on forehead, eyes downcast. C: angrily looking back over her shoulder, arms folded. Distinguish B sadness from C anger. No correct-answer marks."
+    },
+    {
+      "name": "l2-10",
+      "scene": "Wide horizontal THREE equal framed panels with large black labels A, B, C beneath pictures. A: a boy sleeping with head on folded arms atop an open book on a desk. B: a woman holding a wrapped yellow gift box. C: a man holding a large framed picture upright so its FRONT depicts a colorful dessert. No correct-answer marks."
+    },
+    {
+      "name": "l3-pictures",
+      "scene": "Portrait worksheet picture board with EXACTLY SIX equal panels in TWO columns and THREE rows. Large black panel labels, row-major order A B / C D / E F. A: a thoughtful adult woman with her index finger touching her temple, looking up thoughtfully. B: a man in a suit checking his wristwatch. C: a businesswoman and businessman shaking hands while greeting each other. D: a small kitten peeking out of a cardboard box on the floor. E: a standalone flat-screen television on its small stand. F: a smiling adult woman visible seated through the side window of a yellow taxi. Ensure taxi looks like a taxi. No correct-answer marks."
+    },
+    {
+      "name": "r1-21",
+      "scene": "A carton of brown chicken eggs, unmistakably eggs with several clearly visible. No rice, no other food."
+    },
+    {
+      "name": "r1-22",
+      "scene": "Close view of a person's hand holding a pen and WRITING on a sheet of paper on a desk. No legible writing necessary."
+    },
+    {
+      "name": "r1-23",
+      "scene": "A visibly overheated adult man wiping sweat off his forehead, wearing a sleeveless top with a towel around his neck. His expression and sweat convey HOT, not cold."
+    },
+    {
+      "name": "r1-24",
+      "scene": "One GREEN T-SHIRT hanging on a clothesline, clear garment silhouette. No fruit, no food, no printed text."
+    },
+    {
+      "name": "r1-25",
+      "scene": "A young woman listening to music through over-ear headphones, eyes gently closed, hands resting on ear cups."
+    },
+    {
+      "name": "r2-pictures",
+      "scene": "Portrait worksheet picture board with EXACTLY SIX equal panels in TWO columns and THREE rows. Large black panel labels, row-major order A B / C D / E F. A: two adults huddling under an umbrella in rainy weather. B: a smiling woman standing beside an empty chair, gesturing to invite viewer to sit. C: a child looking unhappy at a plate of green vegetables, head resting in hands, refusing the food. D: two women looking at a light-colored shirt on a hanger in a clothing shop. E: a woman happily reading an open book. F: an office woman holding out a corded telephone handset to offer it to someone else. No correct-answer marks."
+    },
+    {
+      "name": "l1-example",
+      "scene": "Landscape worksheet with TWO equal panels. Left: smiling happy adult woman with a large green checkmark beneath. Right: adult man sitting on a bench reading a newspaper with a large coral X beneath. No words or letters, only the checkmark and X."
+    },
+    {
+      "name": "l2-example",
+      "scene": "Wide horizontal THREE equal panels with large labels A B C beneath. A: a stack of books. B: a corded desk telephone. C: three red apples. Add a green checkmark beside label A only. No other words."
+    },
+    {
+      "name": "r1-example",
+      "scene": "Landscape worksheet with TWO equal panels. Left: an open laptop computer with a coral X beneath. Right: an airplane in flight with a green checkmark beneath. No words or letters."
+    }
+  ],
+  "compositionOverrides": {
+    "l2-6 through l2-10": "Wide horizontal triptych, landscape 3:1.",
+    "l3-pictures and r2-pictures": "Portrait 3:4 worksheet with two columns and three rows.",
+    "worked examples": "Wide horizontal worksheet."
+  },
+  "finalEdits": [
+    {
+      "asset": "r2-pictures",
+      "prompt": "Change ONLY panel C (middle-left): replace the boy with a young girl with a short bob haircut, keeping the unhappy expression, hands on cheeks, same position, same clothes color, and same plate of green vegetables. The question says 她 (she). Preserve all six labels, other five panels, ivory paper texture, border geometry, and style. No additional text or answer marks."
+    }
+  ]
+}

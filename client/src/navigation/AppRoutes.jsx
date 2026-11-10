@@ -93,7 +93,7 @@ function TestRoute({ user, onHome }) {
   const preview = params.get('preview') === '1' && ['admin', 'superadmin'].includes(user?.role);
   const onBack = () => navigate(preview ? '/admin/tests' : '/tests');
   if (!testId) return <TestList user={user} onOpenTest={id => navigate(testPath(id))} onBack={onHome} />;
-  const paper = ['h11226', 'h10901', 'h11556'].includes(testId) || /^paper-[a-f0-9]{24}$/.test(testId);
+  const paper = ['h11226', 'h10901', 'h11556', 'h11221'].includes(testId) || /^paper-[a-f0-9]{24}$/.test(testId);
   return paper ? <HskPortal key={testId} paperId={testId} user={user} onBack={onBack} /> : <TestTaker key={testId} testId={testId} onBack={onBack} />;
 }
 

@@ -10,11 +10,45 @@ const PracticePaper = require('../models/PracticePaper');
 const AuditLog = require('../models/AuditLog');
 const paper = require('../data/hsk11226');
 const h10901 = require('../data/hsk10901');
+const h11221 = require('../data/hsk11221');
 const { publicPaper, grade, result } = require('../utils/hsk11226');
 // Independently transcribed from the PDF's printed answer key, A=0 and ✓=0.
 const key = [1,1,1,0,0, 0,2,2,0,1, 3,0,4,1,5, 2,1,1,2,0, 0,1,0,0,1, 2,0,1,5,3, 2,3,1,0,4, 2,4,5,0,1];
 // H10901_1.pdf page 14, independently transcribed; A=0 and ✓=0.
 const h10901Key = [0,1,1,1,0, 0,0,2,0,2, 3,1,0,4,5, 1,1,2,2,1, 0,0,1,1,0, 3,5,2,0,1, 2,3,0,1,4, 5,1,4,0,2];
+// H11221 printed answer sheet, transcribed independently of the paper definition.
+const h11221Key = [1,0,1,1,0, 2,2,0,1,2, 5,1,4,3,0, 2,1,1,0,0, 1,0,0,1,0, 0,3,1,5,2, 3,1,2,4,0, 1,4,5,2,0];
+
+test('H11221 preserves the printed key, all eight examples, recreated pictures, and original audio', () => {
+  const questions = h11221.groups.flatMap(group => group.questions);
+  assert.equal(h11221.groups.length, 8);
+  assert.ok(h11221.groups.every(group => group.questions.length === 5 && group.example));
+  assert.deepEqual(questions.map(q => q.number), Array.from({ length: 40 }, (_, i) => i + 1));
+  assert.deepEqual(questions.map(q => q.correctIndex), h11221Key);
+  assert.ok(questions.slice(0, 20).every(q => q.listeningText));
+  assert.ok(questions.slice(20).every(q => q.text && q.pinyin));
+  assert.ok(questions.every(q => q.explanation));
+  const images = [...h11221.groups, ...questions].flatMap(row => [row.image, row.exampleImage]).filter(Boolean);
+  assert.equal(new Set(images).size, 20);
+  for (const image of images) {
+    assert.ok(image.startsWith('/hsk1/h11221/'));
+    const data = fs.readFileSync(path.join(__dirname, '../../client/public', image));
+    assert.ok(data.length > 1000, image);
+    assert.equal(data.subarray(0, 3).toString('hex'), 'ffd8ff', image);
+  }
+  const crypto = require('node:crypto');
+  const audio = fs.readFileSync(path.join(__dirname, '../../client/public', h11221.audioUrl));
+  assert.equal(audio.length, 6119040);
+  assert.equal(h11221.listeningSeconds, 929);
+  assert.equal(h11221.transferSeconds, 180);
+  assert.equal(h11221.readingSeconds, 1020);
+  assert.equal(crypto.createHash('sha256').update(audio).digest('hex'), '2775c6ab3dea70c63b995e3d1ffcc2084c11baf01c5d3f471c8faa397f9b7c46');
+  const tools = require('../utils/hsk11226').createPaperTools(h11221);
+  assert.deepEqual(tools.grade(h11221Key), { listening: 20, reading: 20, score: 40 });
+  assert.deepEqual(tools.grade(Array(40).fill(null)), { listening: 0, reading: 0, score: 0 });
+  const json = JSON.stringify(tools.publicPaper());
+  for (const privateField of ['correctIndex', 'explanation', 'listeningText']) assert.ok(!json.includes(privateField));
+});
 
 test('H10901 preserves the printed key, original pictures, examples, and its own recording', () => {
   const questions = h10901.groups.flatMap(group => group.questions);
@@ -105,6 +139,33 @@ async function setup() {
   const headers = id => ({ Authorization: `Bearer ${jwt.sign({ id }, process.env.JWT_SECRET)}`, 'Content-Type': 'application/json' });
   return { app, base: `http://127.0.0.1:${server.address().port}/api/hsk1/h11226`, headers: headers('507f1f77bcf86cd799439011'), other: headers('507f1f77bcf86cd799439012'), admin: headers('admin'), superadmin: headers('superadmin') };
 }
+
+test('H11221 starts and grades isolated attempts, preserves results, and supports visibility controls', async () => {
+  const { base, headers, other, admin, superadmin } = await setup();
+  const url = base.replace('/h11226', '/h11221');
+  assert.equal((await fetch(url)).status, 401);
+  const content = await (await fetch(url, { headers })).json();
+  assert.equal(content.code, 'H11221');
+  assert.equal(content.audioUrl, '/hsk1/h11221/listening.mp3');
+  for (const field of ['correctIndex', 'explanation', 'listeningText']) assert.ok(!JSON.stringify(content).includes(field));
+  const created = await (await fetch(`${url}/attempts`, { method: 'POST', headers })).json();
+  assert.equal(created.paper, 'h11221');
+  assert.equal(created.paperDefinition.id, 'h11221');
+  const attemptUrl = `${url}/attempts/${created._id}`;
+  assert.equal((await fetch(attemptUrl, { headers: other })).status, 404);
+  assert.equal((await fetch(`${base}/attempts/${created._id}`, { headers })).status, 404);
+  const submitted = await (await fetch(`${attemptUrl}/submit`, { method: 'POST', headers, body: JSON.stringify({ answers: h11221Key }) })).json();
+  assert.equal(submitted.score, 40);
+  assert.equal(submitted.listening, 20);
+  assert.equal(submitted.reading, 20);
+  assert.equal(submitted.review.length, 40);
+  const retry = await (await fetch(`${attemptUrl}/submit`, { method: 'POST', headers, body: JSON.stringify({ answers: Array(40).fill(null) }) })).json();
+  assert.equal(retry.score, 40);
+  assert.equal((await fetch(`${url}/editor`, { headers: superadmin })).status, 400);
+  await fetch(`${url}/publication`, { method: 'PUT', headers: admin, body: JSON.stringify({ published: false }) });
+  assert.equal((await fetch(url, { headers })).status, 404);
+  assert.equal((await fetch(url, { headers: admin })).status, 200);
+});
 test('authenticated owner gets a server-graded result; retries cannot change the published score', async () => {
   const { base, headers, other } = await setup();
   assert.equal((await fetch(base)).status, 401);
@@ -157,7 +218,7 @@ test('H10901 uses the shared portal with isolated attempts, publication, and imm
   const url = `${root}/h10901`;
   assert.equal((await fetch(url)).status, 401);
   const listing = await (await fetch(root, { headers })).json();
-  assert.deepEqual(listing.map(row => row.id), ['h11226', 'h10901', 'h11556']);
+  assert.deepEqual(listing.map(row => row.id), ['h11226', 'h10901', 'h11556', 'h11221']);
   assert.ok(listing.every(row => !row.custom && row.published));
   const response = await fetch(url, { headers });
   assert.equal(response.status, 200);
@@ -184,7 +245,7 @@ test('H10901 uses the shared portal with isolated attempts, publication, and imm
   assert.equal((await fetch(url, { headers })).status, 404);
   assert.equal((await fetch(url, { headers: admin })).status, 200);
   assert.equal((await fetch(base, { headers })).status, 200);
-  assert.deepEqual((await (await fetch(root, { headers })).json()).map(row => row.id), ['h11226', 'h11556']);
+  assert.deepEqual((await (await fetch(root, { headers })).json()).map(row => row.id), ['h11226', 'h11556', 'h11221']);
   assert.equal((await fetch(attemptUrl, { headers })).status, 200);
 });
 
