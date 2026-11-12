@@ -49,14 +49,13 @@ export default function StudioAnalytics({ refreshKey }) {
   };
   const data = state.data;
   return <section className="studio-analytics" aria-labelledby="studio-analytics-title">
-    <div className="analytics-course-progress-heading"><div><span className="dash-eyebrow">YOUR PRACTICE STUDIO</span><h2 id="studio-analytics-title">Eight skills. Every practice counts.</h2><p>Account activity across all eight studios, plus your HSK test completions.</p></div></div>
+    <div className="analytics-course-progress-heading"><div><span className="dash-eyebrow">YOUR PRACTICE STUDIO</span><h2 id="studio-analytics-title">Eight skills. Every practice counts.</h2></div></div>
     {state.loading ? <p role="status">Loading studio activity and test completions…</p> : state.error ? <div role="alert"><p>Studio analytics couldn’t load. Your saved work hasn’t changed.</p><button className="btn-primary" onClick={() => setAttempt(value => value + 1)}>Retry studio analytics</button></div> : <>
-      <p className="studio-analytics-note">Each question, syllable, character, or phrase counts once per studio until you reset it. Accuracy uses your first checked answer. Earlier activity without an item identity is excluded. Resetting a studio lets you start a new practice cycle.</p>
       {notice && <p role="status">{notice}</p>}
       {resetError && <p role="alert">{resetError}</p>}
       <div className="studio-analytics-grid">{Object.entries(studios).map(([id, [title, unit]]) => {
         const row = data.studios.find(item => item.studio === id);
-        return <article className="analytics-course-progress-card" key={id}>
+        return <article className={`analytics-course-progress-card studio-skill-card studio-skill-${id}`} key={id}>
           <h3><Link to={practicePaths[id]}>{title}</Link></h3>
           <dl><div><dt>{unit}</dt><dd>{row?.activities || 0}</dd></div><div><dt>Answer accuracy</dt><dd>{row?.accuracy == null ? '—' : `${row.accuracy}%`}</dd></div><div><dt>Last practiced</dt><dd>{date(row?.lastPracticed)}</dd></div></dl>
           {row?.graded > 0 && <p>{row.correct} of {row.graded} answers correct</p>}

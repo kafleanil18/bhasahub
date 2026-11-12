@@ -7,6 +7,21 @@
 .studio-analytics dt, .studio-analytics-note { color: var(--mist); line-height: 1.6; }
 .studio-analytics dd { margin: 0; font-weight: 650; text-align: end; }
 .studio-analytics-note { margin-bottom: 20px; }
+.studio-skill-pinyin { --studio-accent: #a23d32; --studio-accent-dark: #ffa99b; }
+.studio-skill-trace { --studio-accent: #865b23; --studio-accent-dark: #edc17d; }
+.studio-skill-listening { --studio-accent: #286a8c; --studio-accent-dark: #8cccea; }
+.studio-skill-sentences { --studio-accent: #356a46; --studio-accent-dark: #9dd3a9; }
+.studio-skill-measures { --studio-accent: #76558b; --studio-accent-dark: #d6b5ef; }
+.studio-skill-numbers { --studio-accent: #9b4c20; --studio-accent-dark: #f4b28d; }
+.studio-skill-dictation { --studio-accent: #286d6c; --studio-accent-dark: #89d4cf; }
+.studio-skill-conversation { --studio-accent: #964d70; --studio-accent-dark: #edaccb; }
+.studio-analytics .studio-skill-card {
+  border-top: 4px solid var(--studio-accent);
+  background: color-mix(in srgb, var(--studio-accent) 7%, var(--card));
+}
+.studio-analytics .studio-skill-card h3 a { color: var(--studio-accent); }
+.studio-analytics .studio-skill-card:hover { border-color: var(--studio-accent); }
+:root.dark .studio-skill-card { --studio-accent: var(--studio-accent-dark); }
 .studio-hsk-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 28px; }
 .studio-test-history { list-style: none; padding: 0; }
 .studio-test-history li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-block: 12px; border-bottom: 1px solid var(--line); }
