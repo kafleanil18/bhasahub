@@ -31,6 +31,28 @@ function setup(flag = false, failDelivery = false) {
 }
 const credentials = { email: ' Student@Example.com ', password: 'password' };
 
+test('explicit development bypass signs in without sending email or verifying the account', async () => {
+  const { user, run, sent } = setup();
+  mock(process.env, 'NODE_ENV', 'development');
+  mock(process.env, 'SKIP_EMAIL_VERIFICATION', 'true');
+  const res = response();
+  await run({ body: credentials }, res);
+  assert.ok(res.body.token);
+  assert.equal(sent(), undefined);
+  assert.equal(user.emailVerified, false);
+});
+
+test('production ignores the email verification bypass setting', async () => {
+  const { run, sent } = setup();
+  mock(process.env, 'NODE_ENV', 'production');
+  mock(process.env, 'SKIP_EMAIL_VERIFICATION', 'true');
+  const res = response();
+  await run({ body: credentials }, res);
+  assert.equal(res.body.verificationRequired, true);
+  assert.equal(res.body.token, undefined);
+  assert.ok(sent());
+});
+
 test('first login sends a hashed expiring OTP and withholds the session', async () => {
   const { user, run, sent } = setup();
   const res = response();

@@ -75,7 +75,9 @@ router.post('/login', authLimiter, async (req, res) => {
     }
 
     // Only newly registered email accounts require this first-login check.
-    if (user.emailVerified === false) {
+    const skipEmailVerification = process.env.NODE_ENV === 'development'
+      && process.env.SKIP_EMAIL_VERIFICATION === 'true';
+    if (user.emailVerified === false && !skipEmailVerification) {
       if (otp !== undefined) {
         if (typeof otp !== 'string' || !/^\d{6}$/.test(otp)) {
           return res.status(400).json({ error: 'Enter the six-digit verification code' });
