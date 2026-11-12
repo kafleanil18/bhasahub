@@ -3,6 +3,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
+import PwaControls from './pwa/PwaControls.jsx'
 import './styles/design-system.css'
 import { clearLegacyPassword } from './auth/rememberedEmail'
 
@@ -13,6 +14,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <App />
+      <PwaControls />
     </BrowserRouter>
   </StrictMode>,
 )

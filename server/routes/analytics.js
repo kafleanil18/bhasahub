@@ -6,6 +6,7 @@ const HskAttempt = require('../models/HskAttempt');
 const Lesson = require('../models/Lesson');
 const Subscription = require('../models/Subscription');
 const Enrollment = require('../models/Enrollment');
+const StudioActivity = require('../models/StudioActivity');
 const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
@@ -124,7 +125,8 @@ router.get('/me', requireAuth, async (req, res) => {
       ]),
     ]);
 
-    const activityDayKeys = [...recentAttemptDays, ...recentHskAttemptDays, ...recentProgressDays].map(dateKey);
+    const studioDays = await StudioActivity.find({ user: userId, createdAt: { $gte: ninetyDaysAgo } }).distinct('createdAt');
+    const activityDayKeys = [...recentAttemptDays, ...recentHskAttemptDays, ...recentProgressDays, ...studioDays].map(dateKey);
     const streak = computeStreak(activityDayKeys);
 
     const visibleCourseIds = [...new Set([...activeCourseIds, ...enrolledCourseIds, ...completedCourseIds].map(String))]

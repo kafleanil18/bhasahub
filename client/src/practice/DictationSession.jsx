@@ -1,3 +1,4 @@
+import { recordStudioActivity } from './recordStudioActivity';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 import SentenceText from './SentenceText';
@@ -58,6 +59,7 @@ export default function DictationSession({ initialSentences, onExit }) {
     playAttemptRef.current++;
     audioRef.current?.pause();
     const comparison = compareDictation(sentence.chinese, answer);
+    recordStudioActivity('dictation', comparison.correct, sentence.id);
     setFeedback(comparison);
     setResults(previous => [...previous, { sentence, answer, comparison }]);
   }

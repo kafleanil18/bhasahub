@@ -1,3 +1,4 @@
+import { recordStudioActivity } from './recordStudioActivity';
 import { useState, useEffect, useRef } from 'react';
 import HanziWriter from 'hanzi-writer';
 
@@ -45,6 +46,7 @@ function parseCsvRows(text) {
 }
 
 function HanziTracePage({ user, onBack, token }) {
+  const practicedCharactersRef = useRef(new Set());
   const canManage = user && (user.role === 'admin' || user.role === 'superadmin');
 
   const [characters, setCharacters] = useState([]);
@@ -205,6 +207,11 @@ function HanziTracePage({ user, onBack, token }) {
     const finishedStroke = currentStrokeRef.current;
     currentStrokeRef.current = [];
     if (finishedStroke.length > 1) {
+      const character = activeCharacter?.character;
+      if (character && !practicedCharactersRef.current.has(character)) {
+        practicedCharactersRef.current.add(character);
+        recordStudioActivity('trace', null, character);
+      }
       setStrokes((prev) => [...prev, finishedStroke]);
     }
   };

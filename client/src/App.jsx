@@ -4,6 +4,7 @@ import HomeFooter from './home/HomeFooter';
 import HomeTestimonials from './home/HomeTestimonials';
 import HomeCourses from './home/HomeCourses';
 import HomeHero from './home/HomeHero';
+import StudioSaveStatus from './practice/StudioSaveStatus';
 import AppRoutes from './navigation/AppRoutes';
 import { adminPaths, coursePath, homePath, practicePaths, safeReturnPath, signInPath } from './navigation/paths';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -243,7 +244,7 @@ function AppContent() {
   const hskLevels = ['all', ...new Set(courses.map(getHskLevel))];
   const filteredCourses = levelFilter === 'all' ? courses : courses.filter(course => getHskLevel(course) === levelFilter);
   const home = <main className="home-page">
-    <HomeHero onEnquireLiveClasses={() => setShowFeedback('live-classes')} onContinueLearning={() => navigate('/my-courses')} onPinyinPractice={() => navigate('/practice/pinyin')} user={user} hasStartedCourse={Object.values(access).some(course => course.completed > 0)} onOpenPractice={openPractice} />
+    <HomeHero onEnquireLiveClasses={() => setShowFeedback('live-classes')} onContinueLearning={() => navigate('/continue')} onPinyinPractice={() => navigate('/practice/pinyin')} user={user} hasStartedCourse={Object.values(access).some(course => course.completed > 0)} onOpenPractice={openPractice} />
     <HomeCourses filteredCourses={filteredCourses} hskLevels={hskLevels} levelFilter={levelFilter} onOpenCourse={openCourse} setLevelFilter={setLevelFilter} />
     <HomeTestimonials scrollTestimonials={scrollTestimonials} setShowTestimonial={setShowTestimonial} testimonials={testimonials} testimonialsScrollRef={testimonialsScrollRef} user={user} />
     <HomeFooter goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} />
@@ -261,6 +262,7 @@ function AppContent() {
     {showFeedback && <FeedbackModal user={user} liveClasses onClose={() => setShowFeedback(false)} />}
     {showTestimonial && <TestimonialModal user={user} onClose={() => { setShowTestimonial(false); loadTestimonials(); }} />}
     <SiteHeader adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} hideForAuth={['/sign-in', '/register', '/reset-password'].includes(location.pathname)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={value => { if (!adminArea) navigate('/admin'); setAdminSidebarOpen(value); }} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} onNavigate={navigate} setShowChangePassword={setShowChangePassword} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
+    <StudioSaveStatus />
     <AppRoutes user={user} home={home} sidebar={sidebar} onHome={goHome} onLogin={handleLogin} openLogin={openLogin} />
   </div>;
 }

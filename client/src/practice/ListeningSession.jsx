@@ -1,3 +1,4 @@
+import { recordStudioActivity } from './recordStudioActivity';
 import { useEffect, useRef, useState } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 
@@ -99,6 +100,7 @@ export default function ListeningSession({ initialQuestions, onRestart }) {
     setSelection(option);
     setChecked(true);
     const correct = option === question.answer;
+    recordStudioActivity('listening', correct, String(question._id));
     void playFeedback(correct);
     if (!correct) setMistakes(previous => [...previous, question]);
   }

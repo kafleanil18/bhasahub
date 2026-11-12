@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#de2910">
+  <title>You're offline · Xiao Ao</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; background: #faf6ec; color: #2a2320; font: 16px/1.6 system-ui, sans-serif; }
+    main { max-width: 440px; }
+    .brand { color: #a92316; font-weight: 700; }
+    h1 { font-size: 28px; line-height: 1.25; }
+    button { padding: 12px 24px; background: #a92316; color: white; border: 0; border-radius: 6px; font: inherit; cursor: pointer; }
+    button:focus-visible { outline: 3px solid #2a2320; outline-offset: 4px; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="brand">Xiao Ao · Chinese Made Simple</p>
+    <h1>You're offline</h1>
+    <p>Connect to the internet to open lessons, play audio, and save your progress.</p>
+    <button type="button" onclick="window.location.reload()">Try again</button>
+  </main>
+</body>
+</html>

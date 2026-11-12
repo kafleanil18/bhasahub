@@ -3,3 +3,7 @@ node_modules/
 .DS_Store
 dist/
 uploads/
+
+# Generated browser test output
+test-results/
+playwright-report/

@@ -8,6 +8,7 @@ const ForgotPassword = lazy(() => import('../auth/ForgotPassword'));
 const ResetPassword = lazy(() => import('../auth/ResetPassword'));
 const AdminPanel = lazy(() => import('../admin/AdminPanel'));
 const CoursePage = lazy(() => import('../courses/CoursePage'));
+const ContinueLearning = lazy(() => import('../courses/ContinueLearning'));
 const LessonManager = lazy(() => import('../admin/LessonManager'));
 const Dashboard = lazy(() => import('../dashboard/Dashboard'));
 const ProgressAnalytics = lazy(() => import('../dashboard/ProgressAnalytics'));
@@ -121,7 +122,8 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
     </Route>
     <Route element={<RequireSession user={user} />}>
       <Route element={<StudentLayout />}>
-        <Route path="/my-courses" element={<Dashboard user={user} onOpenCourse={course => navigate(`/courses/${encodeURIComponent(course._id)}`)} onBrowse={onHome} />} />
+        <Route path="/continue" element={<ContinueLearning />} />
+        <Route path="/my-courses" element={<Dashboard user={user} onOpenCourse={(course, resume) => navigate(resume ? `/continue?course=${encodeURIComponent(course._id)}` : `/courses/${encodeURIComponent(course._id)}`)} onBrowse={onHome} />} />
         <Route path="/progress" element={<ProgressAnalytics user={user} onBack={onHome} />} />
         <Route path="/courses/:courseId" element={<CourseRoute user={user} onHome={onHome} />} />
         <Route path="/courses/:courseId/lessons/:lessonId" element={<CourseRoute user={user} onHome={onHome} />} />

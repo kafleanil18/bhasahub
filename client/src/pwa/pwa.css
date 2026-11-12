@@ -1,0 +1,19 @@
+.pwa-notice {
+  position: fixed;
+  z-index: 1100;
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  right: 1rem;
+  width: min(24rem, calc(100vw - 2rem));
+  padding: var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: 0 4px 16px #2a232018;
+}
+.pwa-notice p { margin: 0 0 var(--space-3); font-size: .875rem; }
+.pwa-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.pwa-actions button { min-height: 44px; padding: .5rem 1rem; border: 1px solid var(--accent-red); border-radius: 6px; background: var(--accent-red); color: white; font: inherit; cursor: pointer; }
+.pwa-actions .pwa-later { background: transparent; color: var(--ink); border-color: var(--line); }
+.pwa-actions button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.pwa-actions button:disabled { opacity: .65; cursor: wait; }

@@ -6,7 +6,7 @@ export default function HomeHero({ onContinueLearning, onPinyinPractice, user, h
   const firstStudentLogin = user?.role === 'student' && user.isFirstLogin === true;
   const startLearning = () => {
     if (!user) onPinyinPractice();
-    else if (hasStartedCourse) onContinueLearning();
+    else if (!teaching) onContinueLearning();
     else requestAnimationFrame(() => document.getElementById('courses')?.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }));
   };
   return <>

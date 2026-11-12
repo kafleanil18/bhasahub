@@ -1,3 +1,4 @@
+import { recordStudioActivity } from './recordStudioActivity';
 import { useState, useEffect, useRef } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 
@@ -984,7 +985,7 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
                         <td
                           key={final}
                           className={`pinyin-syllable ${highlighted ? 'pinyin-highlighted' : ''}`}
-                          onClick={() => setSelected(syllable)}
+                          onClick={() => { setSelected(syllable); recordStudioActivity('pinyin', null, syllable); }}
                         >
                           {syllable}
                         </td>

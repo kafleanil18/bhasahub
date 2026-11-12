@@ -1,3 +1,4 @@
+import { recordStudioActivity } from './recordStudioActivity';
 import { useEffect, useRef, useState } from 'react';
 import { MEASURE_GROUPS, isCorrectMeasure } from './measureQuiz';
 import { shuffleSentences } from './sentenceQuiz';
@@ -20,6 +21,7 @@ export default function MeasureSession({ initialQuestions, voice, onExit }) {
   function choose(word) {
     if (lockedRef.current) return;
     lockedRef.current = true;
+    recordStudioActivity('measures', isCorrectMeasure(question, word), question.id);
     setSelection(word);
     setResults(previous => [...previous,{ question, selected:word, correct:isCorrectMeasure(question,word) }]);
     if (voice) play(question.chinese);

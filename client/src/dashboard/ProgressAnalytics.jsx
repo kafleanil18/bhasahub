@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { downloadCSV } from '../utils/csv';
+import StudioAnalytics from './StudioAnalytics';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -216,6 +217,8 @@ function ProgressAnalytics({ user, onBack }) {
       {error && <div className="analytics-inline-error" role="alert"><span>{error}</span><button className="listening-secondary" onClick={() => setRefreshKey(value => value + 1)}>Try again</button></div>}
 
       {data.courseProgress?.length > 0 && <CourseLessonProgress rows={data.courseProgress} />}
+
+      <StudioAnalytics refreshKey={refreshKey} />
 
       {/* SVG score trend chart */}
       {data.scoreTrend.length > 0 && (

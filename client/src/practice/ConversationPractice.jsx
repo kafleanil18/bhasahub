@@ -1,3 +1,4 @@
+import { recordStudioActivity } from './recordStudioActivity';
 import { useEffect, useRef, useState } from 'react';
 import { bookLessons } from './conversationLessons';
 import { mediaUrl } from '../utils/mediaUrl';
@@ -117,7 +118,8 @@ function ConversationPracticePage({ onBack }) {
 
   const lesson = availableLessons.find((item) => item.id === selectedLessonId) || availableLessons[0];
 
-  const playPhrase = (phrase, audioUrl) => {
+  const playPhrase = (phrase, audioUrl, retry = false) => {
+    if (!retry) recordStudioActivity('conversation', null, phrase.trim().replace(/\s+/g, ' '));
     if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
     window.speechSynthesis?.cancel();
     if (audioUrl) {
@@ -125,7 +127,7 @@ function ConversationPracticePage({ onBack }) {
       audioRef.current = audio;
       audio.onplay = () => setPlayingPhrase(phrase);
       audio.onended = audio.onerror = () => { setPlayingPhrase(''); audioRef.current = null; };
-      audio.play().catch(() => { audioRef.current = null; playPhrase(phrase); });
+      audio.play().catch(() => { audioRef.current = null; playPhrase(phrase, undefined, true); });
       return;
     }
     if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) return;

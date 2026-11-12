@@ -1,3 +1,4 @@
+import { recordStudioActivity } from './recordStudioActivity';
 import { useEffect, useRef, useState } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 import SentenceText, { PinyinText } from './SentenceText';
@@ -32,9 +33,11 @@ export default function SentenceSession({ initialSentences, onExit, onMastered }
     if (correct) onMastered(sentence.id);
     else setMissed(previous => [...previous, sentence]);
     void listen();
+    recordStudioActivity('sentences', correct, sentence.id);
   }
 
   function advance() {
+    if (!lockedRef.current) return;
     playbackRef.current++;
     audioRef.current?.pause();
     if (index === sentences.length - 1) setFinished(true);
@@ -94,6 +97,7 @@ export default function SentenceSession({ initialSentences, onExit, onMastered }
       {tiles.map(tile => <button key={tile.id} className="sentence-tile" lang="zh-CN" aria-label={tile.text} disabled={Boolean(feedback) || selected.includes(tile.id)} onClick={() => setSelected(previous => previous.includes(tile.id) ? previous : [...previous, tile.id])}><PinyinText text={tile.text} readings={sentence.tokenPinyin?.[tile.id]} /></button>)}
     </div>
     {!feedback && <div className="sentence-actions"><button className="sentence-primary" disabled={selected.length !== tiles.length} onClick={check}>Check sentence</button><button className="sentence-secondary" disabled={!selected.length} onClick={() => setSelected([])}>Clear</button></div>}
+    {feedback && <div className="sentence-actions"><button className="sentence-primary" onClick={advance}>{index === sentences.length - 1 ? 'See results' : 'Next sentence →'}</button></div>}
     {feedback && <div className={`sentence-feedback ${feedback}`} role="status">
       <h3 className="sentence-result-heading">
         <svg className="sentence-result-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -108,6 +112,5 @@ export default function SentenceSession({ initialSentences, onExit, onMastered }
     </div>}
     {sentence.audioUrl && <audio key={sentence.id} ref={audioRef} src={mediaUrl(sentence.audioUrl)} preload="none" onError={() => setAudioError('The recording is unavailable. Please try again later.')} />}
     {feedback && (sentence.audioUrl ? <div className="sentence-recording"><button className="sentence-secondary" onClick={listen}>▷ Replay sentence</button>{audioError && <p role="alert" className="sentence-error">{audioError}</p>}</div> : <p className="sentence-muted sentence-recording">Audio has not been added for this sentence yet.</p>)}
-    {feedback && <button className="sentence-primary" onClick={advance}>{index === sentences.length - 1 ? 'See results' : 'Next sentence →'}</button>}
   </section>;
 }

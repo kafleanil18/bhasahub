@@ -1,3 +1,4 @@
+import { recordStudioActivity } from './recordStudioActivity';
 import { useEffect, useRef, useState } from 'react';
 import { NUMBER_MODES, checkNumberAnswer, typedNumberAnswer } from './numberQuiz';
 import { shuffleSentences } from './sentenceQuiz';
@@ -33,6 +34,7 @@ export default function NumberSession({ initialQuestions, voice, onExit }) {
     const result = checkNumberAnswer(question, answer);
     if (!result.valid) { setInputError(result.error); return; }
     checkedRef.current = true; stop(); setInputError('');
+    recordStudioActivity('numbers', result.correct, question.id);
     setFeedback(result.correct ? 'correct' : 'incorrect');
     setResults(previous => [...previous, { question, correct: result.correct, typed: typedNumberAnswer(question, answer) }]);
   }
