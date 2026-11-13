@@ -117,6 +117,8 @@
 :root .home-page .site-footer .logo { color: #ffffff; }
 :root .home-page .site-footer .logo span { color: var(--flag-yellow); }
 :root .home-page .site-footer p { color: #d6d6d6; }
+:root .home-page .site-footer .privacy-links a { color: #ffffff; }
+:root .home-page .site-footer .privacy-links a:hover { color: var(--flag-yellow); }
 :root .home-page .social-link { background: #292929; border-color: #595959; color: #ffffff; }
 :root .home-page .social-link:hover { background: var(--flag-yellow); color: #161616; border-color: var(--flag-yellow); }
 :root .home-page .btn-primary { background: var(--flag-red); color: #ffffff; border-color: var(--flag-red); }

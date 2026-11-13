@@ -62,6 +62,7 @@ export default function PwaControls() {
   if (dismissed || (!waiting && !install)) return null
   return (
     <aside className="pwa-notice" aria-label={waiting ? 'App update' : 'Install app'}>
+      <div className="pwa-notice-brand"><img src="/brand/xiao-mark.svg" alt="" width="32" height="32" /><strong>Xiao Ao</strong></div>
       <p role="status">{waiting ? 'A new version is ready. Finish your work before reloading.' : 'Keep Xiao Ao on your home screen for easy access.'}</p>
       <div className="pwa-actions">
         {waiting ? (

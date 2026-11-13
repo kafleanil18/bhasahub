@@ -1,3 +1,5 @@
+import BrandLogo from '../components/BrandLogo';
+import PrivacyLinks from '../privacy/PrivacyLinks';
 
 export default function HomeFooter({ goHome, isSuperAdmin, serverOk }) {
   return (
@@ -6,7 +8,7 @@ export default function HomeFooter({ goHome, isSuperAdmin, serverOk }) {
         <div className="footer-main">
           <div className="footer-brand-block">
             <button className="logo" onClick={goHome} aria-label="Xiao Ao home">
-              Xiao <span>Ao</span><span className="footer-brand-mark" aria-hidden="true">XA</span>
+              <BrandLogo tone="dark" decorative />
             </button>
             <p className="footer-tag">Small steps. Real conversations.</p>
           </div>
@@ -33,6 +35,7 @@ export default function HomeFooter({ goHome, isSuperAdmin, serverOk }) {
           </div>
         </div>
 
+        <PrivacyLinks />
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} Xiao Ao · Learn Chinese, one step at a time.</span>
           {isSuperAdmin && (

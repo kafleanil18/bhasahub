@@ -339,7 +339,7 @@ fadeUp .8s ease;
 }
 
 /* Header frosted background in dark mode */
-.dark header {
+.dark .site-header {
   background: rgba(26, 23, 20, 0.85);
 }
 

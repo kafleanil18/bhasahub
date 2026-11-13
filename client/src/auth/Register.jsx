@@ -1,3 +1,4 @@
+import BrandLogo from '../components/BrandLogo';
 import { useState, useEffect } from 'react';
 import './Register.css';
 import './Login.css';
@@ -92,8 +93,7 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
 
         <div className="login-welcome-panel">
           <button type="button" className="login-brand" onClick={onBack} aria-label="Xiao Ao home">
-            <span className="login-brand-seal" aria-hidden="true">XA</span>
-            <span>Xiao <span>Ao</span></span>
+            <BrandLogo tone="light" decorative />
           </button>
           <div className="login-welcome-content">
             <h2 className="signin-welcome-title">Your Chinese<br />journey starts here.</h2>
@@ -305,7 +305,7 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
               />
               <label htmlFor="agree-checkbox" className="checkbox-label">
                 I agree to the <a href="#terms" onClick={(e) => e.stopPropagation()}>Terms of Service</a> &{' '}
-                <a href="#privacy" onClick={(e) => e.stopPropagation()}>Privacy Policy</a>.
+                <a href="/privacy" target="_blank" rel="noopener noreferrer" aria-label="Privacy Policy (opens in a new tab)" onClick={(e) => e.stopPropagation()}>Privacy Policy</a>.
               </label>
             </div>
 

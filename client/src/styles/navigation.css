@@ -1,5 +1,4 @@
 /* ---------- High-Contrast Deep Imperial Ink Navigation Bar ---------- */
-header,
 .site-header {
   position: sticky;
   top: 0;
@@ -13,14 +12,13 @@ header,
   transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, padding 0.25s ease;
 }
 
-.dark header,
 .dark .site-header {
   background: rgba(14, 12, 10, 0.97);
   border-bottom: 2px solid rgba(201, 154, 60, 0.6);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.65);
 }
 
-header .container {
+.site-header .container {
   max-width: 1260px;
   width: 100%;
   margin: 0 auto;
@@ -607,7 +605,7 @@ header .container {
    RESPONSIVE NAVIGATION (Tablet & Mobile)
    ========================================================================== */
 @media (max-width: 1360px) {
-  header .container {
+  .site-header .container {
     padding: 0 16px;
   }
 
@@ -1580,7 +1578,7 @@ h1, h2, h3, h4, h5, h6,
 @media (min-width: 1361px) {
   html { font-size: 17px; }
   body { font-size: 1rem; }
-  header .container { max-width: 1480px; padding-inline: 36px; }
+  .site-header .container { max-width: 1480px; padding-inline: 36px; }
   .site-header .header-row { gap: 24px; }
   .site-header .main-nav { justify-content: flex-end; }
   .site-header .nav-links { gap: 10px; }

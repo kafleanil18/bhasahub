@@ -1,14 +1,12 @@
+import BrandLogo from './BrandLogo';
 export default function SiteHeader({ adminSidebarOpen, darkMode, goHome, handleLogout, hideForAuth = false, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, onNavigate, setShowChangePassword, setShowUserMenu, showUserMenu, unreadFeedbackCount, user }) {
   if (hideForAuth) return null;
   return (
     <header className={`site-header${isSuperAdmin || !user ? ' paper-header' : ''}`}>
         <div className="container header-row">
           <div className="header-left">
-            <button className="logo brand-logo" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); }}>
-              <span className="brand-seal" aria-hidden="true">XA</span>
-              <span className="brand-lockup"><span className="brand-title">
-                Xiao <span className="brand-accent">Ao</span>
-              </span><span className="brand-tagline">Chinese Made Simple</span></span>
+            <button className="logo brand-logo" aria-label="Xiao Ao Chinese Made Simple" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); goHome(); }}>
+              <BrandLogo tone={isSuperAdmin || !user ? 'light' : 'dark'} decorative />
             </button>
           </div>
 

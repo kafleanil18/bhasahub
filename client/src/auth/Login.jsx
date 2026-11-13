@@ -1,3 +1,4 @@
+import BrandLogo from '../components/BrandLogo';
 import { useState, useEffect } from 'react';
 import './Login.css';
 import GoogleAuthButton from './GoogleAuthButton';
@@ -76,8 +77,7 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
         {/* Left Column: Portrait & Heading */}
         <div className="login-welcome-panel">
           <button type="button" className="login-brand" onClick={onBack} aria-label="Xiao Ao home">
-            <span className="login-brand-seal" aria-hidden="true">XA</span>
-            <span>Xiao <span>Ao</span></span>
+            <BrandLogo tone="light" decorative />
           </button>
           <div className="login-welcome-content">
             <h2 id="signin-welcome-title" className="signin-welcome-title">We guarantee<br />your HSK exam.</h2>

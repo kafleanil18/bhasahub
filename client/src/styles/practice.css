@@ -982,7 +982,7 @@
 @media (max-width: 768px) {
   .container { padding: 0 18px; }
   .section-title { font-size: 26px; }
-  header { padding: 14px 0; }
+  .site-header { padding: 14px 0; }
 
   /* Sections vertical rhythm */
   .hero { padding: 36px 0 46px; }

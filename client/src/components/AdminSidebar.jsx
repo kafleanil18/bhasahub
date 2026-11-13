@@ -1,3 +1,4 @@
+import BrandLogo from './BrandLogo';
 export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen, isSuperAdmin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, unreadFeedbackCount }) {
   return (
     <aside
@@ -9,6 +10,7 @@ export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen,
           >
             <div className="admin-sidebar-head">
               <div>
+                <BrandLogo />
                 <h2>Super Admin</h2>
               </div>
               <button className="admin-sidebar-close" onClick={() => setAdminSidebarOpen(false)} aria-label="Close admin navigation">×</button>

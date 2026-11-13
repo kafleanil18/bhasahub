@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-function FeedbackModal({ user, onClose, liveClasses = false }) {
+function FeedbackModal({ user, onClose, liveClasses = false, privacyRequest = false }) {
   const [name, setName] = useState(user ? user.name : '');
   const [email, setEmail] = useState(user ? user.email : '');
   const [message, setMessage] = useState('');
@@ -22,19 +22,20 @@ function FeedbackModal({ user, onClose, liveClasses = false }) {
       if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
     };
-    card?.addEventListener('keydown', handleKey);
-    return () => { card?.removeEventListener('keydown', handleKey); previousFocus?.focus(); };
+    document.addEventListener('keydown', handleKey);
+    return () => { document.removeEventListener('keydown', handleKey); previousFocus?.focus(); };
   }, [onClose]);
 
   const handleSubmit = async () => {
     setError('');
+    if (privacyRequest && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return setError('Please enter an email address so we can reply.');
     if (!message.trim()) return setError('Please write a message');
     setSending(true);
     try {
       const res = await fetch(window.API_BASE_URL + '/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, message: liveClasses ? `Live classes enquiry\n\n${message}` : message }),
+        body: JSON.stringify({ name, email, message: privacyRequest ? `Privacy request\n\n${message}` : liveClasses ? `Live classes enquiry\n\n${message}` : message }),
       });
       if (res.ok) {
         setSent(true);
@@ -239,7 +240,7 @@ function FeedbackModal({ user, onClose, liveClasses = false }) {
         @keyframes fbSlideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
 
-      <div ref={cardRef} className="fb-card" role="dialog" aria-modal="true" aria-label={liveClasses ? 'Live classes enquiry' : 'Message us'} onClick={(e) => e.stopPropagation()}>
+      <div ref={cardRef} className="fb-card" role="dialog" aria-modal="true" aria-label={privacyRequest ? 'Privacy request' : liveClasses ? 'Live classes enquiry' : 'Message us'} onClick={(e) => e.stopPropagation()}>
         <button className="fb-close-btn" onClick={onClose} aria-label="Close modal">×</button>
 
         {sent ? (
@@ -247,14 +248,14 @@ function FeedbackModal({ user, onClose, liveClasses = false }) {
             <span className="fb-success-icon">🙏</span>
             <h1 className="fb-title">Thank you!</h1>
             <p className="fb-sub" style={{ marginBottom: 0 }}>
-              {liveClasses ? 'Your live classes enquiry has been sent. Thank you for getting in touch.' : 'Your feedback has been successfully shared. We sincerely appreciate you taking the time to help us improve.'}
+              {privacyRequest ? 'Your privacy request has been sent to the team. We will use your email to respond.' : liveClasses ? 'Your live classes enquiry has been sent. Thank you for getting in touch.' : 'Your feedback has been successfully shared. We sincerely appreciate you taking the time to help us improve.'}
             </p>
             <button className="fb-btn-close" onClick={onClose}>Close</button>
           </div>
         ) : (
           <>
-            <h1 className="fb-title" id="feedback-title">{liveClasses ? 'Enquire about live classes' : 'Message us'}</h1>
-            <p className="fb-sub">{liveClasses ? 'Tell us about your goals and availability, and how we can help.' : "Questions, suggestions, or feedback — we'd love to hear from you."}</p>
+            <h1 className="fb-title" id="feedback-title">{privacyRequest ? 'Contact us about privacy' : liveClasses ? 'Enquire about live classes' : 'Message us'}</h1>
+            <p className="fb-sub">{privacyRequest ? 'Tell us what you need and include a reply email. Do not send your password.' : liveClasses ? 'Tell us about your goals and availability, and how we can help.' : "Questions, suggestions, or feedback — we'd love to hear from you."}</p>
 
             {error && (
               <div className="fb-error" role="alert">
@@ -305,7 +306,7 @@ function FeedbackModal({ user, onClose, liveClasses = false }) {
             </div>
 
             <button className="fb-btn-submit" onClick={handleSubmit} disabled={sending}>
-              {sending ? 'Sending...' : liveClasses ? 'Send enquiry' : 'Send message'}
+              {sending ? 'Sending...' : privacyRequest ? 'Send privacy request' : liveClasses ? 'Send enquiry' : 'Send message'}
             </button>
           </>
         )}

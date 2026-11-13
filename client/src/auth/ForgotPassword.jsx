@@ -1,3 +1,4 @@
+import BrandLogo from '../components/BrandLogo';
 import { useState, useEffect, useRef } from 'react';
 import './Login.css';
 
@@ -154,9 +155,7 @@ function ForgotPassword({ onBack, onSwitch }) {
         {/* Left Column */}
         <div className="login-welcome-panel">
           <div className="login-welcome-content">
-            <h1 className="hsk-mock-title">
-              Xiao <span style={{ color: 'var(--seal)' }}>Ao</span> · Chinese Made Simple
-            </h1>
+            <BrandLogo tone="dark" />
           </div>
         </div>
 

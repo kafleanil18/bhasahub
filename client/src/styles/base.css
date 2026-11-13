@@ -237,7 +237,7 @@ body {
 }
 
 /* ---------- Header ---------- */
-header {
+.site-header {
   padding: 18px 0;
   background: rgba(250, 246, 236, 0.85);
   backdrop-filter: blur(12px);
@@ -247,7 +247,7 @@ header {
   z-index: 20;
 }
 
-header .container {
+.site-header .container {
   display: flex;
   align-items: center;
   justify-content: space-between;

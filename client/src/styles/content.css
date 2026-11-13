@@ -417,7 +417,7 @@
 }
 
 /* ---------- Nav bar polish ---------- */
-header {
+.site-header {
   position: sticky;
   top: 0;
   z-index: 50;
@@ -427,7 +427,7 @@ header {
   transition: box-shadow 0.3s ease;
 }
 
-header:hover {
+.site-header:hover {
   box-shadow: 0 2px 16px rgba(42, 35, 32, 0.06);
 }
 
