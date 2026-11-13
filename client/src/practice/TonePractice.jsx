@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import useAnswerSound from './useAnswerSound';
 import { Link } from 'react-router-dom';
 import { mediaUrl } from '../utils/mediaUrl';
 import { shuffleSentences } from './sentenceQuiz';
@@ -29,6 +30,8 @@ function ToneSession({ questions, onRestart }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [audioError, setAudioError] = useState('');
+  const [soundsEnabled, setSoundsEnabled] = useState(true);
+  const feedbackSound = useAnswerSound(soundsEnabled);
   const audioRef = useRef(null);
   const headingRef = useRef(null);
   const lockedRef = useRef(false);
@@ -53,23 +56,31 @@ function ToneSession({ questions, onRestart }) {
   const check = async event => {
     event.preventDefault();
     if (!heard || selected === null || lockedRef.current) return;
+    feedbackSound.prepare();
     lockedRef.current = true; setBusy(true); setError(''); audioRef.current?.pause();
     try {
       const data = await request('/answer', { method: 'POST', body: JSON.stringify({ recordingId: question._id, selectedTone: selected }) });
       if (!activeRef.current) return;
       setResult(data); setResults(previous => [...previous, data]);
+      feedbackSound.play(data.correct);
     } catch (err) {
       if (activeRef.current) { setError(err.message); lockedRef.current = false; }
     } finally { if (activeRef.current) setBusy(false); }
   };
-  const next = skip => {
+  const next = useCallback(skip => {
     if (advancingRef.current || busy || (!skip && !result)) return;
     advancingRef.current = true;
     audioRef.current?.pause();
     if (skip) setSkipped(value => value + 1);
     setIndex(value => value + 1); setSelected(null); setHeard(false); setResult(null);
     setError(''); setAudioError(''); lockedRef.current = false;
-  };
+  }, [busy, result]);
+
+  useEffect(() => {
+    if (!result?.correct || busy) return;
+    const timer = window.setTimeout(() => next(false), 1200);
+    return () => window.clearTimeout(timer);
+  }, [result, busy, next]);
 
   if (finished) {
     const correct = results.filter(item => item.correct).length;
@@ -88,17 +99,17 @@ function ToneSession({ questions, onRestart }) {
     <h2 id="tone-question-title" ref={headingRef} tabIndex={-1}>Which tone do you hear?</h2>
     <p>Listen to <strong>{question.syllable}</strong>, then choose its tone.</p>
     <audio key={question._id} ref={audioRef} src={mediaUrl(question.audioUrl)} preload="none" onPlaying={() => { setHeard(true); setAudioError(''); }} onError={() => setAudioError('This recording is unavailable. Try again or skip it.')} />
-    <div className="sentence-actions"><button type="button" className="sentence-primary" onClick={() => play(1)} disabled={busy}>Play recording</button><button type="button" className="sentence-secondary" onClick={() => play(.75)} disabled={busy}>Slow · 0.75×</button></div>
+    <div className="sentence-actions"><button type="button" className="sentence-primary" onClick={() => play(1)} disabled={busy}>Play recording</button><button type="button" className="sentence-secondary" onClick={() => play(.75)} disabled={busy}>Slow · 0.75×</button><button type="button" className="sentence-secondary" aria-pressed={!soundsEnabled} onClick={() => setSoundsEnabled(value => !value)}>{soundsEnabled ? 'Mute answer sounds' : 'Unmute answer sounds'}</button></div>
     {audioError && <p role="alert">{audioError}</p>}
     <form onSubmit={check}>
-      <fieldset className="tone-choices" disabled={!heard || !!result || busy}><legend>Choose one of the four tones</legend>{tones.map(tone => <label key={tone.value} className={`tone-choice${selected === tone.value ? ' is-selected' : ''}`}>
+      <fieldset className={`tone-choices${result ? ' has-result' : ''}`} disabled={!heard || !!result || busy}><legend>Choose one of the four tones</legend>{tones.map(tone => <label key={tone.value} className={`tone-choice${selected === tone.value ? ' is-selected' : ''}${result && result.correctTone === tone.value ? ' is-correct' : ''}${result && !result.correct && selected === tone.value ? ' is-wrong' : ''}`}>
         <input type="radio" name="tone" value={tone.value} checked={selected === tone.value} onChange={() => setSelected(tone.value)} />
-        <span className="tone-choice-mark" aria-hidden="true">{tone.mark}</span><span><strong>Tone {tone.value}</strong><small>{tone.label}</small></span>
+        <span className="tone-choice-mark" aria-hidden="true">{tone.mark}</span><span><strong>Tone {tone.value}</strong><small>{tone.label}</small>{result && result.correctTone === tone.value && <small className="tone-option-status">✓ Correct answer</small>}{result && !result.correct && selected === tone.value && <small className="tone-option-status">✗ Your answer</small>}</span>
       </label>)}</fieldset>
       {!heard && <p className="sentence-muted">Play the recording to unlock the answers.</p>}
       {!result && <div className="sentence-actions"><button type="submit" className="sentence-primary" disabled={!heard || selected === null || busy}>{busy ? 'Checking & saving…' : 'Check tone'}</button><button type="button" className="sentence-secondary" disabled={busy} onClick={() => next(true)}>Skip recording</button></div>}
       {error && <p role="alert">{error} Your question is still here; you can retry.</p>}
-      {result && <><div className={`sentence-feedback ${result.correct ? 'correct' : 'incorrect'}`} role="status"><h3>{result.correct ? 'Correct!' : 'Keep practicing.'}</h3><p>{result.syllable} · Tone {result.correctTone} ({tones[result.correctTone - 1].label.toLowerCase()}).{!result.correct && ` You chose Tone ${result.selectedTone}.`}</p></div><button type="button" className="sentence-primary" onClick={() => next(false)}>{index === questions.length - 1 ? 'See results' : 'Next recording →'}</button></>}
+      {result && <><div className={`sentence-feedback ${result.correct ? 'correct' : 'incorrect'}`} role="status"><h3>{result.correct ? 'Correct!' : 'Keep practicing.'}</h3><p>{result.syllable} · Tone {result.correctTone} ({tones[result.correctTone - 1].label.toLowerCase()}).{!result.correct && ` You chose Tone ${result.selectedTone}.`}</p>{result.correct && <p>{index === questions.length - 1 ? 'Opening your results…' : 'Next recording in a moment…'}</p>}</div>{!result.correct && <button type="button" className="sentence-primary" onClick={() => next(false)}>{index === questions.length - 1 ? 'See results' : 'Next recording →'}</button>}</>}
     </form>
   </section>;
 }

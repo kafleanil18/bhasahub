@@ -15,3 +15,14 @@
 .tone-results-table caption { caption-side: top; color: var(--mist); }
 .tone-practice .sentence-secondary { display: inline-flex; align-items: center; text-decoration: none; }
 @media (max-width: 480px) { .tone-choices { grid-template-columns: 1fr; } }
+
+.tone-practice { --tone-correct: #28734e; --tone-incorrect: #a63222; }
+:root.dark .tone-practice { --tone-correct: #86d6a4; --tone-incorrect: #ffa99b; }
+.tone-choices.has-result .tone-choice { opacity: 1; }
+.tone-choice.is-correct { border-color: var(--tone-correct); background: color-mix(in srgb, var(--tone-correct) 12%, var(--card)); }
+.tone-choice.is-correct :is(strong, small, .tone-choice-mark) { color: var(--tone-correct); }
+.tone-choice.is-wrong { border-color: var(--tone-incorrect); background: color-mix(in srgb, var(--tone-incorrect) 8%, var(--card)); }
+.tone-choice.is-wrong :is(strong, small, .tone-choice-mark) { color: var(--tone-incorrect); }
+.tone-practice .sentence-feedback.correct { border-color: var(--tone-correct); background: color-mix(in srgb, var(--tone-correct) 10%, var(--card)); }
+.tone-practice .sentence-feedback.correct h3 { color: var(--tone-correct); }
+.tone-option-status { font-weight: 650; }
