@@ -1,5 +1,6 @@
 const shapes = {
   pinyin: <><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v4M8 22h8"/></>,
+  tones: <><path d="M3 12h2l3-7 4 14 4-10 3 3h2"/><path d="M5 3h14"/></>,
   trace: <><path d="m14 5 5 5M5 19l4-1 12-12a2.1 2.1 0 0 0-3-3L6 15l-1 4ZM3 3h4M3 3v4M3 12v2M12 21h2M17 21h4v-4"/></>,
   listening: <><path d="M4 14v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="12" width="4" height="8" rx="2"/><rect x="17" y="12" width="4" height="8" rx="2"/></>,
   sentences: <><rect x="3" y="4" width="7" height="6" rx="1.5"/><rect x="13" y="4" width="8" height="6" rx="1.5"/><rect x="3" y="14" width="11" height="6" rx="1.5"/><path d="M18 14l3 3-3 3M17 17h4"/></>,

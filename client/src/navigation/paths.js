@@ -1,5 +1,5 @@
 export const practicePaths = {
-  pinyin: '/practice/pinyin', trace: '/practice/characters', listening: '/practice/listening',
+  pinyin: '/practice/pinyin', tones: '/practice/tones', trace: '/practice/characters', listening: '/practice/listening',
   sentences: '/practice/sentences', measures: '/practice/measure-words', numbers: '/practice/numbers',
   dictation: '/practice/dictation', conversation: '/practice/conversations', tests: '/tests',
 };

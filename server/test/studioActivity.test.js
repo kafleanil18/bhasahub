@@ -61,10 +61,10 @@ function summaries(rows = [], hsk = []) {
   mock.method(PracticePaper, 'find', () => ({ select: () => ({ lean: async () => [] }) }));
 }
 
-test('summary returns all eight studios with accuracy only for graded answers', async () => {
+test('summary returns all nine studios with accuracy only for graded answers', async () => {
   summaries([{ _id: 'sentences', activities: 4, graded: 4, correct: 3, lastPracticed: '2026-11-12' }], [{ _id: 'h11226', completed: 2, unfinished: 1, bestScore: 36, score: 60, lastCompleted: '2026-11-12' }]);
   const res = response(); await handler('get', '/me')({ user }, res);
-  assert.equal(res.body.studios.length, 8);
+  assert.equal(res.body.studios.length, 9);
   assert.equal(res.body.studios.find(row => row.studio === 'sentences').accuracy, 75);
   assert.equal(res.body.studios.find(row => row.studio === 'trace').accuracy, null);
   assert.equal(res.body.hsk[0].bestPercent, 90);
@@ -146,4 +146,22 @@ test('reset rejects unknown studios and reports storage failures', async () => {
   res = response();
   await handler('delete', '/:studio')({ user, params: { studio: 'sentences' }, body: { confirmed: true } }, res);
   assert.equal(res.code, 500);
+});
+
+
+test('tone performance reports all four tones and does not invent accuracy for unanswered tones', async () => {
+  summaries([{ _id: 'tones', activities: 3, graded: 3, correct: 2 }]);
+  mock.method(Activity, 'aggregate', async pipeline => {
+    assert.equal(String(pipeline[0].$match.user), user.id);
+    if (pipeline[0].$match.studio === 'tones') return [{ _id: 2, attempted: 2, correct: 1 }, { _id: 4, attempted: 1, correct: 1 }];
+    return [{ _id: 'tones', activities: 3, graded: 3, correct: 2 }];
+  });
+  const res = response(); await handler('get', '/me')({ user }, res);
+  assert.deepEqual(res.body.tonePerformance, [
+    { tone: 1, attempted: 0, correct: 0, accuracy: null },
+    { tone: 2, attempted: 2, correct: 1, accuracy: 50 },
+    { tone: 3, attempted: 0, correct: 0, accuracy: null },
+    { tone: 4, attempted: 1, correct: 1, accuracy: 100 },
+  ]);
+  assert.equal(res.body.studios.find(row => row.studio === 'tones').accuracy, 67);
 });

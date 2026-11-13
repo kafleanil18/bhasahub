@@ -13,6 +13,7 @@ const LessonManager = lazy(() => import('../admin/LessonManager'));
 const Dashboard = lazy(() => import('../dashboard/Dashboard'));
 const ProgressAnalytics = lazy(() => import('../dashboard/ProgressAnalytics'));
 const PinyinPage = lazy(() => import('../practice/PinyinPage'));
+const TonePractice = lazy(() => import('../practice/TonePractice'));
 const FeedbackInbox = lazy(() => import('../admin/FeedbackInbox'));
 const TestManager = lazy(() => import('../admin/TestManager'));
 const TestList = lazy(() => import('../tests/TestList'));
@@ -126,6 +127,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
     </Route>
     <Route element={<RequireSession user={user} />}>
       <Route element={<StudentLayout />}>
+        <Route path="/practice/tones" element={<TonePractice onBack={onHome} />} />
         <Route path="/continue" element={<ContinueLearning />} />
         <Route path="/my-courses" element={<Dashboard user={user} onOpenCourse={(course, resume) => navigate(resume ? `/continue?course=${encodeURIComponent(course._id)}` : `/courses/${encodeURIComponent(course._id)}`)} onBrowse={onHome} />} />
         <Route path="/progress" element={<ProgressAnalytics user={user} onBack={onHome} />} />

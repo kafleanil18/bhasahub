@@ -462,7 +462,7 @@ function ProgressAnalytics({ user, onBack }) {
         </div>
       )}
 
-      {data.totalAttempts === 0 && !data.completedLessons && (
+      {data.totalAttempts === 0 && !data.completedLessons && !data.hasStudioActivity && (
         <div className="analytics-first-step">
           <span className="analytics-first-step-icon" aria-hidden="true">✦</span>
           <div><h2>Your learning record starts here</h2><p>Complete a lesson or a short vocabulary quiz and your progress will appear on this page.</p></div>

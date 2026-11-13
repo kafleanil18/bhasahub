@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { recordStudioActivity } from './recordStudioActivity';
 import { useState, useEffect, useRef } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
@@ -375,6 +376,12 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
   return (
     <section className="pinyin-table-page">
       <style>{`
+        .pinyin-table-page .pinyin-tone-quiz-link {
+          display: inline-flex;
+          align-items: center;
+          min-height: 44px;
+          animation: none;
+        }
         .pinyin-table-page {
           position: relative;
           z-index: 1;
@@ -796,6 +803,7 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
         <div className="pinyin-card">
           <h1 className="pinyin-h1">汉语拼音 · Mandarin Pinyin Chart</h1>
           <p className="pinyin-subtitle">Click any syllable below to listen to all four tones (ā, á, ǎ, à).</p>
+          <p><Link className="btn-primary pinyin-tone-quiz-link" to="/practice/tones">Practice identifying tones →</Link></p>
 
           {isSuperAdmin && (
             <div className="pinyin-admin-bar">

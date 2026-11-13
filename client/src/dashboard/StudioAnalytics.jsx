@@ -4,7 +4,7 @@ import { practicePaths, testPath } from '../navigation/paths';
 import './StudioAnalytics.css';
 
 const studios = {
-  pinyin: ['Pinyin & tones', 'Pinyin syllables practiced'], trace: ['Trace characters', 'Characters practiced'],
+  pinyin: ['Pinyin & tones', 'Pinyin syllables practiced'], tones: ['Tone listening', 'Unique recordings answered'], trace: ['Trace characters', 'Characters practiced'],
   listening: ['Listening practice', 'Unique questions answered'], sentences: ['Sentence builder', 'Unique questions answered'],
   measures: ['Measure words', 'Unique questions answered'], numbers: ['Everyday numbers', 'Unique questions answered'],
   dictation: ['Listening dictation', 'Unique questions answered'], conversation: ['Conversation', 'Unique phrases practiced'],
@@ -42,14 +42,14 @@ export default function StudioAnalytics({ refreshKey }) {
         body: JSON.stringify({ confirmed: true }), signal: AbortSignal.timeout(15000),
       });
       if (!response.ok) throw new Error('Reset failed');
-      setState(previous => ({ ...previous, data: { ...previous.data, studios: previous.data.studios.map(row => row.studio === studio ? { ...row, activities: 0, graded: 0, correct: 0, accuracy: null, lastPracticed: null } : row) } }));
+      setState(previous => ({ ...previous, data: { ...previous.data, studios: previous.data.studios.map(row => row.studio === studio ? { ...row, activities: 0, graded: 0, correct: 0, accuracy: null, lastPracticed: null } : row), ...(studio === 'tones' ? { tonePerformance: [] } : {}) } }));
       setNotice(`${title} count reset. New practice will count again.`);
     } catch { setResetError(`Could not confirm the reset for ${title}. Refresh My Progress to check the current count before trying again.`); }
     finally { setResetting(''); }
   };
   const data = state.data;
   return <section className="studio-analytics" aria-labelledby="studio-analytics-title">
-    <div className="analytics-course-progress-heading"><div><span className="dash-eyebrow">YOUR PRACTICE STUDIO</span><h2 id="studio-analytics-title">Eight skills. Every practice counts.</h2></div></div>
+    <div className="analytics-course-progress-heading"><div><span className="dash-eyebrow">YOUR PRACTICE STUDIO</span><h2 id="studio-analytics-title">Nine skills. Every practice counts.</h2></div></div>
     {state.loading ? <p role="status">Loading studio activity and test completions…</p> : state.error ? <div role="alert"><p>Studio analytics couldn’t load. Your saved work hasn’t changed.</p><button className="btn-primary" onClick={() => setAttempt(value => value + 1)}>Retry studio analytics</button></div> : <>
       {notice && <p role="status">{notice}</p>}
       {resetError && <p role="alert">{resetError}</p>}
@@ -59,6 +59,10 @@ export default function StudioAnalytics({ refreshKey }) {
           <h3><Link to={practicePaths[id]}>{title}</Link></h3>
           <dl><div><dt>{unit}</dt><dd>{row?.activities || 0}</dd></div><div><dt>Answer accuracy</dt><dd>{row?.accuracy == null ? '—' : `${row.accuracy}%`}</dd></div><div><dt>Last practiced</dt><dd>{date(row?.lastPracticed)}</dd></div></dl>
           {row?.graded > 0 && <p>{row.correct} of {row.graded} answers correct</p>}
+          {id === 'tones' && <div className="studio-tone-breakdown" role="group" aria-label="Tone-by-tone accuracy">{[1, 2, 3, 4].map(tone => {
+            const value = data.tonePerformance?.find(item => item.tone === tone);
+            return <div key={tone}><span>Tone {tone}</span><strong>{value?.attempted ? `${value.accuracy}%` : '—'}</strong><small>{value?.correct || 0} of {value?.attempted || 0} correct</small></div>;
+          })}<p>First checked answers per recording. Reset to start a new cycle.</p></div>}
           <button type="button" className="studio-reset-button" disabled={!!resetting || !row?.activities} onClick={() => resetCount(id, title)} aria-label={`Reset ${title} count`}>{resetting === id ? 'Resetting…' : 'Reset count'}</button>
         </article>;
       })}</div>

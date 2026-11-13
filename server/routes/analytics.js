@@ -205,6 +205,7 @@ router.get('/me', requireAuth, async (req, res) => {
 
     res.json({
       streak,
+      hasStudioActivity: !!await StudioActivity.exists({ user: userId }),
       totalAttempts: overallRow.attempts + hskOverall.attempts,
       completedLessons,
       courseProgress,

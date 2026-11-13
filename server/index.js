@@ -68,6 +68,7 @@ app.use('/api/srs', srsRoutes);
 app.use('/api/attempts', attemptRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/studio-activity', require('./routes/studioActivity'));
+app.use('/api/tone-practice', require('./routes/tonePractice'));
 app.use('/api/hanzi-trace', hanziTraceRoutes);
 app.use('/api/ai', aiToneRoutes);
 

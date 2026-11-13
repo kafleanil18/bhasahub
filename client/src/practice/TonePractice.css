@@ -1,0 +1,17 @@
+.tone-practice { max-width: 960px; margin-inline: auto; }
+.tone-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-block: 24px; padding: 0; border: 0; }
+.tone-choices legend { float: none; width: auto; font-size: 1rem; margin-bottom: 12px; }
+.tone-choice { display: flex; align-items: center; gap: 12px; min-height: 88px; padding: 16px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; background: var(--card); }
+.tone-choice.is-selected { border-color: var(--seal); background: color-mix(in srgb, var(--seal) 8%, var(--card)); }
+.tone-choice:focus-within { outline: 2px solid var(--seal); outline-offset: 3px; }
+.tone-choice input { accent-color: var(--seal); flex-shrink: 0; }
+.tone-choice-mark { font-size: 30px; color: var(--seal); line-height: 1.2; }
+.tone-choice strong, .tone-choice small { display: block; }
+.tone-choice small { margin-top: 4px; color: var(--mist); }
+.tone-choices:disabled .tone-choice { cursor: default; opacity: .65; }
+.tone-results-table { overflow-x: auto; margin-block: 20px; }
+.tone-results-table table { width: 100%; border-collapse: collapse; }
+.tone-results-table th, .tone-results-table td { padding: 12px 8px; text-align: start; border-bottom: 1px solid var(--line); }
+.tone-results-table caption { caption-side: top; color: var(--mist); }
+.tone-practice .sentence-secondary { display: inline-flex; align-items: center; text-decoration: none; }
+@media (max-width: 480px) { .tone-choices { grid-template-columns: 1fr; } }

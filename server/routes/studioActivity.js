@@ -16,7 +16,7 @@ router.post('/', requireAuth, limiter, async (req, res) => {
     : studio === 'trace' ? typeof itemKey === 'string' && /^\p{Script=Han}$/u.test(itemKey)
       : typeof itemKey === 'string' && itemKey.trim().length > 0 && itemKey.length <= 512 && !/[\u0000-\u001f]/.test(itemKey);
   const graded = ['listening', 'sentences', 'measures', 'numbers', 'dictation'].includes(studio);
-  if (!validItem || !Activity.studios.includes(studio) || typeof eventId !== 'string' || !/^[a-zA-Z0-9-]{16,80}$/.test(eventId)
+  if (studio === 'tones' || !validItem || !Activity.studios.includes(studio) || typeof eventId !== 'string' || !/^[a-zA-Z0-9-]{16,80}$/.test(eventId)
     || (graded ? typeof correct !== 'boolean' : correct !== undefined && correct !== null)) {
     return res.status(400).json({ error: 'Invalid studio activity' });
   }
@@ -47,7 +47,7 @@ router.delete('/:studio', requireAuth, limiter, async (req, res) => {
 router.get('/me', requireAuth, async (req, res) => {
   try {
     const user = new mongoose.Types.ObjectId(req.user.id);
-    const [rows, papers, legacyTests] = await Promise.all([
+    const [rows, papers, legacyTests, toneRows] = await Promise.all([
       Activity.aggregate([
         // Older events without a question identity cannot be counted uniquely.
         { $match: { user, itemKey: { $type: 'string' } } },
@@ -61,13 +61,23 @@ router.get('/me', requireAuth, async (req, res) => {
         { $sort: { _id: 1 } },
       ]),
       Attempt.find({ user, type: 'test' }).select('test score total createdAt').populate('test', 'title').sort({ createdAt: -1 }).lean(),
+      Activity.aggregate([
+        { $match: { user, studio: 'tones', targetTone: { $in: [1, 2, 3, 4] } } },
+        { $sort: { createdAt: 1, _id: 1 } },
+        { $group: { _id: '$itemKey', correct: { $first: '$correct' }, tone: { $first: '$targetTone' } } },
+        { $group: { _id: '$tone', attempted: { $sum: 1 }, correct: { $sum: { $cond: ['$correct', 1, 0] } } } },
+      ]),
     ]);
     const customPapers = await PracticePaper.find({ _id: { $in: papers.map(row => row._id) } }).select('_id content.title').lean();
     const studios = Activity.studios.map(studio => {
       const row = rows.find(item => item._id === studio);
       return { studio, activities: row?.activities || 0, graded: row?.graded || 0, correct: row?.correct || 0, accuracy: row?.graded ? Math.round(row.correct / row.graded * 100) : null, lastPracticed: row?.lastPracticed || null };
     });
-    res.json({ studios, hsk: papers.map(row => ({ paper: row._id, title: customPapers.find(paper => paper._id === row._id)?.content?.title || `HSK 1 · ${row._id.toUpperCase()}`, completed: row.completed, unfinished: row.unfinished, bestPercent: row.completed ? Math.round(row.bestScore / 40 * 100) : null, averagePercent: row.completed ? Math.round(row.score / (row.completed * 40) * 100) : null, lastCompleted: row.lastCompleted || null })), otherTests: legacyTests.map(row => ({ id: row._id, title: row.test?.title || 'Archived test', score: row.score, total: row.total, date: row.createdAt })) });
+    const tonePerformance = [1, 2, 3, 4].map(tone => {
+      const row = toneRows.find(item => item._id === tone);
+      return { tone, attempted: row?.attempted || 0, correct: row?.correct || 0, accuracy: row?.attempted ? Math.round(row.correct / row.attempted * 100) : null };
+    });
+    res.json({ studios, tonePerformance, hsk: papers.map(row => ({ paper: row._id, title: customPapers.find(paper => paper._id === row._id)?.content?.title || `HSK 1 · ${row._id.toUpperCase()}`, completed: row.completed, unfinished: row.unfinished, bestPercent: row.completed ? Math.round(row.bestScore / 40 * 100) : null, averagePercent: row.completed ? Math.round(row.score / (row.completed * 40) * 100) : null, lastCompleted: row.lastCompleted || null })), otherTests: legacyTests.map(row => ({ id: row._id, title: row.test?.title || 'Archived test', score: row.score, total: row.total, date: row.createdAt })) });
   } catch {
     res.status(500).json({ error: 'Could not load studio analytics' });
   }

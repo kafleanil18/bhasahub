@@ -29,3 +29,9 @@
 .studio-reset-button { min-height: 44px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--seal); font: inherit; cursor: pointer; }
 .studio-reset-button:focus-visible { outline: 2px solid var(--jade); outline-offset: 3px; }
 .studio-reset-button:disabled { opacity: .5; cursor: default; }
+
+.studio-skill-tones { --studio-accent: #485c9a; --studio-accent-dark: #b4c3ff; }
+.studio-tone-breakdown { margin-block: 16px; border-top: 1px solid var(--line); padding-top: 12px; }
+.studio-tone-breakdown > div { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; margin-bottom: 12px; }
+.studio-tone-breakdown small { grid-column: 1 / -1; color: var(--mist); }
+.studio-tone-breakdown p { font-size: .8125rem; color: var(--mist); }

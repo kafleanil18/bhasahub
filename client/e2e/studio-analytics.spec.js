@@ -18,11 +18,11 @@ async function prepare(page, { fail = false, populated = true } = {}) {
   await page.route('https://**/*', route => route.abort());
 }
 
-test('My Progress shows eight studios and HSK completion details', async ({ page }) => {
+test('My Progress shows nine studios and HSK completion details', async ({ page }) => {
   await prepare(page);
   await page.goto('/progress');
-  const section = page.getByRole('region', { name: 'Eight skills. Every practice counts.' });
-  await expect(section.locator('article')).toHaveCount(9);
+  const section = page.getByRole('region', { name: 'Nine skills. Every practice counts.' });
+  await expect(section.locator('article')).toHaveCount(10);
   const sentences = section.locator('article').filter({ has: page.getByRole('link', { name: 'Sentence builder', exact: true }) });
   await expect(sentences).toContainText('3 of 4 answers correct');
   await expect(sentences).toContainText('75%');
@@ -34,8 +34,8 @@ test('empty history shows all studios without invented accuracy', async ({ page 
   await prepare(page, { populated: false });
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto('/progress');
-  const section = page.getByRole('region', { name: 'Eight skills. Every practice counts.' });
-  await expect(section.locator('article')).toHaveCount(8);
+  const section = page.getByRole('region', { name: 'Nine skills. Every practice counts.' });
+  await expect(section.locator('article')).toHaveCount(9);
   await expect(section).toContainText('No HSK attempts yet');
   await expect(section.locator('article').first()).toContainText('—');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
