@@ -37,29 +37,40 @@ function ToneSession({ questions, onRestart }) {
   const lockedRef = useRef(false);
   const advancingRef = useRef(false);
   const activeRef = useRef(true);
+  const playbackRef = useRef(0);
   const question = questions[index];
   const finished = index >= questions.length;
   useEffect(() => { activeRef.current = true; return () => { activeRef.current = false; }; }, []);
   useEffect(() => { advancingRef.current = false; headingRef.current?.focus(); }, [index]);
-  useEffect(() => {
-    const audio = audioRef.current;
-    return () => { audio?.pause(); };
-  }, [question?._id]);
-
-  const play = async rate => {
+  const play = useCallback(async rate => {
     const audio = audioRef.current;
     if (!audio) return;
+    const attempt = ++playbackRef.current;
     setAudioError(''); audio.pause(); audio.currentTime = 0; audio.playbackRate = rate;
     try { await audio.play(); }
-    catch { if (audioRef.current === audio) setAudioError('Could not play this recording. Try again or skip it.'); }
-  };
-  const check = async event => {
-    event.preventDefault();
-    if (!heard || selected === null || lockedRef.current) return;
+    catch (err) {
+      if (activeRef.current && audioRef.current === audio && attempt === playbackRef.current) {
+        setAudioError(err.name === 'NotAllowedError'
+          ? 'Your browser blocked automatic playback. Tap Play recording to start the audio.'
+          : 'Could not play this recording. Try again or skip it.');
+      }
+    }
+  }, []);
+  useEffect(() => {
+    if (!question) return;
+    const audio = audioRef.current;
+    void play(1);
+    const playback = playbackRef;
+    return () => { playback.current++; audio?.pause(); };
+  }, [question, play]);
+
+  const submitAnswer = async tone => {
+    if (!heard || lockedRef.current) return;
     feedbackSound.prepare();
+    setSelected(tone);
     lockedRef.current = true; setBusy(true); setError(''); audioRef.current?.pause();
     try {
-      const data = await request('/answer', { method: 'POST', body: JSON.stringify({ recordingId: question._id, selectedTone: selected }) });
+      const data = await request('/answer', { method: 'POST', body: JSON.stringify({ recordingId: question._id, selectedTone: tone }) });
       if (!activeRef.current) return;
       setResult(data); setResults(previous => [...previous, data]);
       feedbackSound.play(data.correct);
@@ -77,8 +88,8 @@ function ToneSession({ questions, onRestart }) {
   }, [busy, result]);
 
   useEffect(() => {
-    if (!result?.correct || busy) return;
-    const timer = window.setTimeout(() => next(false), 1200);
+    if (!result || busy) return;
+    const timer = window.setTimeout(() => next(false), result.correct ? 1200 : 2400);
     return () => window.clearTimeout(timer);
   }, [result, busy, next]);
 
@@ -98,19 +109,20 @@ function ToneSession({ questions, onRestart }) {
     <progress value={index} max={questions.length} aria-label="Tone questions completed" />
     <h2 id="tone-question-title" ref={headingRef} tabIndex={-1}>Which tone do you hear?</h2>
     <p>Listen to <strong>{question.syllable}</strong>, then choose its tone.</p>
-    <audio key={question._id} ref={audioRef} src={mediaUrl(question.audioUrl)} preload="none" onPlaying={() => { setHeard(true); setAudioError(''); }} onError={() => setAudioError('This recording is unavailable. Try again or skip it.')} />
-    <div className="sentence-actions"><button type="button" className="sentence-primary" onClick={() => play(1)} disabled={busy}>Play recording</button><button type="button" className="sentence-secondary" onClick={() => play(.75)} disabled={busy}>Slow · 0.75×</button><button type="button" className="sentence-secondary" aria-pressed={!soundsEnabled} onClick={() => setSoundsEnabled(value => !value)}>{soundsEnabled ? 'Mute answer sounds' : 'Unmute answer sounds'}</button></div>
+    <audio ref={audioRef} src={mediaUrl(question.audioUrl)} preload="none" onPlaying={() => { setHeard(true); setAudioError(''); }} onError={() => setAudioError('This recording is unavailable. Try again or skip it.')} />
+    <div className="sentence-actions"><button type="button" className="sentence-primary" onClick={() => play(1)} disabled={busy}>{audioError && !heard ? 'Play recording' : 'Replay recording'}</button><button type="button" className="sentence-secondary" onClick={() => play(.75)} disabled={busy}>Slow · 0.75×</button><button type="button" className="sentence-secondary" aria-pressed={!soundsEnabled} onClick={() => setSoundsEnabled(value => !value)}>{soundsEnabled ? 'Mute answer sounds' : 'Unmute answer sounds'}</button></div>
     {audioError && <p role="alert">{audioError}</p>}
-    <form onSubmit={check}>
+    <div>
       <fieldset className={`tone-choices${result ? ' has-result' : ''}`} disabled={!heard || !!result || busy}><legend>Choose one of the four tones</legend>{tones.map(tone => <label key={tone.value} className={`tone-choice${selected === tone.value ? ' is-selected' : ''}${result && result.correctTone === tone.value ? ' is-correct' : ''}${result && !result.correct && selected === tone.value ? ' is-wrong' : ''}`}>
-        <input type="radio" name="tone" value={tone.value} checked={selected === tone.value} onChange={() => setSelected(tone.value)} />
+        <input type="radio" name="tone" value={tone.value} checked={selected === tone.value} onChange={() => submitAnswer(tone.value)} onClick={() => { if (error && selected === tone.value) submitAnswer(tone.value); }} />
         <span className="tone-choice-mark" aria-hidden="true">{tone.mark}</span><span><strong>Tone {tone.value}</strong><small>{tone.label}</small>{result && result.correctTone === tone.value && <small className="tone-option-status">✓ Correct answer</small>}{result && !result.correct && selected === tone.value && <small className="tone-option-status">✗ Your answer</small>}</span>
       </label>)}</fieldset>
-      {!heard && <p className="sentence-muted">Play the recording to unlock the answers.</p>}
-      {!result && <div className="sentence-actions"><button type="submit" className="sentence-primary" disabled={!heard || selected === null || busy}>{busy ? 'Checking & saving…' : 'Check tone'}</button><button type="button" className="sentence-secondary" disabled={busy} onClick={() => next(true)}>Skip recording</button></div>}
-      {error && <p role="alert">{error} Your question is still here; you can retry.</p>}
-      {result && <><div className={`sentence-feedback ${result.correct ? 'correct' : 'incorrect'}`} role="status"><h3>{result.correct ? 'Correct!' : 'Keep practicing.'}</h3><p>{result.syllable} · Tone {result.correctTone} ({tones[result.correctTone - 1].label.toLowerCase()}).{!result.correct && ` You chose Tone ${result.selectedTone}.`}</p>{result.correct && <p>{index === questions.length - 1 ? 'Opening your results…' : 'Next recording in a moment…'}</p>}</div>{!result.correct && <button type="button" className="sentence-primary" onClick={() => next(false)}>{index === questions.length - 1 ? 'See results' : 'Next recording →'}</button>}</>}
-    </form>
+      {!heard && <p className="sentence-muted">The recording plays automatically. If it does not start, use Play recording.</p>}
+      {busy && <p role="status">Checking & saving your answer…</p>}
+      {!result && <div className="sentence-actions"><button type="button" className="sentence-secondary" disabled={busy} onClick={() => next(true)}>Skip recording</button></div>}
+      {error && <div role="alert"><p>{error} Your question is still here; retry saving your answer.</p><button type="button" className="sentence-primary" disabled={busy} onClick={() => submitAnswer(selected)}>Retry answer</button></div>}
+      {result && <><div className={`sentence-feedback ${result.correct ? 'correct' : 'incorrect'}`} role="status"><h3>{result.correct ? 'Correct!' : 'Keep practicing.'}</h3><p>{result.syllable} · Tone {result.correctTone} ({tones[result.correctTone - 1].label.toLowerCase()}).{!result.correct && ` You chose Tone ${result.selectedTone}.`}</p><p>{index === questions.length - 1 ? 'Opening your results…' : 'Next recording in a moment…'}</p></div></>}
+    </div>
   </section>;
 }
 
@@ -131,6 +143,6 @@ export default function TonePractice({ onBack }) {
   return <main className="sentence-page tone-practice" aria-labelledby="tone-practice-title">
     <button className="sentence-back" onClick={onBack}>← Back to home</button>
     <div className="sentence-heading"><p className="sentence-eyebrow">Listen · Choose · Recognize</p><h1 id="tone-practice-title">Tone listening</h1><p>Hear your teacher’s recorded pinyin and choose Tone 1, 2, 3, or 4.</p></div>
-    {state.loading ? <p role="status">Loading recorded pinyin…</p> : state.error ? <section className="sentence-card" role="alert"><p>{state.error}</p><button className="sentence-primary" onClick={() => setAttempt(value => value + 1)}>Try again</button></section> : !state.questions.length ? <section className="sentence-card"><h2>No recorded pinyin yet</h2><p>A teacher needs to add pinyin recordings before this quiz is available.</p><Link to="/practice/pinyin">Explore the pinyin chart</Link></section> : round ? <ToneSession key={roundKey} questions={round} onRestart={start} /> : <section className="sentence-card"><h2>Train your ear for the four tones</h2><p>{state.questions.length} recordings available · Up to 10 questions per round.</p><p>Listen first, choose a tone, and check your answer. Your results are saved to My Progress.</p><button className="sentence-primary" onClick={start}>Start tone practice</button></section>}
+    {state.loading ? <p role="status">Loading recorded pinyin…</p> : state.error ? <section className="sentence-card" role="alert"><p>{state.error}</p><button className="sentence-primary" onClick={() => setAttempt(value => value + 1)}>Try again</button></section> : !state.questions.length ? <section className="sentence-card"><h2>No recorded pinyin yet</h2><p>A teacher needs to add pinyin recordings before this quiz is available.</p><Link to="/practice/pinyin">Explore the pinyin chart</Link></section> : round ? <ToneSession key={roundKey} questions={round} onRestart={start} /> : <section className="sentence-card"><h2>Train your ear for the four tones</h2><p>{state.questions.length} recordings available · Up to 10 questions per round.</p><p>The recording plays automatically. Choose a tone to check your answer and continue. Your results are saved to My Progress.</p><button className="sentence-primary" onClick={start}>Start tone practice</button></section>}
   </main>;
 }
