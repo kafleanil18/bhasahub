@@ -2,8 +2,13 @@ import { mediaUrl } from '../utils/mediaUrl';
 
 export default function HomeCourses({ filteredCourses, hskLevels, levelFilter, onOpenCourse, setLevelFilter }) {
   return (
-    <section className="courses-section" id="courses" aria-label="Courses">
+    <section className="courses-section" id="courses" aria-labelledby="courses-heading">
             <div className="container">
+              <div className="section-header-center">
+                <p className="home-section-kicker">HSK courses</p>
+                <h2 className="section-title" id="courses-heading">Start with a guided course</h2>
+              </div>
+              {hskLevels.length > 2 && (
               <div className="level-pills">
                 {hskLevels.map((lvl) => (
                   <button
@@ -16,11 +21,12 @@ export default function HomeCourses({ filteredCourses, hskLevels, levelFilter, o
                   </button>
                 ))}
               </div>
+              )}
 
               {filteredCourses.length === 0 ? (
                 <p className="courses-empty">No courses in this level yet.</p>
               ) : (
-                <div className="course-cards">
+                <div className={`course-cards${filteredCourses.length === 1 ? ' course-cards--single' : ''}`}>
                   {filteredCourses.map((c) => {
                     return (
                       <div

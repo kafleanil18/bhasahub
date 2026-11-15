@@ -1,14 +1,26 @@
 import { mediaUrl } from '../utils/mediaUrl';
 
-export default function HomeTestimonials({ scrollTestimonials, setShowTestimonial, testimonials, testimonialsScrollRef, user }) {
+export default function HomeTestimonials({ openLogin, scrollTestimonials, setShowTestimonial, testimonials, testimonialsScrollRef, user }) {
+  const shareReview = () => (user ? setShowTestimonial(true) : openLogin());
+
   return (
     <section className="worlds">
             <div className="container">
               <div className="section-header-center">
-                <h2 className="student-review-title">STUDENT REVIEW</h2>
+                <p className="home-section-kicker">Student reviews</p>
+                <h2 className="section-title">What learners are saying</h2>
               </div>
               {testimonials.length === 0 ? (
-                <p className="courses-empty">Be the first to share your experience!</p>
+                <div className="testimonials-empty">
+                  <span className="testimonials-empty-mark" aria-hidden="true">“</span>
+                  <div className="testimonials-empty-copy">
+                    <h3>No reviews yet</h3>
+                    <p>Learning with Xiao Ao? A few words about your experience helps new learners decide where to start.</p>
+                  </div>
+                  <button type="button" className="btn-primary" onClick={shareReview}>
+                    {user ? 'Write the first review' : 'Sign in to write a review'}
+                  </button>
+                </div>
               ) : (
                 <div className="testimonials-slider">
                   {testimonials.length > 1 && (
@@ -49,7 +61,7 @@ export default function HomeTestimonials({ scrollTestimonials, setShowTestimonia
                   )}
                 </div>
               )}
-              {user && (
+              {user && testimonials.length > 0 && (
                 <div className="testimonials-cta">
                   <button className="btn-primary" onClick={() => setShowTestimonial(true)}>
                     Share your experience
