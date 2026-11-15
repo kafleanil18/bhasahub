@@ -121,3 +121,14 @@
  .home-page .home-practice-directory .hero-practice-link,
  .home-page .home-practice-directory .practice-symbol-flip { animation: none !important; transition: none !important; transform: none !important; }
 }
+
+/* "Your practice studio" glides left to right and back. The track moves by the
+   container's width while the label moves back by its own width, so the label
+   travels exactly from the left edge to the right edge. */
+.home-page .practice-kicker-glide { flex: 1; min-width: 0; overflow: hidden; }
+.home-page .practice-kicker-track { animation: practice-kicker-track 5s ease-in-out infinite alternate; }
+.home-page .practice-kicker-track .hero-practice-kicker { display: inline-block; white-space: nowrap; animation: practice-kicker-text 5s ease-in-out infinite alternate; }
+.home-page .practice-kicker-glide:hover :is(.practice-kicker-track, .hero-practice-kicker) { animation-play-state: paused; }
+@keyframes practice-kicker-track { from { transform: translateX(0); } to { transform: translateX(100%); } }
+@keyframes practice-kicker-text { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+@media (prefers-reduced-motion: reduce) { .home-page :is(.practice-kicker-track, .practice-kicker-track .hero-practice-kicker) { animation: none; } }
