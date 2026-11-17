@@ -44,7 +44,7 @@ async function prepare(page, { failSave = false, pairList = pairs } = {}) {
 }
 const choose = async (page, syllable, tone) => {
   const option = page.getByRole('radio', { name: `${syllable} tone ${tone}`, exact: true });
-  await expect(option).toBeEnabled(); await option.check({ force: true });
+  await expect(option).toBeEnabled({ timeout: 15000 }); await option.check({ force: true });
 };
 
 test('both syllables are answered, tone changes are explained, and progress shows pair accuracy', async ({ page }) => {

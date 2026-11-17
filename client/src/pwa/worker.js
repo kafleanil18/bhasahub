@@ -30,3 +30,32 @@ self.addEventListener('fetch', event => {
     return (await cache.match(OFFLINE)) || Response.error()
   }))
 })
+
+// Daily practice reminders sent by the API (see server/utils/dailyPush.js).
+self.addEventListener('push', event => {
+  let data = {}
+  try { data = event.data ? event.data.json() : {} } catch { data = { body: event.data?.text() } }
+  event.waitUntil(self.registration.showNotification(data.title || 'Time for Chinese practice', {
+    body: data.body || 'A few minutes of practice keeps your Chinese growing.',
+    icon: '/pwa/icon-192.png?v=xiao-logo-2',
+    badge: '/pwa/icon-192.png?v=xiao-logo-2',
+    tag: data.tag || 'daily-practice',
+    renotify: false,
+    data: { url: typeof data.url === 'string' && data.url.startsWith('/') && !data.url.startsWith('//') ? data.url : '/' },
+  }))
+})
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close()
+  const target = new URL(event.notification.data?.url || '/', self.location.origin).href
+  event.waitUntil((async () => {
+    const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+    const open = windows.find(client => new URL(client.url).origin === self.location.origin)
+    if (open) {
+      await open.focus()
+      if ('navigate' in open && open.url !== target) await open.navigate(target).catch(() => {})
+      return
+    }
+    await self.clients.openWindow(target)
+  })())
+})

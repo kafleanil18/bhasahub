@@ -64,6 +64,7 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/settings/email', require('./routes/emailSettings'));
 app.use('/api/settings/email-api', require('./routes/emailApiSettings'));
 app.use('/api/practice-reminders', require('./routes/practiceReminders'));
+app.use('/api/push', require('./routes/push'));
 app.use('/api/srs', srsRoutes);
 app.use('/api/attempts', attemptRoutes);
 app.use('/api/analytics', analyticsRoutes);
@@ -144,7 +145,8 @@ async function start() {
     disconnect: () => mongoose.disconnect(),
   });
   const reminders = require('./utils/practiceReminderWorker').startPracticeReminderWorker();
-  server.once('close', () => reminders.stop());
+  const dailyPush = require('./utils/dailyPush').startDailyPushWorker();
+  server.once('close', () => { reminders.stop(); dailyPush.stop(); });
   return server;
 }
 

@@ -12,6 +12,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef, useCallback, lazy, startTransition, Suspense } from 'react';
 import './home.css';
 import './flag-theme.css';
+import { forgetPushDevice } from './pwa/usePushReminders';
 
 const ChangePassword = lazy(() => import('./auth/ChangePassword'));
 const FeedbackModal = lazy(() => import('./components/FeedbackModal'));
@@ -211,6 +212,7 @@ function AppContent() {
     loadCourses(); loadAccess(); loadTestimonials(); loadMyAccess(); loadAdminNotificationCounts();
   };
   const handleLogout = () => {
+    void forgetPushDevice(localStorage.getItem('token'));
     localStorage.removeItem('token'); localStorage.removeItem('user');
     // Commit the session change and destination together so route guards never
     // see a signed-out user on the previous protected page.
