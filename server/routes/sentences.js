@@ -1,25 +1,14 @@
 const express = require('express');
-const multer = require('multer');
-const path = require('node:path');
 const rateLimit = require('express-rate-limit');
 const catalog = require('../data/hsk1Sentences.json');
 const SentenceAudio = require('../models/SentenceAudio');
 const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
 const { uploadBufferToCloudinary } = require('../utils/cloudinary');
 const { logActivity } = require('../utils/auditLog');
+const { audioUpload: upload, audioUploadErrors } = require('../utils/audioUpload');
 
 const router = express.Router();
 const ids = new Set(catalog.sentences.map(sentence => sentence.id));
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 15 * 1024 * 1024 },
-  fileFilter(req, file, done) {
-    const extension = path.extname(file.originalname).toLowerCase();
-    const audio = file.mimetype.startsWith('audio/') || file.mimetype === 'application/ogg';
-    if (audio && ['.mp3', '.m4a', '.wav', '.ogg', '.webm'].includes(extension)) return done(null, true);
-    done(new Error('Could not read the audio recording. Please record it again.'));
-  },
-});
 const uploadLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, max: 100,
   standardHeaders: true, legacyHeaders: false,
@@ -68,8 +57,6 @@ router.delete('/:id/audio', requireAuth, requireSuperAdmin, knownSentence, async
   }
 });
 
-router.use((err, req, res, next) => {
-  res.status(400).json({ error: err.code === 'LIMIT_FILE_SIZE' ? 'Recordings must be 15 MB or smaller.' : err.message || 'Could not save the recording.' });
-});
+router.use(audioUploadErrors);
 
 module.exports = router;

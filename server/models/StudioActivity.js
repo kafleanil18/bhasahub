@@ -8,6 +8,9 @@ const schema = new mongoose.Schema({
   itemKey: { type: String },
   targetTone: { type: Number, min: 1, max: 4 },
   selectedTone: { type: Number, min: 1, max: 4 },
+  // Tone pair answers (spoken tones of both syllables); left unset for every other activity.
+  targetTones: { type: [Number], default: undefined },
+  selectedTones: { type: [Number], default: undefined },
 }, { timestamps: true });
 schema.index({ user: 1, eventId: 1 }, { unique: true });
 schema.index({ user: 1, studio: 1, createdAt: -1 });

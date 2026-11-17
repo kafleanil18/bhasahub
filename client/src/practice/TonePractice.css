@@ -26,3 +26,25 @@
 .tone-practice .sentence-feedback.correct { border-color: var(--tone-correct); background: color-mix(in srgb, var(--tone-correct) 10%, var(--card)); }
 .tone-practice .sentence-feedback.correct h3 { color: var(--tone-correct); }
 .tone-option-status { font-weight: 650; }
+
+/* Mode picker and tone pairs */
+.tone-modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
+.tone-modes .tone-mode-card { margin: 0; }
+.tone-pair-focus { display: grid; gap: 8px; margin: 16px 0 20px; padding: 0; border: 0; }
+.tone-pair-focus legend { float: none; width: auto; font-weight: 650; margin-bottom: 4px; }
+.tone-pair-focus label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.tone-pair-focus input { accent-color: var(--seal); }
+.tone-pair-word { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin: 8px 0 16px; }
+.tone-pair-word [lang="zh-CN"] { font-size: 44px; line-height: 1.2; }
+.tone-pair-word span:last-child { color: var(--mist); }
+.tone-pair-choices { display: grid; gap: 8px; }
+.tone-pair-row { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-block: 12px; }
+.tone-pair-row legend { font-weight: 650; }
+.tone-pair-row .tone-choice { flex-direction: column; justify-content: center; text-align: center; gap: 4px; min-height: 96px; padding: 12px 8px; }
+.tone-pair-row .tone-choice input { position: absolute; opacity: 0; pointer-events: none; }
+.tone-pair-row .tone-choice { position: relative; }
+.tone-pair-row .tone-choice-mark { font-size: 26px; }
+.tone-pair-note { font-weight: 600; }
+.tone-pair-change { color: var(--mist); }
+@media (max-width: 760px) { .tone-modes { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .tone-pair-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

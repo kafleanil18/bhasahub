@@ -21,6 +21,7 @@ async function prepare(page, { empty = false, broken = false, failSave = false, 
     const path = new URL(r.request().url()).pathname.replace('/api', ''); let data = [];
     if (path === '/pinyin-table') data = { initials: ['m'], finals: ['a'], syllables: [{ initial: 'm', final: 'a', syllable: 'ma' }] };
     if (path === '/tone-practice/questions') data = { questions: empty ? [] : questions };
+    if (path === '/tone-practice/pairs') data = { pairs: [] };
     if (path === '/tone-practice/answer') {
       posts++;
       if (fail) { fail = false; return r.fulfill({ status: 503, json: { error: 'Save unavailable' } }); }

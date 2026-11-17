@@ -6,8 +6,12 @@ const Activity = require('../models/StudioActivity');
 const HskAttempt = require('../models/HskAttempt');
 const Attempt = require('../models/Attempt');
 const PracticePaper = require('../models/PracticePaper');
+const tonePairs = require('../data/tonePairs.json').pairs;
 const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
+// Words whose spoken tones differ from the dictionary tones (third-tone, 不 and 一 changes).
+const toneChangePairs = new Set(tonePairs.filter(pair => pair.writtenTones.some((tone, index) => tone !== pair.tones[index])).map(pair => `pair:${pair.id}`));
+const summary = rows => ({ attempted: rows.length, correct: rows.filter(row => row.correct).length, accuracy: rows.length ? Math.round(rows.filter(row => row.correct).length / rows.length * 100) : null });
 const limiter = rateLimit({ windowMs: 60000, max: 180, standardHeaders: true, legacyHeaders: false });
 
 router.post('/', requireAuth, limiter, async (req, res) => {
@@ -47,7 +51,7 @@ router.delete('/:studio', requireAuth, limiter, async (req, res) => {
 router.get('/me', requireAuth, async (req, res) => {
   try {
     const user = new mongoose.Types.ObjectId(req.user.id);
-    const [rows, papers, legacyTests, toneRows] = await Promise.all([
+    const [rows, papers, legacyTests, toneRows, pairRows] = await Promise.all([
       Activity.aggregate([
         // Older events without a question identity cannot be counted uniquely.
         { $match: { user, itemKey: { $type: 'string' } } },
@@ -67,6 +71,8 @@ router.get('/me', requireAuth, async (req, res) => {
         { $group: { _id: '$itemKey', correct: { $first: '$correct' }, tone: { $first: '$targetTone' } } },
         { $group: { _id: '$tone', attempted: { $sum: 1 }, correct: { $sum: { $cond: ['$correct', 1, 0] } } } },
       ]),
+      // Answers are stored once per word (unique event per item), so each row is the first checked answer.
+      Activity.find({ user, studio: 'tones', itemKey: { $regex: '^pair:' }, correct: { $type: 'bool' } }).select('itemKey correct').lean(),
     ]);
     const customPapers = await PracticePaper.find({ _id: { $in: papers.map(row => row._id) } }).select('_id content.title').lean();
     const studios = Activity.studios.map(studio => {
@@ -77,7 +83,8 @@ router.get('/me', requireAuth, async (req, res) => {
       const row = toneRows.find(item => item._id === tone);
       return { tone, attempted: row?.attempted || 0, correct: row?.correct || 0, accuracy: row?.attempted ? Math.round(row.correct / row.attempted * 100) : null };
     });
-    res.json({ studios, tonePerformance, hsk: papers.map(row => ({ paper: row._id, title: customPapers.find(paper => paper._id === row._id)?.content?.title || `HSK 1 · ${row._id.toUpperCase()}`, completed: row.completed, unfinished: row.unfinished, bestPercent: row.completed ? Math.round(row.bestScore / 40 * 100) : null, averagePercent: row.completed ? Math.round(row.score / (row.completed * 40) * 100) : null, lastCompleted: row.lastCompleted || null })), otherTests: legacyTests.map(row => ({ id: row._id, title: row.test?.title || 'Archived test', score: row.score, total: row.total, date: row.createdAt })) });
+    const tonePairPerformance = { ...summary(pairRows), toneChanges: summary(pairRows.filter(row => toneChangePairs.has(row.itemKey))) };
+    res.json({ studios, tonePerformance, tonePairPerformance, hsk: papers.map(row => ({ paper: row._id, title: customPapers.find(paper => paper._id === row._id)?.content?.title || `HSK 1 · ${row._id.toUpperCase()}`, completed: row.completed, unfinished: row.unfinished, bestPercent: row.completed ? Math.round(row.bestScore / 40 * 100) : null, averagePercent: row.completed ? Math.round(row.score / (row.completed * 40) * 100) : null, lastCompleted: row.lastCompleted || null })), otherTests: legacyTests.map(row => ({ id: row._id, title: row.test?.title || 'Archived test', score: row.score, total: row.total, date: row.createdAt })) });
   } catch {
     res.status(500).json({ error: 'Could not load studio analytics' });
   }

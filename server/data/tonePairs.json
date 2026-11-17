@@ -1,0 +1,1276 @@
+{
+  "version": 1,
+  "pairs": [
+    {
+      "id": "jin-tian",
+      "hanzi": "今天",
+      "syllables": [
+        "jin",
+        "tian"
+      ],
+      "pinyin": "jīn tiān",
+      "tones": [
+        1,
+        1
+      ],
+      "writtenTones": [
+        1,
+        1
+      ],
+      "english": "today",
+      "rule": null
+    },
+    {
+      "id": "fei-ji",
+      "hanzi": "飞机",
+      "syllables": [
+        "fei",
+        "ji"
+      ],
+      "pinyin": "fēi jī",
+      "tones": [
+        1,
+        1
+      ],
+      "writtenTones": [
+        1,
+        1
+      ],
+      "english": "airplane",
+      "rule": null
+    },
+    {
+      "id": "xing-qi",
+      "hanzi": "星期",
+      "syllables": [
+        "xing",
+        "qi"
+      ],
+      "pinyin": "xīng qī",
+      "tones": [
+        1,
+        1
+      ],
+      "writtenTones": [
+        1,
+        1
+      ],
+      "english": "week",
+      "rule": null
+    },
+    {
+      "id": "ka-fei",
+      "hanzi": "咖啡",
+      "syllables": [
+        "ka",
+        "fei"
+      ],
+      "pinyin": "kā fēi",
+      "tones": [
+        1,
+        1
+      ],
+      "writtenTones": [
+        1,
+        1
+      ],
+      "english": "coffee",
+      "rule": null
+    },
+    {
+      "id": "zhong-guo",
+      "hanzi": "中国",
+      "syllables": [
+        "zhong",
+        "guo"
+      ],
+      "pinyin": "zhōng guó",
+      "tones": [
+        1,
+        2
+      ],
+      "writtenTones": [
+        1,
+        2
+      ],
+      "english": "China",
+      "rule": null
+    },
+    {
+      "id": "jin-nian",
+      "hanzi": "今年",
+      "syllables": [
+        "jin",
+        "nian"
+      ],
+      "pinyin": "jīn nián",
+      "tones": [
+        1,
+        2
+      ],
+      "writtenTones": [
+        1,
+        2
+      ],
+      "english": "this year",
+      "rule": null
+    },
+    {
+      "id": "huan-ying",
+      "hanzi": "欢迎",
+      "syllables": [
+        "huan",
+        "ying"
+      ],
+      "pinyin": "huān yíng",
+      "tones": [
+        1,
+        2
+      ],
+      "writtenTones": [
+        1,
+        2
+      ],
+      "english": "welcome",
+      "rule": null
+    },
+    {
+      "id": "qian-bi",
+      "hanzi": "铅笔",
+      "syllables": [
+        "qian",
+        "bi"
+      ],
+      "pinyin": "qiān bǐ",
+      "tones": [
+        1,
+        3
+      ],
+      "writtenTones": [
+        1,
+        3
+      ],
+      "english": "pencil",
+      "rule": null
+    },
+    {
+      "id": "kai-shi",
+      "hanzi": "开始",
+      "syllables": [
+        "kai",
+        "shi"
+      ],
+      "pinyin": "kāi shǐ",
+      "tones": [
+        1,
+        3
+      ],
+      "writtenTones": [
+        1,
+        3
+      ],
+      "english": "to begin",
+      "rule": null
+    },
+    {
+      "id": "he-shui",
+      "hanzi": "喝水",
+      "syllables": [
+        "he",
+        "shui"
+      ],
+      "pinyin": "hē shuǐ",
+      "tones": [
+        1,
+        3
+      ],
+      "writtenTones": [
+        1,
+        3
+      ],
+      "english": "to drink water",
+      "rule": null
+    },
+    {
+      "id": "shang-dian",
+      "hanzi": "商店",
+      "syllables": [
+        "shang",
+        "dian"
+      ],
+      "pinyin": "shāng diàn",
+      "tones": [
+        1,
+        4
+      ],
+      "writtenTones": [
+        1,
+        4
+      ],
+      "english": "shop",
+      "rule": null
+    },
+    {
+      "id": "yi-yuan",
+      "hanzi": "医院",
+      "syllables": [
+        "yi",
+        "yuan"
+      ],
+      "pinyin": "yī yuàn",
+      "tones": [
+        1,
+        4
+      ],
+      "writtenTones": [
+        1,
+        4
+      ],
+      "english": "hospital",
+      "rule": null
+    },
+    {
+      "id": "che-zhan",
+      "hanzi": "车站",
+      "syllables": [
+        "che",
+        "zhan"
+      ],
+      "pinyin": "chē zhàn",
+      "tones": [
+        1,
+        4
+      ],
+      "writtenTones": [
+        1,
+        4
+      ],
+      "english": "station",
+      "rule": null
+    },
+    {
+      "id": "ming-tian",
+      "hanzi": "明天",
+      "syllables": [
+        "ming",
+        "tian"
+      ],
+      "pinyin": "míng tiān",
+      "tones": [
+        2,
+        1
+      ],
+      "writtenTones": [
+        2,
+        1
+      ],
+      "english": "tomorrow",
+      "rule": null
+    },
+    {
+      "id": "zuo-tian",
+      "hanzi": "昨天",
+      "syllables": [
+        "zuo",
+        "tian"
+      ],
+      "pinyin": "zuó tiān",
+      "tones": [
+        2,
+        1
+      ],
+      "writtenTones": [
+        2,
+        1
+      ],
+      "english": "yesterday",
+      "rule": null
+    },
+    {
+      "id": "nian-qing",
+      "hanzi": "年轻",
+      "syllables": [
+        "nian",
+        "qing"
+      ],
+      "pinyin": "nián qīng",
+      "tones": [
+        2,
+        1
+      ],
+      "writtenTones": [
+        2,
+        1
+      ],
+      "english": "young",
+      "rule": null
+    },
+    {
+      "id": "tong-xue",
+      "hanzi": "同学",
+      "syllables": [
+        "tong",
+        "xue"
+      ],
+      "pinyin": "tóng xué",
+      "tones": [
+        2,
+        2
+      ],
+      "writtenTones": [
+        2,
+        2
+      ],
+      "english": "classmate",
+      "rule": null
+    },
+    {
+      "id": "yin-hang",
+      "hanzi": "银行",
+      "syllables": [
+        "yin",
+        "hang"
+      ],
+      "pinyin": "yín háng",
+      "tones": [
+        2,
+        2
+      ],
+      "writtenTones": [
+        2,
+        2
+      ],
+      "english": "bank",
+      "rule": null
+    },
+    {
+      "id": "xue-xi",
+      "hanzi": "学习",
+      "syllables": [
+        "xue",
+        "xi"
+      ],
+      "pinyin": "xué xí",
+      "tones": [
+        2,
+        2
+      ],
+      "writtenTones": [
+        2,
+        2
+      ],
+      "english": "to study",
+      "rule": null
+    },
+    {
+      "id": "mei-you",
+      "hanzi": "没有",
+      "syllables": [
+        "mei",
+        "you"
+      ],
+      "pinyin": "méi yǒu",
+      "tones": [
+        2,
+        3
+      ],
+      "writtenTones": [
+        2,
+        3
+      ],
+      "english": "not have",
+      "rule": null
+    },
+    {
+      "id": "ping-guo",
+      "hanzi": "苹果",
+      "syllables": [
+        "ping",
+        "guo"
+      ],
+      "pinyin": "píng guǒ",
+      "tones": [
+        2,
+        3
+      ],
+      "writtenTones": [
+        2,
+        3
+      ],
+      "english": "apple",
+      "rule": null
+    },
+    {
+      "id": "niu-nai",
+      "hanzi": "牛奶",
+      "syllables": [
+        "niu",
+        "nai"
+      ],
+      "pinyin": "niú nǎi",
+      "tones": [
+        2,
+        3
+      ],
+      "writtenTones": [
+        2,
+        3
+      ],
+      "english": "milk",
+      "rule": null
+    },
+    {
+      "id": "xue-xiao",
+      "hanzi": "学校",
+      "syllables": [
+        "xue",
+        "xiao"
+      ],
+      "pinyin": "xué xiào",
+      "tones": [
+        2,
+        4
+      ],
+      "writtenTones": [
+        2,
+        4
+      ],
+      "english": "school",
+      "rule": null
+    },
+    {
+      "id": "tong-shi",
+      "hanzi": "同事",
+      "syllables": [
+        "tong",
+        "shi"
+      ],
+      "pinyin": "tóng shì",
+      "tones": [
+        2,
+        4
+      ],
+      "writtenTones": [
+        2,
+        4
+      ],
+      "english": "colleague",
+      "rule": null
+    },
+    {
+      "id": "niu-rou",
+      "hanzi": "牛肉",
+      "syllables": [
+        "niu",
+        "rou"
+      ],
+      "pinyin": "niú ròu",
+      "tones": [
+        2,
+        4
+      ],
+      "writtenTones": [
+        2,
+        4
+      ],
+      "english": "beef",
+      "rule": null
+    },
+    {
+      "id": "bei-jing",
+      "hanzi": "北京",
+      "syllables": [
+        "bei",
+        "jing"
+      ],
+      "pinyin": "běi jīng",
+      "tones": [
+        3,
+        1
+      ],
+      "writtenTones": [
+        3,
+        1
+      ],
+      "english": "Beijing",
+      "rule": null
+    },
+    {
+      "id": "lao-shi",
+      "hanzi": "老师",
+      "syllables": [
+        "lao",
+        "shi"
+      ],
+      "pinyin": "lǎo shī",
+      "tones": [
+        3,
+        1
+      ],
+      "writtenTones": [
+        3,
+        1
+      ],
+      "english": "teacher",
+      "rule": null
+    },
+    {
+      "id": "mei-tian",
+      "hanzi": "每天",
+      "syllables": [
+        "mei",
+        "tian"
+      ],
+      "pinyin": "měi tiān",
+      "tones": [
+        3,
+        1
+      ],
+      "writtenTones": [
+        3,
+        1
+      ],
+      "english": "every day",
+      "rule": null
+    },
+    {
+      "id": "mei-guo",
+      "hanzi": "美国",
+      "syllables": [
+        "mei",
+        "guo"
+      ],
+      "pinyin": "měi guó",
+      "tones": [
+        3,
+        2
+      ],
+      "writtenTones": [
+        3,
+        2
+      ],
+      "english": "America",
+      "rule": null
+    },
+    {
+      "id": "nv-er",
+      "hanzi": "女儿",
+      "syllables": [
+        "nü",
+        "er"
+      ],
+      "pinyin": "nǚ ér",
+      "tones": [
+        3,
+        2
+      ],
+      "writtenTones": [
+        3,
+        2
+      ],
+      "english": "daughter",
+      "rule": null
+    },
+    {
+      "id": "ke-neng",
+      "hanzi": "可能",
+      "syllables": [
+        "ke",
+        "neng"
+      ],
+      "pinyin": "kě néng",
+      "tones": [
+        3,
+        2
+      ],
+      "writtenTones": [
+        3,
+        2
+      ],
+      "english": "maybe",
+      "rule": null
+    },
+    {
+      "id": "kao-shi",
+      "hanzi": "考试",
+      "syllables": [
+        "kao",
+        "shi"
+      ],
+      "pinyin": "kǎo shì",
+      "tones": [
+        3,
+        4
+      ],
+      "writtenTones": [
+        3,
+        4
+      ],
+      "english": "exam",
+      "rule": null
+    },
+    {
+      "id": "mi-fan",
+      "hanzi": "米饭",
+      "syllables": [
+        "mi",
+        "fan"
+      ],
+      "pinyin": "mǐ fàn",
+      "tones": [
+        3,
+        4
+      ],
+      "writtenTones": [
+        3,
+        4
+      ],
+      "english": "cooked rice",
+      "rule": null
+    },
+    {
+      "id": "hao-kan",
+      "hanzi": "好看",
+      "syllables": [
+        "hao",
+        "kan"
+      ],
+      "pinyin": "hǎo kàn",
+      "tones": [
+        3,
+        4
+      ],
+      "writtenTones": [
+        3,
+        4
+      ],
+      "english": "good-looking",
+      "rule": null
+    },
+    {
+      "id": "qi-che",
+      "hanzi": "汽车",
+      "syllables": [
+        "qi",
+        "che"
+      ],
+      "pinyin": "qì chē",
+      "tones": [
+        4,
+        1
+      ],
+      "writtenTones": [
+        4,
+        1
+      ],
+      "english": "car",
+      "rule": null
+    },
+    {
+      "id": "mian-bao",
+      "hanzi": "面包",
+      "syllables": [
+        "mian",
+        "bao"
+      ],
+      "pinyin": "miàn bāo",
+      "tones": [
+        4,
+        1
+      ],
+      "writtenTones": [
+        4,
+        1
+      ],
+      "english": "bread",
+      "rule": null
+    },
+    {
+      "id": "shang-ban",
+      "hanzi": "上班",
+      "syllables": [
+        "shang",
+        "ban"
+      ],
+      "pinyin": "shàng bān",
+      "tones": [
+        4,
+        1
+      ],
+      "writtenTones": [
+        4,
+        1
+      ],
+      "english": "to go to work",
+      "rule": null
+    },
+    {
+      "id": "da-xue",
+      "hanzi": "大学",
+      "syllables": [
+        "da",
+        "xue"
+      ],
+      "pinyin": "dà xué",
+      "tones": [
+        4,
+        2
+      ],
+      "writtenTones": [
+        4,
+        2
+      ],
+      "english": "university",
+      "rule": null
+    },
+    {
+      "id": "qu-nian",
+      "hanzi": "去年",
+      "syllables": [
+        "qu",
+        "nian"
+      ],
+      "pinyin": "qù nián",
+      "tones": [
+        4,
+        2
+      ],
+      "writtenTones": [
+        4,
+        2
+      ],
+      "english": "last year",
+      "rule": null
+    },
+    {
+      "id": "wen-ti",
+      "hanzi": "问题",
+      "syllables": [
+        "wen",
+        "ti"
+      ],
+      "pinyin": "wèn tí",
+      "tones": [
+        4,
+        2
+      ],
+      "writtenTones": [
+        4,
+        2
+      ],
+      "english": "question",
+      "rule": null
+    },
+    {
+      "id": "dian-nao",
+      "hanzi": "电脑",
+      "syllables": [
+        "dian",
+        "nao"
+      ],
+      "pinyin": "diàn nǎo",
+      "tones": [
+        4,
+        3
+      ],
+      "writtenTones": [
+        4,
+        3
+      ],
+      "english": "computer",
+      "rule": null
+    },
+    {
+      "id": "xia-yu",
+      "hanzi": "下雨",
+      "syllables": [
+        "xia",
+        "yu"
+      ],
+      "pinyin": "xià yǔ",
+      "tones": [
+        4,
+        3
+      ],
+      "writtenTones": [
+        4,
+        3
+      ],
+      "english": "to rain",
+      "rule": null
+    },
+    {
+      "id": "han-yu",
+      "hanzi": "汉语",
+      "syllables": [
+        "han",
+        "yu"
+      ],
+      "pinyin": "hàn yǔ",
+      "tones": [
+        4,
+        3
+      ],
+      "writtenTones": [
+        4,
+        3
+      ],
+      "english": "Chinese language",
+      "rule": null
+    },
+    {
+      "id": "dian-shi",
+      "hanzi": "电视",
+      "syllables": [
+        "dian",
+        "shi"
+      ],
+      "pinyin": "diàn shì",
+      "tones": [
+        4,
+        4
+      ],
+      "writtenTones": [
+        4,
+        4
+      ],
+      "english": "television",
+      "rule": null
+    },
+    {
+      "id": "zai-jian",
+      "hanzi": "再见",
+      "syllables": [
+        "zai",
+        "jian"
+      ],
+      "pinyin": "zài jiàn",
+      "tones": [
+        4,
+        4
+      ],
+      "writtenTones": [
+        4,
+        4
+      ],
+      "english": "goodbye",
+      "rule": null
+    },
+    {
+      "id": "xian-zai",
+      "hanzi": "现在",
+      "syllables": [
+        "xian",
+        "zai"
+      ],
+      "pinyin": "xiàn zài",
+      "tones": [
+        4,
+        4
+      ],
+      "writtenTones": [
+        4,
+        4
+      ],
+      "english": "now",
+      "rule": null
+    },
+    {
+      "id": "ni-hao",
+      "hanzi": "你好",
+      "syllables": [
+        "ni",
+        "hao"
+      ],
+      "pinyin": "ní hǎo",
+      "writtenPinyin": "nǐ hǎo",
+      "tones": [
+        2,
+        3
+      ],
+      "writtenTones": [
+        3,
+        3
+      ],
+      "english": "hello",
+      "rule": "third"
+    },
+    {
+      "id": "shui-guo",
+      "hanzi": "水果",
+      "syllables": [
+        "shui",
+        "guo"
+      ],
+      "pinyin": "shuí guǒ",
+      "writtenPinyin": "shuǐ guǒ",
+      "tones": [
+        2,
+        3
+      ],
+      "writtenTones": [
+        3,
+        3
+      ],
+      "english": "fruit",
+      "rule": "third"
+    },
+    {
+      "id": "hen-hao",
+      "hanzi": "很好",
+      "syllables": [
+        "hen",
+        "hao"
+      ],
+      "pinyin": "hén hǎo",
+      "writtenPinyin": "hěn hǎo",
+      "tones": [
+        2,
+        3
+      ],
+      "writtenTones": [
+        3,
+        3
+      ],
+      "english": "very good",
+      "rule": "third"
+    },
+    {
+      "id": "ke-yi",
+      "hanzi": "可以",
+      "syllables": [
+        "ke",
+        "yi"
+      ],
+      "pinyin": "ké yǐ",
+      "writtenPinyin": "kě yǐ",
+      "tones": [
+        2,
+        3
+      ],
+      "writtenTones": [
+        3,
+        3
+      ],
+      "english": "can; may",
+      "rule": "third"
+    },
+    {
+      "id": "xiao-jie",
+      "hanzi": "小姐",
+      "syllables": [
+        "xiao",
+        "jie"
+      ],
+      "pinyin": "xiáo jiě",
+      "writtenPinyin": "xiǎo jiě",
+      "tones": [
+        2,
+        3
+      ],
+      "writtenTones": [
+        3,
+        3
+      ],
+      "english": "Miss",
+      "rule": "third"
+    },
+    {
+      "id": "shou-biao",
+      "hanzi": "手表",
+      "syllables": [
+        "shou",
+        "biao"
+      ],
+      "pinyin": "shóu biǎo",
+      "writtenPinyin": "shǒu biǎo",
+      "tones": [
+        2,
+        3
+      ],
+      "writtenTones": [
+        3,
+        3
+      ],
+      "english": "wristwatch",
+      "rule": "third"
+    },
+    {
+      "id": "yu-san",
+      "hanzi": "雨伞",
+      "syllables": [
+        "yu",
+        "san"
+      ],
+      "pinyin": "yú sǎn",
+      "writtenPinyin": "yǔ sǎn",
+      "tones": [
+        2,
+        3
+      ],
+      "writtenTones": [
+        3,
+        3
+      ],
+      "english": "umbrella",
+      "rule": "third"
+    },
+    {
+      "id": "bu-shi",
+      "hanzi": "不是",
+      "syllables": [
+        "bu",
+        "shi"
+      ],
+      "pinyin": "bú shì",
+      "writtenPinyin": "bù shì",
+      "tones": [
+        2,
+        4
+      ],
+      "writtenTones": [
+        4,
+        4
+      ],
+      "english": "is not",
+      "rule": "bu"
+    },
+    {
+      "id": "bu-yao",
+      "hanzi": "不要",
+      "syllables": [
+        "bu",
+        "yao"
+      ],
+      "pinyin": "bú yào",
+      "writtenPinyin": "bù yào",
+      "tones": [
+        2,
+        4
+      ],
+      "writtenTones": [
+        4,
+        4
+      ],
+      "english": "don't want",
+      "rule": "bu"
+    },
+    {
+      "id": "bu-dui",
+      "hanzi": "不对",
+      "syllables": [
+        "bu",
+        "dui"
+      ],
+      "pinyin": "bú duì",
+      "writtenPinyin": "bù duì",
+      "tones": [
+        2,
+        4
+      ],
+      "writtenTones": [
+        4,
+        4
+      ],
+      "english": "not right",
+      "rule": "bu"
+    },
+    {
+      "id": "bu-qu",
+      "hanzi": "不去",
+      "syllables": [
+        "bu",
+        "qu"
+      ],
+      "pinyin": "bú qù",
+      "writtenPinyin": "bù qù",
+      "tones": [
+        2,
+        4
+      ],
+      "writtenTones": [
+        4,
+        4
+      ],
+      "english": "not go",
+      "rule": "bu"
+    },
+    {
+      "id": "bu-chi",
+      "hanzi": "不吃",
+      "syllables": [
+        "bu",
+        "chi"
+      ],
+      "pinyin": "bù chī",
+      "tones": [
+        4,
+        1
+      ],
+      "writtenTones": [
+        4,
+        1
+      ],
+      "english": "not eat",
+      "rule": "bu"
+    },
+    {
+      "id": "bu-mang",
+      "hanzi": "不忙",
+      "syllables": [
+        "bu",
+        "mang"
+      ],
+      "pinyin": "bù máng",
+      "tones": [
+        4,
+        2
+      ],
+      "writtenTones": [
+        4,
+        2
+      ],
+      "english": "not busy",
+      "rule": "bu"
+    },
+    {
+      "id": "bu-hao",
+      "hanzi": "不好",
+      "syllables": [
+        "bu",
+        "hao"
+      ],
+      "pinyin": "bù hǎo",
+      "tones": [
+        4,
+        3
+      ],
+      "writtenTones": [
+        4,
+        3
+      ],
+      "english": "not good",
+      "rule": "bu"
+    },
+    {
+      "id": "yi-xia",
+      "hanzi": "一下",
+      "syllables": [
+        "yi",
+        "xia"
+      ],
+      "pinyin": "yí xià",
+      "writtenPinyin": "yī xià",
+      "tones": [
+        2,
+        4
+      ],
+      "writtenTones": [
+        1,
+        4
+      ],
+      "english": "a little; briefly",
+      "rule": "yi"
+    },
+    {
+      "id": "yi-yang",
+      "hanzi": "一样",
+      "syllables": [
+        "yi",
+        "yang"
+      ],
+      "pinyin": "yí yàng",
+      "writtenPinyin": "yī yàng",
+      "tones": [
+        2,
+        4
+      ],
+      "writtenTones": [
+        1,
+        4
+      ],
+      "english": "the same",
+      "rule": "yi"
+    },
+    {
+      "id": "yi-gong",
+      "hanzi": "一共",
+      "syllables": [
+        "yi",
+        "gong"
+      ],
+      "pinyin": "yí gòng",
+      "writtenPinyin": "yī gòng",
+      "tones": [
+        2,
+        4
+      ],
+      "writtenTones": [
+        1,
+        4
+      ],
+      "english": "altogether",
+      "rule": "yi"
+    },
+    {
+      "id": "yi-tian",
+      "hanzi": "一天",
+      "syllables": [
+        "yi",
+        "tian"
+      ],
+      "pinyin": "yì tiān",
+      "writtenPinyin": "yī tiān",
+      "tones": [
+        4,
+        1
+      ],
+      "writtenTones": [
+        1,
+        1
+      ],
+      "english": "one day",
+      "rule": "yi"
+    },
+    {
+      "id": "yi-nian",
+      "hanzi": "一年",
+      "syllables": [
+        "yi",
+        "nian"
+      ],
+      "pinyin": "yì nián",
+      "writtenPinyin": "yī nián",
+      "tones": [
+        4,
+        2
+      ],
+      "writtenTones": [
+        1,
+        2
+      ],
+      "english": "one year",
+      "rule": "yi"
+    },
+    {
+      "id": "yi-qi",
+      "hanzi": "一起",
+      "syllables": [
+        "yi",
+        "qi"
+      ],
+      "pinyin": "yì qǐ",
+      "writtenPinyin": "yī qǐ",
+      "tones": [
+        4,
+        3
+      ],
+      "writtenTones": [
+        1,
+        3
+      ],
+      "english": "together",
+      "rule": "yi"
+    }
+  ]
+}

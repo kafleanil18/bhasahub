@@ -3,6 +3,9 @@ import useAnswerSound from './useAnswerSound';
 import { Link } from 'react-router-dom';
 import { mediaUrl } from '../utils/mediaUrl';
 import { shuffleSentences } from './sentenceQuiz';
+import TonePairSession from './TonePairSession';
+import useChineseVoice from './useChineseVoice';
+import { pairRound } from './tonePairs';
 import './SentencePractice.css';
 import './TonePractice.css';
 
@@ -20,7 +23,7 @@ async function request(path, options = {}) {
   return data;
 }
 
-function ToneSession({ questions, onRestart }) {
+function ToneSession({ questions, onRestart, onChangeMode }) {
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState(null);
   const [heard, setHeard] = useState(false);
@@ -101,7 +104,7 @@ function ToneSession({ questions, onRestart }) {
       {skipped > 0 && <p>{skipped} skipped. Skipped recordings are not counted or graded.</p>}
       {results.length > 0 && <div className="tone-results-table"><table><caption>Your answers this round</caption><thead><tr><th scope="col">Pinyin</th><th scope="col">Your tone</th><th scope="col">Recorded tone</th><th scope="col">Result</th></tr></thead><tbody>{results.map(item => <tr key={item.recordingId}><th scope="row">{item.syllable}</th><td>Tone {item.selectedTone}</td><td>Tone {item.correctTone}</td><td>{item.correct ? 'Correct' : 'Review'}</td></tr>)}</tbody></table></div>}
       <p>My Progress keeps the first checked answer for each recording until you reset Tone listening. Repeated rounds do not increase the unique count.</p>
-      <div className="sentence-actions"><button className="sentence-primary" onClick={onRestart}>Start another round</button><Link className="sentence-secondary" to="/progress">View My Progress</Link></div>
+      <div className="sentence-actions"><button className="sentence-primary" onClick={onRestart}>Start another round</button><button className="sentence-secondary" onClick={onChangeMode}>Choose another mode</button><Link className="sentence-secondary" to="/progress">View My Progress</Link></div>
     </section>;
   }
   return <section className="sentence-card" aria-labelledby="tone-question-title">
@@ -126,6 +129,43 @@ function ToneSession({ questions, onRestart }) {
   </section>;
 }
 
+function useTonePairs() {
+  const [state, setState] = useState({ loading: true });
+  const [attempt, setAttempt] = useState(0);
+  const speech = useChineseVoice();
+  useEffect(() => {
+    const controller = new AbortController(); setState({ loading: true });
+    request('/pairs', { signal: AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]) }).then(data => {
+      if (!Array.isArray(data.pairs)) throw new Error('Could not load tone pairs.');
+      if (!controller.signal.aborted) setState({ pairs: data.pairs });
+    }).catch(err => { if (!controller.signal.aborted) setState({ error: err.message }); });
+    return () => controller.abort();
+  }, [attempt]);
+  // Words without a teacher recording need a Mandarin device voice.
+  const canSpeak = speech.supported && !!speech.voice;
+  const playable = state.pairs?.filter(pair => pair.audioUrl || canSpeak) || [];
+  return { ...state, loading: state.loading || (speech.loading && !!state.pairs), playable, voice: speech.voice, canSpeak, retry: () => setAttempt(value => value + 1) };
+}
+
+function TonePairStart({ pairs, onStart }) {
+  const [focus, setFocus] = useState('all');
+  if (pairs.loading) return <section className="sentence-card tone-mode-card"><h2>Tone pairs</h2><p role="status">Loading tone pairs…</p></section>;
+  if (pairs.error) return <section className="sentence-card tone-mode-card"><h2>Tone pairs</h2><p role="alert">{pairs.error}</p><button className="sentence-secondary" onClick={pairs.retry}>Try again</button></section>;
+  const changes = pairs.playable.filter(pair => pair.toneRule).length;
+  const recorded = pairs.playable.filter(pair => pair.audioUrl).length;
+  if (!pairs.playable.length) return <section className="sentence-card tone-mode-card"><h2>Tone pairs</h2><p>Tone pairs need a teacher recording or a Mandarin voice on your device. Install a Chinese (Mandarin) voice in your device’s speech settings, or check back once your teacher has recorded the words.</p></section>;
+  return <section className="sentence-card tone-mode-card" aria-labelledby="tone-pairs-title">
+    <p className="sentence-eyebrow">New · Two-syllable words</p><h2 id="tone-pairs-title">Tone pairs</h2>
+    <p>Hear a real word like 你好 or 不是 and choose the tone of each syllable. Learn how tones change in natural speech: two 3rd tones, 不 and 一.</p>
+    <p className="sentence-muted">{pairs.playable.length} words · {recorded ? `${recorded} recorded by your teacher` : 'Played with your device’s Mandarin voice'}{recorded && recorded < pairs.playable.length ? ', the rest use your device voice' : ''}.</p>
+    <fieldset className="tone-pair-focus"><legend>Practice focus</legend>
+      <label><input type="radio" name="tone-pair-focus" value="all" checked={focus === 'all'} onChange={() => setFocus('all')} /> All tone pairs</label>
+      <label><input type="radio" name="tone-pair-focus" value="changes" checked={focus === 'changes'} disabled={!changes} onChange={() => setFocus('changes')} /> Tone changes only ({changes} {changes === 1 ? 'word' : 'words'})</label>
+    </fieldset>
+    <button className="sentence-primary" onClick={() => onStart(focus)}>Start tone pairs</button>
+  </section>;
+}
+
 export default function TonePractice({ onBack }) {
   const [state, setState] = useState({ loading: true });
   const [attempt, setAttempt] = useState(0);
@@ -139,10 +179,18 @@ export default function TonePractice({ onBack }) {
     }).catch(err => { if (!controller.signal.aborted) setState({ error: err.message }); });
     return () => controller.abort();
   }, [attempt]);
-  const start = () => { setRound(shuffleSentences(state.questions).slice(0, 10)); setRoundKey(value => value + 1); };
+  const pairs = useTonePairs();
+  const start = () => { setRound({ mode: 'single', questions: shuffleSentences(state.questions).slice(0, 10) }); setRoundKey(value => value + 1); };
+  const startPairs = focus => { setRound({ mode: 'pairs', focus, questions: pairRound(pairs.playable, { focus, shuffle: shuffleSentences }) }); setRoundKey(value => value + 1); };
+  const restart = () => round.mode === 'pairs' ? startPairs(round.focus) : start();
   return <main className="sentence-page tone-practice" aria-labelledby="tone-practice-title">
     <button className="sentence-back" onClick={onBack}>← Back to home</button>
-    <div className="sentence-heading"><p className="sentence-eyebrow">Listen · Choose · Recognize</p><h1 id="tone-practice-title">Tone listening</h1><p>Hear your teacher’s recorded pinyin and choose Tone 1, 2, 3, or 4.</p></div>
-    {state.loading ? <p role="status">Loading recorded pinyin…</p> : state.error ? <section className="sentence-card" role="alert"><p>{state.error}</p><button className="sentence-primary" onClick={() => setAttempt(value => value + 1)}>Try again</button></section> : !state.questions.length ? <section className="sentence-card"><h2>No recorded pinyin yet</h2><p>A teacher needs to add pinyin recordings before this quiz is available.</p><Link to="/practice/pinyin">Explore the pinyin chart</Link></section> : round ? <ToneSession key={roundKey} questions={round} onRestart={start} /> : <section className="sentence-card"><h2>Train your ear for the four tones</h2><p>{state.questions.length} recordings available · Up to 10 questions per round.</p><p>The recording plays automatically. Choose a tone to check your answer and continue. Your results are saved to My Progress.</p><button className="sentence-primary" onClick={start}>Start tone practice</button></section>}
+    <div className="sentence-heading"><p className="sentence-eyebrow">Listen · Choose · Recognize</p><h1 id="tone-practice-title">Tone listening</h1><p>Hear your teacher’s recorded pinyin and choose Tone 1, 2, 3, or 4, then practice tone pairs in real words.</p></div>
+    {round?.mode === 'pairs' ? <TonePairSession key={roundKey} pairs={round.questions} voice={pairs.voice} onRestart={restart} onChangeMode={() => setRound(null)} />
+      : round ? <ToneSession key={roundKey} questions={round.questions} onRestart={restart} onChangeMode={() => setRound(null)} />
+        : <div className="tone-modes">
+          {state.loading ? <section className="sentence-card tone-mode-card"><p role="status">Loading recorded pinyin…</p></section> : state.error ? <section className="sentence-card tone-mode-card" role="alert"><p>{state.error}</p><button className="sentence-primary" onClick={() => setAttempt(value => value + 1)}>Try again</button></section> : !state.questions.length ? <section className="sentence-card tone-mode-card"><h2>No recorded pinyin yet</h2><p>A teacher needs to add pinyin recordings before this quiz is available.</p><Link to="/practice/pinyin">Explore the pinyin chart</Link></section> : <section className="sentence-card tone-mode-card"><p className="sentence-eyebrow">Single syllables</p><h2>Train your ear for the four tones</h2><p>{state.questions.length} recordings available · Up to 10 questions per round.</p><p>The recording plays automatically. Choose a tone to check your answer and continue. Your results are saved to My Progress.</p><button className="sentence-primary" onClick={start}>Start tone practice</button></section>}
+          <TonePairStart pairs={pairs} onStart={startPairs} />
+        </div>}
   </main>;
 }

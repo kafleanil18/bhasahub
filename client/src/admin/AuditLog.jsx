@@ -35,6 +35,8 @@ const RESOURCE_LABELS = {
   'team-member': 'Team member',
   testimonial: 'Testimonial',
   'pinyin-table': 'Pinyin table',
+  'sentence-audio': 'Sentence audio',
+  'tone-pair-audio': 'Tone pair audio',
 };
 
 function AuditLog({ onBack }) {

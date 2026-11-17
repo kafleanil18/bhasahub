@@ -3,7 +3,8 @@ import SentenceText from '../practice/SentenceText';
 import { mediaUrl } from '../utils/mediaUrl';
 import { MAX_RECORDING_BYTES, MAX_RECORDING_SECONDS, recordingMimeType } from './sentenceRecording';
 
-export default function SentenceRecorder({ sentence, onSave, onClose }) {
+// Also records tone pair words: pass eyebrow, noun and script to describe the item being read.
+export default function SentenceRecorder({ sentence, onSave, onClose, eyebrow, noun = 'sentence', script }) {
   const [phase, setPhase] = useState('idle');
   const [seconds, setSeconds] = useState(0);
   const [draft, setDraft] = useState(null);
@@ -127,9 +128,9 @@ export default function SentenceRecorder({ sentence, onSave, onClose }) {
   }
 
   return <dialog ref={dialogRef} className="access-dialog audio-recorder-dialog" aria-labelledby="sentence-recorder-title" aria-describedby="sentence-recorder-description" onCancel={event => { event.preventDefault(); if (phase !== 'saving') onClose(); }}>
-    <div className="access-dialog-heading"><div><p className="access-eyebrow">Sentence #{String(sentence.number).padStart(3, '0')}</p><h2 id="sentence-recorder-title">{sentence.audioUrl ? 'Replace recording' : 'Record sentence audio'}</h2><p id="sentence-recorder-description">Read the Chinese sentence naturally. You can listen and try again before saving.</p></div><button className="access-close" aria-label="Close recorder" disabled={phase === 'saving'} onClick={onClose}>×</button></div>
+    <div className="access-dialog-heading"><div><p className="access-eyebrow">{eyebrow || `Sentence #${String(sentence.number).padStart(3, '0')}`}</p><h2 id="sentence-recorder-title">{sentence.audioUrl ? 'Replace recording' : `Record ${noun} audio`}</h2><p id="sentence-recorder-description">Read the Chinese {noun} naturally. You can listen and try again before saving.</p></div><button className="access-close" aria-label="Close recorder" disabled={phase === 'saving'} onClick={onClose}>×</button></div>
     <ol className="audio-recording-steps" aria-label="Recording steps">{['Record', 'Review', 'Save'].map((step, index) => <li key={step} aria-current={(phase === 'saving' ? 2 : draft ? 1 : 0) === index ? 'step' : undefined}><span>{index + 1}</span>{step}</li>)}</ol>
-    <div className="audio-recording-script"><p><SentenceText sentence={sentence}/></p><span>{sentence.english}</span></div>
+    <div className="audio-recording-script">{script || <><p><SentenceText sentence={sentence}/></p><span>{sentence.english}</span></>}</div>
     {sentence.audioUrl && <div className="audio-current-recording"><label htmlFor="current-sentence-audio">Current recording</label><audio id="current-sentence-audio" ref={currentAudioRef} src={mediaUrl(sentence.audioUrl)} controls preload="none" aria-label="Current saved recording"/><p>Your current recording stays available until you save a replacement.</p></div>}
     <div className={`audio-recording-state ${phase === 'recording' ? 'is-recording' : ''}`}><span role="status" aria-live="polite">{phase === 'recording' ? 'Recording your voice…' : phase === 'requesting' ? 'Allow microphone access in your browser to begin.' : phase === 'stopping' ? 'Preparing your recording…' : phase === 'saving' ? 'Saving for student practice…' : draft ? 'Listen to your recording. Save it or try again.' : 'Ready to record · Up to 60 seconds'}</span>{phase === 'recording' && <strong role="timer" aria-label="Recording duration">{Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')}</strong>}</div>
     {draft && <div className="audio-preview"><label htmlFor="new-sentence-audio">Your new recording</label><audio id="new-sentence-audio" ref={previewRef} src={draft.url} controls aria-label="Preview your microphone recording" onError={() => setError('Could not play this preview. Please record again.')}/></div>}

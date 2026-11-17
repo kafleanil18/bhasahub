@@ -4,7 +4,7 @@ import { practicePaths, testPath } from '../navigation/paths';
 import './StudioAnalytics.css';
 
 const studios = {
-  pinyin: ['Pinyin & tones', 'Pinyin syllables practiced'], tones: ['Tone listening', 'Unique recordings answered'], trace: ['Trace characters', 'Characters practiced'],
+  pinyin: ['Pinyin & tones', 'Pinyin syllables practiced'], tones: ['Tone listening', 'Unique recordings & words answered'], trace: ['Trace characters', 'Characters practiced'],
   listening: ['Listening practice', 'Unique questions answered'], sentences: ['Sentence builder', 'Unique questions answered'],
   measures: ['Measure words', 'Unique questions answered'], numbers: ['Everyday numbers', 'Unique questions answered'],
   dictation: ['Listening dictation', 'Unique questions answered'], conversation: ['Conversation', 'Unique phrases practiced'],
@@ -42,7 +42,7 @@ export default function StudioAnalytics({ refreshKey }) {
         body: JSON.stringify({ confirmed: true }), signal: AbortSignal.timeout(15000),
       });
       if (!response.ok) throw new Error('Reset failed');
-      setState(previous => ({ ...previous, data: { ...previous.data, studios: previous.data.studios.map(row => row.studio === studio ? { ...row, activities: 0, graded: 0, correct: 0, accuracy: null, lastPracticed: null } : row), ...(studio === 'tones' ? { tonePerformance: [] } : {}) } }));
+      setState(previous => ({ ...previous, data: { ...previous.data, studios: previous.data.studios.map(row => row.studio === studio ? { ...row, activities: 0, graded: 0, correct: 0, accuracy: null, lastPracticed: null } : row), ...(studio === 'tones' ? { tonePerformance: [], tonePairPerformance: null } : {}) } }));
       setNotice(`${title} count reset. New practice will count again.`);
     } catch { setResetError(`Could not confirm the reset for ${title}. Refresh My Progress to check the current count before trying again.`); }
     finally { setResetting(''); }
@@ -63,6 +63,7 @@ export default function StudioAnalytics({ refreshKey }) {
             const value = data.tonePerformance?.find(item => item.tone === tone);
             return <div key={tone}><span>Tone {tone}</span><strong>{value?.attempted ? `${value.accuracy}%` : '—'}</strong><small>{value?.correct || 0} of {value?.attempted || 0} correct</small></div>;
           })}<p>First checked answers per recording. Reset to start a new cycle.</p></div>}
+          {id === 'tones' && data.tonePairPerformance?.attempted > 0 && <div className="studio-tone-breakdown studio-tone-pairs" role="group" aria-label="Tone pair accuracy">{[['Tone pairs', data.tonePairPerformance], ['Tone changes', data.tonePairPerformance.toneChanges]].map(([label, value]) => <div key={label}><span>{label}</span><strong>{value?.attempted ? `${value.accuracy}%` : '—'}</strong><small>{value?.correct || 0} of {value?.attempted || 0} correct</small></div>)}<p>Two-syllable words. Tone changes cover two 3rd tones, 不 and 一.</p></div>}
           <button type="button" className="studio-reset-button" disabled={!!resetting || !row?.activities} onClick={() => resetCount(id, title)} aria-label={`Reset ${title} count`}>{resetting === id ? 'Resetting…' : 'Reset count'}</button>
         </article>;
       })}</div>

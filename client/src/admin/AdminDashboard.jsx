@@ -125,6 +125,7 @@ export default function AdminDashboard({ onNavigate, user }) {
           <div className="control-quick-audio-links">
             <button onClick={() => onNavigate('pinyin')} aria-label="Pinyin audio">Pinyin <span aria-hidden="true">→</span></button>
             <button onClick={() => onNavigate('sentence-audio')} aria-label="Sentence audio">Sentences <span aria-hidden="true">→</span></button>
+            <button onClick={() => onNavigate('tone-pair-audio')} aria-label="Tone pair audio">Tone pairs <span aria-hidden="true">→</span></button>
           </div>
         </div>
       </div>

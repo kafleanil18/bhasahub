@@ -32,6 +32,7 @@ const ListeningDictation = lazy(() => import('../practice/ListeningDictation'));
 const NumberTrainer = lazy(() => import('../practice/NumberTrainer'));
 const MeasureWordPractice = lazy(() => import('../practice/MeasureWordPractice'));
 const SentenceAudioManager = lazy(() => import('../admin/SentenceAudioManager'));
+const TonePairAudioManager = lazy(() => import('../admin/TonePairAudioManager'));
 const ConversationManager = lazy(() => import('../admin/ConversationManager'));
 const EmailSettings = lazy(() => import('../admin/EmailSettings'));
 const PracticeReminders = lazy(() => import('../admin/PracticeReminders'));
@@ -156,6 +157,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
           <Route path="conversations" element={<ConversationManager onBack={onHome} />} />
           <Route path="testimonials" element={<TestimonialManager onBack={onHome} />} />
           <Route path="sentence-audio" element={<SentenceAudioManager onBack={onHome} />} />
+          <Route path="tone-pair-audio" element={<TonePairAudioManager onBack={onHome} />} />
           <Route path="characters" element={<HanziTracePage user={user} token={localStorage.getItem('token')} onBack={onHome} />} />
           <Route path="pinyin" element={<PinyinPage isSuperAdmin onBack={onHome} backLabel="← Back to Admin Dashboard" />} />
           <Route path="inbox" element={<FeedbackInbox onBack={onHome} />} />

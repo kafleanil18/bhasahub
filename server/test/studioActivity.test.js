@@ -46,7 +46,12 @@ test('ungraded practice records activity without a score; duplicate events succe
   assert.equal(res.body.saved, true);
 });
 
-function summaries(rows = [], hsk = []) {
+function summaries(rows = [], hsk = [], pairRows = []) {
+  mock.method(Activity, 'find', filter => {
+    assert.equal(String(filter.user), user.id);
+    assert.equal(filter.studio, 'tones');
+    return { select: () => ({ lean: async () => pairRows }) };
+  });
   for (const [model, result] of [[Activity, rows], [HskAttempt, hsk]]) {
     mock.method(model, 'aggregate', async pipeline => {
       assert.equal(String(pipeline[0].$match.user), user.id);
@@ -164,4 +169,22 @@ test('tone performance reports all four tones and does not invent accuracy for u
     { tone: 4, attempted: 1, correct: 1, accuracy: 100 },
   ]);
   assert.equal(res.body.studios.find(row => row.studio === 'tones').accuracy, 67);
+});
+
+test('tone pair performance separates words whose spoken tones change', async () => {
+  summaries([], [], [
+    { itemKey: 'pair:ni-hao', correct: false }, { itemKey: 'pair:bu-shi', correct: true },
+    { itemKey: 'pair:jin-tian', correct: true }, { itemKey: 'pair:bu-chi', correct: true },
+  ]);
+  const res = response(); await handler('get', '/me')({ user }, res);
+  assert.deepEqual(res.body.tonePairPerformance, {
+    attempted: 4, correct: 3, accuracy: 75,
+    toneChanges: { attempted: 2, correct: 1, accuracy: 50 },
+  });
+});
+
+test('tone pair performance has no accuracy before any pair is answered', async () => {
+  summaries();
+  const res = response(); await handler('get', '/me')({ user }, res);
+  assert.deepEqual(res.body.tonePairPerformance, { attempted: 0, correct: 0, accuracy: null, toneChanges: { attempted: 0, correct: 0, accuracy: null } });
 });
