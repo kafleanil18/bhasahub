@@ -51,3 +51,24 @@ test('analytics setup errors cannot lock a sentence after several answers', asyn
   await page.getByRole('button', { name: 'Next sentence' }).click();
   await expect(page.getByText('Sentence 5 of 10', { exact: true })).toBeVisible();
 });
+
+test('topics can be searched and expanded, and undo removes the last placed word', async ({ page }) => {
+  await prepare(page);
+  await page.getByRole('button', { name: '← Choose another topic' }).click();
+  const topics = page.locator('.sb-topic');
+  await expect(topics).toHaveCount(8);
+  await page.getByRole('button', { name: `Show all ${catalog.topics.length} topics` }).click();
+  await expect(topics).toHaveCount(catalog.topics.length);
+  await page.getByRole('searchbox', { name: 'Find a topic' }).fill(catalog.topics[2].title);
+  await expect(topics.first()).toContainText(catalog.topics[2].title);
+  await page.getByRole('searchbox', { name: 'Find a topic' }).fill('zzzz');
+  await expect(page.getByText('No topics match')).toBeVisible();
+  await page.getByRole('button', { name: 'Start mixed practice' }).click();
+  const answer = page.getByRole('group', { name: 'Your sentence' });
+  const words = page.getByRole('group', { name: 'Available words' });
+  await words.getByRole('button').and(page.locator(':enabled')).first().click();
+  await words.getByRole('button').and(page.locator(':enabled')).first().click();
+  await expect(answer.getByRole('button')).toHaveCount(2);
+  await page.getByRole('button', { name: 'Undo last word' }).click();
+  await expect(answer.getByRole('button')).toHaveCount(1);
+});
