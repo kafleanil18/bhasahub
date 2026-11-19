@@ -1,7 +1,8 @@
 import { recordStudioActivity } from './recordStudioActivity';
 import { useEffect, useRef, useState } from 'react';
 import { bookLessons } from './conversationLessons';
-import { mediaUrl } from '../utils/mediaUrl';
+import useChineseVoice from './useChineseVoice';
+import { pickConversationVoice } from './conversationVoice';
 import './ConversationPractice.css';
 
 const lessons = [
@@ -96,14 +97,32 @@ const lessons = [
   ...bookLessons,
 ];
 
+const LAST_LESSON_KEY = 'conversation-last-lesson';
+const readLastLesson = () => { try { return localStorage.getItem(LAST_LESSON_KEY); } catch { return null; } };
+const linesOf = lesson => lesson.exchanges.flatMap(exchange => exchange.turns.map((turn, index) => ({ ...turn, exchange, first: index === 0 })));
+
+function SpeakerIcon({ playing, size = 22 }) {
+  return playing
+    ? <span className="cp-eq" aria-hidden="true"><i /><i /><i /></span>
+    : <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" /><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>;
+}
+
+// One conversation line at a time: intro → lines → done. Same layout on phones and desktops.
 function ConversationPracticePage({ onBack }) {
   const [availableLessons, setAvailableLessons] = useState(lessons);
-  const [selectedLessonId, setSelectedLessonId] = useState(lessons[0].id);
-  const [translationsVisible, setTranslationsVisible] = useState(true);
-  const [playingPhrase, setPlayingPhrase] = useState('');
-  const audioRef = useRef(null);
+  const [selectedLessonId, setSelectedLessonId] = useState(() => readLastLesson() || lessons[0].id);
+  const [step, setStep] = useState(-1); // -1 intro, 0..n-1 lines, n done
+  const [showPinyin, setShowPinyin] = useState(true);
+  const [showEnglish, setShowEnglish] = useState(true);
+  const [playingKey, setPlayingKey] = useState('');
+  const runRef = useRef(0);
+  const touchRef = useRef(null);
+  const headingRef = useRef(null);
+  const speech = useChineseVoice();
+  const voice = pickConversationVoice(speech.voices);
+  const isGoogle = Boolean(voice && /google/i.test(voice.name));
 
-  useEffect(() => () => { window.speechSynthesis?.cancel(); audioRef.current?.pause(); }, []);
+  useEffect(() => () => { runRef.current++; window.speechSynthesis?.cancel(); }, []);
   useEffect(() => {
     fetch(`${window.API_BASE_URL}/api/settings`).then(response => response.json()).then(settings => {
       if (!Array.isArray(settings.conversationLessons)) return;
@@ -116,118 +135,132 @@ function ConversationPracticePage({ onBack }) {
     }).catch(() => {});
   }, []);
 
-  const lesson = availableLessons.find((item) => item.id === selectedLessonId) || availableLessons[0];
+  const lesson = availableLessons.find(item => item.id === selectedLessonId) || availableLessons[0];
+  const lessonIndex = availableLessons.findIndex(item => item.id === lesson.id);
+  const nextLesson = availableLessons[lessonIndex + 1];
+  const lines = linesOf(lesson);
+  const line = lines[step];
+  const done = step >= lines.length;
 
-  const playPhrase = (phrase, audioUrl, retry = false) => {
-    if (!retry) recordStudioActivity('conversation', null, phrase.trim().replace(/\s+/g, ' '));
-    if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
-    window.speechSynthesis?.cancel();
-    if (audioUrl) {
-      const audio = new Audio(mediaUrl(audioUrl));
-      audioRef.current = audio;
-      audio.onplay = () => setPlayingPhrase(phrase);
-      audio.onended = audio.onerror = () => { setPlayingPhrase(''); audioRef.current = null; };
-      audio.play().catch(() => { audioRef.current = null; playPhrase(phrase, undefined, true); });
-      return;
-    }
+  useEffect(() => { headingRef.current?.focus({ preventScroll: true }); }, [step, lesson.id]);
+
+  const stop = () => { runRef.current++; window.speechSynthesis?.cancel(); setPlayingKey(''); };
+  const say = (key, text) => {
+    stop();
     if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
-    const utterance = new SpeechSynthesisUtterance(phrase);
-    utterance.lang = 'zh-CN';
+    const run = runRef.current;
+    recordStudioActivity('conversation', null, text.trim().replace(/\s+/g, ' '));
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = voice?.lang || 'zh-CN';
+    if (voice) utterance.voice = voice;
     utterance.rate = 0.86;
-    utterance.onstart = () => setPlayingPhrase(phrase);
-    utterance.onend = () => setPlayingPhrase('');
-    utterance.onerror = () => setPlayingPhrase('');
+    utterance.onstart = () => { if (run === runRef.current) setPlayingKey(key); };
+    utterance.onend = utterance.onerror = () => { if (run === runRef.current) setPlayingKey(''); };
+    setPlayingKey(key);
     window.speechSynthesis.speak(utterance);
   };
-
-  const selectLesson = (id) => {
-    window.speechSynthesis?.cancel();
-    audioRef.current?.pause(); audioRef.current = null;
-    setPlayingPhrase('');
-    setSelectedLessonId(id);
+  // Moving to a line plays it straight away (the tap or key press allows audio).
+  const goTo = next => {
+    const target = Math.max(-1, Math.min(lines.length, next));
+    setStep(target);
+    // Each screen starts at the top of the card, even after tapping a control low on a short screen.
+    if (window.scrollY > 0) window.scrollTo({ top: 0, behavior: 'instant' });
+    if (target >= 0 && target < lines.length) say(`line-${target}`, lines[target].chinese); else stop();
+  };
+  const selectLesson = id => {
+    stop(); setStep(-1); setSelectedLessonId(id); window.scrollTo({ top: 0, behavior: 'instant' });
+    try { localStorage.setItem(LAST_LESSON_KEY, id); } catch { /* Remembering the lesson is optional. */ }
   };
 
+  useEffect(() => {
+    const onKey = event => {
+      if (event.metaKey || event.ctrlKey || event.altKey || event.target.closest?.('select, input, textarea')) return;
+      if (event.key === 'ArrowRight') { event.preventDefault(); goTo(step + 1); }
+      else if (event.key === 'ArrowLeft' && step >= 0) { event.preventDefault(); goTo(step - 1); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
+  const onTouchStart = event => { const t = event.touches[0]; touchRef.current = { x: t.clientX, y: t.clientY }; };
+  const onTouchEnd = event => {
+    const start = touchRef.current; touchRef.current = null;
+    if (!start || step < 0 || done) return;
+    const t = event.changedTouches[0], dx = t.clientX - start.x, dy = t.clientY - start.y;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) goTo(step + (dx < 0 ? 1 : -1));
+  };
+
+  const voiceNote = !speech.loading && (!speech.supported || !voice
+    ? 'No Mandarin voice in this browser. Open in Chrome to hear the Google voice.'
+    : isGoogle ? null : `Google voice isn’t available here, so ${voice.name.replace(/\s*\(.*\)\s*$/, '')} is used. Chrome has the Google voice.`);
+
   return (
-    <main className="container conversation-page" aria-labelledby="conversation-page-title">
-      <button className="back-btn conversation-back" type="button" onClick={onBack}>← Back to practice studio</button>
+    <main className="container conversation-page cp-page" aria-labelledby="cp-title">
+      <div className="cp-topbar">
+        <button className="cp-back" type="button" onClick={onBack}>← Practice studio</button>
+        <label className="cp-lesson-select"><span className="cp-visually-hidden">Choose lesson</span>
+          <select value={lesson.id} onChange={event => selectLesson(event.target.value)}>
+            {availableLessons.map(item => <option key={item.id} value={item.id}>Lesson {item.number} · {item.title} — {item.subtitle}</option>)}
+          </select>
+        </label>
+      </div>
 
-      <section className="conversation-lesson-nav" aria-label="Choose a conversation lesson">
-        <label className="conversation-lesson-select-wrap"><span>Choose lesson</span><select className="conversation-lesson-select" value={lesson.id} onChange={event => selectLesson(event.target.value)}>
-          {availableLessons.map(item => <option key={item.id} value={item.id}>Lesson {item.number} · {item.title} — {item.subtitle}</option>)}
-        </select></label>
-        <span className="conversation-lesson-position">Lesson {availableLessons.findIndex(item => item.id === lesson.id) + 1} of {availableLessons.length}<span aria-hidden="true"> · </span>{lesson.topic}</span>
-        <div className="conversation-lesson-stepper"><button type="button" onClick={() => selectLesson(availableLessons[Math.max(0, availableLessons.findIndex(item => item.id === lesson.id) - 1)].id)} disabled={availableLessons.findIndex(item => item.id === lesson.id) === 0}>← Previous</button><button type="button" onClick={() => selectLesson(availableLessons[Math.min(availableLessons.length - 1, availableLessons.findIndex(item => item.id === lesson.id) + 1)].id)} disabled={availableLessons.findIndex(item => item.id === lesson.id) === availableLessons.length - 1}>Next lesson →</button></div>
-      </section>
+      <section className={`cp-card${step < 0 ? ' is-intro' : done ? ' is-done' : ''}`} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} aria-live="polite">
+        {step < 0 && <div className="cp-intro">
+          <div className="cp-intro-image"><img src={lesson.image} alt={lesson.imageAlt} width="1672" height="942" /></div>
+          <div className="cp-intro-body">
+            <p className="cp-eyebrow">Lesson {lesson.number} · {lesson.topic}</p>
+            <h1 id="cp-title" ref={headingRef} tabIndex={-1}><span lang="zh-CN">{lesson.title}</span> <small>{lesson.subtitle}</small></h1>
+            <p className="cp-intro-text">{lesson.intro}</p>
+            <p className="cp-intro-meta"><span>💬 {lines.length} lines</span><span>文 {lesson.words.length} words</span></p>
+            <button type="button" className="cp-primary cp-start" onClick={() => goTo(0)}>▶ Start conversation</button>
+            {voiceNote && <p className="cp-voice-note">🔊 {voiceNote}</p>}
+          </div>
+        </div>}
 
-      <header className="conversation-page-heading">
-        <div>
-          <p className="conversation-eyebrow">LESSON {lesson.number} · BEGINNER</p>
-          <h2 id="conversation-page-title">{lesson.title} <span>{lesson.subtitle}</span></h2>
-          <p className="conversation-lead">{lesson.intro}</p>
-        </div>
-        <div className="conversation-lesson-meta"><span>{lesson.exchanges.length} {lesson.exchanges.length === 1 ? 'conversation' : 'conversations'}</span><span>{lesson.words.length} new words</span></div>
-      </header>
-
-      <section className="conversation-hero" aria-label="Lesson introduction">
-        <div className="conversation-hero-image">
-          <img src={lesson.image} alt={lesson.imageAlt} width="1672" height="942" fetchPriority="high" />
-          <span className="conversation-image-caption">{lesson.caption}</span>
-        </div>
-        <div className="conversation-hero-copy">
-          <p className="conversation-hero-kicker">{lesson.kicker}</p>
-          <h3>{lesson.heroTitle}</h3>
-          <p>Listen to a sample phrase, then practice each exchange below.</p>
-        <div className="conversation-hero-phrase"><span className="conversation-phrase-stack"><b lang="zh-Latn">{lesson.exchanges[0].turns[0].pinyin.replace(/[！!]/g, '')}</b><strong lang="zh-CN">{lesson.exchanges[0].turns[0].chinese.replace(/[！!]/g, '')}</strong><small>{lesson.exchanges[0].turns[0].english}</small></span><button type="button" onClick={() => playPhrase(lesson.exchanges[0].turns[0].chinese, lesson.exchanges[0].turns[0].audioUrl)} aria-label={`Listen to ${lesson.exchanges[0].turns[0].pinyin}`}>{playingPhrase === lesson.exchanges[0].turns[0].chinese ? '♫' : '▶'}</button></div>
-        </div>
-      </section>
-
-      <div className="conversation-content-grid">
-        <section className="conversation-exchanges" aria-labelledby="conversation-exchanges-title">
-          <div className="conversation-section-heading">
-            <div><p className="conversation-eyebrow">SPEAK IT OUT LOUD</p><h2 id="conversation-exchanges-title">Short conversations</h2><p className="conversation-dialogue-guide">Take turns: Speaker A starts, then Speaker B replies.</p></div>
-            <button className="conversation-translation-toggle" type="button" aria-pressed={translationsVisible} onClick={() => setTranslationsVisible(value => !value)}>
-              {translationsVisible ? 'Hide English' : 'Show English'}
+        {line && <>
+          <div className="cp-line-head">
+            <span className="cp-exchange-title"><b>{line.exchange.number}</b> {line.exchange.title}</span>
+            <span className="cp-count">{step + 1} / {lines.length}</span>
+          </div>
+          <div className="cp-progress" aria-hidden="true"><i style={{ width: `${(step + 1) / lines.length * 100}%` }} /></div>
+          <h1 id="cp-title" className="cp-visually-hidden" ref={headingRef} tabIndex={-1}>Line {step + 1} of {lines.length}: {line.exchange.title}</h1>
+          <div className={`cp-line speaker-${line.speaker.toLowerCase()}`} key={step}>
+            <span className="cp-speaker" aria-label={`Speaker ${line.speaker}`}>{line.speaker}</span>
+            {showPinyin && <p className="cp-pinyin" lang="zh-Latn">{line.pinyin}</p>}
+            <p className="cp-chinese" lang="zh-CN">{line.chinese}</p>
+            {showEnglish && <p className="cp-english">{line.english}</p>}
+            <button type="button" className={`cp-listen${playingKey === `line-${step}` ? ' is-playing' : ''}`} onClick={() => say(`line-${step}`, line.chinese)} aria-label={`Listen to ${line.pinyin}`}>
+              <SpeakerIcon playing={playingKey === `line-${step}`} size={26} /><span>{playingKey === `line-${step}` ? 'Playing…' : 'Listen'}</span>
             </button>
           </div>
+          <div className="cp-toggles" role="group" aria-label="Display options">
+            <button type="button" aria-pressed={showPinyin} onClick={() => setShowPinyin(value => !value)}>Pinyin</button>
+            <button type="button" aria-pressed={showEnglish} onClick={() => setShowEnglish(value => !value)}>English</button>
+          </div>
+          <div className="cp-nav">
+            <button type="button" className="cp-secondary" onClick={() => goTo(step - 1)}>← Back</button>
+            <button type="button" className="cp-primary" onClick={() => goTo(step + 1)}>{step === lines.length - 1 ? 'Finish ✓' : 'Next →'}</button>
+          </div>
+          <p className="cp-hint" aria-hidden="true">Swipe or use ← → keys</p>
+        </>}
 
-          <nav className="conversation-jump-links" aria-label="Jump to a conversation">{lesson.exchanges.map((exchange, index) => <a key={exchange.number} href={`#conversation-${exchange.number}`}><span>{String(index + 1).padStart(2, '0')}</span>{exchange.title}</a>)}</nav>
-
-          {lesson.exchanges.map((exchange) => (
-            <article id={`conversation-${exchange.number}`} className={`conversation-exchange is-${exchange.tone}`} key={exchange.number}>
-              <header className="conversation-exchange-heading"><span className="conversation-exchange-number">{exchange.number}</span><h3>{exchange.title}</h3></header>
-              <div className="conversation-turns">
-                {exchange.turns.map((turn, index) => (
-                  <div className={`conversation-turn turn-${turn.speaker.toLowerCase()}`} key={`${exchange.number}-${index}-${turn.speaker}`}>
-                    <span className="conversation-speaker" aria-label={`Speaker ${turn.speaker}`}>{turn.speaker}</span>
-                    <div className="conversation-turn-copy">
-                      <span lang="zh-Latn">{turn.pinyin}</span>
-                      <strong lang="zh-CN">{turn.chinese}</strong>
-                      {translationsVisible && <small>{turn.english}</small>}
-                    </div>
-                    <button className={`conversation-listen${playingPhrase === turn.chinese ? ' is-playing' : ''}`} type="button" onClick={() => playPhrase(turn.chinese, turn.audioUrl)} aria-label={`${playingPhrase === turn.chinese ? 'Playing' : 'Listen to'} ${turn.pinyin}`} aria-pressed={playingPhrase === turn.chinese}>
-                      <span aria-hidden="true">{playingPhrase === turn.chinese ? '♫' : '▶'}</span><span>{playingPhrase === turn.chinese ? 'Playing' : 'Listen'}</span>
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </article>
-          ))}
-        </section>
-
-        <aside className="conversation-vocabulary" aria-labelledby="conversation-vocabulary-title">
-          <div className="conversation-vocabulary-heading"><span aria-hidden="true">文</span><div><p className="conversation-eyebrow">WORDS TO KNOW</p><h2 id="conversation-vocabulary-title">New words</h2></div></div>
-          <ol className="conversation-word-list">
-            {lesson.words.map((word, index) => (
-              <li className="conversation-word" key={word.chinese}>
-                <span className="conversation-word-index">{index + 1}</span>
-                <div className="conversation-word-main"><strong lang="zh-CN">{word.chinese}</strong><span lang="zh-Latn">{word.pinyin}</span></div>
-                <div className="conversation-word-meaning"><small>{word.type}</small><span>{word.meaning}</span></div>
-              </li>
-            ))}
-          </ol>
-          <p className="conversation-vocabulary-note">Use <b>Listen</b> on a dialogue line, then say it aloud yourself.</p>
-        </aside>
-      </div>
+        {done && <div className="cp-done">
+          <p className="cp-eyebrow">Lesson complete 🎉</p>
+          <h1 id="cp-title" ref={headingRef} tabIndex={-1}>Nice work!</h1>
+          <p className="cp-intro-text">Review the new words — tap one to hear it.</p>
+          <ul className="cp-words">{lesson.words.map(word => {
+            const key = `word-${word.chinese}`;
+            return <li key={word.chinese}><button type="button" className={playingKey === key ? 'is-playing' : ''} onClick={() => say(key, word.chinese)} aria-label={`Listen to ${word.chinese}, ${word.pinyin}: ${word.meaning}`}>
+              <span lang="zh-CN">{word.chinese}</span><small lang="zh-Latn">{word.pinyin}</small><em>{word.meaning}</em><SpeakerIcon playing={playingKey === key} size={18} />
+            </button></li>;
+          })}</ul>
+          <div className="cp-nav">
+            <button type="button" className="cp-secondary" onClick={() => goTo(0)}>↺ Practise again</button>
+            {nextLesson ? <button type="button" className="cp-primary" onClick={() => selectLesson(nextLesson.id)}>Next lesson →</button>
+              : <button type="button" className="cp-primary" onClick={onBack}>Back to studio</button>}
+          </div>
+        </div>}
+      </section>
     </main>
   );
 }
