@@ -197,3 +197,17 @@ test('one tone selection submits once even if clicked repeatedly', async ({ page
   expect(context.posts()).toBe(1);
   await expect(page.getByText('Question 2 of 2')).toBeVisible();
 });
+
+test('students can limit a round to chosen syllables from the Pinyin Chart', async ({ page }) => {
+  const context = await prepare(page);
+  await page.goto('/practice/tones');
+  const picker = page.getByRole('group', { name: 'Choose syllables to practise' });
+  await expect(picker.getByRole('checkbox')).toHaveCount(2);
+  await picker.getByRole('button', { name: 'Clear all' }).click();
+  await expect(page.getByRole('button', { name: 'Start tone practice' })).toBeDisabled();
+  await picker.getByRole('checkbox', { name: /^ba,/ }).check();
+  await page.getByRole('button', { name: 'Start tone practice' }).click();
+  await expect(page.getByText('Question 1 of 1')).toBeVisible();
+  await answer(page, 4); await expect(page.getByRole('status')).toContainText('Correct!');
+  expect([...context.saved.values()].map(item => item.syllable)).toEqual(['ba']);
+});
