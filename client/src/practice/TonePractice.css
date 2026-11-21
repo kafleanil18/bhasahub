@@ -246,10 +246,25 @@
 .tone-art-char small { color: var(--tone); font-size: 17px; font-weight: 700; }
 .tone-art-char i { position: absolute; right: -14px; top: 50%; transform: translate(50%, -50%); color: #fff; font-style: normal; font-size: 22px; font-weight: 700; }
 @media (max-width: 600px) {
-  .tone-mode-cards { grid-template-columns: 1fr; gap: 14px; }
-  .tone-mode-card-art { min-height: 150px; padding: 18px 12px; }
-  .tone-art-syllable { font-size: 52px; }
-  .tone-art-char b { font-size: 40px; }
+  .tone-practice h2.tone-choose-title { margin: 4px 0 12px; font-size: 20px; }
+  .tone-mode-cards { gap: 10px; }
+  .tone-mode-card { border-radius: 16px; }
+  .tone-mode-card-art { min-height: 0; aspect-ratio: 1 / 1; padding: 10px 6px; }
+  .tone-mode-card-body { gap: 4px; padding: 10px 12px 12px; }
+  .tone-mode-card-body strong { font-size: 15px; line-height: 1.25; }
+  .tone-mode-card-body > span { font-size: 12px; line-height: 1.35; }
+  .tone-mode-card-body .tone-mode-card-cta { margin-top: 4px; padding: 5px 12px; font-size: 12px; }
+  .tone-art-single { gap: 8px; }
+  .tone-art-syllable { font-size: 38px; }
+  .tone-art-row { display: grid; grid-template-columns: repeat(2, auto); gap: 5px; }
+  .tone-art-row > span { padding: 3px 5px; border-radius: 8px; }
+  .tone-art-row .tone-contour { width: 28px; height: 21px; }
+  .tone-art-pair { gap: 16px; }
+  .tone-art-char { gap: 2px; padding: 6px 7px 5px; border-radius: 10px; }
+  .tone-art-char .tone-contour { width: 30px; height: 22px; }
+  .tone-art-char b { font-size: 28px; }
+  .tone-art-char small { font-size: 12px; }
+  .tone-art-char i { right: -8px; font-size: 15px; }
 }
 .tone-retry { display: flex; flex-direction: column; align-items: center; }
 .tone-link { margin-top: 12px; padding: 0; border: 0; background: none; color: var(--seal); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: underline; }
@@ -265,4 +280,57 @@
   .tone-header { flex-direction: column; align-items: stretch; }
   .tone-mode-toggle { width: 100%; }
   .tone-mode-toggle button { flex: 1; padding: 10px 12px; }
+}
+
+/* Phone: keep the whole exercise on one screen so tones can be chosen without scrolling. */
+@media (max-width: 600px) {
+  .tone-minimal.sentence-page { padding-top: 8px; padding-bottom: 24px; }
+  .tone-minimal .tone-header { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-bottom: 10px; }
+  .tone-minimal .tone-header .sentence-back { flex-shrink: 0; min-height: 36px; padding: 6px 0; font-size: 14px; }
+  .tone-minimal .tone-mode-toggle { flex: 1 1 100%; width: 100%; gap: 6px; }
+  .tone-minimal .tone-mode-toggle button { flex: 1; min-height: 36px; padding: 6px 8px; font-size: 14px; white-space: nowrap; border-width: 1.5px; }
+  .tone-minimal .tone-stage.sentence-card { padding: 12px; border-radius: 16px; }
+  .tone-minimal .tone-icon-button { width: 34px; height: 34px; }
+  .tone-minimal .tone-count { font-size: 14px; }
+  .tone-minimal .tone-dots { margin: 8px 0 10px; }
+  .tone-minimal .tone-dots li { height: 6px; }
+  .tone-minimal .sentence-card h2.tone-question { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; margin: 0; }
+  .tone-minimal .tone-listen { grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; padding: 10px 12px; margin-bottom: 0; border-radius: 14px; }
+  .tone-minimal .tone-play { width: 56px; height: 56px; box-shadow: 0 6px 14px -8px var(--accent-red); }
+  .tone-minimal .tone-play svg { width: 22px; height: 22px; }
+  .tone-minimal .tone-play-bars { height: 22px; gap: 3px; }
+  .tone-minimal .tone-play-bars i { width: 4px; }
+  .tone-minimal .tone-listen-syllable { font-size: 36px; }
+  .tone-minimal .tone-pair-word [lang="zh-CN"] { font-size: 34px; letter-spacing: .04em; }
+  .tone-minimal .tone-pair-word span:last-child { font-size: 12px; }
+  .tone-minimal .tone-pill { min-height: 34px; padding: 4px 10px; font-size: 12px; gap: 4px; }
+  .tone-minimal .tone-pill svg { width: 14px; height: 14px; }
+  .tone-minimal .tone-alert { margin: 6px 0; font-size: 13px; }
+
+  /* Single syllables: four compact cards in one row */
+  .tone-minimal .tone-choices:not(.tone-pair-row) { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin: 10px 0 4px; }
+  .tone-minimal .tone-choices:not(.tone-pair-row) .tone-choice { padding: 8px 2px 6px; gap: 2px; border-radius: 10px; border-top-width: 4px; }
+  .tone-minimal .tone-choices:not(.tone-pair-row) .tone-contour { width: 34px; height: 26px; }
+  .tone-minimal .tone-choices:not(.tone-pair-row) .tone-choice-mark { font-size: 20px; }
+  .tone-minimal .tone-choices:not(.tone-pair-row) .tone-choice-text strong { font-size: 11px; }
+
+  /* Tone pairs: each syllable's four tones as a 2 × 2 grid */
+  .tone-minimal .tone-pair-choices { gap: 8px; margin-top: 10px; }
+  .tone-minimal .tone-pair-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; padding: 6px; border-radius: 12px; }
+  .tone-minimal .tone-pair-row legend { gap: 6px; padding: 0 2px 4px; }
+  .tone-minimal .tone-slot-step { width: 20px; height: 20px; font-size: 11px; }
+  .tone-minimal .tone-slot-hanzi { font-size: 20px; }
+  .tone-minimal .tone-slot-pinyin { font-size: 15px; }
+  .tone-minimal .tone-pair-row .tone-choice { flex-direction: column; justify-content: center; align-items: center; gap: 0; min-height: 0; padding: 4px 2px 3px; border-radius: 9px; border-top-width: 3px; text-align: center; }
+  .tone-minimal .tone-pair-row .tone-contour:not(.tone-slot-contour) { width: 26px; height: 18px; }
+  .tone-minimal .tone-pair-row .tone-choice-mark { font-size: 15px; }
+  .tone-minimal .tone-pair-row .tone-choice-text { display: none; }
+
+  .tone-minimal .tone-footer { margin-top: 6px; }
+  .tone-minimal .tone-skip { min-height: 36px; padding: 4px; font-size: 14px; }
+  .tone-minimal .tone-feedback { gap: 10px; padding: 12px 14px 16px; margin-top: 10px; }
+  .tone-minimal .tone-feedback h3 { font-size: 17px; margin: 0 0 2px; }
+  .tone-minimal .tone-feedback p { font-size: 13px; margin: 2px 0; }
+  .tone-minimal .tone-feedback-icon { width: 30px; height: 30px; font-size: 16px; }
+  .tone-minimal .tone-options { margin-top: 12px; }
 }
