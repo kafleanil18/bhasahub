@@ -131,3 +131,22 @@
 .hsk-featured-actions button:disabled { cursor: wait; opacity: .65; }
 .hsk-featured-status { padding: 20px 0; }
 @media (max-width: 600px) { .hsk-featured-actions { width: 100%; } }
+
+/* Mock-test access gating: one free paper, the rest unlock after admin approval. */
+.test-access-banner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px; margin-bottom: 24px; border: 1px solid #e3c984; border-radius: 12px; background: #fdf6e3; color: #4a3b22; }
+.test-access-banner.is-pending { border-color: #c9d8e8; background: #eef4fa; color: #2c4661; }
+.test-access-banner strong { display: block; font-size: 16px; margin-bottom: 4px; }
+.test-access-banner p { margin: 0; font-size: 14px; line-height: 1.6; }
+.test-access-banner > div { flex: 1; min-width: 240px; }
+.test-access-request-btn { flex-shrink: 0; min-height: 44px; padding: 10px 18px; border: 0; border-radius: 8px; background: var(--accent-red, #c2402a); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; }
+.test-access-request-btn:disabled { opacity: .65; cursor: wait; }
+.test-access-error { width: 100%; margin: 0; color: #8b3f35; font-size: 14px; }
+.mock-test-lock-tag { display: inline-flex; align-items: center; width: fit-content; padding: 5px 11px; margin: 0 8px 9px 0; border: 1px solid #d8d0c4; border-radius: 999px; background: #f1ece5; color: #5d5145; font-size: 13px; font-weight: 700; line-height: 1.35; }
+.mock-test-free-tag { display: inline-flex; align-items: center; width: fit-content; padding: 5px 11px; margin: 0 8px 9px 0; border: 1px solid #b8edce; border-radius: 999px; background: #d8f3e2; color: #185a38; font-size: 13px; font-weight: 700; line-height: 1.35; }
+.hsk-featured-test .mock-test-lock-tag, .hsk-featured-test .mock-test-free-tag { margin-right: 8px; }
+.hsk-featured-test.is-locked { background: #f4f0e8; border-left-color: #d8d0c4; color: #5d5145; }
+.hsk-featured-test.is-locked h2 { color: #4a4238; }
+.hsk-featured-test.is-locked p, .hsk-featured-test.is-locked .hsk-featured-meta, .hsk-featured-test.is-locked .hsk-featured-meta span, .hsk-featured-test.is-locked small { color: #7a6f61; }
+.hsk-featured-locked-note { margin: 0; color: #7a6f61; font-size: 14px; font-weight: 600; }
+.mock-test-card.is-locked { opacity: .6; cursor: default; }
+.mock-test-card.is-locked:hover { transform: none; box-shadow: none; }

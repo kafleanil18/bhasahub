@@ -117,9 +117,10 @@ afterEach(async () => {
   for (const server of servers.splice(0)) { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
   restorations.reverse().forEach(restore => restore()); restorations.length = 0;
 });
-async function setup() {
+async function setup({ testsUnlocked = true } = {}) {
   mock(process.env, 'JWT_SECRET', 'hsk-test-secret');
   mock(User, 'findById', id => ({ select: async () => ({ _id: id, role: ['admin', 'superadmin'].includes(id) ? id : 'student' }) }));
+  mock(require('../models/AccessRequest'), 'exists', async () => testsUnlocked);
   const publications = new Map();
   mock(PracticePaper, 'findById', async id => publications.get(id));
   mock(PracticePaper, 'find', async () => [...publications.values()]);
@@ -165,6 +166,19 @@ test('H11112 preserves the printed key and original audio', () => {
   assert.deepEqual(tools.grade(h11112Key), { listening: 20, reading: 20, score: 40 });
   const json = JSON.stringify(tools.publicPaper());
   for (const privateField of ['correctIndex', 'explanation', 'listeningText']) assert.ok(!json.includes(privateField));
+});
+
+test('without approved access only the free paper opens; staff bypass the lock', async () => {
+  const { base, headers, admin } = await setup({ testsUnlocked: false });
+  const free = await (await fetch(base, { headers })).json();
+  assert.equal(free.id, 'h11226');
+  const lockedUrl = base.replace('/h11226', '/h11221');
+  const locked = await fetch(lockedUrl, { headers });
+  assert.equal(locked.status, 403);
+  assert.equal((await locked.json()).code, 'TESTS_LOCKED');
+  assert.equal((await fetch(`${lockedUrl}/attempts`, { method: 'POST', headers })).status, 403);
+  assert.equal((await fetch(`${base}/attempts`, { method: 'POST', headers })).status, 201);
+  assert.equal((await fetch(lockedUrl, { headers: admin })).status, 200);
 });
 
 test('H11221 starts and grades isolated attempts, preserves results, and supports visibility controls', async () => {

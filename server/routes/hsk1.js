@@ -6,12 +6,13 @@ const PracticePaper = require('../models/PracticePaper');
 const { logActivity } = require('../utils/auditLog');
 const { createPaperTools } = require('../utils/hsk11226');
 const { cleanContent, validateReady } = require('../utils/practicePaperContent');
+const { FREE_PAPER_ID, hasTestAccess } = require('../utils/testAccess');
 const builtIns = require('../data/hskPapers');
 const router = express.Router();
 const staff = req => ['admin', 'superadmin'].includes(req.user.role);
 const isBuiltIn = id => Object.hasOwn(builtIns, id);
 // `edited`: a built-in paper whose content a superadmin has replaced. `deleted`: soft-deleted, restorable.
-const metadata = (id, content, published, extra = {}) => ({ id, title: content.title, code: content.code || id.toUpperCase(), published, custom: !isBuiltIn(id), edited: false, deleted: false, ...extra });
+const metadata = (id, content, published, extra = {}) => ({ id, title: content.title, code: content.code || id.toUpperCase(), published, custom: !isBuiltIn(id), edited: false, deleted: false, free: id === FREE_PAPER_ID, ...extra });
 router.use(requireAuth);
 router.use((req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
 router.get('/', async (req, res) => {
@@ -116,6 +117,13 @@ function requirePublishedPaper(req, res, next) {
   if (!staff(req) && !req.published) return res.status(404).json({ error: 'This practice paper is currently hidden.' });
   next();
 }
+async function requireTestAccess(req, res, next) {
+  if (req.paperId === FREE_PAPER_ID) return next();
+  try {
+    if (!await hasTestAccess(req.user)) return res.status(403).json({ error: 'This mock test is locked. Request access to unlock all tests.', code: 'TESTS_LOCKED' });
+    next();
+  } catch { res.status(500).json({ error: 'Could not check your test access.' }); }
+}
 function resultFor(req, attempt) {
   const value = attempt.toObject ? attempt.toObject() : attempt;
   let definition = value.paperSnapshot || req.paper;
@@ -131,14 +139,14 @@ function resultFor(req, attempt) {
   }
   return createPaperTools(definition).result(value.paperSnapshot ? { ...value, paperSnapshot: definition } : value);
 }
-router.get('/:paperId', requirePublishedPaper, (req, res) => res.json(req.paperTools.publicPaper()));
+router.get('/:paperId', requirePublishedPaper, requireTestAccess, (req, res) => res.json(req.paperTools.publicPaper()));
 router.get('/:paperId/attempts', async (req, res) => {
   try {
     const attempts = await HskAttempt.find({ user: req.user.id, paper: req.paperId, status: 'submitted' }).sort({ createdAt: -1 }).limit(20).select('score listening reading submittedAt');
     res.json(attempts);
   } catch { res.status(500).json({ error: 'Could not load your results.' }); }
 });
-router.post('/:paperId/attempts', requirePublishedPaper, async (req, res) => {
+router.post('/:paperId/attempts', requirePublishedPaper, requireTestAccess, async (req, res) => {
   if (!isBuiltIn(req.paperId) || req.record?.content) {
     try { validateReady(req.paper); }
     catch (err) { return res.status(400).json({ error: `Paper is not ready: ${err.message}` }); }

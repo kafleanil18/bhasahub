@@ -35,10 +35,18 @@ router.get('/my', requireAuth, async (req, res) => {
   }
 });
 
-// POST /api/access-requests — student: ask for access to a course
+// POST /api/access-requests — student: ask for access to a course, or to all mock tests ({ scope: 'tests' })
 router.post('/', requireAuth, async (req, res) => {
   try {
-    const { courseId } = req.body;
+    const { courseId, scope } = req.body;
+    if (scope === 'tests') {
+      const approved = await AccessRequest.findOne({ user: req.user.id, scope: 'tests', status: 'approved' });
+      if (approved) return res.status(400).json({ error: 'You already have access to all mock tests' });
+      const pending = await AccessRequest.findOne({ user: req.user.id, scope: 'tests', status: 'pending' });
+      if (pending) return res.status(200).json(pending);
+      const request = await AccessRequest.create({ user: req.user.id, scope: 'tests', status: 'pending' });
+      return res.status(201).json(request);
+    }
     if (!Types.ObjectId.isValid(courseId)) return res.status(400).json({ error: 'A valid courseId is required' });
 
     const course = await Course.findById(courseId);
@@ -66,6 +74,18 @@ router.put('/:id/approve', requireAuth, requireAdmin, async (req, res) => {
     if (!request) return res.status(404).json({ error: 'Request not found' });
 
     if (request.status !== 'pending') return res.status(409).json({ error: 'Request has already been processed' });
+    if (request.scope === 'tests') {
+      request.status = 'approved';
+      await request.save();
+      const reqUser = await User.findById(request.user).select('name');
+      logActivity(req, {
+        action: 'approve',
+        resourceType: 'access-request',
+        resourceId: request._id,
+        label: `${reqUser ? reqUser.name : 'Unknown'} → All mock tests`,
+      });
+      return res.json({ request });
+    }
     const days = req.body.days === undefined ? 30 : Number(req.body.days);
     if (!Number.isInteger(days) || days <= 0 || days > 3650) return res.status(400).json({ error: 'Days must be an integer between 1 and 3650' });
     // Create a stable subscription first; the guarded update applies each request only once.
@@ -130,7 +150,7 @@ router.put('/:id/deny', requireAuth, requireAdmin, async (req, res) => {
       action: 'deny',
       resourceType: 'access-request',
       resourceId: request._id,
-      label: `${request.user ? request.user.name : 'Unknown'} → ${request.course ? request.course.title : 'Unknown'}`,
+      label: `${request.user ? request.user.name : 'Unknown'} → ${request.scope === 'tests' ? 'All mock tests' : request.course ? request.course.title : 'Unknown'}`,
     });
     res.json(request);
   } catch {
