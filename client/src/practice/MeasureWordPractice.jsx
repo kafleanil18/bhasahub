@@ -4,23 +4,52 @@ import useChineseVoice, { voiceKey } from './useChineseVoice';
 import SentenceText, { PinyinText } from './SentenceText';
 import MeasureSession from './MeasureSession';
 import './SentencePractice.css';
+import './TonePractice.css';
 import './MeasureWordPractice.css';
+
+// A sample phrase for each card: [number, measure word, noun].
+const examples = {
+  mixed: ['一', '本', '书'], people: ['三', '只', '猫'], study: ['两', '张', '照片'],
+  food: ['一', '杯', '茶'], home: ['一', '把', '伞'], outside: ['五', '辆', '汽车'],
+};
+function PhraseArt({ id }) {
+  const [count, measure, noun] = examples[id];
+  return <span className="measure-art" aria-hidden="true" lang="zh-CN">{count}<b>{measure}</b>{noun}</span>;
+}
 
 export default function MeasureWordPractice({ onBack }) {
   const [session, setSession] = useState(null);
+  const [sessionKey, setSessionKey] = useState(0);
   const { voice, voices, selected, setSelected } = useChineseVoice();
-  return <section className="sentence-page measure-page" aria-labelledby="measure-title">
-    <button className="sentence-back" onClick={onBack}>← Back to home</button>
-    <div className="sentence-heading"><p className="sentence-eyebrow">Small words · Better Chinese</p><h1 id="measure-title">Measure word practice</h1><p>One book, a cup of tea, three cats. Learn the word that connects a number to the thing you are counting.</p></div>
-    {session ? <><button className="sentence-back" onClick={() => setSession(null)}>← Choose another topic</button><MeasureSession initialQuestions={session} voice={voice} onExit={() => setSession(null)} /></> : <>
-      <div className="sentence-overview"><div><strong>{MEASURE_GROUPS.length}</strong><span>common measure words</span></div><div><strong>{MEASURE_QUESTIONS.length}</strong><span>practice phrases</span></div><div><strong>10</strong><span>questions per round</span></div></div>
-      {voices.length > 0 ? <label className="measure-voice-label">Chinese voice for answer playback<select value={selected} onChange={event => setSelected(event.target.value)}>{voices.map(voice => <option key={voiceKey(voice)} value={voiceKey(voice)}>{voice.name} · {voice.lang}</option>)}</select></label> : <p className="sentence-muted">Practice works without audio. If your device has a Mandarin voice, you can hear each phrase after answering.</p>}
-      <div className="sentence-mixed"><div><h2>Mix the measure words</h2><p>One question for each of the 10 measure words.</p></div><button className="sentence-primary" onClick={() => setSession(measureRound())}>Start mixed practice →</button></div>
-      <div className="sentence-topics">{MEASURE_TOPICS.map((topic,index) => <button key={topic.id} className="sentence-topic" onClick={() => setSession(measureRound(topic.id))}><span className="sentence-topic-number">{String(index + 1).padStart(2,'0')}</span><span><strong>{topic.title}</strong><small>{topic.description}</small></span><span aria-hidden="true">↗</span></button>)}</div>
-      <details className="measure-reference"><summary>Review the 10 measure words</summary><div>{MEASURE_GROUPS.map(group => {
-        const example = MEASURE_QUESTIONS.find(question => question.measure === group.word);
-        return <article key={group.word}><h2><PinyinText text={group.word} readings={[group.pinyin]} /></h2><div><strong>{group.meaning}</strong><p>{group.explanation}</p><p><SentenceText sentence={example} /> · {example.english}</p></div></article>;
-      })}</div></details>
+  const topic = session && (session.topic === 'mixed' ? { title: 'Mixed' } : MEASURE_TOPICS.find(item => item.id === session.topic));
+  const start = id => { setSession({ topic: id, questions: measureRound(id) }); setSessionKey(value => value + 1); };
+
+  return <main className="sentence-page tone-practice measure-page" aria-labelledby="measure-title">
+    <div className="measure-header">
+      <button className="sentence-back" onClick={session ? () => setSession(null) : onBack}>{session ? '← All topics' : '← Back to home'}</button>
+      {topic && <span className="measure-chip">{topic.title}</span>}
+    </div>
+    <h1 id="measure-title" className={session ? 'tone-visually-hidden' : 'measure-title'}>Measure word practice</h1>
+    {session ? <MeasureSession key={sessionKey} initialQuestions={session.questions} voice={voice} onRestart={() => start(session.topic)} onExit={() => setSession(null)} /> : <>
+      <p className="measure-intro">Pick the word that joins a number to the thing you count.</p>
+      <button type="button" className="measure-card measure-card-mixed" onClick={() => start('mixed')} aria-label="Mixed practice" aria-describedby="measure-card-mixed">
+        <span className="measure-card-art"><PhraseArt id="mixed" /></span>
+        <span className="measure-card-body"><strong>Mixed practice</strong><span id="measure-card-mixed">One question for each of the {MEASURE_GROUPS.length} measure words.</span><span className="measure-card-cta" aria-hidden="true">Start →</span></span>
+      </button>
+      <h2 className="measure-section-title">Or choose a topic</h2>
+      <div className="measure-cards">{MEASURE_TOPICS.map(item => <button type="button" key={item.id} className="measure-card" onClick={() => start(item.id)} aria-label={item.title} aria-describedby={`measure-card-${item.id}`}>
+        <span className="measure-card-art"><PhraseArt id={item.id} /></span>
+        <span className="measure-card-body"><strong>{item.title}</strong><span id={`measure-card-${item.id}`}>{item.description}</span></span>
+      </button>)}</div>
+      <details className="measure-reference"><summary>Review the {MEASURE_GROUPS.length} measure words</summary>
+        <div className="measure-reference-grid">{MEASURE_GROUPS.map(group => {
+          const example = MEASURE_QUESTIONS.find(question => question.measure === group.word);
+          return <article key={group.word}><h3><PinyinText text={group.word} readings={[group.pinyin]} /></h3><div><strong>{group.meaning}</strong><p><SentenceText sentence={example} /></p><p className="measure-reference-english">{example.english}</p></div></article>;
+        })}</div>
+      </details>
+      {voices.length > 1 && <details className="measure-voice"><summary>Voice · {voice?.name}</summary>
+        <label>Chinese voice for answer playback<select value={selected} onChange={event => setSelected(event.target.value)}>{voices.map(option => <option key={voiceKey(option)} value={voiceKey(option)}>{option.name} · {option.lang}</option>)}</select></label>
+      </details>}
     </>}
-  </section>;
+  </main>;
 }
