@@ -7,6 +7,7 @@ const User = require('../models/User');
 const Enrollment = require('../models/Enrollment');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { logActivity } = require('../utils/auditLog');
+const { activePassExpiry } = require('../utils/platformAccess');
 
 const router = express.Router();
 
@@ -45,7 +46,7 @@ router.post('/', requireAuth, async (req, res) => {
 
     const now = new Date();
     const activeSub = await Subscription.findOne({ user: req.user.id, course: courseId, expiresAt: { $gt: now } });
-    if (activeSub) return res.status(400).json({ error: 'You already have access to this course' });
+    if (activeSub || await activePassExpiry(req.user.id)) return res.status(400).json({ error: 'You already have access to this course' });
 
     const existingPending = await AccessRequest.findOne({ user: req.user.id, course: courseId, status: 'pending' });
     if (existingPending) return res.status(200).json(existingPending);

@@ -13,6 +13,13 @@ export default function SiteHeader({ adminSidebarOpen, darkMode, goHome, handleL
           <nav id="site-navigation" aria-label="Main navigation" className={`main-nav ${mobileMenuOpen ? 'open' : ''}`}>
             <div className="nav-links">
               {isAdmin && !isSuperAdmin && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/admin/tests'); }}>Manage tests</button>}
+              {!isAdmin && !isSuperAdmin && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/pricing'); }}>
+                <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"></path>
+                  <circle cx="7.5" cy="7.5" r="1.5"></circle>
+                </svg>
+                <span>Pricing</span>
+              </button>}
               {isSuperAdmin ? null : user ? (
                 <>
                   <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/my-courses'); }}>

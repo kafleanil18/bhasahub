@@ -3,7 +3,7 @@ const VocabSchedule = require('../models/VocabSchedule');
 const Vocabulary = require('../models/Vocabulary');
 const Lesson = require('../models/Lesson');
 const Course = require('../models/Course');
-const Subscription = require('../models/Subscription');
+const { accessibleCourseIds } = require('../utils/platformAccess');
 const { requireAuth } = require('../middleware/auth');
 
 const { canAccessCourse, isAdmin } = require('../middleware/courseAccess');
@@ -65,10 +65,7 @@ router.get('/due', requireAuth, async (req, res) => {
       // Filter access before limiting so expired courses cannot crowd out due cards.
       const lessonQuery = {};
       if (!isAdmin(req.user)) {
-        const subscribedCourses = await Subscription.find({
-          user: req.user.id,
-          expiresAt: { $gt: new Date() },
-        }).distinct('course');
+        const subscribedCourses = await accessibleCourseIds(req.user.id);
         const publishedCourses = await Course.find({
           _id: { $in: subscribedCourses }, published: true,
         }).distinct('_id');

@@ -4,6 +4,7 @@ const User = require('../models/User');
 const Course = require('../models/Course');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { logActivity } = require('../utils/auditLog');
+const { activePassExpiry } = require('../utils/platformAccess');
 
 const router = express.Router();
 
@@ -96,9 +97,19 @@ router.delete('/:id', requireAuth, requireAdmin, async (req, res) => {
 router.get('/my', requireAuth, async (req, res) => {
   try {
     const now = new Date();
-    const subs = await Subscription.find({ user: req.user.id, expiresAt: { $gt: now } })
-      .populate('course', 'title level');
-    res.json(subs);
+    const [subs, passExpiry] = await Promise.all([
+      Subscription.find({ user: req.user.id, expiresAt: { $gt: now } }).populate('course', 'title level'),
+      activePassExpiry(req.user.id),
+    ]);
+    if (!passExpiry) return res.json(subs);
+    // A whole-platform plan covers every published course, so list each one.
+    const courses = await Course.find({ published: true }).select('title level').lean();
+    const byCourse = new Map(subs.filter(sub => sub.course).map(sub => [String(sub.course._id), sub]));
+    res.json(courses.map(course => {
+      const sub = byCourse.get(String(course._id));
+      if (sub && sub.expiresAt > passExpiry) return sub;
+      return { _id: `plan-${course._id}`, user: req.user.id, course, expiresAt: passExpiry, plan: true };
+    }));
   } catch {
     res.status(500).json({ error: 'Could not load your access' });
   }
@@ -113,6 +124,11 @@ router.get('/check/:courseId', requireAuth, async (req, res) => {
       course: req.params.courseId,
       expiresAt: { $gt: now },
     });
+    const passExpiry = await activePassExpiry(req.user.id);
+    if (passExpiry && await Course.exists({ _id: req.params.courseId, published: true })) {
+      const expiresAt = sub && sub.expiresAt > passExpiry ? sub.expiresAt : passExpiry;
+      return res.json({ hasAccess: true, expiresAt, plan: true });
+    }
     res.json({ hasAccess: !!sub, expiresAt: sub ? sub.expiresAt : null });
   } catch {
     res.status(500).json({ error: 'Could not check access' });

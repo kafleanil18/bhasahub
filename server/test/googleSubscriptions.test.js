@@ -5,6 +5,7 @@ const assert = require('node:assert/strict');
 const User = require('../models/User');
 const Course = require('../models/Course');
 const Subscription = require('../models/Subscription');
+const PlatformPass = require('../models/PlatformPass');
 const AccessRequest = require('../models/AccessRequest');
 const Enrollment = require('../models/Enrollment');
 const AuditLog = require('../models/AuditLog');
@@ -54,6 +55,7 @@ test('a Google student requests access and receives it only after super admin ap
   assert.equal(req.user.id, student._id);
   mock(Course, 'findById', async () => course);
   mock(Subscription, 'findOne', async () => null);
+  mock(PlatformPass, 'findOne', () => ({ select: () => ({ lean: async () => null }) }));
   let saved;
   mock(AccessRequest, 'findOne', async () => saved || null);
   mock(AccessRequest, 'create', async data => { saved = { _id: 'request', ...data }; return saved; });

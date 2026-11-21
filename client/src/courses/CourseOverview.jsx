@@ -1,5 +1,6 @@
 import { supportsConversation } from '../utils/courseFeatures';
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { mediaUrl } from '../utils/mediaUrl';
 import LessonCategoryIcon from './LessonCategoryIcon';
 import './CourseOverview.css';
@@ -34,7 +35,6 @@ function CourseOverview({
   const [enrolled, setEnrolled] = useState(false);
   const [enrollError, setEnrollError] = useState(null);
   const [requestStatus, setRequestStatus] = useState(null); // null | 'pending' | 'denied'
-  const [requestingAccess, setRequestingAccess] = useState(false);
   const [accessRequestError, setAccessRequestError] = useState(null);
 
   useEffect(() => {
@@ -74,30 +74,6 @@ function CourseOverview({
     };
   }, [loadRequestStatus, token, hasAccess]);
 
-  const requestAccess = async () => {
-    if (!token || mutationRef.current || requestStatus === 'pending') return;
-    mutationRef.current = true;
-    setRequestingAccess(true);
-    setAccessRequestError(null);
-    try {
-      const res = await fetch(`${API}/access-requests`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ courseId: course._id }),
-      });
-      if (res.ok) {
-        setRequestStatus('pending');
-      } else {
-        const data = await res.json();
-        setAccessRequestError(data.error || 'Could not send your subscription request.');
-      }
-    } catch {
-      setAccessRequestError('Could not send your access request.');
-    } finally {
-      setRequestingAccess(false);
-      mutationRef.current = false;
-    }
-  };
 
   const toggleEnroll = async () => {
     if (!token || mutationRef.current) return;
@@ -137,7 +113,7 @@ function CourseOverview({
       <aside className="overview-course-card" aria-label={isAdmin ? 'Course at a glance' : 'Your course progress'}><div className="overview-course-art"><img src={course.image ? mediaUrl(course.image) : '/images/chinese-ink-landscape.jpg'} width="1200" height="800" alt="" decoding="async"/><span>One lesson. One step forward.</span></div><div className="overview-progress"><p className="overview-eyebrow">{isAdmin ? 'Course at a glance' : 'Your course progress'}</p>{isAdmin ? <><strong>{loading ? 'Preparing lessons…' : lessonsError ? 'Lessons unavailable' : `${courseLessons.length} lessons to explore`}</strong><p>Preview the learning experience before sharing it with students.</p></> : progressReady ? <><div className="overview-progress-numbers"><strong>{progressPercent}%</strong><span>{currentCourseCompleted} of {courseLessons.length} lessons completed</span></div><progress value={currentCourseCompleted} max={courseLessons.length || 1} aria-label="Course completion"/><p>{courseComplete ? 'You’ve completed every lesson. Come back whenever you want to review.' : currentCourseCompleted ? 'Keep going. Your next lesson is ready when you are.' : 'Your progress will appear here as you complete lessons.'}</p></> : <p role="status">{progressError || lessonsError || 'Loading your progress…'}</p>}</div></aside>
     </div>
 
-    {user && !isAdmin && <div className={`overview-access ${accessError ? 'is-error' : hasAccess ? 'is-active' : 'is-pending'}`} role={accessError ? 'alert' : 'status'}><div><strong>{!accessChecked ? 'Checking your course access…' : accessError ? 'We couldn’t check your access' : hasAccess ? 'Your course access is active' : requestStatus === 'pending' ? 'Your access request is under review' : requestStatus === 'denied' ? 'Your previous request was declined' : 'Ready to start this course?'}</strong><p>{!accessChecked ? 'Your lesson access will update shortly.' : accessError ? accessError : hasAccess ? readableExpiry ? `You can open lessons until ${readableExpiry}.` : 'Choose a lesson below to begin.' : requestStatus === 'pending' ? 'An admin will review your request. This page checks for updates automatically.' : requestStatus === 'denied' ? 'You can send a new request when you’re ready.' : 'Browse the syllabus below, then request course access to unlock the lessons.'}</p></div>{accessChecked && !hasAccess && !accessError && requestStatus !== 'pending' && <button className="overview-button is-primary" disabled={requestingAccess} onClick={requestAccess}>{requestingAccess ? 'Sending request…' : requestStatus === 'denied' ? 'Request access again' : 'Request course access'}</button>}{accessError && <button className="overview-button" onClick={() => window.location.reload()}>Refresh page</button>}{accessRequestError && <p className="overview-feedback is-error" role="alert">{accessRequestError}</p>}</div>}
+    {user && !isAdmin && <div className={`overview-access ${accessError ? 'is-error' : hasAccess ? 'is-active' : 'is-pending'}`} role={accessError ? 'alert' : 'status'}><div><strong>{!accessChecked ? 'Checking your course access…' : accessError ? 'We couldn’t check your access' : hasAccess ? 'Your course access is active' : requestStatus === 'pending' ? 'Your access request is under review' : requestStatus === 'denied' ? 'Your previous request was declined' : 'Unlock this course with a plan'}</strong><p>{!accessChecked ? 'Your lesson access will update shortly.' : accessError ? accessError : hasAccess ? readableExpiry ? `You can open lessons until ${readableExpiry}.` : 'Choose a lesson below to begin.' : requestStatus === 'pending' ? 'An admin will review your request. This page checks for updates automatically.' : requestStatus === 'denied' ? 'Choose a subscription plan to unlock every course, including this one.' : 'One plan unlocks every HSK course. Plans start at Rs 1,000 a month.'}</p></div>{accessChecked && !hasAccess && !accessError && requestStatus !== 'pending' && <Link className="overview-button is-primary" to="/pricing">See plans <span aria-hidden="true">→</span></Link>}{accessError && <button className="overview-button" onClick={() => window.location.reload()}>Refresh page</button>}{accessRequestError && <p className="overview-feedback is-error" role="alert">{accessRequestError}</p>}</div>}
     {user && canOpenLessons && <div className="overview-enrollment"><div><strong>{enrolled ? 'Saved to your learning dashboard' : 'Keep this course in your learning dashboard'}</strong><p>{enrolled ? 'Find this course in My learning whenever you return.' : 'Add it to My learning so it’s easy to find next time.'}</p></div><button className="overview-button" disabled={enrolling} onClick={toggleEnroll}>{enrolling ? 'Updating…' : enrolled ? 'Remove from My learning' : 'Add to My learning'}</button>{enrollError && <p className="overview-feedback is-error" role="alert">{enrollError}</p>}</div>}
     {showAccessMsg && !canOpenLessons && <div className="overview-feedback" role="alert"><p>This lesson needs active course access. Use <strong>Request course access</strong> above to ask an admin to unlock it.</p><button className="overview-button" onClick={onDismissAccessMsg}>Got it</button></div>}
 

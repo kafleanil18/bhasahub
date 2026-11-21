@@ -32,6 +32,7 @@ const RESOURCE_LABELS = {
   user: 'User',
   subscription: 'Subscription',
   'access-request': 'Access request',
+  'plan-request': 'Plan request',
   'team-member': 'Team member',
   testimonial: 'Testimonial',
   'pinyin-table': 'Pinyin table',

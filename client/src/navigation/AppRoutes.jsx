@@ -37,6 +37,7 @@ const ConversationManager = lazy(() => import('../admin/ConversationManager'));
 const EmailSettings = lazy(() => import('../admin/EmailSettings'));
 const PracticeReminders = lazy(() => import('../admin/PracticeReminders'));
 const ReminderUnsubscribe = lazy(() => import('../ReminderUnsubscribe'));
+const PricingPage = lazy(() => import('../pricing/PricingPage'));
 const PrivacyPolicy = lazy(() => import('../privacy/PrivacyPages').then(module => ({ default: module.PrivacyPolicy })));
 const BrowserStoragePolicy = lazy(() => import('../privacy/PrivacyPages').then(module => ({ default: module.BrowserStoragePolicy })));
 
@@ -116,6 +117,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
     <Route element={<PublicLayout />}>
       <Route path="/privacy" element={<PrivacyPolicy user={user} />} />
       <Route path="/cookies" element={<BrowserStoragePolicy />} />
+      <Route path="/pricing" element={<PricingPage user={user} />} />
       <Route path="/email/reminders/unsubscribe" element={<ReminderUnsubscribe />} />
       <Route path="/" element={<HomeRoute user={user} home={home} />} />
       <Route path="/practice/pinyin" element={<PinyinPage onBack={onHome} isSuperAdmin={staff} backLabel="← Back to home" />} />

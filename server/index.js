@@ -53,6 +53,7 @@ app.use('/api/testimonials', testimonialRoutes);
 app.use('/api/team', teamRoutes);
 app.use('/api/access-requests', accessRequestRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/plans', require('./routes/plans'));
 app.use('/api/sentences', require('./routes/sentences'));
 app.use('/api/users', userRoutes);
 app.use('/api/slides', slideRoutes);

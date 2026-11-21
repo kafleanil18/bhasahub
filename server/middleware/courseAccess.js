@@ -1,5 +1,6 @@
 const Course = require('../models/Course');
 const Subscription = require('../models/Subscription');
+const { activePassExpiry } = require('../utils/platformAccess');
 
 function isAdmin(user) {
   return user && ['admin', 'superadmin'].includes(user.role);
@@ -10,6 +11,7 @@ async function canAccessCourse(user, courseId) {
   if (!user) return false;
   const course = await Course.findById(courseId);
   if (!course || !course.published) return false;
+  if (await activePassExpiry(user.id)) return true;
   return !!await Subscription.exists({ user: user.id, course: courseId, expiresAt: { $gt: new Date() } });
 }
 

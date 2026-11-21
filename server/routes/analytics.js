@@ -4,7 +4,7 @@ const Attempt = require('../models/Attempt');
 const Progress = require('../models/Progress');
 const HskAttempt = require('../models/HskAttempt');
 const Lesson = require('../models/Lesson');
-const Subscription = require('../models/Subscription');
+const { accessibleCourseIds } = require('../utils/platformAccess');
 const Enrollment = require('../models/Enrollment');
 const StudioActivity = require('../models/StudioActivity');
 const { requireAuth } = require('../middleware/auth');
@@ -74,7 +74,7 @@ router.get('/me', requireAuth, async (req, res) => {
         { $group: { _id: null, score: { $sum: '$score' }, attempts: { $sum: 1 } } },
       ]),
       Progress.countDocuments({ user: userId, completed: true }),
-      Subscription.distinct('course', { user: userId, expiresAt: { $gt: new Date() } }),
+      accessibleCourseIds(userId),
       Enrollment.distinct('course', { user: userId }),
       Progress.distinct('course', { user: userId, completed: true }),
       Attempt.find({ user: userId, createdAt: { $gte: ninetyDaysAgo } }).distinct('createdAt'),

@@ -5,6 +5,8 @@ const resources = {
   courses: { path: '/courses', label: 'courses' },
   subs: { path: '/subscriptions/all', label: 'student access' },
   requests: { path: '/access-requests', label: 'access requests' },
+  planRequests: { path: '/plans/requests', label: 'plan requests' },
+  members: { path: '/plans/members', label: 'plan members' },
 };
 export async function accessRequest(path, options = {}) {
   const response = await fetch(`${window.API_BASE_URL}/api${path}`, {
@@ -18,7 +20,7 @@ export async function accessRequest(path, options = {}) {
 }
 
 export default function useSubscriptionData() {
-  const [data, setData] = useState({ students: [], courses: [], subs: [], requests: [] });
+  const [data, setData] = useState({ students: [], courses: [], subs: [], requests: [], planRequests: [], members: [] });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(0);
@@ -49,7 +51,7 @@ export default function useSubscriptionData() {
   useEffect(() => {
     mounted.current = true;
     void load().finally(() => { if (mounted.current) setLoading(false); });
-    const refresh = () => { void load(['requests', 'subs']); };
+    const refresh = () => { void load(['requests', 'subs', 'planRequests', 'members']); };
     const refreshOnFocus = () => { void load(); };
     const interval = window.setInterval(refresh, 15000);
     window.addEventListener('focus', refreshOnFocus);

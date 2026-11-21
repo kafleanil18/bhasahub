@@ -79,13 +79,14 @@ async function verifySettings(settings) {
 async function send(settings, message) {
   if (settings.provider === 'resend') {
     const from = settings.senderName ? `${JSON.stringify(settings.senderName)} <${settings.senderEmail}>` : settings.senderEmail;
-    const data = await request(settings, '/emails', { from, to: message.to, subject: message.subject, ...(message.html ? { html: message.html } : {}), ...(message.text ? { text: message.text } : {}) });
+    const data = await request(settings, '/emails', { from, to: message.to, subject: message.subject, ...(message.replyTo ? { reply_to: message.replyTo } : {}), ...(message.html ? { html: message.html } : {}), ...(message.text ? { text: message.text } : {}) });
     if (!data.id) throw new Error('The email provider did not confirm acceptance.');
     return;
   }
   const data = await request(settings, '/smtp/email', {
     sender: { email: settings.senderEmail, name: settings.senderName || 'Xiao Ao' },
     to: [{ email: message.to }], subject: message.subject,
+    ...(message.replyTo ? { replyTo: { email: message.replyTo } } : {}),
     ...(message.html ? { htmlContent: message.html } : { textContent: message.text }),
   });
   if (!data.messageId) throw new Error('The email provider did not confirm acceptance.');
