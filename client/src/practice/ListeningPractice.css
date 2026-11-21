@@ -9,6 +9,8 @@
 .listening-empty h2 { color: var(--ink); font-size: 20px; }
 .listening-alert { display: grid; justify-items: center; gap: 8px; }
 .listening-hint { color: var(--mist); text-align: center; }
+.listening-voice-warning { padding: 16px 18px; margin-bottom: 16px; border: 1px solid var(--line); border-left: 4px solid var(--accent-red); border-radius: 12px; background: var(--card); }
+.listening-voice-warning p { margin: 0 0 10px; line-height: 1.6; }
 
 /* Course cards */
 .listening-courses { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }

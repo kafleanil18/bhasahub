@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import ListeningSession from './ListeningSession';
-import { createListeningQuiz, recordedVocabulary } from './listeningQuiz';
+import { createListeningQuiz } from './listeningQuiz';
+import useChineseVoice from './useChineseVoice';
 import './SentencePractice.css';
 import './TonePractice.css';
 import './ListeningPractice.css';
@@ -24,6 +25,8 @@ export default function ListeningPractice({ user, onBack, onSignIn }) {
   const [notReady, setNotReady] = useState({});
   const [error, setError] = useState('');
   const [retry, setRetry] = useState(0);
+  // For now every word is read by Google's female Mandarin voice (Google 普通话（中国大陆）), not teacher recordings.
+  const speech = useChineseVoice({ googleOnly: true });
 
   useEffect(() => {
     if (!user) return;
@@ -55,7 +58,7 @@ export default function ListeningPractice({ user, onBack, onSignIn }) {
     if (opening) return;
     setOpening(lesson._id); setError('');
     try {
-      const words = recordedVocabulary(await readApi(`/lessons/${lesson._id}/vocabulary`));
+      const words = await readApi(`/lessons/${lesson._id}/vocabulary`);
       const questions = createListeningQuiz(words);
       if (!questions.length) { setNotReady(previous => ({ ...previous, [lesson._id]: true })); return; }
       setSession({ lesson, words, questions }); setSessionKey(value => value + 1);
@@ -73,9 +76,13 @@ export default function ListeningPractice({ user, onBack, onSignIn }) {
     </div>
     <h1 id="listening-title" className={session ? 'tone-visually-hidden' : 'listening-title'}>Listening practice</h1>
     {!user ? <div className="listening-empty"><h2>Your lessons, ready to listen</h2><p>Sign in to practise vocabulary from the courses you have access to.</p><button className="sentence-primary" onClick={onSignIn}>Sign in to practise</button></div>
-      : session ? <ListeningSession key={sessionKey} initialQuestions={session.questions} onRestart={restart} onExit={() => setSession(null)} />
+      : session ? <ListeningSession key={sessionKey} initialQuestions={session.questions} voice={speech.voice} onRestart={restart} onExit={() => setSession(null)} />
       : <>
         <p className="listening-intro">Train your ear, one word at a time. Practise with recordings from your lessons.</p>
+        {!speech.voice && <div className="listening-voice-warning" role="status">{speech.loading ? <p>Loading Google’s Mandarin voice…</p> : <>
+          <p>{speech.supported ? 'Listening practice uses Google’s Mandarin voice, which comes with Google Chrome on computers and Android phones. Open this page in Chrome, then refresh.' : 'Speech playback is unavailable in this browser. Open this page in Google Chrome on a computer or Android phone.'}</p>
+          {speech.supported && <button className="sentence-secondary" onClick={speech.refresh}>Refresh voices</button>}
+        </>}</div>}
         {error && <div className="tone-alert listening-alert" role="alert"><p>{error}</p><button className="sentence-secondary" onClick={() => setRetry(value => value + 1)}>Try again</button></div>}
         {courses && !courses.length && <div className="listening-empty"><p>No Chinese courses are available for your account yet. Ask your teacher for course access.</p></div>}
         {courses && courses.length > 1 && <>
@@ -88,10 +95,10 @@ export default function ListeningPractice({ user, onBack, onSignIn }) {
         {courseId && <>
           <h2 className="listening-section-title">{courses?.length > 1 ? 'Choose a lesson' : `${course?.title || 'Your course'} · choose a lesson`}</h2>
           {lessons && !lessons.length && <div className="listening-empty"><p>This course has no published vocabulary lessons yet.</p></div>}
-          {lessons?.length > 0 && <div className="listening-lessons">{lessons.map((lesson, index) => <button type="button" key={lesson._id} className={`listening-lesson${notReady[lesson._id] ? ' is-unavailable' : ''}`} disabled={Boolean(opening) || notReady[lesson._id]} aria-busy={opening === lesson._id} onClick={() => openLesson(lesson)} aria-describedby={`listening-lesson-${lesson._id}`}>
+          {lessons?.length > 0 && <div className="listening-lessons">{lessons.map((lesson, index) => <button type="button" key={lesson._id} className={`listening-lesson${notReady[lesson._id] ? ' is-unavailable' : ''}`} disabled={!speech.voice || Boolean(opening) || notReady[lesson._id]} aria-busy={opening === lesson._id} onClick={() => openLesson(lesson)} aria-describedby={`listening-lesson-${lesson._id}`}>
             <span className="listening-lesson-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
             <strong>{lesson.title}</strong>
-            <small id={`listening-lesson-${lesson._id}`}>{opening === lesson._id ? 'Loading recordings…' : notReady[lesson._id] ? 'Needs at least two recorded words' : 'About 10 words · Start →'}</small>
+            <small id={`listening-lesson-${lesson._id}`}>{opening === lesson._id ? 'Loading recordings…' : notReady[lesson._id] ? 'Needs at least two words' : 'About 10 words · Start →'}</small>
           </button>)}</div>}
         </>}
         {!courseId && courses?.length > 1 && <p className="listening-hint">Pick a course to see its lessons.</p>}

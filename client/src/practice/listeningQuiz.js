@@ -18,13 +18,25 @@ export function recordedVocabulary(words) {
   });
 }
 
+// Words Google's Mandarin voice can read: a Chinese word and a meaning, no recording needed.
+export function speakableVocabulary(words) {
+  const seen = new Set();
+  return words.filter(word => {
+    if (!word.word?.trim() || !word.meaning?.trim()) return false;
+    const key = word.word.trim();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 const meaningKey = text => text.trim().toLocaleLowerCase().replace(/\s+/g, ' ');
 
 export function createListeningQuiz(words, limit = 10, random = Math.random) {
-  const recorded = recordedVocabulary(words);
-  const meanings = [...new Map(recorded.map(word => [meaningKey(word.meaning), word.meaning.trim()])).values()];
+  const usable = speakableVocabulary(words);
+  const meanings = [...new Map(usable.map(word => [meaningKey(word.meaning), word.meaning.trim()])).values()];
   if (meanings.length < 2) return [];
-  return shuffle(recorded, random).slice(0, limit).map(word => {
+  return shuffle(usable, random).slice(0, limit).map(word => {
     const answer = word.meaning.trim();
     const alternatives = shuffle(meanings.filter(meaning => meaningKey(meaning) !== meaningKey(answer)), random).slice(0, 3);
     return { ...word, answer, options: shuffle([answer, ...alternatives], random) };

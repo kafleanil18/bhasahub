@@ -1,18 +1,19 @@
 import { test, expect } from '@playwright/test';
 
 const words = [['你好', 'nǐ hǎo', 'hello'], ['谢谢', 'xiè xie', 'thank you'], ['再见', 'zài jiàn', 'goodbye'], ['老师', 'lǎo shī', 'teacher']]
-  .map(([word, pronunciation, meaning], i) => ({ _id: `w${i}`, word, pronunciation, meaning, audioUrl: `/word-${i}.wav` }));
-function wav() {
-  const b = Buffer.alloc(1644); b.write('RIFF'); b.writeUInt32LE(b.length - 8, 4); b.write('WAVEfmt ', 8);
-  b.writeUInt32LE(16, 16); b.writeUInt16LE(1, 20); b.writeUInt16LE(1, 22); b.writeUInt32LE(8000, 24);
-  b.writeUInt32LE(16000, 28); b.writeUInt16LE(2, 32); b.writeUInt16LE(16, 34); b.write('data', 36); b.writeUInt32LE(1600, 40); return b;
-}
-async function prepare(page) {
-  await page.addInitScript(() => {
+  .map(([word, pronunciation, meaning], i) => ({ _id: `w${i}`, word, pronunciation, meaning, audioUrl: i === 0 ? '/teacher.mp3' : '' }));
+const female = { name: 'Google 普通话（中国大陆）', lang: 'zh-CN', voiceURI: 'google-zh-cn' };
+async function prepare(page, voices = [{ name: 'Tingting', lang: 'zh-CN', voiceURI: 'tingting' }, { name: 'Google 國語（臺灣）', lang: 'zh-TW', voiceURI: 'google-zh-tw' }, female]) {
+  await page.addInitScript(voices => {
     localStorage.setItem('token', 'fixture'); localStorage.setItem('user', JSON.stringify({ id: 'student', name: 'Student', role: 'student' }));
-  });
+    window.__spoken = [];
+    const synth = new EventTarget(); synth.getVoices = () => voices; synth.cancel = () => {};
+    synth.speak = utterance => { window.__spoken.push({ text: utterance.text, voice: utterance.voice?.name }); setTimeout(() => { utterance.onstart?.(); setTimeout(() => utterance.onend?.(), 30); }, 10); };
+    Object.defineProperty(window, 'speechSynthesis', { value: synth });
+    window.SpeechSynthesisUtterance = class { constructor(text) { this.text = text; } };
+  }, voices);
   await page.route('https://**/*', route => route.abort());
-  await page.route('**/word-*.wav', route => route.fulfill({ body: wav(), contentType: 'audio/wav' }));
+  await page.route('**/teacher.mp3', route => route.abort());
   await page.route('**/api/**', route => {
     const path = new URL(route.request().url()).pathname.replace('/api', '');
     if (path === '/courses') return route.fulfill({ json: [{ _id: 'c1', title: 'HSK 1 Chinese', language: 'chinese' }, { _id: 'c2', title: 'HSK 2 Chinese', language: 'chinese' }, { _id: 'c3', title: 'Spanish', language: 'spanish' }] });
@@ -23,9 +24,9 @@ async function prepare(page) {
     return route.fulfill({ json: [] });
   });
 }
-const meaningOfCurrent = page => page.evaluate(() => document.querySelector('audio').getAttribute('src').match(/word-(\d)/)[1]);
+const lastSpoken = page => page.evaluate(() => window.__spoken.at(-1)?.text);
 
-test('students pick a course and lesson, then hear and match each word', async ({ page }) => {
+test('every word is read by the female Google Mandarin voice, even unrecorded ones', async ({ page }) => {
   await prepare(page);
   await page.goto('/practice/listening');
   await expect(page.getByRole('heading', { name: 'Listening practice' })).toBeVisible();
@@ -33,12 +34,14 @@ test('students pick a course and lesson, then hear and match each word', async (
   await page.getByRole('button', { name: /HSK 1 Chinese/ }).click();
   await expect(page.getByRole('button', { name: /Grammar/ })).toHaveCount(0);
   await page.getByRole('button', { name: /One word only/ }).click();
-  await expect(page.getByRole('button', { name: /One word only/ })).toContainText('Needs at least two recorded words');
+  await expect(page.getByRole('button', { name: /One word only/ })).toContainText('Needs at least two words');
   await page.getByRole('button', { name: /Greetings/ }).click();
   await expect(page.locator('.listening-chip')).toHaveText('Greetings');
   for (let question = 1; question <= 4; question++) {
     await expect(page.getByText(`${question} / 4`, { exact: true })).toBeVisible();
-    const answer = words[Number(await meaningOfCurrent(page))].meaning;
+    await expect.poll(() => lastSpoken(page)).toBeTruthy();
+    const current = await lastSpoken(page);
+    const answer = words.find(word => word.word === current).meaning;
     if (question === 1) {
       await page.locator(`.listening-option:not(:has(input[value="${answer}"]))`).first().click({ timeout: 15000 });
       await expect(page.locator('.listening-feedback')).toContainText('Not quite');
@@ -51,6 +54,17 @@ test('students pick a course and lesson, then hear and match each word', async (
     }
   }
   await expect(page.getByRole('heading', { name: '3 of 4 correct' })).toBeVisible();
+  const spoken = await page.evaluate(() => window.__spoken);
+  expect(new Set(spoken.map(item => item.voice))).toEqual(new Set([female.name]));
+  expect(new Set(spoken.map(item => item.text))).toEqual(new Set(words.map(word => word.word)));
   await page.getByRole('button', { name: 'All lessons', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Listening practice' })).toBeVisible();
+});
+
+test('without Google’s voice, students are told to open the page in Chrome', async ({ page }) => {
+  await prepare(page, [{ name: 'Tingting', lang: 'zh-CN', voiceURI: 'tingting' }]);
+  await page.goto('/practice/listening');
+  await page.getByRole('button', { name: /HSK 1 Chinese/ }).click();
+  await expect(page.locator('.listening-voice-warning')).toContainText('Google’s Mandarin voice', { timeout: 5000 });
+  await expect(page.getByRole('button', { name: /Greetings/ })).toBeDisabled();
 });
