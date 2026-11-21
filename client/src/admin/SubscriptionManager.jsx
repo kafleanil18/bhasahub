@@ -58,6 +58,10 @@ export default function SubscriptionManager({ onBack }) {
   const approvePlan = async request => {
     await mutate(`plan-approve-${request._id}`, `/plans/requests/${request._id}/approve`, { method: 'PUT' }, `${planLabel(request.plan)} plan started for ${request.user?.name || 'the student'}. Every course is unlocked.`, ['planRequests', 'members']);
   };
+  const resendPlanEmail = async request => {
+    await mutate(`plan-notify-${request._id}`, `/plans/requests/${request._id}/notify`, { method: 'POST' }, 'Email sent to the super admins.', ['planRequests']);
+    void reload(['planRequests']);
+  };
   const confirmAction = async () => {
     const { type, record } = confirmation;
     if (type === 'plan-decline') {
@@ -88,7 +92,7 @@ export default function SubscriptionManager({ onBack }) {
         <div className="access-view-switch" aria-label="Choose what to manage"><button aria-pressed={!showingRequests && !showingPlans} onClick={() => chooseView('access')}>Student access <span>{errors.subs ? '—' : subs.length}</span></button><button aria-pressed={showingRequests} onClick={() => chooseView('requests')}>Pending requests <span>{errors.requests ? '—' : pending.length}</span></button><button aria-pressed={showingPlans} onClick={() => chooseView('plans')}>Plan requests <span>{errors.planRequests ? '—' : pendingPlans.length}</span></button></div>
         {showingPlans ? <>
           <div className="access-list-heading"><div><h2 id="access-list-title">Plan requests</h2><p>Students who chose a plan on the pricing page. Start the plan once their payment arrives — every course unlocks right away.</p></div><button className="access-button" disabled={refreshing} onClick={() => reload(['planRequests', 'members'])}>{refreshing ? 'Refreshing…' : 'Refresh list'}</button></div>
-          {hasListError ? <div className="access-empty"><h3>Plan requests couldn’t be loaded</h3><p>Nothing has changed. Try loading them again.</p><button className="access-button" onClick={() => reload(['planRequests', 'members'])}>Try again</button></div> : <PlanRequests requests={pendingPlans} members={members} busy={busy} onApprove={approvePlan} onDecline={record => openConfirmation({ type: 'plan-decline', record })}/>}
+          {hasListError ? <div className="access-empty"><h3>Plan requests couldn’t be loaded</h3><p>Nothing has changed. Try loading them again.</p><button className="access-button" onClick={() => reload(['planRequests', 'members'])}>Try again</button></div> : <PlanRequests requests={pendingPlans} members={members} busy={busy} onApprove={approvePlan} onResend={resendPlanEmail} onDecline={record => openConfirmation({ type: 'plan-decline', record })}/>}
         </> : <>
         <div className="access-list-heading"><div><h2 id="access-list-title">{showingRequests ? 'Review access requests' : 'Manage student access'}</h2><p>{showingRequests ? 'Approve a request to give the student access to that course.' : 'All active course access is shown by default, including access expiring soon.'}</p></div><button className="access-button" disabled={refreshing} onClick={() => reload(['subs', 'requests'])}>{refreshing ? 'Refreshing…' : 'Refresh list'}</button></div>
         <div className="access-filter-bar"><label className="access-search"><span>Search {showingRequests ? 'requests' : 'access'}</span><input type="search" placeholder="Student name, email, or course…" value={query} onChange={event => setQuery(event.target.value)}/></label>{!showingRequests && <label><span>Access status</span><select value={status} onChange={event => setStatus(event.target.value)}><option value="all">All statuses</option><option value="active">Active</option><option value="expiring">Expiring within 7 days</option><option value="expired">Expired</option></select></label>}</div>

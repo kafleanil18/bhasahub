@@ -74,7 +74,7 @@ export default function PricingPage({ user }) {
 
       {notice && <div className="pricing-banner is-success" role="status" tabIndex={-1} ref={noticeRef}>{notice}</div>}
       {error && <div className="pricing-banner is-error" role="alert">{error}</div>}
-      {student && !loading && status.pass && <div className="pricing-banner is-active" role="status"><strong>Your plan is active until {formatDate(status.pass.expiresAt)}.</strong> A new plan adds its time after that date.</div>}
+      {student && !loading && status.pass && <div className="pricing-banner is-active" role="status"><div><strong>Your {status.pass.plan ? `${planLabel(status.pass.plan)} ` : ''}plan is active until {formatDate(status.pass.expiresAt)}.</strong> Every course is unlocked. You can choose a new plan when this one ends.</div></div>}
       {student && !loading && pending && <div className="pricing-banner is-pending" role="status">
         <div><strong>Your {planLabel(pending.plan)} plan request is waiting for payment.</strong> We’ll email you how to pay {formatRs(pending.price)}. Your courses unlock as soon as the payment is confirmed.</div>
         <button type="button" className="pricing-link" onClick={cancel} disabled={!!busy}>{busy === 'cancel' ? 'Cancelling…' : 'Cancel request'}</button>
@@ -84,19 +84,24 @@ export default function PricingPage({ user }) {
 
       <section className="pricing-grid" aria-label="Plans">
         {PLANS.map(plan => {
-          const requested = pending?.plan === plan.id;
+          const activePass = student && !loading ? status.pass : null;
+          const active = activePass?.plan === plan.id;
+          const locked = !!activePass && !active;
+          const requested = !activePass && pending?.plan === plan.id;
           const saving = savingPercent(plan);
-          return <article key={plan.id} className={`pricing-card${plan.featured ? ' is-featured' : ''}${requested ? ' is-requested' : ''}`} aria-labelledby={`plan-${plan.id}`}>
+          const featured = plan.featured && !activePass;
+          return <article key={plan.id} className={`pricing-card${featured ? ' is-featured' : ''}${requested ? ' is-requested' : ''}${active ? ' is-active' : ''}${locked ? ' is-locked' : ''}`} aria-labelledby={`plan-${plan.id}`}>
             <div className="pricing-card-top">
               <h2 id={`plan-${plan.id}`}>{plan.label}</h2>
-              {plan.featured ? <span className="pricing-badge">Best value</span> : <span className="pricing-note">{plan.note}</span>}
+              {active ? <span className="pricing-badge is-active"><Check/> Active plan</span> : featured ? <span className="pricing-badge">Best value</span> : <span className="pricing-note">{plan.note}</span>}
             </div>
             <p className="pricing-price"><strong>{formatRs(plan.price)}</strong><span>{plan.months === 1 ? 'for 1 month' : `for ${plan.months} months`}</span></p>
             <p className="pricing-monthly">{plan.months === 1 ? 'Billed once. No auto-renewal.' : <>{formatRs(monthlyPrice(plan))} a month · <b>Save {saving}%</b></>}</p>
-            <button type="button" className="pricing-choose" disabled={staff || requested || !!busy || loading} onClick={() => choose(plan)} aria-label={requested ? `${plan.label} plan requested` : `Choose the ${plan.label} plan, ${formatRs(plan.price)}`}>
-              {busy === plan.id ? 'Sending request…' : requested ? <>Requested <Check/></> : !user ? 'Sign in to choose' : pending ? `Switch to ${plan.label}` : `Choose ${plan.label}`}
-              {!requested && busy !== plan.id && <span aria-hidden="true">→</span>}
-            </button>
+            {active ? <p className="pricing-active-until" role="status"><Check/> Active until {formatDate(activePass.expiresAt)}</p>
+              : <button type="button" className="pricing-choose" disabled={staff || locked || requested || !!busy || loading} onClick={() => choose(plan)} aria-label={locked ? `${plan.label} plan, available when your current plan ends` : requested ? `${plan.label} plan requested` : `Choose the ${plan.label} plan, ${formatRs(plan.price)}`}>
+                {busy === plan.id ? 'Sending request…' : locked ? 'Available when your plan ends' : requested ? <>Requested <Check/></> : !user ? 'Sign in to choose' : pending ? `Switch to ${plan.label}` : `Choose ${plan.label}`}
+                {!requested && !locked && busy !== plan.id && <span aria-hidden="true">→</span>}
+              </button>}
           </article>;
         })}
       </section>

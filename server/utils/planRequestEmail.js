@@ -51,16 +51,28 @@ async function notifyPlanRequest({ studentId, request, changedFrom = null }) {
     User.findById(studentId).select('name email'),
     User.find({ role: 'superadmin' }).select('email'),
   ]);
-  if (!student) return { sent: 0 };
+  if (!student) return { sentTo: [], error: 'The student account no longer exists.' };
   const recipients = [...new Set(admins.map(admin => admin.email).filter(Boolean))];
+  if (!recipients.length) return { sentTo: [], error: 'No super admin account has an email address.' };
   const adminUrl = `${(process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/+$/, '')}/admin/subscriptions`;
   const message = planRequestMessage({ student, request, changedFrom, adminUrl });
   const results = await Promise.allSettled(recipients.map(to => sendEmail(
     { to, replyTo: student.email, ...message },
     `Plan request email for ${to}: ${message.subject}`,
   )));
-  results.filter(result => result.status === 'rejected').forEach(result => console.error('Plan request email failed:', result.reason?.message || result.reason));
-  return { sent: results.filter(result => result.status === 'fulfilled').length, recipients: recipients.length };
+  const failures = results.map((result, index) => result.status === 'rejected' ? `${recipients[index]}: ${result.reason?.message || result.reason}` : null).filter(Boolean);
+  failures.forEach(failure => console.error('Plan request email failed:', failure));
+  return { sentTo: recipients.filter((_, index) => results[index].status === 'fulfilled'), error: failures.join('; ') };
 }
 
-module.exports = { notifyPlanRequest, planRequestMessage };
+// Sends the email and stores the outcome on the request.
+async function notifyAndRecord(PlanRequest, { studentId, request, changedFrom = null }) {
+  let outcome;
+  try { outcome = await notifyPlanRequest({ studentId, request, changedFrom }); }
+  catch (err) { outcome = { sentTo: [], error: err.message || 'Email could not be sent.' }; console.error('Plan request email failed:', outcome.error); }
+  const adminEmail = { sentTo: outcome.sentTo, error: outcome.error || '', at: new Date() };
+  await PlanRequest.updateOne({ _id: request._id }, { $set: { adminEmail } }).catch(err => console.error('Could not save plan email status:', err.message));
+  return adminEmail;
+}
+
+module.exports = { notifyPlanRequest, notifyAndRecord, planRequestMessage };

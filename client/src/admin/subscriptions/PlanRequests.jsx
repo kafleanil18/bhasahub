@@ -1,7 +1,17 @@
 import { formatDate, initials } from './accessDates';
 import { formatRs, planLabel } from '../../pricing/plans';
 
-export default function PlanRequests({ requests, members, busy, onApprove, onDecline }) {
+function EmailStatus({ request, busy, onResend }) {
+  const status = request.adminEmail;
+  const sending = busy === `plan-notify-${request._id}`;
+  const resend = <button className="access-link" disabled={!!busy} onClick={() => onResend(request)}>{sending ? 'Sending…' : 'Send email again'}</button>;
+  if (!status?.at) return <p className="access-plan-email is-waiting"><span>Email to super admins: not recorded yet.</span>{resend}</p>;
+  if (status.sentTo?.length) return <p className="access-plan-email is-sent"><span>✓ Email sent to {status.sentTo.join(', ')}</span>{resend}</p>;
+  const notSetUp = /not configured/i.test(status.error || '');
+  return <p className="access-plan-email is-failed" role="status"><span><strong>Email not sent.</strong> {notSetUp ? 'Email delivery isn’t set up on the server. Set it up in Admin → Email settings, then send again.' : status.error}</span>{resend}</p>;
+}
+
+export default function PlanRequests({ requests, members, busy, onApprove, onDecline, onResend }) {
   const now = Date.now();
   const activeMembers = members.filter(pass => new Date(pass.expiresAt).getTime() > now);
   return <div className="access-plan-panel">
@@ -10,6 +20,7 @@ export default function PlanRequests({ requests, members, busy, onApprove, onDec
         <div className="access-person"><span className="access-avatar" aria-hidden="true">{initials(request.user?.name)}</span><div><h3>{request.user?.name || 'Deleted student'}</h3><small>{request.user?.email || 'Account no longer available'}</small></div><span className="access-status is-pending">Awaiting payment</span></div>
         <div className="access-request-course"><span className="access-help">Chosen plan</span><strong>{planLabel(request.plan)} · {formatRs(request.price)}</strong><small>{request.days} days of every course · Requested {formatDate(request.createdAt)}</small></div>
         <div className="access-request-controls"><div><button className="access-button is-primary" disabled={!!busy || !request.user} onClick={() => onApprove(request)}>{busy === `plan-approve-${request._id}` ? 'Starting plan…' : 'Payment received · Start plan'}</button><button className="access-link is-danger" disabled={!!busy} onClick={() => onDecline(request)}>Decline</button></div></div>
+        <EmailStatus request={request} busy={busy} onResend={onResend}/>
       </article>)}</div>}
     <div className="access-list-heading access-plan-members-heading"><div><h2>Active plans</h2><p>{activeMembers.length ? `${activeMembers.length} ${activeMembers.length === 1 ? 'student has' : 'students have'} every course unlocked.` : 'No student has an active plan yet.'}</p></div></div>
     {activeMembers.length > 0 && <ul className="access-plan-members">{activeMembers.map(pass => <li key={pass._id}><span className="access-avatar" aria-hidden="true">{initials(pass.user?.name)}</span><span><strong>{pass.user?.name || 'Deleted student'}</strong><small>{pass.user?.email || ''}</small></span><span className="access-plan-expiry"><small>{planLabel(pass.plan)} plan</small>Until {formatDate(pass.expiresAt)}</span></li>)}</ul>}

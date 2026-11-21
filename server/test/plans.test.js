@@ -28,6 +28,10 @@ async function withApp(run) {
   process.env.JWT_SECRET = 'plans-test';
   stub(User, 'findById', id => ({ select: async () => (String(id) === ADMIN_ID ? { _id: ADMIN_ID, role: 'admin', name: 'Admin' } : { _id: STUDENT_ID, role: 'student', name: 'Sita', email: 'sita@example.com' }) }), restore);
   stub(AuditLog, 'create', async () => ({}), restore);
+  const saved = [];
+  stub(PlanRequest, 'updateOne', async (filter, update) => { saved.push({ filter, update }); return {}; }, restore);
+  let activePass = null;
+  stub(PlatformPass, 'findOne', () => ({ select: () => ({ lean: async () => activePass }) }), restore);
   const app = express();
   app.use(express.json());
   app.use('/api/plans', require('../routes/plans'));
@@ -36,7 +40,7 @@ async function withApp(run) {
   const base = `http://127.0.0.1:${server.address().port}/api/plans`;
   const as = id => ({ Authorization: `Bearer ${jwt.sign({ id }, process.env.JWT_SECRET)}`, 'Content-Type': 'application/json' });
   try {
-    await run({ base, as, stub: (target, name, value) => stub(target, name, value, restore) });
+    await run({ base, as, saved, setActivePass: value => { activePass = value; }, stub: (target, name, value) => stub(target, name, value, restore) });
   } finally {
     server.closeAllConnections();
     await new Promise(resolve => server.close(resolve));
@@ -106,8 +110,8 @@ test('students request a plan with the server price, super admins are emailed, a
   });
 });
 
-test('a failed plan email still accepts the request', async () => {
-  await withApp(async ({ base, as, stub }) => {
+test('a failed plan email still accepts the request and records why it failed', async () => {
+  await withApp(async ({ base, as, stub, saved }) => {
     const errors = [];
     stub(console, 'error', (...args) => errors.push(args.join(' ')));
     emailTransport.setEmailSettingsLoader(async () => ({ provider: 'test', send: async () => { throw new Error('mailbox offline'); } }));
@@ -119,9 +123,66 @@ test('a failed plan email still accepts the request', async () => {
       assert.equal(response.status, 201);
       await new Promise(resolve => setTimeout(resolve, 20));
       assert.ok(errors.some(line => line.includes('mailbox offline')));
+      const status = saved.at(-1).update.$set.adminEmail;
+      assert.deepEqual(status.sentTo, []);
+      assert.equal(status.error, 'owner@example.com: mailbox offline');
     } finally {
       emailTransport.setEmailSettingsLoader(async () => null);
     }
+  });
+});
+
+test('admins can resend the plan email and see whether it was delivered', async () => {
+  await withApp(async ({ base, as, stub, saved }) => {
+    stub(PlanRequest, 'findById', async () => ({ _id: REQUEST_ID, user: STUDENT_ID, plan: '6-months', price: 3000, days: 180, status: 'pending' }));
+    stub(User, 'find', () => ({ select: async () => [{ email: 'owner@example.com' }] }));
+    try {
+      emailTransport.setEmailSettingsLoader(async () => null);
+      const previousEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'production';
+      try {
+        assert.equal((await fetch(`${base}/requests/${REQUEST_ID}/notify`, { method: 'POST', headers: as(STUDENT_ID) })).status, 403);
+        const failed = await fetch(`${base}/requests/${REQUEST_ID}/notify`, { method: 'POST', headers: as(ADMIN_ID) });
+        assert.equal(failed.status, 502);
+        assert.equal((await failed.json()).error, 'Email not sent: owner@example.com: Email delivery is not configured');
+      } finally {
+        if (previousEnv === undefined) delete process.env.NODE_ENV; else process.env.NODE_ENV = previousEnv;
+      }
+      const sent = [];
+      emailTransport.setEmailSettingsLoader(async () => ({ provider: 'test', send: async message => { sent.push(message); } }));
+      const ok = await fetch(`${base}/requests/${REQUEST_ID}/notify`, { method: 'POST', headers: as(ADMIN_ID) });
+      assert.equal(ok.status, 200);
+      assert.deepEqual((await ok.json()).adminEmail.sentTo, ['owner@example.com']);
+      assert.equal(sent[0].replyTo, 'sita@example.com');
+      assert.deepEqual(saved.at(-1).update.$set.adminEmail.sentTo, ['owner@example.com']);
+    } finally {
+      emailTransport.setEmailSettingsLoader(async () => null);
+    }
+  });
+});
+
+test('no super admin email is reported instead of silently skipped', async () => {
+  const restore = [];
+  stub(User, 'findById', () => ({ select: async () => ({ name: 'Sita', email: 'sita@example.com' }) }), restore);
+  stub(User, 'find', () => ({ select: async () => [{ email: '' }] }), restore);
+  try {
+    const { notifyPlanRequest } = require('../utils/planRequestEmail');
+    assert.deepEqual(await notifyPlanRequest({ studentId: STUDENT_ID, request: { plan: '1-month', price: 1000, days: 30 } }), { sentTo: [], error: 'No super admin account has an email address.' });
+  } finally {
+    restore.reverse().forEach(undo => undo());
+  }
+});
+
+test('students with an active plan cannot request another until it ends', async () => {
+  await withApp(async ({ base, as, stub, setActivePass }) => {
+    let created = 0;
+    stub(PlanRequest, 'findOneAndUpdate', async () => null);
+    stub(PlanRequest, 'create', async fields => { created += 1; return { _id: REQUEST_ID, ...fields }; });
+    setActivePass({ expiresAt: new Date('2027-03-12T00:00:00.000Z') });
+    const response = await fetch(`${base}/requests`, { method: 'POST', headers: as(STUDENT_ID), body: JSON.stringify({ planId: '1-month' }) });
+    assert.equal(response.status, 409);
+    assert.match((await response.json()).error, /already active until 12 Mar 2027/);
+    assert.equal(created, 0);
   });
 });
 

@@ -10,6 +10,12 @@ const planRequestSchema = new mongoose.Schema(
     status: { type: String, enum: ['pending', 'approved', 'denied'], default: 'pending' },
     reviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
     reviewedAt: { type: Date, default: null },
+    // Result of the last email to super admins, so a failed delivery is visible in admin.
+    adminEmail: {
+      sentTo: { type: [String], default: undefined },
+      error: { type: String, default: '' },
+      at: { type: Date },
+    },
   },
   { timestamps: true }
 );

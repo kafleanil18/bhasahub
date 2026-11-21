@@ -26,6 +26,12 @@ async function prepare(page, role, state = {}) {
     if (path === '/plans/requests/my' && method === 'DELETE') { calls.push({ method, path }); request = null; return route.fulfill({ json: { ok: true } }); }
     if (path === '/plans/requests' && method === 'GET') return route.fulfill({ json: planRequests });
     if (path === '/plans/members') return route.fulfill({ json: members });
+    const notify = path.match(/^\/plans\/requests\/([^/]+)\/notify$/);
+    if (notify) {
+      calls.push({ method, path });
+      planRequests = planRequests.map(row => row._id === notify[1] ? { ...row, adminEmail: { sentTo: ['owner@example.com'], error: '', at: '2026-11-21T10:00:00.000Z' } } : row);
+      return route.fulfill({ json: { adminEmail: { sentTo: ['owner@example.com'] } } });
+    }
     const approve = path.match(/^\/plans\/requests\/([^/]+)\/approve$/);
     if (approve) {
       calls.push({ method, path });
@@ -73,7 +79,19 @@ test('a student requests a plan, switches it, and can cancel', async ({ page }) 
 test('a student with an active plan sees when it ends', async ({ page }) => {
   await prepare(page, 'student', { pass: { expiresAt: '2027-03-12T00:00:00.000Z', plan: '6-months' } });
   await page.goto('/pricing');
-  await expect(page.locator('.pricing-banner.is-active')).toContainText('Your plan is active until');
+  await expect(page.locator('.pricing-banner.is-active')).toContainText('Your 6 months plan is active until');
+  const active = page.getByRole('article', { name: '6 months' });
+  await expect(active).toHaveClass(/is-active/);
+  await expect(active).toContainText('Active plan');
+  await expect(active).toContainText('Active until');
+  await expect(active.getByRole('button')).toHaveCount(0);
+  const border = await active.evaluate(element => getComputedStyle(element).borderTopColor);
+  expect(border).toBe('rgb(31, 122, 69)');
+  for (const name of ['1 month', '3 months']) {
+    const card = page.getByRole('article', { name });
+    await expect(card).toHaveClass(/is-locked/);
+    await expect(card.getByRole('button', { name: new RegExp(`${name} plan, available when your current plan ends`) })).toBeDisabled();
+  }
 });
 
 test('the pricing page fits a phone without sideways scrolling', async ({ page }) => {
@@ -113,4 +131,16 @@ test('below the plans, every platform feature is described and live classes can 
   await expect(features).toContainText('Daily practice reminder');
   await features.getByRole('button', { name: /Enquire about live classes/ }).click();
   await expect(page.getByRole('dialog', { name: 'Live classes enquiry' })).toBeVisible();
+});
+
+test('admins see when the plan email failed and can send it again', async ({ page }) => {
+  const calls = await prepare(page, 'superadmin', { planRequests: [{ _id: 'r7', user: { _id: 'u1', name: 'Sita Rai', email: 'sita@example.com' }, plan: '1-month', price: 1000, days: 30, status: 'pending', createdAt: '2026-11-20T00:00:00.000Z', adminEmail: { sentTo: [], error: 'owner@example.com: Email delivery is not configured', at: '2026-11-20T00:00:00.000Z' } }] });
+  await page.goto('/admin/subscriptions');
+  await page.getByRole('button', { name: 'Review plans' }).click();
+  const row = page.getByRole('article', { name: 'Plan request from Sita Rai' });
+  await expect(row).toContainText('Email not sent.');
+  await expect(row).toContainText('Admin → Email settings');
+  await row.getByRole('button', { name: 'Send email again' }).click();
+  await expect(row).toContainText('✓ Email sent to owner@example.com');
+  expect(calls).toEqual([{ method: 'POST', path: '/plans/requests/r7/notify' }]);
 });

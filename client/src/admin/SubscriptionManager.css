@@ -195,3 +195,6 @@
 .access-plan-members small { color: var(--mist); }
 .access-plan-expiry { display: grid; justify-items: end; font-weight: 700; font-size: 14px; text-align: right; }
 @media (max-width: 600px) { .access-plan-members li { flex-wrap: wrap; } .access-plan-expiry { justify-items: start; text-align: left; width: 100%; } }
+.access-plan-email { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; margin: 4px 0 0; padding: 10px 12px; border-radius: 8px; background: var(--rice); font-size: 13px; line-height: 1.45; }
+.access-plan-email.is-sent { color: #1f7a45; }
+.access-plan-email.is-failed { border-left: 3px solid var(--accent-red); color: var(--ink); }
