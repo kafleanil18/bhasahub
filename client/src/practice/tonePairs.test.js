@@ -22,3 +22,12 @@ test('tone-change focus only uses words with a tone rule', () => {
   assert.deepEqual(pairRound(pairs, { focus: 'changes', shuffle: items => items }).map(pair => pair.id), ['b', 'c']);
   assert.equal(pairRound(pairs, { size: 2, shuffle: items => items }).length, 2);
 });
+
+test('rounds use recorded words before device-voice words', () => {
+  const pairs = [{ id: 'v1' }, { id: 'r1', audioUrl: '/r1.mp3' }, { id: 'v2' }, { id: 'r2', audioUrl: '/r2.mp3', toneRule: true }, { id: 'v3', toneRule: true }];
+  const reverse = items => [...items].reverse();
+  assert.deepEqual(pairRound(pairs, { shuffle: reverse }).map(pair => pair.id), ['r2', 'r1', 'v3', 'v2', 'v1']);
+  assert.deepEqual(pairRound(pairs, { size: 3, shuffle: reverse }).map(pair => pair.id), ['r2', 'r1', 'v3']);
+  assert.deepEqual(pairRound(pairs, { size: 1, shuffle: reverse }).map(pair => pair.id), ['r2']);
+  assert.deepEqual(pairRound(pairs, { focus: 'changes', shuffle: reverse }).map(pair => pair.id), ['r2', 'v3']);
+});

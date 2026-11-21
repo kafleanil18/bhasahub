@@ -27,7 +27,10 @@ export function toneRuleNote(result) {
   return '';
 }
 
+// Teacher-recorded words come first (in random order); device-voice words only fill the rest of the round.
 export function pairRound(pairs, { focus = 'all', size = 10, shuffle }) {
   const pool = focus === 'changes' ? pairs.filter(pair => pair.toneRule) : pairs;
-  return shuffle(pool).slice(0, size);
+  const recorded = pool.filter(pair => pair.audioUrl);
+  const deviceVoice = pool.filter(pair => !pair.audioUrl);
+  return [...shuffle(recorded), ...shuffle(deviceVoice)].slice(0, size);
 }
