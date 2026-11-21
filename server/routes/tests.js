@@ -2,6 +2,7 @@ const express = require('express');
 const Test = require('../models/Test');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { logActivity } = require('../utils/auditLog');
+const { hasTestAccess } = require('../utils/testAccess');
 
 const router = express.Router();
 
@@ -28,6 +29,7 @@ router.get('/:id', requireAuth, async (req, res) => {
     const test = await Test.findById(req.params.id);
     const admin = req.user && ['admin', 'superadmin'].includes(req.user.role);
     if (!test || (!test.published && !admin)) return res.status(404).json({ error: 'Test not found' });
+    if (!await hasTestAccess(req.user)) return res.status(403).json({ error: 'This mock test is locked. Request access to unlock all tests.', code: 'TESTS_LOCKED' });
     const result = test.toObject();
     result.questions.forEach(q => delete q.correctIndex);
     res.json(result);
