@@ -92,7 +92,7 @@ test('existing live class enquiries keep their original label and message', asyn
     await route.fulfill({ status: 201, json: { message: 'Received' } });
   });
   await page.goto('/');
-  await page.getByRole('button', { name: 'Live classes available' }).click();
+  await page.getByRole('button', { name: /Live classes\s*Enquire now/ }).click();
   const dialog = page.getByRole('dialog', { name: 'Live classes enquiry' });
   await dialog.getByLabel('Message', { exact: true }).fill('When is the next class?');
   await dialog.getByRole('button', { name: 'Send enquiry' }).click();
