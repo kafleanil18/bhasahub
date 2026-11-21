@@ -4,26 +4,43 @@ import { recordedSentences } from './dictationQuiz';
 import { shuffleSentences } from './sentenceQuiz';
 import DictationSession from './DictationSession';
 import './SentencePractice.css';
+import './TonePractice.css';
 import './ListeningDictation.css';
+
+const shortest = sentences => sentences.reduce((best, sentence) => !best || sentence.chinese.length < best.chinese.length ? sentence : best, null);
 
 export default function ListeningDictation({ onBack, onRecordAudio }) {
   const { catalog, error, reload } = useSentenceCatalog();
   const [session, setSession] = useState(null);
+  const [sessionKey, setSessionKey] = useState(0);
   const ready = catalog ? recordedSentences(catalog.sentences) : [];
-  const topics = catalog?.topics.filter(topic => ready.some(sentence => sentence.topicId === topic.id)) || [];
-  function start(sentences) { setSession(shuffleSentences(sentences).slice(0, 10)); }
-  return <section className="sentence-page dictation-page" aria-labelledby="dictation-title">
-    <button className="sentence-back" onClick={onBack}>← Back to home</button>
-    <div className="sentence-heading"><p className="sentence-eyebrow">HSK 1 · Listen and write</p><h1 id="dictation-title">Listening dictation</h1><p>Listen to your teacher, write the Chinese sentence, and discover which characters you recognized.</p></div>
-    {error ? <div className="sentence-card" role="alert"><p>{error}</p><button className="sentence-primary" onClick={reload}>Try again</button></div> : !catalog ? <p role="status">Loading recordings…</p> : session ? <><button className="sentence-back" onClick={() => setSession(null)}>← Choose another topic</button><DictationSession initialSentences={session} onExit={() => setSession(null)} /></> : !ready.length ? <div className="sentence-card"><h2>Teacher recordings are coming soon</h2><p>Dictation will be ready when your teacher records audio for sentences in the library.</p><div className="sentence-actions"><button className="sentence-secondary" onClick={reload}>Check for recordings</button>{onRecordAudio && <button className="sentence-primary" onClick={onRecordAudio}>Record sentence audio</button>}</div></div> : <>
-      <div className="sentence-overview"><div><strong>{ready.length}</strong><span>recorded sentences</span></div><div><strong>{topics.length}</strong><span>topics ready</span></div><div><strong>10</strong><span>sentences per session, or fewer</span></div></div>
-      <div className="sentence-mixed"><div><h2>A little of everything</h2><p>Practice with up to 10 recordings from across the library.</p></div><button className="sentence-primary" onClick={() => start(ready)}>Start mixed dictation →</button></div>
-      <div className="sentence-section-heading"><h2>Pick a topic</h2><p>Only sentences with teacher recordings are included.</p></div>
-      <div className="sentence-topics">{topics.map((topic, index) => {
-        const sentences = ready.filter(sentence => sentence.topicId === topic.id);
-        return <button className="sentence-topic" key={topic.id} onClick={() => start(sentences)}><span className="sentence-topic-number">{String(index + 1).padStart(2, '0')}</span><span><strong>{topic.title}</strong><small>{sentences.length} recording{sentences.length === 1 ? '' : 's'} available</small></span><span aria-hidden="true">↗</span></button>;
-      })}</div>
-      <button className="sentence-back" onClick={reload}>Refresh available recordings</button>
-    </>}
-  </section>;
+  const topics = catalog?.topics.map(topic => ({ ...topic, sentences: ready.filter(sentence => sentence.topicId === topic.id) })).filter(topic => topic.sentences.length) || [];
+  const start = (title, sentences) => { setSession({ title, sentences: shuffleSentences(sentences).slice(0, 10), pool: sentences }); setSessionKey(value => value + 1); };
+  const sample = shortest(ready);
+
+  return <main className="sentence-page tone-practice dictation-page" aria-labelledby="dictation-title">
+    <div className="dictation-header">
+      <button className="sentence-back" onClick={session ? () => setSession(null) : onBack}>{session ? '← All topics' : '← Back to home'}</button>
+      {session && <span className="dictation-chip">{session.title}</span>}
+    </div>
+    <h1 id="dictation-title" className={session ? 'tone-visually-hidden' : 'dictation-title'}>Listening dictation</h1>
+    {error ? <div className="dictation-empty" role="alert"><p>{error}</p><button className="sentence-primary" onClick={reload}>Try again</button></div>
+      : !catalog ? <p className="dictation-empty" role="status">Loading recordings…</p>
+      : session ? <DictationSession key={sessionKey} initialSentences={session.sentences} onRestart={() => start(session.title, session.pool)} onExit={() => setSession(null)} />
+      : !ready.length ? <div className="dictation-empty"><h2>Teacher recordings are coming soon</h2><p>Dictation opens once your teacher records audio for sentences in the library.</p><div className="sentence-actions"><button className="sentence-secondary" onClick={reload}>Check for recordings</button>{onRecordAudio && <button className="sentence-primary" onClick={onRecordAudio}>Record sentence audio</button>}</div></div>
+      : <>
+        <p className="dictation-intro">Listen to your teacher, then type the sentence in Chinese.</p>
+        <button type="button" className="dictation-card-mixed" onClick={() => start('Mixed', ready)} aria-label="Mixed dictation" aria-describedby="dictation-mixed-text">
+          <span className="dictation-card-art" aria-hidden="true"><span className="dictation-art-icon">听写</span><small lang="zh-CN">{sample?.chinese}</small></span>
+          <span className="dictation-card-body"><strong>Mixed dictation</strong><span id="dictation-mixed-text">Up to 10 recordings from across the library · {ready.length} ready</span><span className="dictation-card-cta" aria-hidden="true">Start →</span></span>
+        </button>
+        <h2 className="dictation-section-title">Or choose a topic</h2>
+        <div className="dictation-topics">{topics.map(topic => <button type="button" key={topic.id} className="dictation-topic" onClick={() => start(topic.title, topic.sentences)} aria-label={topic.title} aria-describedby={`dictation-topic-${topic.id}`}>
+          <span className="dictation-topic-sample" lang="zh-CN" aria-hidden="true">{shortest(topic.sentences).chinese}</span>
+          <strong>{topic.title}</strong>
+          <small id={`dictation-topic-${topic.id}`}>{topic.sentences.length} recording{topic.sentences.length === 1 ? '' : 's'}</small>
+        </button>)}</div>
+        <button className="tone-link dictation-refresh" onClick={reload}>Refresh available recordings</button>
+      </>}
+  </main>;
 }
