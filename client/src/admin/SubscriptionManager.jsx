@@ -48,6 +48,10 @@ export default function SubscriptionManager({ onBack }) {
     if (success) setGrantForm(null);
   };
   const approve = async request => {
+    if (request.scope === 'tests') {
+      await mutate(`approve-${request._id}`, `/access-requests/${request._id}/approve`, { method: 'PUT', body: JSON.stringify({}) }, `Request approved. ${request.user.name} can now take all mock tests.`, ['requests']);
+      return;
+    }
     const days = Number(requestDays[request._id] ?? 30);
     if (!Number.isInteger(days) || days < 1 || days > 3650) return;
     await mutate(`approve-${request._id}`, `/access-requests/${request._id}/approve`, { method: 'PUT', body: JSON.stringify({ days }) }, `Request approved. ${days} days added for ${request.user.name} · ${request.course.title}.`, ['requests', 'subs']);
@@ -80,6 +84,6 @@ export default function SubscriptionManager({ onBack }) {
       </section>
     </>}
     {grantForm && <GrantAccessDialog initial={grantForm} students={students} courses={courses} subs={subs} busy={!!busy} error={actionError} onSave={grant} onClose={() => { setGrantForm(null); setActionError(''); }}/>}
-    {confirmation && <AccessDialog title={confirmation.type === 'decline' ? 'Decline this request?' : 'Remove course access?'} description={confirmation.type === 'decline' ? 'The student can request access again later.' : 'The student will lose access to this course immediately. Their learning progress is kept.'} busy={!!busy} onClose={() => { setConfirmation(null); setActionError(''); }}><div className="access-confirm-details"><strong>{confirmation.record.user?.name || 'Deleted student'}</strong><span>{confirmation.record.course?.title || 'Deleted course'}</span></div>{actionError && <p className="access-feedback is-error" role="alert">{actionError}</p>}<div className="access-dialog-actions"><button className="access-button" disabled={!!busy} onClick={() => { setConfirmation(null); setActionError(''); }}>Keep {confirmation.type === 'decline' ? 'request' : 'access'}</button><button className="access-button is-destructive" disabled={!!busy} onClick={confirmAction}>{busy ? 'Saving…' : confirmation.type === 'decline' ? 'Decline request' : 'Remove access'}</button></div></AccessDialog>}
+    {confirmation && <AccessDialog title={confirmation.type === 'decline' ? 'Decline this request?' : 'Remove course access?'} description={confirmation.type === 'decline' ? 'The student can request access again later.' : 'The student will lose access to this course immediately. Their learning progress is kept.'} busy={!!busy} onClose={() => { setConfirmation(null); setActionError(''); }}><div className="access-confirm-details"><strong>{confirmation.record.user?.name || 'Deleted student'}</strong><span>{confirmation.record.scope === 'tests' ? 'All HSK mock tests' : confirmation.record.course?.title || 'Deleted course'}</span></div>{actionError && <p className="access-feedback is-error" role="alert">{actionError}</p>}<div className="access-dialog-actions"><button className="access-button" disabled={!!busy} onClick={() => { setConfirmation(null); setActionError(''); }}>Keep {confirmation.type === 'decline' ? 'request' : 'access'}</button><button className="access-button is-destructive" disabled={!!busy} onClick={confirmAction}>{busy ? 'Saving…' : confirmation.type === 'decline' ? 'Decline request' : 'Remove access'}</button></div></AccessDialog>}
   </section>;
 }

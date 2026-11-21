@@ -4,14 +4,16 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Test = require('../models/Test');
+const AccessRequest = require('../models/AccessRequest');
 
 test('mock test list and questions require authentication and remain available to students', async () => {
-  const originalUser = User.findById, originalFind = Test.find, originalById = Test.findById;
+  const originalUser = User.findById, originalFind = Test.find, originalById = Test.findById, originalExists = AccessRequest.exists;
   const secret = process.env.JWT_SECRET;
   process.env.JWT_SECRET = 'practice-access-test';
   User.findById = () => ({ select: async () => ({ _id: 'student', role: 'student' }) });
   Test.find = () => ({ select: () => ({ sort: async () => [] }) });
   Test.findById = async () => ({ published: true, toObject: () => ({ questions: [{ prompt: 'Test', correctIndex: 0 }] }) });
+  AccessRequest.exists = async () => true;
   const app = express();
   app.use('/api/tests', require('../routes/tests'));
   const server = app.listen(0, '127.0.0.1');
@@ -30,7 +32,7 @@ test('mock test list and questions require authentication and remain available t
   } finally {
     server.closeAllConnections();
     await new Promise(resolve => server.close(resolve));
-    User.findById = originalUser; Test.find = originalFind; Test.findById = originalById;
+    User.findById = originalUser; Test.find = originalFind; Test.findById = originalById; AccessRequest.exists = originalExists;
     if (secret === undefined) delete process.env.JWT_SECRET; else process.env.JWT_SECRET = secret;
   }
 });

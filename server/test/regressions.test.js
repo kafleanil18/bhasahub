@@ -27,14 +27,29 @@ test('a demoted admin loses access despite their old JWT role', async () => {
 
 test('test detail hides unpublished tests and strips answer keys', async () => {
   const run = handler('../routes/tests', '/:id');
+  const student = { user: { id: 'student', role: 'student' } };
+  mock(AccessRequest, 'exists', async () => true);
   mock(Test, 'findById', async () => ({ published: false }));
   let res = response();
-  await run({ params: { id: 'test' } }, res);
+  await run({ params: { id: 'test' }, ...student }, res);
   assert.equal(res.code, 404);
   mock(Test, 'findById', async () => ({ published: true, toObject: () => ({ questions: [{ correctIndex: 1, questionText: 'Question' }] }) }));
   res = response();
-  await run({ params: { id: 'test' } }, res);
+  await run({ params: { id: 'test' }, ...student }, res);
   assert.equal(res.body.questions[0].correctIndex, undefined);
+});
+
+test('test detail is locked for students without approved mock-test access', async () => {
+  const run = handler('../routes/tests', '/:id');
+  mock(Test, 'findById', async () => ({ published: true, toObject: () => ({ questions: [] }) }));
+  mock(AccessRequest, 'exists', async () => null);
+  let res = response();
+  await run({ params: { id: 'test' }, user: { id: 'student', role: 'student' } }, res);
+  assert.equal(res.code, 403);
+  assert.equal(res.body.code, 'TESTS_LOCKED');
+  res = response();
+  await run({ params: { id: 'test' }, user: { id: 'admin', role: 'admin' } }, res);
+  assert.equal(res.code, 200);
 });
 
 test('server grades test answers and ignores forged score fields', async () => {

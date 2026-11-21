@@ -15,6 +15,10 @@ function TestList({ onOpenTest, onBack, user }) {
   const [completionByTest, setCompletionByTest] = useState({});
   const [completionLoading, setCompletionLoading] = useState(true);
   const [completionError, setCompletionError] = useState('');
+  const isStaff = ['admin', 'superadmin'].includes(user?.role);
+  const [accessStatus, setAccessStatus] = useState(isStaff ? 'approved' : 'loading');
+  const [requesting, setRequesting] = useState(false);
+  const [requestError, setRequestError] = useState('');
 
   useEffect(() => {
     fetch(`${API}/tests`, { headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` } })
@@ -22,6 +26,36 @@ function TestList({ onOpenTest, onBack, user }) {
       .then(data => { setTests(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (isStaff) return;
+    let active = true;
+    fetch(`${API}/access-requests/my`, { headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` } })
+      .then(res => res.json())
+      .then(data => {
+        if (!active) return;
+        const request = Array.isArray(data) ? data.find(row => row.scope === 'tests') : null;
+        setAccessStatus(request ? request.status : 'none');
+      })
+      .catch(() => { if (active) setAccessStatus('none'); });
+    return () => { active = false; };
+  }, [isStaff]);
+
+  const unlocked = isStaff || accessStatus === 'approved';
+  const requestAccess = async () => {
+    setRequesting(true); setRequestError('');
+    try {
+      const response = await fetch(`${API}/access-requests`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scope: 'tests' }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Could not send your request.');
+      setAccessStatus('pending');
+    } catch (err) { setRequestError(err.message); }
+    finally { setRequesting(false); }
+  };
 
   const studentKey = user?._id || user?.id || user?.email || '';
   useEffect(() => {
@@ -72,6 +106,17 @@ function TestList({ onOpenTest, onBack, user }) {
       <button className="back-btn" onClick={onBack}>← Back to home</button>
       <h1 className="section-title">HSK Mock Tests</h1>
 
+      {!unlocked && accessStatus !== 'loading' && (
+        <div className={`test-access-banner${accessStatus === 'pending' ? ' is-pending' : ''}`} role="status">
+          <div>
+            <strong>{accessStatus === 'pending' ? 'Your access request is under review' : accessStatus === 'denied' ? 'Your previous request was declined' : 'One mock test is free — unlock the rest'}</strong>
+            <p>{accessStatus === 'pending' ? 'An admin will review your request. Check back soon — the H11226 test is free to take meanwhile.' : 'You can take the H11226 test for free. To open all other mock tests, send a request and an admin will approve it.'}</p>
+          </div>
+          {accessStatus !== 'pending' && <button className="test-access-request-btn" disabled={requesting} onClick={requestAccess}>{requesting ? 'Sending request…' : accessStatus === 'denied' ? 'Request access again' : 'Request access to all tests'}</button>}
+          {requestError && <p className="test-access-error" role="alert">{requestError}</p>}
+        </div>
+      )}
+
       {paperError && <div role="alert"><p>{paperError}</p><button onClick={reloadPapers}>Retry loading practice papers</button></div>}
       {papersLoading && <p role="status">Loading practice papers…</p>}
       {(practicePapers.length > 0 || (!loading && tests.length > 0)) && (
@@ -99,12 +144,12 @@ function TestList({ onOpenTest, onBack, user }) {
       {completionLoading && studentKey && !papersLoading && !loading && <p role="status" className="test-progress-loading">Checking your test progress…</p>}
       {!completionLoading && !completionError && filteredPracticePapers.length + filteredTests.length === 0 && <p className="courses-empty">{completionFilter === 'completed' ? 'No completed tests match this view.' : completionFilter === 'not-started' ? 'No tests are waiting to be started in this view.' : levelFilter !== 'All' ? `No ${levelFilter} tests are available yet.` : 'No mock tests are available yet.'}</p>}
 
-      {filteredPracticePapers.map(paper => <FeaturedPaper key={paper.id} paperId={paper.id} title={paper.title} code={paper.code} completed={completionByTest[paper.id]} onOpen={() => onOpenTest(paper.id)} onRetake={() => onOpenTest(paper.id)} showHidden={['admin', 'superadmin'].includes(user?.role)} />)}
+      {filteredPracticePapers.map(paper => <FeaturedPaper key={paper.id} paperId={paper.id} title={paper.title} code={paper.code} completed={completionByTest[paper.id]} locked={!unlocked && !paper.free} free={!!paper.free && !unlocked} onOpen={() => onOpenTest(paper.id)} onRetake={() => onOpenTest(paper.id)} showHidden={isStaff} />)}
 
       {loading && <p className="courses-empty">Loading tests...</p>}
       <div className="course-cards">
         {filteredTests.map((t) => (
-          <div className={`course-card mock-test-card${completionByTest[t._id] === true ? ' is-completed' : ''}`} key={t._id} role="button" tabIndex={0} aria-label={`Open ${t.title}${completionByTest[t._id] === true ? ', completed' : ''}`} onClick={() => onOpenTest(t._id)} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onOpenTest(t._id); } }}>
+          <div className={`course-card mock-test-card${completionByTest[t._id] === true ? ' is-completed' : ''}${!unlocked ? ' is-locked' : ''}`} key={t._id} role="button" tabIndex={0} aria-label={!unlocked ? `${t.title}, locked — request access to unlock` : `Open ${t.title}${completionByTest[t._id] === true ? ', completed' : ''}`} aria-disabled={!unlocked || undefined} onClick={() => { if (unlocked) onOpenTest(t._id); }} onKeyDown={event => { if ((event.key === 'Enter' || event.key === ' ') && unlocked) { event.preventDefault(); onOpenTest(t._id); } }}>
             {t.image ? (
               <img className="course-card-img" src={mediaUrl(t.image)} alt={t.title} />
             ) : (
@@ -118,6 +163,7 @@ function TestList({ onOpenTest, onBack, user }) {
               </div>
             )}
             <div className="course-card-body">
+              {!unlocked && <span className="mock-test-lock-tag">🔒 Approval needed</span>}
               {typeof completionByTest[t._id] === 'boolean' && <span className={`mock-test-completion${completionByTest[t._id] ? ' is-done' : ''}`}>{completionByTest[t._id] ? '✓ Completed' : 'Not started'}</span>}
               <h3 className="course-card-title">{t.title}</h3>
               <p className="course-card-desc">{t.description}</p>

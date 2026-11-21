@@ -40,6 +40,7 @@ function AudioPlayer({ src, style, onPlay, onPlayStateChange }) {
 function TestTaker({ testId, onBack }) {
   const [test, setTest] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [answers, setAnswers] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
@@ -68,9 +69,13 @@ function TestTaker({ testId, onBack }) {
 
   useEffect(() => {
     fetch(`${API}/tests/${testId}`, { headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {} })
-      .then(res => { if (!res.ok) throw new Error(); return res.json(); })
-      .then(data => { setTest(data); setLoading(false); })
-      .catch(() => setLoading(false));
+      .then(async res => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Test not found.');
+        setTest(data);
+      })
+      .catch(err => setLoadError(err.message || 'Test not found.'))
+      .finally(() => setLoading(false));
   }, [testId]);
 
   useEffect(() => {
@@ -215,7 +220,7 @@ function TestTaker({ testId, onBack }) {
     return (
       <section className="course-page container">
         <button className="back-btn" onClick={onBack}>Back to tests</button>
-        <p className="courses-empty">Test not found.</p>
+        <p className="courses-empty">{loadError || 'Test not found.'}</p>
       </section>
     );
   }
