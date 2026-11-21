@@ -26,7 +26,7 @@ async function prepare(page, voices = [{ name: 'Tingting', lang: 'zh-CN', voiceU
 }
 const lastSpoken = page => page.evaluate(() => window.__spoken.at(-1)?.text);
 
-test('every word is read by the female Google Mandarin voice, even unrecorded ones', async ({ page }) => {
+test('every word is read by the female Google Mandarin voice when available, even unrecorded ones', async ({ page }) => {
   await prepare(page);
   await page.goto('/practice/listening');
   await expect(page.getByRole('heading', { name: 'Listening practice' })).toBeVisible();
@@ -61,10 +61,19 @@ test('every word is read by the female Google Mandarin voice, even unrecorded on
   await expect(page.getByRole('heading', { name: 'Listening practice' })).toBeVisible();
 });
 
-test('without Google’s voice, students are told to open the page in Chrome', async ({ page }) => {
-  await prepare(page, [{ name: 'Tingting', lang: 'zh-CN', voiceURI: 'tingting' }]);
+test('on Safari, iPhone or Edge without Google voices, words use the device’s female Mandarin voice', async ({ page }) => {
+  await prepare(page, [{ name: 'Microsoft Yunxi Online (Natural) - Chinese (Mainland)', lang: 'zh-CN', voiceURI: 'yunxi' }, { name: 'Microsoft Xiaoxiao Online (Natural) - Chinese (Mainland)', lang: 'zh-CN', voiceURI: 'xiaoxiao' }]);
   await page.goto('/practice/listening');
   await page.getByRole('button', { name: /HSK 1 Chinese/ }).click();
-  await expect(page.locator('.listening-voice-warning')).toContainText('Google’s Mandarin voice', { timeout: 5000 });
+  await page.getByRole('button', { name: /Greetings/ }).click();
+  await expect.poll(() => page.evaluate(() => window.__spoken.length)).toBeGreaterThan(0);
+  expect(new Set(await page.evaluate(() => window.__spoken.map(item => item.voice)))).toEqual(new Set(['Microsoft Xiaoxiao Online (Natural) - Chinese (Mainland)']));
+});
+
+test('with no Mandarin voice at all, lessons explain how to add one', async ({ page }) => {
+  await prepare(page, [{ name: 'Samantha', lang: 'en-US', voiceURI: 'samantha' }]);
+  await page.goto('/practice/listening');
+  await page.getByRole('button', { name: /HSK 1 Chinese/ }).click();
+  await expect(page.locator('.listening-voice-warning')).toContainText('No Mandarin voice was found', { timeout: 5000 });
   await expect(page.getByRole('button', { name: /Greetings/ })).toBeDisabled();
 });

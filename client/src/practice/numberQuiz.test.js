@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { NUMBER_MODES, NUMBER_QUESTIONS, chineseNumber, numberRound, checkNumberAnswer } from './numberQuiz.js';
-import { mandarinVoices, googleMandarinVoices } from './useChineseVoice.js';
+import { mandarinVoices, rankGoogleFemale } from './useChineseVoice.js';
 
 test('Chinese numbers handle tens, hundreds, and embedded zeros', () => {
   const examples = {0:'零',1:'一',10:'十',11:'十一',20:'二十',25:'二十五',99:'九十九',100:'一百',101:'一百零一',110:'一百一十',205:'二百零五',1000:'一千',1001:'一千零一',1010:'一千零一十',9999:'九千九百九十九'};
@@ -73,11 +73,15 @@ test('Mandarin voice selection prioritizes mainland Mandarin and excludes Canton
   assert.deepEqual(new Set(selected.map(v=>v.name)),new Set(['Taiwan','Mandarin','Mandarin BCP47']));
 });
 
-test('number practice keeps only Google Mandarin voices, China first', () => {
-  const voices = [
-    { name: 'Tingting', lang: 'zh-CN' }, { name: 'Google 國語（臺灣）', lang: 'zh-TW' },
-    { name: 'Google 普通话（中国大陆）', lang: 'zh-CN' }, { name: 'Google 粤語（香港）', lang: 'zh-HK' }, { name: 'Google US English', lang: 'en-US' },
-  ];
-  assert.deepEqual(googleMandarinVoices(voices).map(voice => voice.name), ['Google 普通话（中国大陆）', 'Google 國語（臺灣）']);
-  assert.deepEqual(googleMandarinVoices([{ name: 'Tingting', lang: 'zh-CN' }]), []);
+test('voice choice prefers Google female Mandarin, then a female device voice, never dropping Mandarin voices', () => {
+  const first = voices => rankGoogleFemale(voices)[0]?.name;
+  const google = { name: 'Google 普通话（中国大陆）', lang: 'zh-CN' }, taiwan = { name: 'Google 國語（臺灣）', lang: 'zh-TW' };
+  const tingting = { name: 'Tingting', lang: 'zh-CN' }, kangkang = { name: 'Microsoft Kangkang - Chinese (Simplified, PRC)', lang: 'zh-CN' };
+  const xiaoxiao = { name: 'Microsoft Xiaoxiao Online (Natural) - Chinese (Mainland)', lang: 'zh-CN' }, english = { name: 'Google US English', lang: 'en-US' };
+  assert.equal(first([tingting, taiwan, google, english]), google.name);
+  assert.equal(first([kangkang, xiaoxiao, english]), xiaoxiao.name);
+  assert.equal(first([tingting, english]), tingting.name);
+  assert.equal(first([{ name: '中文（中国）', lang: 'zh_CN' }]), '中文（中国）');
+  assert.equal(rankGoogleFemale([kangkang, tingting, english]).length, 2);
+  assert.deepEqual(rankGoogleFemale([english]), []);
 });

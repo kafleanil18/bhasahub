@@ -25,8 +25,9 @@ export default function ListeningPractice({ user, onBack, onSignIn }) {
   const [notReady, setNotReady] = useState({});
   const [error, setError] = useState('');
   const [retry, setRetry] = useState(0);
-  // For now every word is read by Google's female Mandarin voice (Google 普通话（中国大陆）), not teacher recordings.
-  const speech = useChineseVoice({ googleOnly: true });
+  // For now every word is read by a computer voice, not teacher recordings: Google's female Mandarin voice
+  // (Google 普通话（中国大陆）) when the browser has it, otherwise the device's best female Mandarin voice.
+  const speech = useChineseVoice({ preferGoogleFemale: true });
 
   useEffect(() => {
     if (!user) return;
@@ -79,8 +80,8 @@ export default function ListeningPractice({ user, onBack, onSignIn }) {
       : session ? <ListeningSession key={sessionKey} initialQuestions={session.questions} voice={speech.voice} onRestart={restart} onExit={() => setSession(null)} />
       : <>
         <p className="listening-intro">Train your ear, one word at a time. Practise with recordings from your lessons.</p>
-        {!speech.voice && <div className="listening-voice-warning" role="status">{speech.loading ? <p>Loading Google’s Mandarin voice…</p> : <>
-          <p>{speech.supported ? 'Listening practice uses Google’s Mandarin voice, which comes with Google Chrome on computers and Android phones. Open this page in Chrome, then refresh.' : 'Speech playback is unavailable in this browser. Open this page in Google Chrome on a computer or Android phone.'}</p>
+        {!speech.voice && <div className="listening-voice-warning" role="status">{speech.loading ? <p>Loading the Mandarin voice…</p> : <>
+          <p>{speech.supported ? 'No Mandarin voice was found on this device. Add a Chinese (Mandarin) voice in your device’s speech settings, or open this page in Google Chrome, then refresh.' : 'Speech playback is unavailable in this browser. Open this page in Google Chrome.'}</p>
           {speech.supported && <button className="sentence-secondary" onClick={speech.refresh}>Refresh voices</button>}
         </>}</div>}
         {error && <div className="tone-alert listening-alert" role="alert"><p>{error}</p><button className="sentence-secondary" onClick={() => setRetry(value => value + 1)}>Try again</button></div>}

@@ -6,10 +6,19 @@ export function mandarinVoices(voices) {
     return language === 'zh' || /^zh-(cn|sg|tw|hans|hant)(-|$)/.test(language) || /^cmn(-|$)/.test(language);
   }).sort((a, b) => Number(/^zh-(CN|Hans)/i.test(b.lang)) - Number(/^zh-(CN|Hans)/i.test(a.lang)));
 }
-// Google's Mandarin voices ship with Chrome on desktop and Android (e.g. "Google 普通话（中国大陆）").
-export const googleMandarinVoices = voices => mandarinVoices(voices).filter(voice => /google/i.test(voice.name));
+const FEMALE = /tingting|meijia|lili|yu-?shu|xiaoxiao|xiaoyi|xiaohan|xiaomo|xiaochen|huihui|yaoyao|hanhan|female|女/i;
+const MALE = /kangkang|yunxi|yunyang|yunjian|li-?mu|zhiwei|male|男/i;
+// Google's female mainland voice first; otherwise the device's best female Mandarin voice, so audio plays on every browser.
+export function rankGoogleFemale(voices) {
+  const score = voice => {
+    const google = /google/i.test(voice.name), mainland = /^zh-(cn|hans)/i.test(voice.lang.replaceAll('_', '-'));
+    return (google && mainland ? 100 : 0) + (google ? 40 : 0) + (FEMALE.test(voice.name) ? 20 : 0) - (MALE.test(voice.name) ? 20 : 0) + (mainland ? 10 : 0);
+  };
+  return mandarinVoices(voices).map((voice, index) => ({ voice, index, score: score(voice) }))
+    .sort((a, b) => b.score - a.score || a.index - b.index).map(item => item.voice);
+}
 export const voiceKey = voice => voice.voiceURI || `${voice.name}-${voice.lang}`;
-export default function useChineseVoice({ googleOnly = false } = {}) {
+export default function useChineseVoice({ preferGoogleFemale = false } = {}) {
   const supported = typeof window.speechSynthesis !== 'undefined' && typeof window.SpeechSynthesisUtterance !== 'undefined';
   const [voices, setVoices] = useState([]);
   const [selected, setSelected] = useState('');
@@ -17,11 +26,11 @@ export default function useChineseVoice({ googleOnly = false } = {}) {
   const refresh = useCallback(() => {
     if (!supported) return;
     const all = window.speechSynthesis.getVoices();
-    const available = googleOnly ? googleMandarinVoices(all) : mandarinVoices(all);
+    const available = preferGoogleFemale ? rankGoogleFemale(all) : mandarinVoices(all);
     setVoices(previous => available.map(voice => previous.find(old => voiceKey(old) === voiceKey(voice) && old.name === voice.name && old.lang === voice.lang) || voice));
     setSelected(previous => available.some(voice => voiceKey(voice) === previous) ? previous : available[0] ? voiceKey(available[0]) : '');
     if (available.length) setLoading(false);
-  }, [supported, googleOnly]);
+  }, [supported, preferGoogleFemale]);
   useEffect(() => {
     if (!supported) return;
     refresh();

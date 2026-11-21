@@ -15,8 +15,8 @@ const examples = {
 export default function NumberTrainer({ onBack }) {
   const [session, setSession] = useState(null);
   const [sessionKey, setSessionKey] = useState(0);
-  // Numbers are always read by Google's Mandarin voice so every student hears the same, natural reading.
-  const { supported, loading, refresh, voice } = useChineseVoice({ googleOnly: true });
+  // Google's female Mandarin voice when the browser has it, otherwise the device's best female Mandarin voice.
+  const { supported, loading, refresh, voice } = useChineseVoice({ preferGoogleFemale: true });
   const mode = session && NUMBER_MODES.find(item => item.id === session.mode);
   const start = id => { setSession({ mode: id, questions: numberRound(id) }); setSessionKey(value => value + 1); };
 
@@ -29,7 +29,7 @@ export default function NumberTrainer({ onBack }) {
     {session ? <NumberSession key={sessionKey} initialQuestions={session.questions} voice={voice} onRestart={() => start(session.mode)} onExit={() => setSession(null)} /> : <>
       <p className="number-intro">Hear a number in Chinese, then type what you heard.</p>
       {!voice && <div className="number-voice-warning" role="status">{loading ? <p>Loading Chinese voices…</p> : <>
-        <p>{supported ? 'This practice uses Google’s Mandarin voice, which comes with Google Chrome on computers and Android phones. Open this page in Chrome, then refresh.' : 'Speech playback is unavailable in this browser. Open this page in Google Chrome on a computer or Android phone.'}</p>
+        <p>{supported ? 'No Mandarin voice was found on this device. Add a Chinese (Mandarin) voice in your device’s speech settings, or open this page in Google Chrome, then refresh.' : 'Speech playback is unavailable in this browser. Open this page in Google Chrome.'}</p>
         {supported && <button className="sentence-secondary" onClick={refresh}>Refresh voices</button>}
       </>}</div>}
       <div className="number-mode-cards">{NUMBER_MODES.map(item => <button type="button" key={item.id} className="number-mode-card" disabled={!voice} onClick={() => start(item.id)} aria-label={item.title} aria-describedby={`number-mode-${item.id}`}>
