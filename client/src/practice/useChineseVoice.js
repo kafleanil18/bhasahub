@@ -6,19 +6,22 @@ export function mandarinVoices(voices) {
     return language === 'zh' || /^zh-(cn|sg|tw|hans|hant)(-|$)/.test(language) || /^cmn(-|$)/.test(language);
   }).sort((a, b) => Number(/^zh-(CN|Hans)/i.test(b.lang)) - Number(/^zh-(CN|Hans)/i.test(a.lang)));
 }
+// Google's Mandarin voices ship with Chrome on desktop and Android (e.g. "Google 普通话（中国大陆）").
+export const googleMandarinVoices = voices => mandarinVoices(voices).filter(voice => /google/i.test(voice.name));
 export const voiceKey = voice => voice.voiceURI || `${voice.name}-${voice.lang}`;
-export default function useChineseVoice() {
+export default function useChineseVoice({ googleOnly = false } = {}) {
   const supported = typeof window.speechSynthesis !== 'undefined' && typeof window.SpeechSynthesisUtterance !== 'undefined';
   const [voices, setVoices] = useState([]);
   const [selected, setSelected] = useState('');
   const [loading, setLoading] = useState(supported);
   const refresh = useCallback(() => {
     if (!supported) return;
-    const available = mandarinVoices(window.speechSynthesis.getVoices());
+    const all = window.speechSynthesis.getVoices();
+    const available = googleOnly ? googleMandarinVoices(all) : mandarinVoices(all);
     setVoices(previous => available.map(voice => previous.find(old => voiceKey(old) === voiceKey(voice) && old.name === voice.name && old.lang === voice.lang) || voice));
     setSelected(previous => available.some(voice => voiceKey(voice) === previous) ? previous : available[0] ? voiceKey(available[0]) : '');
     if (available.length) setLoading(false);
-  }, [supported]);
+  }, [supported, googleOnly]);
   useEffect(() => {
     if (!supported) return;
     refresh();
