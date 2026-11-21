@@ -43,7 +43,7 @@ async function prepare(page, { empty = false, broken = false, failSave = false, 
   return { saved, posts: () => posts };
 }
 async function start(page) {
-  await page.goto('/practice/tones'); await page.getByRole('button', { name: 'Start tone practice' }).click();
+  await page.goto('/practice/tones'); await page.getByRole('button', { name: 'Single syllables', exact: true }).click();
 }
 async function answer(page, tone) {
   const option = page.getByRole('radio', { name: new RegExp(`Tone ${tone}`) });
@@ -56,14 +56,14 @@ test('audio unlocks four choices, a full round shows correct/wrong results and p
   await expect(page.getByRole('button', { name: /^Tone listening/ })).toHaveCount(0);
   await page.getByRole('button', { name: /Pinyin & tones Build a clear foundation/ }).click();
   await page.getByRole('link', { name: 'Practice identifying tones' }).click();
-  await page.getByRole('button', { name: 'Start tone practice' }).click();
+  await page.getByRole('button', { name: 'Single syllables', exact: true }).click();
   await expect(page.getByRole('radio')).toHaveCount(4);
   await expect(page.getByRole('button', { name: 'Check tone', exact: true })).toHaveCount(0);
   await expect(page.getByRole('radio').first()).toBeEnabled();
   await answer(page, 2); await expect(page.getByRole('status')).toContainText('Correct!');
   await expect(page.locator('.tone-choice.is-correct')).toContainText('Tone 2');
   await expect(page.locator('.tone-choice.is-correct strong')).toHaveCSS('color', 'rgb(40, 115, 78)');
-  await expect(page.getByText('Question 2 of 2')).toBeVisible();
+  await expect(page.getByText('2 / 2', { exact: true })).toBeVisible();
   await expect(page.getByRole('radio').first()).toBeEnabled();
   await answer(page, 1); await expect(page.getByRole('status')).toContainText('Tone 4');
   await expect(page.getByRole('heading', { name: '1 of 2 correct' })).toBeVisible();
@@ -76,7 +76,7 @@ test('audio unlocks four choices, a full round shows correct/wrong results and p
 
 test('repeats preserve first-answer counts and tone reset requires confirmation', async ({ page }) => {
   const { saved } = await prepare(page);
-  await start(page); await answer(page, 1); await expect(page.getByText('Question 2 of 2')).toBeVisible();
+  await start(page); await answer(page, 1); await expect(page.getByText('2 / 2', { exact: true })).toBeVisible();
   await answer(page, 4);
   await expect(page.getByRole('heading', { name: '1 of 2 correct' })).toBeVisible();
   await page.getByRole('button', { name: 'Start another round' }).click(); await answer(page, 2);
@@ -92,7 +92,7 @@ test('repeats preserve first-answer counts and tone reset requires confirmation'
 test('save failure preserves the question and choice for a successful retry', async ({ page }) => {
   const context = await prepare(page, { failSave: true }); await start(page); await answer(page, 2);
   await expect(page.getByRole('alert')).toContainText('Save unavailable');
-  await expect(page.getByText('Question 1 of 2')).toBeVisible(); await expect(page.getByRole('radio', { name: /Tone 2/ })).toBeChecked();
+  await expect(page.getByText('1 / 2', { exact: true })).toBeVisible(); await expect(page.getByRole('radio', { name: /Tone 2/ })).toBeChecked();
   await page.getByRole('button', { name: 'Retry answer', exact: true }).click();
   await expect(page.getByRole('status')).toContainText('Correct!'); expect(context.posts()).toBe(2); expect(context.saved.size).toBe(1);
 });
@@ -106,7 +106,8 @@ test('broken audio can be skipped without grading or counting', async ({ page })
 
 test('empty bank is explained', async ({ page }) => {
   await prepare(page, { empty: true }); await page.goto('/practice/tones');
-  await expect(page.getByRole('heading', { name: 'No recorded pinyin yet' })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Single syllables/ })).toBeDisabled();
+  await expect(page.getByText('No recordings yet')).toBeVisible();
 });
 
 test('tone practice requires sign-in on direct visits', async ({ page }) => {
@@ -141,11 +142,11 @@ test('correct and wrong answers play different sounds and both advance automatic
   await prepare(page); await trackAnswerSounds(page); await start(page);
   await answer(page, 2);
   await expect.poll(() => page.evaluate(() => window.__answerSounds)).toEqual([523.25, 659.25]);
-  await expect(page.locator('.tone-choice.is-correct')).toContainText('Correct answer');
-  await expect(page.getByText('Question 2 of 2')).toBeVisible();
+  await expect(page.locator('.tone-choice.is-correct')).toBeVisible();
+  await expect(page.getByText('2 / 2', { exact: true })).toBeVisible();
   await answer(page, 1);
   await expect.poll(() => page.evaluate(() => window.__answerSounds)).toEqual([523.25, 659.25, 220, 165]);
-  await expect(page.locator('.tone-choice.is-wrong')).toContainText('Your answer');
+  await expect(page.locator('.tone-choice.is-wrong')).toBeVisible();
   await expect(page.getByRole('heading', { name: '1 of 2 correct' })).toBeVisible();
 });
 
@@ -154,7 +155,7 @@ test('muting answer sounds still allows green feedback and automatic advancement
   await page.getByRole('button', { name: 'Mute answer sounds' }).click();
   await answer(page, 2);
   await expect(page.locator('.tone-choice.is-correct')).toContainText('Tone 2');
-  await expect(page.getByText('Question 2 of 2')).toBeVisible();
+  await expect(page.getByText('2 / 2', { exact: true })).toBeVisible();
   expect(await page.evaluate(() => window.__answerSounds)).toEqual([]);
 });
 
@@ -162,7 +163,7 @@ test('unavailable feedback audio never blocks correct-answer advancement', async
   await prepare(page);
   await page.addInitScript(() => { window.AudioContext = class { constructor() { throw new Error('Unavailable'); } }; });
   await start(page); await answer(page, 2);
-  await expect(page.getByText('Question 2 of 2')).toBeVisible();
+  await expect(page.getByText('2 / 2', { exact: true })).toBeVisible();
 });
 
 
@@ -184,7 +185,7 @@ test('blocked autoplay offers a manual fallback without unlocking answers premat
   await expect(page.getByRole('radio').first()).toBeEnabled();
   await page.getByRole('radio', { name: /Tone 2/ }).check();
   await expect(page.getByRole('status')).toContainText('Correct!');
-  await expect(page.getByText('Question 2 of 2')).toBeVisible();
+  await expect(page.getByText('2 / 2', { exact: true })).toBeVisible();
 });
 
 test('one tone selection submits once even if clicked repeatedly', async ({ page }) => {
@@ -195,19 +196,20 @@ test('one tone selection submits once even if clicked repeatedly', async ({ page
   await answer.evaluate(input => { input.click(); input.click(); });
   await expect(page.getByRole('status')).toContainText('Correct!');
   expect(context.posts()).toBe(1);
-  await expect(page.getByText('Question 2 of 2')).toBeVisible();
+  await expect(page.getByText('2 / 2', { exact: true })).toBeVisible();
 });
 
 test('students can limit a round to chosen syllables from the Pinyin Chart', async ({ page }) => {
   const context = await prepare(page);
   await page.goto('/practice/tones');
+  await page.getByText('Options').click();
   const picker = page.getByRole('group', { name: 'Choose syllables to practise' });
   await expect(picker.getByRole('checkbox')).toHaveCount(2);
   await picker.getByRole('button', { name: 'Clear all' }).click();
-  await expect(page.getByRole('button', { name: 'Start tone practice' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Single syllables', exact: true })).toBeDisabled();
   await picker.getByRole('checkbox', { name: /^ba,/ }).check();
-  await page.getByRole('button', { name: 'Start tone practice' }).click();
-  await expect(page.getByText('Question 1 of 1')).toBeVisible();
+  await page.getByRole('button', { name: 'Single syllables', exact: true }).click();
+  await expect(page.getByText('1 / 1', { exact: true })).toBeVisible();
   await answer(page, 4); await expect(page.getByRole('status')).toContainText('Correct!');
   expect([...context.saved.values()].map(item => item.syllable)).toEqual(['ba']);
 });

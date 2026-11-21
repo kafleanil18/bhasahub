@@ -50,8 +50,7 @@ const choose = async (page, syllable, tone) => {
 test('both syllables are answered, tone changes are explained, and progress shows pair accuracy', async ({ page }) => {
   const context = await prepare(page);
   await page.goto('/practice/tones');
-  await expect(page.getByRole('heading', { name: 'Tone pairs' })).toBeVisible();
-  await page.getByRole('button', { name: 'Start tone pairs' }).click();
+  await page.getByRole('button', { name: 'Tone pairs', exact: true }).click();
   await expect(page.getByRole('radio')).toHaveCount(8);
   const first = await page.locator('.tone-pair-word [lang="zh-CN"]').textContent();
   // Answer 你好 with its written tones (3 + 3) to see the third-tone rule; answer 今天 correctly.
@@ -80,17 +79,17 @@ test('both syllables are answered, tone changes are explained, and progress show
 test('tone-change focus only uses rule words and save failures can be retried', async ({ page }) => {
   const context = await prepare(page, { failSave: true });
   await page.goto('/practice/tones');
-  await page.getByRole('radio', { name: /Tone changes only \(1 word\)/ }).check();
-  await page.getByRole('button', { name: 'Start tone pairs' }).click();
-  await expect(page.getByText('Word 1 of 1')).toBeVisible();
+  await page.getByText('Options').click();
+  await page.getByRole('checkbox', { name: /Tone changes only \(1 word\)/ }).check();
+  await page.getByRole('button', { name: 'Tone pairs', exact: true }).click();
+  await expect(page.getByText('1 / 1', { exact: true })).toBeVisible();
   await choose(page, 'ni', 2); await choose(page, 'hao', 3);
   await expect(page.getByRole('alert')).toContainText('Save unavailable');
   await page.getByRole('button', { name: 'Retry answer', exact: true }).click();
   await expect(page.getByRole('status')).toContainText('Correct!');
   expect(context.posts()).toBe(2);
   await expect(page.getByRole('heading', { name: '1 of 1 correct' })).toBeVisible({ timeout: 10000 });
-  await page.getByRole('button', { name: 'Choose another mode' }).click();
-  await expect(page.getByRole('button', { name: 'Start tone pairs' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Tone pairs', exact: true })).toBeVisible();
 });
 
 test('without recordings or a Mandarin device voice, tone pairs explain what is needed', async ({ page }) => {
@@ -102,7 +101,7 @@ test('without recordings or a Mandarin device voice, tone pairs explain what is 
 
 test('tone pair choices fit a phone screen', async ({ page }) => {
   await prepare(page); await page.setViewportSize({ width: 375, height: 812 });
-  await page.goto('/practice/tones'); await page.getByRole('button', { name: 'Start tone pairs' }).click();
+  await page.goto('/practice/tones'); await page.getByRole('button', { name: 'Tone pairs', exact: true }).click();
   await expect(page.getByRole('radio').first()).toBeEnabled();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

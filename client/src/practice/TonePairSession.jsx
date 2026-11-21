@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useAnswerSound from './useAnswerSound';
 import { mediaUrl } from '../utils/mediaUrl';
-import { markSyllable, toneNames, toneRuleNote } from './tonePairs';
+import { markSyllable, toneRuleNote } from './tonePairs';
 import { AdvanceBar, PlayButton, ProgressDots, ScoreRing, SlowButton, SoundToggle, ToneContour } from './ToneVisuals';
 import useToneKeys from './useToneKeys';
 
@@ -80,7 +80,7 @@ async function submitPair(pairId, selectedTones) {
   return data;
 }
 
-export default function TonePairSession({ pairs, voice, onRestart, onChangeMode }) {
+export default function TonePairSession({ pairs, voice, onRestart }) {
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState([null, null]);
   const [result, setResult] = useState(null);
@@ -146,18 +146,16 @@ export default function TonePairSession({ pairs, voice, onRestart, onChangeMode 
       <div className="tone-results-summary">
         {results.length > 0 && <ScoreRing correct={correct} total={results.length} />}
         <div><p className="sentence-eyebrow">Round complete</p><h2 id="tone-pair-round-title" ref={headingRef} tabIndex={-1}>{results.length ? `${correct} of ${results.length} correct` : 'No answers checked'}</h2>
-          {results.length > 0 && <p>{Math.round(correct / results.length * 100)}% accuracy this round.</p>}
-          {skipped > 0 && <p className="sentence-muted">{skipped} skipped. Skipped words are not counted or graded.</p>}</div>
+          {skipped > 0 && <p className="sentence-muted">{skipped} skipped</p>}</div>
       </div>
       {results.length > 0 && <div className="tone-results-table"><table><caption>Your answers this round</caption><thead><tr><th scope="col">Word</th><th scope="col">Your tones</th><th scope="col">Spoken tones</th><th scope="col">Result</th></tr></thead><tbody>{results.map(item => <tr key={item.pairId}><th scope="row"><span lang="zh-CN" className="tone-results-hanzi">{item.hanzi}</span> {item.pinyin}</th><td><span className="tone-cell"><ToneContour tone={item.selectedTones[0]} size={24} /><ToneContour tone={item.selectedTones[1]} size={24} />{spokenTones(item.selectedTones)}</span></td><td><span className="tone-cell"><ToneContour tone={item.correctTones[0]} size={24} /><ToneContour tone={item.correctTones[1]} size={24} />{spokenTones(item.correctTones)}</span>{item.toneChange && <small className="tone-pair-change"> · tone change</small>}</td><td><span className={`tone-result-pill ${item.correct ? 'is-correct' : 'is-wrong'}`}>{item.correct ? '✓ Correct' : '↻ Review'}</span></td></tr>)}</tbody></table></div>}
-      <p className="sentence-muted">My Progress keeps the first checked answer for each word until you reset Tone listening.</p>
-      <div className="sentence-actions"><button className="sentence-primary" onClick={onRestart}>Start another round</button><button className="sentence-secondary" onClick={onChangeMode}>Choose another mode</button><Link className="sentence-secondary" to="/progress">View My Progress</Link></div>
+      <div className="sentence-actions"><button className="sentence-primary" onClick={onRestart}>Start another round</button><Link className="sentence-secondary" to="/progress">View My Progress</Link></div>
     </section>;
   }
   const characters = [...pair.hanzi];
   return <section className="sentence-card tone-stage" aria-labelledby="tone-pair-question-title">
     <div className="tone-topbar">
-      <div className="sentence-progress"><span>Word {index + 1} of {pairs.length}</span><span>{results.length} checked</span></div>
+      <span className="tone-count">{index + 1} / {pairs.length}</span>
       <SoundToggle enabled={soundsEnabled} onToggle={() => setSoundsEnabled(value => !value)} />
     </div>
     <ProgressDots total={pairs.length} current={index} statuses={statuses} />
@@ -166,7 +164,6 @@ export default function TonePairSession({ pairs, voice, onRestart, onChangeMode 
     <div className="tone-listen tone-listen-pair">
       <PlayButton playing={playing} onClick={() => play(1, true)} disabled={busy} label={audioError && !heard ? 'Play word' : 'Replay word'} />
       <p className="tone-pair-word"><span lang="zh-CN">{pair.hanzi}</span><span>{pair.english}</span></p>
-      <p className="sentence-muted tone-listen-hint">{!heard ? 'The word plays automatically. If it does not start, tap play.' : pair.audioUrl ? 'Pick a tone for each syllable.' : 'Played with your device’s Mandarin voice. Pick a tone for each syllable.'}</p>
       <SlowButton onClick={() => play(.75, true)} disabled={busy} />
     </div>
     {audioError && <p className="tone-alert" role="alert">{audioError}</p>}
@@ -182,21 +179,20 @@ export default function TonePairSession({ pairs, voice, onRestart, onChangeMode 
           return <label key={tone} data-tone={tone} className={`tone-choice${isSelected ? ' is-selected' : ''}${isCorrect ? ' is-correct' : ''}${isWrong ? ' is-wrong' : ''}`}>
             <input type="radio" name={`tone-pair-${position}`} value={tone} checked={isSelected} aria-label={`${syllable} tone ${tone}`} onChange={() => choose(position, tone)} onClick={() => { if (error && isSelected) void submit(selected); }} />
             <ToneContour tone={tone} size={40} />
-            <span className="tone-choice-mark" aria-hidden="true">{markSyllable(syllable, tone)}</span><span className="tone-choice-text"><strong>Tone {tone}</strong>{isCorrect && <small className="tone-option-status">✓ Spoken tone</small>}{isWrong && <small className="tone-option-status">✗ Your answer</small>}</span>
+            <span className="tone-choice-mark" aria-hidden="true">{markSyllable(syllable, tone)}</span><span className="tone-choice-text"><strong>Tone {tone}</strong></span>
           </label>;
         })}
       </fieldset>;
     })}</div>
-    {busy && <p className="tone-checking" role="status">Checking & saving your answer…</p>}
-    {!result && !busy && <div className="tone-footer"><span className="tone-shortcuts">Keys <kbd>1</kbd>–<kbd>4</kbd> fill the next syllable · <kbd>R</kbd> replays</span><button type="button" className="tone-skip" disabled={busy} onClick={() => next(true)}>Skip word →</button></div>}
+    {!result && <div className="tone-footer"><button type="button" className="tone-skip" disabled={busy} aria-label="Skip word" onClick={() => next(true)}>Skip →</button></div>}
     {error && <div className="tone-alert" role="alert"><p>{error} Your word is still here; retry saving your answer.</p><button type="button" className="sentence-primary" disabled={busy} onClick={() => submit(selected)}>Retry answer</button></div>}
     {result && <div className={`sentence-feedback tone-feedback ${result.correct ? 'correct' : 'incorrect'}`} role="status">
       <span className="tone-feedback-icon" aria-hidden="true">{result.correct ? '✓' : '✗'}</span>
       <div><h3>{result.correct ? 'Correct!' : 'Keep practicing.'}</h3>
-        <p><span lang="zh-CN">{result.hanzi}</span> {result.pinyin} · Tone {result.correctTones[0]} + Tone {result.correctTones[1]} ({toneNames[result.correctTones[0]]}, then {toneNames[result.correctTones[1]]}).{!result.correct && ` You chose ${spokenTones(result.selectedTones)}.`}</p>
+        <p><span lang="zh-CN">{result.hanzi}</span> {result.pinyin} · Tone {result.correctTones[0]} + Tone {result.correctTones[1]}</p>
         {result.toneChange && result.writtenPinyin && <p className="tone-shift" aria-hidden="true"><span><small>Written</small><s>{result.writtenPinyin}</s></span><b>→</b><span><small>Spoken</small><strong>{result.pinyin}</strong></span></p>}
         {note && <p className="tone-pair-note">{note}</p>}
-        <p className="tone-next">{index === pairs.length - 1 ? 'Opening your results…' : 'Next word in a moment…'}</p></div>
+</div>
       <AdvanceBar duration={advanceDelay} />
     </div>}
   </section>;
