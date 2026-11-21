@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { bookLessons } from './conversationLessons';
 import useChineseVoice from './useChineseVoice';
 import { pickConversationVoice } from './conversationVoice';
+import { checkNaturalVoice, naturalVoiceUrl } from './naturalVoice';
 import './ConversationPractice.css';
 
 const lessons = [
@@ -121,8 +122,11 @@ function ConversationPracticePage({ onBack }) {
   const speech = useChineseVoice();
   const voice = pickConversationVoice(speech.voices);
   const isGoogle = Boolean(voice && /google/i.test(voice.name));
+  const [natural, setNatural] = useState(null); // null while checking, then true when the Azure voice is available
+  const audioRef = useRef(null);
 
-  useEffect(() => () => { runRef.current++; window.speechSynthesis?.cancel(); }, []);
+  useEffect(() => { let live = true; checkNaturalVoice().then(ok => { if (live) setNatural(ok); }); return () => { live = false; }; }, []);
+  useEffect(() => () => { runRef.current++; window.speechSynthesis?.cancel(); audioRef.current?.pause(); }, []);
   useEffect(() => {
     fetch(`${window.API_BASE_URL}/api/settings`).then(response => response.json()).then(settings => {
       if (!Array.isArray(settings.conversationLessons)) return;
@@ -144,12 +148,26 @@ function ConversationPracticePage({ onBack }) {
 
   useEffect(() => { headingRef.current?.focus({ preventScroll: true }); }, [step, lesson.id]);
 
-  const stop = () => { runRef.current++; window.speechSynthesis?.cancel(); setPlayingKey(''); };
-  const say = (key, text) => {
+  const stop = () => { runRef.current++; window.speechSynthesis?.cancel(); audioRef.current?.pause(); audioRef.current = null; setPlayingKey(''); };
+  const say = (key, text, speaker = 'A') => {
     stop();
-    if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
     const run = runRef.current;
     recordStudioActivity('conversation', null, text.trim().replace(/\s+/g, ' '));
+    if (natural) {
+      // Natural Azure voice; if the clip can't load, the browser voice reads it instead.
+      const audio = new Audio(naturalVoiceUrl(text, { speaker }));
+      audioRef.current = audio;
+      const finish = () => { if (run === runRef.current) setPlayingKey(''); };
+      audio.onended = finish;
+      audio.onerror = () => { if (run === runRef.current) browserSay(key, text, run); };
+      setPlayingKey(key);
+      audio.play().catch(error => { if (error?.name === 'NotAllowedError') finish(); }); // load failures go through onerror
+      return;
+    }
+    browserSay(key, text, run);
+  };
+  const browserSay = (key, text, run) => {
+    if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) { setPlayingKey(''); return; }
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = voice?.lang || 'zh-CN';
     if (voice) utterance.voice = voice;
@@ -165,7 +183,7 @@ function ConversationPracticePage({ onBack }) {
     setStep(target);
     // Each screen starts at the top of the card, even after tapping a control low on a short screen.
     if (window.scrollY > 0) window.scrollTo({ top: 0, behavior: 'instant' });
-    if (target >= 0 && target < lines.length) say(`line-${target}`, lines[target].chinese); else stop();
+    if (target >= 0 && target < lines.length) say(`line-${target}`, lines[target].chinese, lines[target].speaker); else stop();
   };
   const selectLesson = id => {
     stop(); setStep(-1); setSelectedLessonId(id); window.scrollTo({ top: 0, behavior: 'instant' });
@@ -189,7 +207,7 @@ function ConversationPracticePage({ onBack }) {
     if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) goTo(step + (dx < 0 ? 1 : -1));
   };
 
-  const voiceNote = !speech.loading && (!speech.supported || !voice
+  const voiceNote = natural !== false ? null : !speech.loading && (!speech.supported || !voice
     ? 'No Mandarin voice in this browser. Open in Chrome to hear the Google voice.'
     : isGoogle ? null : `Google voice isn’t available here, so ${voice.name.replace(/\s*\(.*\)\s*$/, '')} is used. Chrome has the Google voice.`);
 
@@ -229,7 +247,7 @@ function ConversationPracticePage({ onBack }) {
             {showPinyin && <p className="cp-pinyin" lang="zh-Latn">{line.pinyin}</p>}
             <p className="cp-chinese" lang="zh-CN">{line.chinese}</p>
             {showEnglish && <p className="cp-english">{line.english}</p>}
-            <button type="button" className={`cp-listen${playingKey === `line-${step}` ? ' is-playing' : ''}`} onClick={() => say(`line-${step}`, line.chinese)} aria-label={`Listen to ${line.pinyin}`}>
+            <button type="button" className={`cp-listen${playingKey === `line-${step}` ? ' is-playing' : ''}`} onClick={() => say(`line-${step}`, line.chinese, line.speaker)} aria-label={`Listen to ${line.pinyin}`}>
               <SpeakerIcon playing={playingKey === `line-${step}`} size={26} /><span>{playingKey === `line-${step}` ? 'Playing…' : 'Listen'}</span>
             </button>
           </div>

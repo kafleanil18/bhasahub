@@ -1,12 +1,13 @@
 import { test, expect } from '@playwright/test';
 
 // Fake speech engine: records what was spoken and with which voice.
-async function prepare(page, voices) {
+async function prepare(page, voices, { natural = false } = {}) {
   await page.addInitScript(list => {
     localStorage.setItem('token', 't'); localStorage.setItem('user', JSON.stringify({ id: 's', name: 'S', role: 'student' }));
     window.__spoken = []; window.__audioPlays = 0;
     const fakeVoices = list.map(([name, lang]) => ({ name, lang, voiceURI: name }));
-    HTMLMediaElement.prototype.play = function () { window.__audioPlays++; return Promise.resolve(); };
+    window.__audioSrcs = [];
+    HTMLMediaElement.prototype.play = function () { window.__audioPlays++; window.__audioSrcs.push(this.src); return Promise.resolve(); };
     window.SpeechSynthesisUtterance = class { constructor(text) { this.text = text; } };
     Object.defineProperty(window, 'speechSynthesis', { value: {
       getVoices: () => fakeVoices, addEventListener() {}, removeEventListener() {}, cancel() {},
@@ -15,6 +16,7 @@ async function prepare(page, voices) {
   }, voices);
   await page.route('**/api/settings', r => r.fulfill({ json: { conversationLessons: [] } }));
   await page.route('**/api/**', r => r.fulfill({ json: {} }));
+  await page.route('**/api/tts/status', r => r.fulfill({ json: { enabled: natural } }));
   await page.route('https://**/*', r => r.abort());
   await page.goto('/practice/conversations');
 }
@@ -44,6 +46,24 @@ test('a lesson plays one line at a time with the Google voice and ends with word
   await page.getByRole('button', { name: 'Next lesson →' }).click();
   await expect(page.getByRole('button', { name: 'Start conversation' })).toBeVisible();
   await expect(page.getByRole('combobox', { name: 'Choose lesson' })).toHaveValue(/./);
+});
+
+test('with the Azure voice set up, lines play natural audio with a voice per speaker', async ({ page }) => {
+  await prepare(page, [['Google 普通话（中国大陆）', 'zh-CN']], { natural: true });
+  // Registered after prepare's catch-all so it wins: clips stay loading, so no fallback.
+  await page.route('**/api/tts?*', () => {});
+  await expect(page.locator('.cp-voice-note')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Start conversation' }).click();
+  await page.getByRole('button', { name: 'Next →' }).click();
+  const srcs = await page.evaluate(() => window.__audioSrcs.map(src => Object.fromEntries(new URL(src).searchParams)));
+  expect(srcs).toEqual([{ text: '你好！', speaker: 'A', speed: 'normal' }, { text: '你好！', speaker: 'B', speed: 'normal' }]);
+  expect(await spoken(page)).toEqual([]);
+});
+
+test('if a natural clip fails to load, the browser voice reads the line instead', async ({ page }) => {
+  await prepare(page, [['Google 普通话（中国大陆）', 'zh-CN']], { natural: true });
+  await page.getByRole('button', { name: 'Start conversation' }).click();
+  await expect.poll(() => spoken(page)).toEqual([{ text: '你好！', voice: 'Google 普通话（中国大陆）' }]);
 });
 
 test('without a Google voice the best Mandarin voice is used and explained', async ({ page }) => {

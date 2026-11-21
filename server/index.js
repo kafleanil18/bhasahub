@@ -73,6 +73,7 @@ app.use('/api/studio-activity', require('./routes/studioActivity'));
 app.use('/api/tone-practice', require('./routes/tonePractice'));
 app.use('/api/hanzi-trace', hanziTraceRoutes);
 app.use('/api/ai', aiToneRoutes);
+app.use('/api/tts', require('./routes/tts'));
 
 
 const TeamMember = require('./models/TeamMember');
