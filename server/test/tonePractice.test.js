@@ -74,6 +74,10 @@ test('tone answers cannot be fabricated through the generic studio endpoint', as
 
 const TonePairAudio = require('../models/TonePairAudio');
 const pairCatalog = require('../data/tonePairs.json');
+const TonePairWord = require('../models/TonePairWord');
+const AuditLog = require('../models/AuditLog');
+const quietAudit = () => mock.method(AuditLog, 'create', async () => ({}));
+const { parseWord, toPair } = require('../utils/tonePairWords');
 const marks = ['āēīōūǖ', 'áéíóúǘ', 'ǎěǐǒǔǚ', 'àèìòùǜ'];
 const markedTone = syllable => marks.findIndex(set => [...set].some(mark => syllable.includes(mark))) + 1;
 const plain = syllable => syllable.replace(/[ǖǘǚǜ]/g, 'ü').normalize('NFD').replace(/ü/g, 'ü').replace(/[̀-ͯ]/g, '');
@@ -100,9 +104,10 @@ test('tone pair catalog is consistent: spoken pinyin, tone changes and toneless 
 });
 
 function pairAudio(rows = []) { mock.method(TonePairAudio, 'find', () => ({ select: () => ({ lean: async () => rows }) })); }
+function customWords(rows = []) { mock.method(TonePairWord, 'find', () => ({ sort: () => ({ lean: async () => rows }) })); }
 
 test('students receive pairs with toneless syllables and recordings, but no answer key', async () => {
-  pairAudio([{ pairId: 'ni-hao', audioUrl: 'https://example.com/nihao.webm' }]);
+  pairAudio([{ pairId: 'ni-hao', audioUrl: 'https://example.com/nihao.webm' }]); customWords();
   const res = response(); await handler('get', '/pairs')({ user: { ...user, role: 'student' } }, res);
   assert.equal(res.body.pairs.length, pairCatalog.pairs.length);
   const nihao = res.body.pairs.find(pair => pair.id === 'ni-hao');
@@ -144,4 +149,57 @@ test('invalid pair answers and unknown words are rejected without saving', async
     assert.equal(res.code, 404);
   }
   assert.equal(saves, 0);
+});
+
+const wordId = '507f1f77bcf86cd799439099';
+const savedWord = { _id: wordId, hanzi: '旅游', syllables: ['lü', 'you'], tones: [3, 2], writtenTones: [3, 2], english: 'travel', rule: null };
+
+test('studio words are validated and normalised before saving', () => {
+  assert.deepEqual(parseWord({ hanzi: ' 旅游 ', syllables: ['LV3', 'yóu'], tones: [3, 2], english: ' travel ' }).word,
+    { hanzi: '旅游', syllables: ['lü', 'you'], tones: [3, 2], writtenTones: [3, 2], english: 'travel', rule: null });
+  for (const body of [
+    { hanzi: '你', syllables: ['ni', 'hao'], tones: [3, 3], english: 'x' },
+    { hanzi: 'ab', syllables: ['ni', 'hao'], tones: [3, 3], english: 'x' },
+    { hanzi: '你好', syllables: ['ni'], tones: [3, 3], english: 'x' },
+    { hanzi: '你好', syllables: ['n1', 'hao'], tones: [3, 3], english: 'x' },
+    { hanzi: '你好', syllables: ['ni', 'hao'], tones: [0, 3], english: 'x' },
+    { hanzi: '你好', syllables: ['ni', 'hao'], tones: [3, 3], english: '' },
+  ]) assert.ok(parseWord(body).error, JSON.stringify(body));
+  assert.deepEqual(toPair({ ...savedWord, syllables: ['ni', 'hao'], tones: [2, 3], writtenTones: [3, 3], rule: 'third' }),
+    { id: `w-${wordId}`, hanzi: '旅游', syllables: ['ni', 'hao'], pinyin: 'ní hǎo', tones: [2, 3], writtenTones: [3, 3], english: 'travel', rule: 'third', writtenPinyin: 'nǐ hǎo', custom: true });
+});
+
+test('super admin can add a word; duplicates of built-in or added words are refused', async () => {
+  quietAudit();
+  mock.method(TonePairWord, 'exists', async () => null);
+  mock.method(TonePairWord, 'create', async doc => ({ ...doc, _id: wordId, toObject() { return { ...doc, _id: wordId }; } }));
+  let res = response();
+  await handler('post', '/pairs')({ user, body: { hanzi: '旅游', syllables: ['lv', 'you'], tones: [3, 2], english: 'travel' } }, res);
+  assert.equal(res.code, 201);
+  assert.equal(res.body.pair.id, `w-${wordId}`); assert.equal(res.body.pair.pinyin, 'lǚ yóu'); assert.equal(res.body.pair.toneRule, false);
+  res = response();
+  await handler('post', '/pairs')({ user, body: { hanzi: '你好', syllables: ['ni', 'hao'], tones: [2, 3], writtenTones: [3, 3], english: 'hello' } }, res);
+  assert.equal(res.code, 409);
+  res = response(); await handler('post', '/pairs')({ user, body: { hanzi: '你' } }, res);
+  assert.equal(res.code, 400);
+});
+
+test('added words appear in practice and are graded like built-in words', async () => {
+  pairAudio([{ pairId: `w-${wordId}`, audioUrl: 'https://example.com/lvyou.webm' }]); customWords([savedWord]);
+  let res = response(); await handler('get', '/pairs')({ user: { ...user, role: 'student' } }, res);
+  assert.deepEqual(res.body.pairs.at(-1), { id: `w-${wordId}`, hanzi: '旅游', syllables: ['lü', 'you'], english: 'travel', audioUrl: 'https://example.com/lvyou.webm', toneRule: false });
+  mock.method(TonePairWord, 'findById', () => ({ lean: async () => savedWord }));
+  mock.method(Activity, 'updateOne', async () => ({}));
+  res = response(); await handler('post', '/pairs/answer')({ user, body: { pairId: `w-${wordId}`, selectedTones: [3, 2] } }, res);
+  assert.equal(res.body.correct, true); assert.equal(res.body.pinyin, 'lǚ yóu');
+});
+
+test('only added words can be deleted, and their recording goes with them', async () => {
+  quietAudit();
+  let res = response(); await handler('delete', '/pairs/:id')({ user, params: { id: 'ni-hao' } }, res);
+  assert.equal(res.code, 400);
+  mock.method(TonePairWord, 'findByIdAndDelete', async id => (assert.equal(id, wordId), savedWord));
+  let removed; mock.method(TonePairAudio, 'deleteOne', async filter => { removed = filter; });
+  res = response(); await handler('delete', '/pairs/:id')({ user, params: { id: `w-${wordId}` } }, res);
+  assert.equal(res.code, 200); assert.deepEqual(removed, { pairId: `w-${wordId}` });
 });

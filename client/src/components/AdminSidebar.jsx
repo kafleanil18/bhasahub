@@ -85,7 +85,7 @@ export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen,
                 <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M3 16c2-6 4-6 6 0M13 9c2 6 4 6 6 0M8 4v3M16 4v3"/>
                 </svg>
-                Tone pair audio
+                Tone pair studio
               </button>}
               </div>
               <div className="admin-sidebar-group">

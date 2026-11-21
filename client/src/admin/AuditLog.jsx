@@ -37,6 +37,7 @@ const RESOURCE_LABELS = {
   'pinyin-table': 'Pinyin table',
   'sentence-audio': 'Sentence audio',
   'tone-pair-audio': 'Tone pair audio',
+  'tone-pair-word': 'Tone pair word',
 };
 
 function AuditLog({ onBack }) {
