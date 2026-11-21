@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import ListeningSession from './ListeningSession';
 import { createListeningQuiz, recordedVocabulary } from './listeningQuiz';
+import './SentencePractice.css';
+import './TonePractice.css';
 import './ListeningPractice.css';
 
 async function readApi(path, signal) {
@@ -13,114 +15,87 @@ async function readApi(path, signal) {
 }
 
 export default function ListeningPractice({ user, onBack, onSignIn }) {
-  const [courses, setCourses] = useState([]);
-  const [lessons, setLessons] = useState([]);
+  const [courses, setCourses] = useState(null);
   const [courseId, setCourseId] = useState('');
-  const [lessonId, setLessonId] = useState('');
-  const [words, setWords] = useState([]);
-  const [questions, setQuestions] = useState(null);
-  const [loading, setLoading] = useState('');
+  const [lessons, setLessons] = useState(null);
+  const [session, setSession] = useState(null);
+  const [sessionKey, setSessionKey] = useState(0);
+  const [opening, setOpening] = useState('');
+  const [notReady, setNotReady] = useState({});
   const [error, setError] = useState('');
-  const [courseRetry, setCourseRetry] = useState(0);
-  const [lessonRetry, setLessonRetry] = useState(0);
-  const [wordRetry, setWordRetry] = useState(0);
-  const [failedResource, setFailedResource] = useState('courses');
+  const [retry, setRetry] = useState(0);
 
   useEffect(() => {
     if (!user) return;
     const controller = new AbortController();
-    setLoading('courses');
-    setFailedResource('courses');
-    setError('');
+    setError(''); setCourses(null);
     const admin = ['admin', 'superadmin'].includes(user.role);
     Promise.all([readApi('/courses', controller.signal), admin ? Promise.resolve(null) : readApi('/subscriptions/my', controller.signal)])
       .then(([all, subscriptions]) => {
         const ids = new Set((subscriptions || []).map(sub => sub.course?._id));
-        setCourses(all.filter(course => course.language === 'chinese' && (admin || ids.has(course._id))));
+        const list = all.filter(course => course.language === 'chinese' && (admin || ids.has(course._id)));
+        setCourses(list);
+        if (list.length === 1) setCourseId(list[0]._id);
       })
-      .catch(err => { if (!controller.signal.aborted) setError(err.message); })
-      .finally(() => { if (!controller.signal.aborted) setLoading(''); });
+      .catch(err => { if (!controller.signal.aborted) setError(err.message); });
     return () => controller.abort();
-  }, [user, courseRetry]);
+  }, [user, retry]);
 
   useEffect(() => {
     if (!courseId) return;
     const controller = new AbortController();
-    setLoading('lessons');
-    setFailedResource('lessons');
-    setError('');
+    setError(''); setLessons(null); setNotReady({});
     readApi(`/lessons/course/${courseId}`, controller.signal)
       .then(data => setLessons(data.filter(lesson => (lesson.category || 'vocabulary') === 'vocabulary')))
-      .catch(err => { if (!controller.signal.aborted) setError(err.message); })
-      .finally(() => { if (!controller.signal.aborted) setLoading(''); });
+      .catch(err => { if (!controller.signal.aborted) setError(err.message); });
     return () => controller.abort();
-  }, [courseId, lessonRetry]);
+  }, [courseId, retry]);
 
-  useEffect(() => {
-    if (!lessonId) return;
-    const controller = new AbortController();
-    setLoading('words');
-    setFailedResource('words');
-    setError('');
-    readApi(`/lessons/${lessonId}/vocabulary`, controller.signal)
-      .then(data => setWords(recordedVocabulary(data)))
-      .catch(err => { if (!controller.signal.aborted) setError(err.message); })
-      .finally(() => { if (!controller.signal.aborted) setLoading(''); });
-    return () => controller.abort();
-  }, [lessonId, wordRetry]);
-
-  const eligible = new Set(words.map(word => word.meaning.trim().toLocaleLowerCase().replace(/\s+/g, ' '))).size >= 2;
-  const selectedCourse = courses.find(course => course._id === courseId);
-  const lessonTitle = lessons.find(lesson => lesson._id === lessonId)?.title;
-
-  function reset() {
-    setQuestions(null);
-    setLessonId('');
-    setWords([]);
+  async function openLesson(lesson) {
+    if (opening) return;
+    setOpening(lesson._id); setError('');
+    try {
+      const words = recordedVocabulary(await readApi(`/lessons/${lesson._id}/vocabulary`));
+      const questions = createListeningQuiz(words);
+      if (!questions.length) { setNotReady(previous => ({ ...previous, [lesson._id]: true })); return; }
+      setSession({ lesson, words, questions }); setSessionKey(value => value + 1);
+    } catch (err) { setError(err.message); }
+    finally { setOpening(''); }
   }
+  const restart = () => { setSession(previous => ({ ...previous, questions: createListeningQuiz(previous.words) })); setSessionKey(value => value + 1); };
+  const course = courses?.find(item => item._id === courseId);
+  const loading = user && !error && (!courses || (courseId && !lessons));
 
-  return (
-    <section className="listening-page" aria-labelledby="listening-title">
-      <button className="listening-back" onClick={onBack}>← Back to home</button>
-      <div className="listening-heading">
-        <span className="listening-kicker"><span aria-hidden="true">♫</span> PRACTICE STUDIO <span aria-hidden="true">·</span> LISTENING</span>
-        <h1 id="listening-title">Listening practice</h1>
-        <p>{questions ? lessonTitle : 'Train your ear, one word at a time. Practice with recordings from your lessons.'}</p>
-      </div>
-      {!user ? <div className="listening-card"><h2>Your lessons, ready to listen.</h2><p>Sign in to practice vocabulary from the courses you have access to.</p><button className="listening-primary" onClick={onSignIn}>Sign in to practice</button></div>
-        : questions ? <><ListeningSession initialQuestions={questions} onRestart={reset} /><button className="listening-back" onClick={reset}>← End practice and choose a lesson</button></>
-          : <div className="listening-setup" aria-busy={Boolean(loading)}>
-            <div className="listening-setup-top"><div><span className="listening-setup-icon" aria-hidden="true">♫</span><div><h2>Set up a listening session</h2><p>Choose a course and lesson. We’ll build a short quiz from its recorded words.</p></div></div><span className="listening-session-tag">ABOUT 10 WORDS</span></div>
-            <div className="listening-steps" aria-label="Session setup steps">
-              <div className={courseId ? 'is-complete' : 'is-current'}><span>{courseId ? '✓' : '1'}</span><div><strong>Choose a course</strong><small>{selectedCourse?.title || 'Pick your course'}</small></div></div>
-              <i aria-hidden="true" />
-              <div className={lessonId ? 'is-complete' : courseId ? 'is-current' : ''}><span>{lessonId ? '✓' : '2'}</span><div><strong>Choose a lesson</strong><small>{lessonTitle || 'Select a lesson'}</small></div></div>
-              <i aria-hidden="true" />
-              <div className={eligible ? 'is-current' : ''}><span>3</span><div><strong>Listen & learn</strong><small>{eligible ? 'Your session is ready' : 'Start your practice'}</small></div></div>
-            </div>
-            <div className="listening-card listening-picker">
-              <div className="listening-fields">
-                <label htmlFor="listening-course"><span>01</span> Course</label>
-                <select id="listening-course" value={courseId} disabled={loading === 'courses'} onChange={event => { setLoading(''); setCourseId(event.target.value); setLessonId(''); setLessons([]); setWords([]); setError(''); }}>
-                  <option value="">Choose a course you have access to</option>
-                  {courses.map(course => <option key={course._id} value={course._id}>{course.title}</option>)}
-                </select>
-                <label htmlFor="listening-lesson"><span>02</span> Lesson</label>
-                <select id="listening-lesson" value={lessonId} disabled={!courseId || Boolean(loading)} onChange={event => { setLessonId(event.target.value); setWords([]); setError(''); }}>
-                  <option value="">{courseId ? 'Choose a lesson to practice' : 'Choose a course first'}</option>
-                  {lessons.map(lesson => <option key={lesson._id} value={lesson._id}>{lesson.title}</option>)}
-                </select>
-              </div>
-              {loading && <p role="status" className="listening-inline-status"><span className="listening-loader" aria-hidden="true" />Loading {loading === 'words' ? 'recorded vocabulary' : loading}…</p>}
-              {error && <div className="listening-error" role="alert"><p>{error}</p><button className="listening-secondary" onClick={() => { if (failedResource === 'courses') setCourseRetry(value => value + 1); else if (failedResource === 'lessons') setLessonRetry(value => value + 1); else setWordRetry(value => value + 1); }}>Try again</button></div>}
-              {!loading && !error && !courses.length && <p role="status" className="listening-inline-status">No Chinese courses are available for your account yet. Ask your teacher for course access.</p>}
-              {!loading && !error && courseId && !lessons.length && <p role="status" className="listening-inline-status">This course has no published vocabulary lessons yet.</p>}
-            </div>
-            <div className={`listening-ready${lessonId && !loading ? ' has-lesson' : ''}`} aria-live="polite">
-              <div className="listening-ready-copy"><span className="listening-ready-icon" aria-hidden="true">{eligible ? '✓' : '♫'}</span><div><strong>{lessonId ? (eligible ? 'Ready when you are' : 'Lesson needs more recordings') : 'Your practice session'}</strong><p>{lessonId ? (eligible ? `${words.length} recorded words · Replay audio as often as you like.` : 'Choose another lesson with at least two recorded words.') : 'Select a course and lesson to see your session details.'}</p></div></div>
-              <button className="listening-primary" disabled={!lessonId || !eligible || Boolean(loading) || Boolean(error)} onClick={() => setQuestions(createListeningQuiz(words))}><span aria-hidden="true">▶</span> Start listening</button>
-            </div>
-          </div>}
-    </section>
-  );
+  return <main className="sentence-page tone-practice listening-page" aria-labelledby="listening-title">
+    <div className="listening-header">
+      <button className="sentence-back" onClick={session ? () => setSession(null) : onBack}>{session ? '← All lessons' : '← Back to home'}</button>
+      {session && <span className="listening-chip">{session.lesson.title}</span>}
+    </div>
+    <h1 id="listening-title" className={session ? 'tone-visually-hidden' : 'listening-title'}>Listening practice</h1>
+    {!user ? <div className="listening-empty"><h2>Your lessons, ready to listen</h2><p>Sign in to practise vocabulary from the courses you have access to.</p><button className="sentence-primary" onClick={onSignIn}>Sign in to practise</button></div>
+      : session ? <ListeningSession key={sessionKey} initialQuestions={session.questions} onRestart={restart} onExit={() => setSession(null)} />
+      : <>
+        <p className="listening-intro">Train your ear, one word at a time. Practise with recordings from your lessons.</p>
+        {error && <div className="tone-alert listening-alert" role="alert"><p>{error}</p><button className="sentence-secondary" onClick={() => setRetry(value => value + 1)}>Try again</button></div>}
+        {courses && !courses.length && <div className="listening-empty"><p>No Chinese courses are available for your account yet. Ask your teacher for course access.</p></div>}
+        {courses && courses.length > 1 && <>
+          <h2 className="listening-section-title">Choose a course</h2>
+          <div className="listening-courses">{courses.map(item => <button type="button" key={item._id} className={`listening-course${item._id === courseId ? ' is-selected' : ''}`} aria-pressed={item._id === courseId} onClick={() => setCourseId(item._id)}>
+            <span className="listening-course-art" aria-hidden="true"><b>听</b></span>
+            <strong>{item.title}</strong>
+          </button>)}</div>
+        </>}
+        {courseId && <>
+          <h2 className="listening-section-title">{courses?.length > 1 ? 'Choose a lesson' : `${course?.title || 'Your course'} · choose a lesson`}</h2>
+          {lessons && !lessons.length && <div className="listening-empty"><p>This course has no published vocabulary lessons yet.</p></div>}
+          {lessons?.length > 0 && <div className="listening-lessons">{lessons.map((lesson, index) => <button type="button" key={lesson._id} className={`listening-lesson${notReady[lesson._id] ? ' is-unavailable' : ''}`} disabled={Boolean(opening) || notReady[lesson._id]} aria-busy={opening === lesson._id} onClick={() => openLesson(lesson)} aria-describedby={`listening-lesson-${lesson._id}`}>
+            <span className="listening-lesson-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+            <strong>{lesson.title}</strong>
+            <small id={`listening-lesson-${lesson._id}`}>{opening === lesson._id ? 'Loading recordings…' : notReady[lesson._id] ? 'Needs at least two recorded words' : 'About 10 words · Start →'}</small>
+          </button>)}</div>}
+        </>}
+        {!courseId && courses?.length > 1 && <p className="listening-hint">Pick a course to see its lessons.</p>}
+        {loading && <p className="listening-hint" role="status">Loading…</p>}
+      </>}
+  </main>;
 }
