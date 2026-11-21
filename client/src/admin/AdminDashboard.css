@@ -8,9 +8,6 @@
 .control-center .control-page-heading h1 { margin: 0; color: var(--ink); font-family: var(--font-body, sans-serif) !important; font-size: 28px; font-weight: 650; line-height: 1.25; letter-spacing: -.025em; }
 .control-page-heading-copy p { margin: 8px 0 0; color: var(--mist); font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
 .control-page-heading-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; }
-.control-center .control-heading-course { font-size: 14px; }
-.control-heading-course { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 44px; padding: 8px 16px; border: 1px solid var(--control-accent); border-radius: 6px; background: var(--control-accent); color: white; font-weight: 600; }
-.control-heading-course:hover { background: color-mix(in srgb, var(--control-accent) 90%, black); }
 .control-welcome { display: block; padding: 36px; border: 1px solid var(--control-hero-line); border-radius: 16px; background: var(--control-paper); color: var(--control-hero-ink); margin-bottom: 24px; }
 .control-welcome { position: relative; overflow: hidden; isolation: isolate; }
 .control-welcome::after { content: ''; position: absolute; z-index: 0; top: 0; right: 0; bottom: 0; width: min(52%, 600px); background: url('/images/login-great-wall-ink.png') right bottom / contain no-repeat; opacity: .3; pointer-events: none; }
@@ -24,8 +21,6 @@
 .control-primary { display: inline-flex; align-items: center; justify-content: space-between; min-height: 50px; gap: 20px; padding: 8px 8px 8px 16px; border: 1px solid var(--control-accent); border-radius: 8px; background: var(--control-accent); color: white; font-size: clamp(12px, calc(12px + 0.4vw), 14px) !important; font-weight: 650 !important; }
 .control-primary > span { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid #ffffff25; border-radius: 5px; background: #ffffff18; font-size: 20px; transition: transform .2s cubic-bezier(.2,.8,.2,1); }
 .control-primary:hover > span { transform: translate(1px,-1px); }
-.control-text-link { display: inline-flex; align-items: center; gap: 16px; color: inherit; text-decoration: none; min-height: 44px; font-size: clamp(12px, calc(12px + 0.4vw), 14px); font-weight: 600; border-bottom: 1px solid var(--control-hero-line); }
-.control-text-link:hover { color: var(--seal); }
 .control-welcome-copy > .control-welcome-note { font-size: clamp(12px, calc(10px + 0.4vw), 14px) !important; margin-top: 12px; }
 .control-hero-card { min-width: 0; padding: 6px; background: color-mix(in srgb,var(--control-paper) 90%,white); border: 1px solid var(--control-hero-line); border-radius: 10px; box-shadow: 0 16px 40px -28px #37271b30; }
 .control-hero-image { position: relative; aspect-ratio: 2; overflow: hidden; border-radius: 5px 5px 0 0; background: #f5eddc; }

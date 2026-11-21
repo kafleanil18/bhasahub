@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import ControlIcon from './ControlIcon';
 import ControlCharts from './ControlCharts';
+import { formatRs } from '../pricing/plans';
 import './AdminDashboard.css';
 
 const API = window.API_BASE_URL + '/api';
@@ -57,6 +58,7 @@ export default function AdminDashboard({ onNavigate, user }) {
   }, [attempt]);
 
   const queue = [
+    { target: 'subscriptions', label: 'Plan requests', count: stats?.plans?.pending || 0, description: 'Waiting for payment' },
     { target: 'subscriptions', label: 'Course access requests', count: stats?.accessRequests?.pending || 0, description: 'Awaiting review' },
     { target: 'testimonials', label: 'Student testimonials', count: stats?.testimonials?.pending || 0, description: 'Awaiting review' },
     { target: 'inbox', label: 'Feedback inbox', count: stats?.feedback?.unread || 0, description: 'Unread messages' },
@@ -71,6 +73,12 @@ export default function AdminDashboard({ onNavigate, user }) {
     ['Active subscriptions', stats.subscriptions.active, `${stats.subscriptions.expiringSoon} expire within 7 days`],
     ['Lessons completed', stats.lessons.completed, 'Across all students'],
   ] : [];
+  const income = stats?.plans ? [
+    ['Income, last 30 days', formatRs(stats.plans.incomeLast30Days), `${stats.plans.startedLast30Days} ${stats.plans.startedLast30Days === 1 ? 'plan' : 'plans'} started`],
+    ['Total income', formatRs(stats.plans.incomeTotal), 'From approved plans'],
+    ['Active plan members', stats.plans.active.toLocaleString(), 'Every course unlocked'],
+    ['Plans awaiting payment', stats.plans.pending.toLocaleString(), 'Start them once paid'],
+  ] : [];
 
   return <section className="container control-center" aria-labelledby="control-title">
     <div className="control-page-heading">
@@ -83,19 +91,10 @@ export default function AdminDashboard({ onNavigate, user }) {
         </div>
       </div>
       <div className="control-page-heading-actions">
-        <button className="control-heading-course" onClick={() => onNavigate('courses')}>Manage courses <span aria-hidden="true">↗</span></button>
         <button className="control-refresh" disabled={loading} onClick={() => setAttempt(value => value + 1)}><ControlIcon name="refresh"/>{loading ? 'Refreshing…' : 'Refresh data'}</button>
-        <a className="control-text-link" href="#control-admin-tools">All tools <span aria-hidden="true">↓</span></a>
       </div>
     </div>
     {error && <div className="control-error" role="alert"><strong>{stats ? 'Showing the last available snapshot.' : 'Dashboard data is unavailable.'}</strong><p>{error}</p><button disabled={loading} onClick={() => setAttempt(value => value + 1)}>Try again</button></div>}
-    <section aria-labelledby="control-overview-title" aria-busy={loading}>
-      <div className="control-section-heading"><h2 id="control-overview-title">Platform overview</h2><span>All-time totals</span></div>
-      {!stats && loading ? <div className="control-metrics control-loading" role="status" aria-label="Loading platform overview">{Array.from({ length: 4 }, (_, i) => <div className="control-metric" key={i} aria-hidden="true"><span/><span/><span/></div>)}</div> : stats ? <>
-        <dl className="control-metrics">{metrics.map(([label, value, note]) => <div className="control-metric" key={label}><dt>{label}</dt><dd className="control-metric-value">{value.toLocaleString()}</dd><dd className="control-metric-note">{note}</dd></div>)}</dl>
-        <div className="control-details-strip">{[['Total enrollments', stats.enrollments.total, 'subscriptions'], ['Bundled HSK 1 mock tests', stats.tests.bundled, 'tests'], ['Admins & staff', stats.admins.total, 'admins']].map(([label, value, target]) => <button key={label} onClick={() => onNavigate(target)}><span>{label}</span><strong>{value} <span aria-hidden="true">→</span></strong></button>)}</div>
-      </> : <p className="control-unavailable">Refresh to load your platform overview. You can still open the management tools below.</p>}
-    </section>
     <section className="control-review-hub" id="control-review-queue" aria-labelledby="control-queue-title" aria-busy={loading}>
       <div className="control-review-heading">
         <h2 id="control-queue-title">Needs attention</h2>
@@ -114,6 +113,17 @@ export default function AdminDashboard({ onNavigate, user }) {
         </li>)}
       </ul>
     </section>
+    <section aria-labelledby="control-overview-title" aria-busy={loading}>
+      <div className="control-section-heading"><h2 id="control-overview-title">Platform overview</h2><span>All-time totals</span></div>
+      {!stats && loading ? <div className="control-metrics control-loading" role="status" aria-label="Loading platform overview">{Array.from({ length: 4 }, (_, i) => <div className="control-metric" key={i} aria-hidden="true"><span/><span/><span/></div>)}</div> : stats ? <>
+        <dl className="control-metrics">{metrics.map(([label, value, note]) => <div className="control-metric" key={label}><dt>{label}</dt><dd className="control-metric-value">{value.toLocaleString()}</dd><dd className="control-metric-note">{note}</dd></div>)}</dl>
+        <div className="control-details-strip">{[['Total enrollments', stats.enrollments.total, 'subscriptions'], ['Bundled HSK 1 mock tests', stats.tests.bundled, 'tests'], ['Admins & staff', stats.admins.total, 'admins']].map(([label, value, target]) => <button key={label} onClick={() => onNavigate(target)}><span>{label}</span><strong>{value} <span aria-hidden="true">→</span></strong></button>)}</div>
+      </> : <p className="control-unavailable">Refresh to load your platform overview. You can still open the management tools below.</p>}
+    </section>
+    {income.length > 0 && <section aria-labelledby="control-income-title">
+      <div className="control-section-heading"><h2 id="control-income-title">Plans & income</h2><span>Counted when you start a paid plan</span></div>
+      <dl className="control-metrics">{income.map(([label, value, note]) => <div className="control-metric" key={label}><dt>{label}</dt><dd className="control-metric-value">{value}</dd><dd className="control-metric-note">{note}</dd></div>)}</dl>
+    </section>}
     <section className="control-quick-access" id="control-admin-tools" aria-labelledby="control-tools-title">
       <div className="control-section-heading"><h2 id="control-tools-title">Quick access</h2></div>
       <div className="control-quick-links">

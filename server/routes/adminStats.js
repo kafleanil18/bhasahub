@@ -8,6 +8,8 @@ const Subscription = require('../models/Subscription');
 const Testimonial = require('../models/Testimonial');
 const Test = require('../models/Test');
 const Feedback = require('../models/Feedback');
+const PlanRequest = require('../models/PlanRequest');
+const PlatformPass = require('../models/PlatformPass');
 const bundledHskPapers = require('../data/hskPapers');
 const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
 
@@ -39,6 +41,9 @@ router.get('/', requireAuth, requireSuperAdmin, async (req, res) => {
       publishedTests,
       totalTests,
       unreadFeedback,
+      pendingPlanRequests,
+      activePlanMembers,
+      planIncome,
     ] = await Promise.all([
       User.countDocuments({ role: 'student' }),
       User.countDocuments({ role: { $in: ['admin', 'superadmin'] } }),
@@ -68,7 +73,20 @@ router.get('/', requireAuth, requireSuperAdmin, async (req, res) => {
       Test.countDocuments({ published: true }),
       Test.countDocuments(),
       Feedback.countDocuments({ read: false }),
+      PlanRequest.countDocuments({ status: 'pending' }),
+      PlatformPass.countDocuments({ expiresAt: { $gt: now } }),
+      // Plans are approved once payment arrives, so approved prices are the income received.
+      PlanRequest.aggregate([
+        { $match: { status: 'approved' } },
+        { $group: {
+          _id: null,
+          total: { $sum: '$price' },
+          last30Days: { $sum: { $cond: [{ $gte: ['$reviewedAt', thirtyDaysAgo] }, '$price', 0] } },
+          startedLast30Days: { $sum: { $cond: [{ $gte: ['$reviewedAt', thirtyDaysAgo] }, 1, 0] } },
+        } },
+      ]),
     ]);
+    const income = planIncome[0] || { total: 0, last30Days: 0, startedLast30Days: 0 };
 
     res.json({
       students: { total: totalStudents, newLast7Days: newSignups7d, newLast30Days: newSignups30d, signupsByDay },
@@ -85,6 +103,13 @@ router.get('/', requireAuth, requireSuperAdmin, async (req, res) => {
         bundled: Object.keys(bundledHskPapers).length,
       },
       feedback: { unread: unreadFeedback },
+      plans: {
+        pending: pendingPlanRequests,
+        active: activePlanMembers,
+        startedLast30Days: income.startedLast30Days,
+        incomeLast30Days: income.last30Days,
+        incomeTotal: income.total,
+      },
     });
   } catch (err) {
     console.error('Load admin stats error:', err);
