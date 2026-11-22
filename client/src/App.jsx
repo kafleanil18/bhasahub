@@ -15,7 +15,6 @@ import './flag-theme.css';
 import { forgetPushDevice } from './pwa/usePushReminders';
 
 const ChangePassword = lazy(() => import('./auth/ChangePassword'));
-const FeedbackModal = lazy(() => import('./components/FeedbackModal'));
 const TestimonialModal = lazy(() => import('./components/TestimonialModal'));
 
 function readStoredUser() {
@@ -36,7 +35,6 @@ function AppContent() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [levelFilter, setLevelFilter] = useState('all');
   const [showChangePassword, setShowChangePassword] = useState(false);
-  const [showFeedback, setShowFeedback] = useState(false);
   const [showTestimonial, setShowTestimonial] = useState(false);
   const [testimonials, setTestimonials] = useState([]);
   const [unreadFeedbackCount, setUnreadFeedbackCount] = useState(0);
@@ -72,7 +70,6 @@ function AppContent() {
     setMobileMenuOpen(false);
     setShowUserMenu(false);
     setAdminSidebarOpen(false);
-    setShowFeedback(false);
     setShowChangePassword(false);
     setShowTestimonial(false);
     if (!location.hash) window.scrollTo({ top: 0, behavior: 'instant' });
@@ -218,7 +215,7 @@ function AppContent() {
     // see a signed-out user on the previous protected page.
     startTransition(() => {
       setUser(null); setMyAccessDays(null); setAccess({});
-      setShowChangePassword(false); setShowFeedback(false);
+      setShowChangePassword(false);
       navigate('/', { replace: true });
     });
   };
@@ -247,7 +244,7 @@ function AppContent() {
   const hskLevels = ['all', ...new Set(courses.map(getHskLevel))];
   const filteredCourses = levelFilter === 'all' ? courses : courses.filter(course => getHskLevel(course) === levelFilter);
   const home = <main className="home-page">
-    <HomeHero onEnquireLiveClasses={() => setShowFeedback('live-classes')} onContinueLearning={() => navigate('/continue')} onPinyinPractice={() => navigate('/practice/pinyin')} user={user} hasStartedCourse={Object.values(access).some(course => course.completed > 0)} onOpenPractice={openPractice} />
+    <HomeHero onContinueLearning={() => navigate('/continue')} onPinyinPractice={() => navigate('/practice/pinyin')} user={user} hasStartedCourse={Object.values(access).some(course => course.completed > 0)} onOpenPractice={openPractice} />
     <HomeCourses filteredCourses={filteredCourses} hskLevels={hskLevels} levelFilter={levelFilter} onOpenCourse={openCourse} setLevelFilter={setLevelFilter} />
     <HomeTestimonials openLogin={openLogin} scrollTestimonials={scrollTestimonials} setShowTestimonial={setShowTestimonial} testimonials={testimonials} testimonialsScrollRef={testimonialsScrollRef} user={user} />
     <HomeFooter goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} />
@@ -262,7 +259,6 @@ function AppContent() {
       <div className="ambient-orb orb-1" /><div className="ambient-orb orb-2" /><div className="ambient-orb orb-3" /><div className="ambient-orb orb-4" /><div className="ambient-mesh-grid" />
     </div>
     {showChangePassword && <ChangePassword onClose={() => setShowChangePassword(false)} />}
-    {showFeedback && <Suspense fallback={<div className="container" role="status">Opening enquiry form…</div>}><FeedbackModal user={user} liveClasses onClose={() => setShowFeedback(false)} /></Suspense>}
     {showTestimonial && <TestimonialModal user={user} onClose={() => { setShowTestimonial(false); loadTestimonials(); }} />}
     <SiteHeader adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} hideForAuth={['/sign-in', '/register', '/reset-password'].includes(location.pathname)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={value => { if (!adminArea) navigate('/admin'); setAdminSidebarOpen(value); }} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} onNavigate={navigate} setShowChangePassword={setShowChangePassword} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
     <StudioSaveStatus />

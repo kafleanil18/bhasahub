@@ -1,4 +1,4 @@
-import { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signInPath } from '../navigation/paths';
 import { PLANS, formatRs, monthlyPrice, planLabel, savingPercent } from './plans';
@@ -6,7 +6,8 @@ import { FEATURE_GROUPS } from './features';
 import './PricingPage.css';
 
 const API = `${window.API_BASE_URL}/api/plans`;
-const FeedbackModal = lazy(() => import('../components/FeedbackModal'));
+import ContactLinks from '../components/ContactLinks';
+import { CONTACT_PHONE } from '../components/contactPhone';
 const formatDate = value => new Date(value).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 
 async function call(path = '', options = {}) {
@@ -33,7 +34,6 @@ export default function PricingPage({ user }) {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const noticeRef = useRef(null);
-  const [enquiring, setEnquiring] = useState(false);
 
   const load = useCallback(async () => {
     if (!student) return;
@@ -119,7 +119,7 @@ export default function PricingPage({ user }) {
               <div><h3 id={`features-${group.id}`}>{group.title}</h3><p>{group.summary}</p></div>
             </div>
             <ul>{group.items.map(([title, description, tag]) => <li key={title}><Check/><div><strong>{title}{tag && <span className="pricing-feature-tag">{tag}</span>}</strong><span>{description}</span></div></li>)}</ul>
-            {group.action && <button type="button" className="pricing-feature-action" onClick={() => setEnquiring(true)} aria-haspopup="dialog">{group.action} <span aria-hidden="true">→</span></button>}
+            {group.action && CONTACT_PHONE && <div className="pricing-feature-action"><span>{group.action}</span><ContactLinks/></div>}
           </article>)}
         </div>
       </section>
@@ -133,6 +133,5 @@ export default function PricingPage({ user }) {
         </ol>
       </section>
     </div>
-    {enquiring && <Suspense fallback={<div className="container" role="status">Opening enquiry form…</div>}><FeedbackModal user={user} liveClasses onClose={() => setEnquiring(false)} /></Suspense>}
   </main>;
 }

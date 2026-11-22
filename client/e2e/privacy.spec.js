@@ -84,18 +84,11 @@ test('policy pages fit phones and desktops in light and dark mode', async ({ pag
   }
 });
 
-test('existing live class enquiries keep their original label and message', async ({ page }) => {
+test('live classes link straight to WhatsApp and Viber instead of a form', async ({ page }) => {
   await prepare(page);
-  let submitted;
-  await page.route('**/api/feedback', async route => {
-    submitted = route.request().postDataJSON();
-    await route.fulfill({ status: 201, json: { message: 'Received' } });
-  });
   await page.goto('/');
-  await page.getByRole('button', { name: /Live classes\s*Enquire now/ }).click();
-  const dialog = page.getByRole('dialog', { name: 'Live classes enquiry' });
-  await dialog.getByLabel('Message', { exact: true }).fill('When is the next class?');
-  await dialog.getByRole('button', { name: 'Send enquiry' }).click();
-  await expect(dialog).toContainText('Your live classes enquiry has been sent');
-  expect(submitted.message).toBe('Live classes enquiry\n\nWhen is the next class?');
+  const contact = page.getByRole('group', { name: 'Contact us about live classes' });
+  await expect(contact.getByRole('link', { name: 'Chat with us on WhatsApp' })).toHaveAttribute('href', /^https:\/\/wa\.me\/9779800000000\?text=/);
+  await expect(contact.getByRole('link', { name: 'Chat with us on Viber' })).toHaveAttribute('href', /^viber:\/\/chat\?number=%2B9779800000000/);
+  await expect(page.getByRole('button', { name: /Enquire now/ })).toHaveCount(0);
 });

@@ -129,8 +129,10 @@ test('below the plans, every platform feature is described and live classes can 
   }
   await expect(features).toContainText('Spaced-repetition review');
   await expect(features).toContainText('Daily practice reminder');
-  await features.getByRole('button', { name: /Enquire about live classes/ }).click();
-  await expect(page.getByRole('dialog', { name: 'Live classes enquiry' })).toBeVisible();
+  const live = features.getByRole('article', { name: 'Live classes' });
+  await expect(live.getByRole('link', { name: 'Chat with us on WhatsApp' })).toHaveAttribute('href', /^https:\/\/wa\.me\/9779800000000\?text=/);
+  await expect(live.getByRole('link', { name: 'Chat with us on Viber' })).toHaveAttribute('href', /^viber:\/\/chat\?number=%2B9779800000000/);
+  await expect(live.getByRole('button')).toHaveCount(0);
 });
 
 test('admins see when the plan email failed and can send it again', async ({ page }) => {

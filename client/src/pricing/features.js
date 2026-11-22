@@ -49,8 +49,8 @@ export const FEATURE_GROUPS = [
   {
     id: 'teachers', mark: '师', title: 'Live classes', summary: 'Learn with a teacher as well.',
     items: [
-      ['Live classes with a teacher', 'Send us an enquiry and we’ll tell you about upcoming classes.'],
+      ['Live classes with a teacher', 'Message us on WhatsApp or Viber and we’ll tell you about upcoming classes.'],
     ],
-    action: 'Enquire about live classes',
+    action: 'Message us about live classes',
   },
 ];
