@@ -1,4 +1,4 @@
-.control-center { --control-accent: var(--accent-red); --control-soft: color-mix(in srgb,var(--seal) 5%,var(--card)); --control-success: #28654e; --control-warning: #8b6122; --control-paper: #faf6ec; --control-hero-ink: #2a2320; --control-hero-muted: #70675b; --control-hero-line: #e6dcc6; display: flex; flex-direction: column; gap: 24px; max-width: 1200px; padding-top: 32px; padding-bottom: 56px; color: var(--ink); animation: none; }
+.control-center { --control-accent: var(--accent-red); --control-soft: color-mix(in srgb,var(--seal) 5%,var(--card)); --control-success: #28654e; --control-warning: #8b6122; --control-paper: #faf6ec; --control-hero-ink: #2a2320; --control-hero-muted: #70675b; --control-hero-line: #e6dcc6; --pie-jade: #1f7a45; --pie-gold: #c58019; --pie-seal: #a92316; --pie-other: var(--mist); display: flex; flex-direction: column; gap: 24px; max-width: 1200px; padding-top: 32px; padding-bottom: 56px; color: var(--ink); animation: none; }
 .control-center section { animation: none; }
 .control-center button { font: inherit; cursor: pointer; }
 .control-center :is(button,a):focus-visible { outline: 3px solid var(--seal); outline-offset: 4px; }
@@ -104,9 +104,29 @@
 .control-empty { margin-top: 16px; color: var(--mist); font-size: 13px; line-height: 1.5; }
 .control-empty strong { color: var(--ink); font-size: 14px; font-weight: 500; }
 .control-empty p { margin: 4px 0 0; }
+.control-pie-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
+.control-pie-section { padding: 20px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
+.control-pie-section h3 { margin: 0 0 16px; color: var(--ink); font-family: var(--font-body); font-size: 16px; font-weight: 600; }
+.control-pie-wrap { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.control-stat-row { display: flex; gap: 24px; flex-wrap: wrap; }
+.control-stat { display: flex; flex-direction: column; gap: 4px; }
+.control-stat strong { font-size: 28px; font-weight: 700; line-height: 1.1; color: var(--ink); }
+.control-stat span { font-size: 13px; color: var(--mist); }
+@media (max-width: 900px) { .control-pie-grid { grid-template-columns: 1fr; } }
+.control-pie { position: relative; width: 148px; height: 148px; border-radius: 50%; flex-shrink: 0; }
+.control-pie::before { content: ''; position: absolute; inset: 26px; border-radius: 50%; background: var(--card); }
+.control-pie-center { position: absolute; inset: 26px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.control-pie-center strong { font-size: 22px; font-weight: 700; line-height: 1.1; }
+.control-pie-center span { font-size: 11px; color: var(--mist); }
+.control-pie-legend { list-style: none; display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; min-width: 0; flex: 1; }
+.control-pie-legend li { display: flex; align-items: baseline; gap: 8px; font-size: 13px; color: var(--ink); }
+.control-pie-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.control-pie-legend-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.control-pie-legend-value { margin-left: auto; flex-shrink: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.control-pie-legend-value small { color: var(--mist); font-weight: 400; margin-left: 2px; }
 @media (max-width: 900px) { .control-charts { grid-template-columns: 1fr; } }
 @media (max-width: 520px) { .control-panel { padding: 16px; } }
-:root.dark .control-center { --control-paper: #181818; --control-hero-ink: #f7f0e6; --control-hero-muted: #bdb4a8; --control-hero-line: #403a34; --control-success: #8fd5b3; --control-warning: #f5ce69; }
+:root.dark .control-center { --control-paper: #181818; --control-hero-ink: #f7f0e6; --control-hero-muted: #bdb4a8; --control-hero-line: #403a34; --control-success: #8fd5b3; --control-warning: #f5ce69; --pie-jade: #3aa374; --pie-gold: #b8893a; --pie-seal: #cb4330; }
 @media (max-width: 1200px) { .control-welcome { gap: 24px; padding: 24px; }.control-welcome h1 { font-size: 44px; } }
 @media (max-width: 767px) {
  .control-center { padding: 24px 16px 48px; }.control-welcome { grid-template-columns: 1fr; gap: 28px; padding: 24px 20px; }.control-welcome h1 { font-size: 44px; }.control-welcome-copy > p:not(.control-eyebrow) { max-width: 480px; }.control-hero-card { max-width: 480px; width: 100%; justify-self: center; }.control-hero-image { aspect-ratio: 2.4; }

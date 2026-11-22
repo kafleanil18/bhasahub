@@ -1,12 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
+import { mediaUrl } from '../utils/mediaUrl';
 
 function FeedbackModal({ user, onClose, liveClasses = false, privacyRequest = false }) {
   const [name, setName] = useState(user ? user.name : '');
   const [email, setEmail] = useState(user ? user.email : '');
+  const [whatsapp, setWhatsapp] = useState('');
   const [message, setMessage] = useState('');
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
   const [sending, setSending] = useState(false);
+  const [teachers, setTeachers] = useState([]);
+
+  useEffect(() => {
+    if (!liveClasses) return;
+    fetch(window.API_BASE_URL + '/api/teachers')
+      .then(res => res.json())
+      .then(data => setTeachers(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, [liveClasses]);
 
   const cardRef = useRef(null);
   useEffect(() => {
@@ -28,14 +39,20 @@ function FeedbackModal({ user, onClose, liveClasses = false, privacyRequest = fa
 
   const handleSubmit = async () => {
     setError('');
-    if (privacyRequest && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return setError('Please enter an email address so we can reply.');
-    if (!message.trim()) return setError('Please write a message');
+    if (liveClasses) {
+      if (!name.trim()) return setError('Please enter your name.');
+      if (!whatsapp.trim()) return setError('Please enter your WhatsApp number.');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return setError('Please enter a valid email address.');
+    } else {
+      if (privacyRequest && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return setError('Please enter an email address so we can reply.');
+      if (!message.trim()) return setError('Please write a message');
+    }
     setSending(true);
     try {
       const res = await fetch(window.API_BASE_URL + '/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, message: privacyRequest ? `Privacy request\n\n${message}` : liveClasses ? `Live classes enquiry\n\n${message}` : message }),
+        body: JSON.stringify({ name, email, message: privacyRequest ? `Privacy request\n\n${message}` : liveClasses ? `Live classes enquiry\n\nWhatsApp: ${whatsapp}` : message }),
       });
       if (res.ok) {
         setSent(true);
@@ -236,6 +253,71 @@ function FeedbackModal({ user, onClose, liveClasses = false, privacyRequest = fa
           color: var(--seal);
         }
 
+        .fb-teachers {
+          margin-top: 1.75rem;
+          padding-top: 1.5rem;
+          border-top: 1px solid var(--line);
+        }
+
+        .fb-teachers-title {
+          font-size: 0.875rem;
+          font-weight: 700;
+          color: var(--ink);
+          margin: 0 0 0.9rem 0;
+        }
+
+        .fb-teachers-grid {
+          display: flex;
+          flex-direction: column;
+          gap: 0.9rem;
+        }
+
+        .fb-teacher-card {
+          display: flex;
+          gap: 0.75rem;
+          align-items: flex-start;
+        }
+
+        .fb-teacher-avatar {
+          flex-shrink: 0;
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          overflow: hidden;
+          background: var(--jade);
+          color: #fff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+        }
+
+        .fb-teacher-avatar img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .fb-teacher-name {
+          margin: 0;
+          font-size: 0.9rem;
+          font-weight: 700;
+          color: var(--ink);
+        }
+
+        .fb-teacher-role {
+          margin: 0 0 0.2rem 0;
+          font-size: 0.8rem;
+          color: var(--mist);
+        }
+
+        .fb-teacher-bio {
+          margin: 0;
+          font-size: 0.825rem;
+          color: var(--ink);
+          line-height: 1.5;
+        }
+
         @keyframes fbFadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes fbSlideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
@@ -280,6 +362,21 @@ function FeedbackModal({ user, onClose, liveClasses = false, privacyRequest = fa
               />
             </div>
 
+            {liveClasses && (
+              <div className="fb-group">
+                <label className="fb-label" htmlFor="feedback-whatsapp">WhatsApp Number</label>
+                <input
+                  id="feedback-whatsapp"
+                  className="fb-input"
+                  type="tel"
+                  autoComplete="tel"
+                  value={whatsapp}
+                  onChange={(e) => setWhatsapp(e.target.value)}
+                  placeholder="+977 98XXXXXXXX"
+                />
+              </div>
+            )}
+
             <div className="fb-group">
               <label className="fb-label" htmlFor="feedback-email">Email Address</label>
               <input
@@ -293,21 +390,43 @@ function FeedbackModal({ user, onClose, liveClasses = false, privacyRequest = fa
               />
             </div>
 
-            <div className="fb-group">
-              <label className="fb-label" htmlFor="feedback-message">Message</label>
-              <textarea
-                id="feedback-message"
-                className="fb-textarea"
-                rows="4"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder={liveClasses ? "I’d like to know more about live classes…" : "Write your message here..."}
-              />
-            </div>
+            {!liveClasses && (
+              <div className="fb-group">
+                <label className="fb-label" htmlFor="feedback-message">Message</label>
+                <textarea
+                  id="feedback-message"
+                  className="fb-textarea"
+                  rows="4"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Write your message here..."
+                />
+              </div>
+            )}
 
             <button className="fb-btn-submit" onClick={handleSubmit} disabled={sending}>
               {sending ? 'Sending...' : privacyRequest ? 'Send privacy request' : liveClasses ? 'Send enquiry' : 'Send message'}
             </button>
+
+            {liveClasses && teachers.length > 0 && (
+              <div className="fb-teachers">
+                <p className="fb-teachers-title">Meet our Chinese teachers</p>
+                <div className="fb-teachers-grid">
+                  {teachers.map(teacher => (
+                    <div className="fb-teacher-card" key={teacher._id}>
+                      <div className="fb-teacher-avatar">
+                        {teacher.photo ? <img src={mediaUrl(teacher.photo)} alt={teacher.name} /> : <span>{(teacher.name || 'T').charAt(0)}</span>}
+                      </div>
+                      <div>
+                        <p className="fb-teacher-name">{teacher.name}</p>
+                        <p className="fb-teacher-role">{teacher.title}</p>
+                        <p className="fb-teacher-bio">{teacher.bio}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </>
         )}
       </div>

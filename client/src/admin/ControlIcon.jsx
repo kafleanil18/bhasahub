@@ -9,6 +9,7 @@ const paths = {
   inbox: <><path d="M4 4h16v16H4zM4 13h5l2 3h2l2-3h5"/></>,
   tests: <><rect x="4" y="3" width="16" height="19" rx="2"/><path d="M9 3V1h6v2M8 9h8m-8 5h8m-8 4h4"/></>,
   audit: <><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></>,
+  teachers: <><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></>,
   refresh: <><path d="M20 7v5h-5M4 17v-5h5M6 6a8 8 0 0 1 14 6M4 12a8 8 0 0 0 14 6"/></>,
 };
 export default function ControlIcon({ name }) { return <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name] || paths.lessons}</svg>; }

@@ -33,6 +33,7 @@ router.get('/', requireAuth, requireSuperAdmin, async (req, res) => {
       totalCourses,
       totalEnrollments,
       topCourses,
+      enrollmentsByHskLevel,
       completedLessons,
       pendingAccessRequests,
       activeSubscriptions,
@@ -65,6 +66,25 @@ router.get('/', requireAuth, requireSuperAdmin, async (req, res) => {
         { $unwind: '$course' },
         { $project: { _id: 0, courseId: '$course._id', title: '$course.title', count: 1 } },
       ]),
+      Enrollment.aggregate([
+        { $lookup: { from: 'courses', localField: 'course', foreignField: '_id', as: 'course' } },
+        { $unwind: '$course' },
+        { $project: {
+          level: {
+            $switch: {
+              branches: [
+                { case: { $regexMatch: { input: '$course.title', regex: /hsk\s*1/i } }, then: 'HSK 1' },
+                { case: { $regexMatch: { input: '$course.title', regex: /hsk\s*2/i } }, then: 'HSK 2' },
+                { case: { $regexMatch: { input: '$course.title', regex: /hsk\s*3/i } }, then: 'HSK 3' },
+              ],
+              default: null,
+            },
+          },
+        } },
+        { $match: { level: { $ne: null } } },
+        { $group: { _id: '$level', count: { $sum: 1 } } },
+        { $project: { _id: 0, level: '$_id', count: 1 } },
+      ]),
       Progress.countDocuments({ completed: true }),
       AccessRequest.countDocuments({ status: 'pending' }),
       Subscription.countDocuments({ expiresAt: { $gt: now } }),
@@ -92,7 +112,7 @@ router.get('/', requireAuth, requireSuperAdmin, async (req, res) => {
       students: { total: totalStudents, newLast7Days: newSignups7d, newLast30Days: newSignups30d, signupsByDay },
       admins: { total: totalAdmins },
       courses: { published: publishedCourses, total: totalCourses },
-      enrollments: { total: totalEnrollments, topCourses },
+      enrollments: { total: totalEnrollments, topCourses, byHskLevel: enrollmentsByHskLevel },
       lessons: { completed: completedLessons },
       accessRequests: { pending: pendingAccessRequests },
       subscriptions: { active: activeSubscriptions, expiringSoon: expiringSoonSubscriptions },

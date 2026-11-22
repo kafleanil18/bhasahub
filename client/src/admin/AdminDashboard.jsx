@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import ControlIcon from './ControlIcon';
 import ControlCharts from './ControlCharts';
+import ControlEnrollmentPie from './ControlEnrollmentPie';
+import ControlPie from './ControlPie';
 import { formatRs } from '../pricing/plans';
 import './AdminDashboard.css';
 
@@ -9,6 +11,7 @@ const shortcuts = [
   ['courses', 'courses', 'Courses'],
   ['tests', 'tests', 'Tests'],
   ['subscriptions', 'students', 'Students & access'],
+  ['teachers', 'teachers', 'Teachers'],
 ];
 
 export default function AdminDashboard({ onNavigate, user }) {
@@ -118,6 +121,39 @@ export default function AdminDashboard({ onNavigate, user }) {
       {!stats && loading ? <div className="control-metrics control-loading" role="status" aria-label="Loading platform overview">{Array.from({ length: 4 }, (_, i) => <div className="control-metric" key={i} aria-hidden="true"><span/><span/><span/></div>)}</div> : stats ? <>
         <dl className="control-metrics">{metrics.map(([label, value, note]) => <div className="control-metric" key={label}><dt>{label}</dt><dd className="control-metric-value">{value.toLocaleString()}</dd><dd className="control-metric-note">{note}</dd></div>)}</dl>
         <div className="control-details-strip">{[['Total enrollments', stats.enrollments.total, 'subscriptions'], ['Bundled HSK 1 mock tests', stats.tests.bundled, 'tests'], ['Admins & staff', stats.admins.total, 'admins']].map(([label, value, target]) => <button key={label} onClick={() => onNavigate(target)}><span>{label}</span><strong>{value} <span aria-hidden="true">→</span></strong></button>)}</div>
+        <div className="control-pie-grid">
+          <div className="control-pie-section">
+            <h3>Enrollment share by HSK level</h3>
+            <ControlEnrollmentPie enrollments={stats.enrollments} />
+          </div>
+          <div className="control-pie-section">
+            <h3>User roles</h3>
+            <ControlPie
+              slices={[
+                { label: 'Students', count: stats.students.total, color: 'var(--pie-jade)' },
+                { label: 'Admins & staff', count: stats.admins.total, color: 'var(--pie-gold)' },
+              ]}
+              centerValue={stats.students.total + stats.admins.total}
+              centerLabel="users"
+              emptyTitle="No users yet"
+              emptyBody="The role breakdown will appear here once accounts exist."
+            />
+          </div>
+          <div className="control-pie-section">
+            <h3>Subscriptions status</h3>
+            <div className="control-stat-row">
+              <div className="control-stat"><strong>{(stats.subscriptions.active - stats.subscriptions.expiringSoon).toLocaleString()}</strong><span>Active (30+ days)</span></div>
+              <div className="control-stat"><strong>{stats.subscriptions.expiringSoon.toLocaleString()}</strong><span>Expiring soon</span></div>
+            </div>
+          </div>
+          <div className="control-pie-section">
+            <h3>Courses published vs draft</h3>
+            <div className="control-stat-row">
+              <div className="control-stat"><strong>{stats.courses.published.toLocaleString()}</strong><span>Published</span></div>
+              <div className="control-stat"><strong>{(stats.courses.total - stats.courses.published).toLocaleString()}</strong><span>Draft</span></div>
+            </div>
+          </div>
+        </div>
       </> : <p className="control-unavailable">Refresh to load your platform overview. You can still open the management tools below.</p>}
     </section>
     {income.length > 0 && <section aria-labelledby="control-income-title">

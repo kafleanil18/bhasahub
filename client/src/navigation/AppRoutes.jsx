@@ -36,6 +36,7 @@ const TonePairAudioManager = lazy(() => import('../admin/TonePairAudioManager'))
 const ConversationManager = lazy(() => import('../admin/ConversationManager'));
 const EmailSettings = lazy(() => import('../admin/EmailSettings'));
 const PracticeReminders = lazy(() => import('../admin/PracticeReminders'));
+const TeacherManager = lazy(() => import('../admin/TeacherManager'));
 const ReminderUnsubscribe = lazy(() => import('../ReminderUnsubscribe'));
 const PricingPage = lazy(() => import('../pricing/PricingPage'));
 const PrivacyPolicy = lazy(() => import('../privacy/PrivacyPages').then(module => ({ default: module.PrivacyPolicy })));
@@ -158,6 +159,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
           <Route path="users" element={<UserManager onBack={onHome} />} />
           <Route path="conversations" element={<ConversationManager onBack={onHome} />} />
           <Route path="testimonials" element={<TestimonialManager onBack={onHome} />} />
+          <Route path="teachers" element={<TeacherManager onBack={onHome} />} />
           <Route path="sentence-audio" element={<SentenceAudioManager onBack={onHome} />} />
           <Route path="tone-pair-audio" element={<TonePairAudioManager onBack={onHome} />} />
           <Route path="characters" element={<HanziTracePage user={user} token={localStorage.getItem('token')} onBack={onHome} />} />

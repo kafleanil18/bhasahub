@@ -51,6 +51,7 @@ app.use('/api/tests', testRoutes);
 app.use('/api/hsk1', require('./routes/hsk1'));
 app.use('/api/testimonials', testimonialRoutes);
 app.use('/api/team', teamRoutes);
+app.use('/api/teachers', require('./routes/teachers'));
 app.use('/api/access-requests', accessRequestRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/plans', require('./routes/plans'));
@@ -77,6 +78,30 @@ app.use('/api/tts', require('./routes/tts'));
 
 
 const TeamMember = require('./models/TeamMember');
+const Teacher = require('./models/Teacher');
+
+const seedTeachers = async () => {
+  try {
+    const count = await Teacher.countDocuments();
+    if (count === 0) {
+      await Teacher.insertMany([
+        {
+          name: 'Li Wei',
+          title: 'Chinese Teacher',
+          bio: 'Li Wei has taught Mandarin for over eight years, specializing in HSK exam preparation and conversational fluency for beginners.',
+        },
+        {
+          name: 'Zhang Mei',
+          title: 'Chinese Teacher',
+          bio: 'Zhang Mei focuses on pronunciation and tones, helping students build confidence speaking Mandarin from their very first lesson.',
+        },
+      ]);
+      console.log('🌱 Seeded default teachers');
+    }
+  } catch (err) {
+    console.error('Error seeding teachers:', err);
+  }
+};
 
 const seedTeam = async () => {
   try {
@@ -133,7 +158,7 @@ async function start() {
     }),
     initialize: async () => {
       console.log('✅ MongoDB connected');
-      await Promise.all([seedTeam(), ensureHanziTraceSeeded(), require('./models/PracticeReminder').init(), require('./models/EmailApiSettings').init()]);
+      await Promise.all([seedTeam(), seedTeachers(), ensureHanziTraceSeeded(), require('./models/PracticeReminder').init(), require('./models/EmailApiSettings').init()]);
     },
     listen: () => new Promise((resolve, reject) => {
       const server = app.listen(port);
