@@ -86,6 +86,16 @@ Each picture is redrawn as a new illustration in the shared style. The original 
 6. Look at every result before saving it. Check the action, the count of people or objects, the panel order and letters, and that there are no stray marks. Regenerate any picture that's wrong.
 7. Save each picture as `client/public/hsk1/hxxxxx/<name>.jpg`, using the names in step 3's table.
 
+**Use small image files.** Compress every picture to a low file size: a paper's pictures should total about 1 MB. Raw AI images are often 2–3 MB each.
+
+| Picture | Size | Target |
+|---|---|---|
+| Single question picture | 960 × 720 (4:3) | under 60 KB |
+| A/B/C strip | 1500 × 640 | under 100 KB |
+| A–F sheet | 1200 × 1600 (portrait) | under 150 KB |
+
+Use WebP at quality about 80 for uploads through Test Studio. For bundled files, use JPG, since the tests check bundled pictures for the JPEG signature. H11112's 15 pictures went from 37 MB to 780 KB this way. Test Studio shows the same targets under each upload field and warns about any picture over 300 KB.
+
 ## 7. Tests
 
 Add a block to `server/test/hsk1.test.js` modelled on the H11112 one:
