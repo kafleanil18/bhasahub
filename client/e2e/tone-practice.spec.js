@@ -32,7 +32,7 @@ async function prepare(page, { empty = false, broken = false, failSave = false, 
     if (path === '/analytics/me') data = { scoreTrend: [], weakestWords: [], totalAttempts: 0, completedLessons: 0, hasStudioActivity: saved.size > 0 };
     if (path === '/studio-activity/me') {
       const rows = [...saved.values()];
-      data = { studios: [{ studio: 'tones', activities: rows.length, graded: rows.length, correct: rows.filter(x => x.correct).length, accuracy: rows.length ? Math.round(rows.filter(x => x.correct).length / rows.length * 100) : null }], tonePerformance: [1, 2, 3, 4].map(tone => {
+      data = { studios: [{ studio: 'tones', activities: rows.length, total: questions.length, graded: rows.length, correct: rows.filter(x => x.correct).length, accuracy: rows.length ? Math.round(rows.filter(x => x.correct).length / rows.length * 100) : null }], tonePerformance: [1, 2, 3, 4].map(tone => {
         const items = rows.filter(x => x.correctTone === tone), correct = items.filter(x => x.correct).length;
         return { tone, attempted: items.length, correct, accuracy: items.length ? Math.round(correct / items.length * 100) : null };
       }), hsk: [], otherTests: [] };
@@ -70,8 +70,9 @@ test('audio unlocks four choices, a full round shows correct/wrong results and p
   await expect(page.getByRole('table')).toContainText('Review');
   await page.getByRole('link', { name: 'View My Progress' }).click();
   const card = page.locator('article').filter({ has: page.getByRole('link', { name: 'Tone listening', exact: true }) });
-  await expect(card).toContainText('1 of 2 answers correct'); await expect(card).toContainText('50%');
-  await expect(card.locator('.studio-tone-breakdown')).toContainText('Tone 4'); expect(context.saved.size).toBe(2);
+  await expect(card.getByRole('img', { name: 'Tone listening: 2 of 2 questions attempted, 100%' })).toBeVisible();
+  await expect(card).not.toContainText('answers correct'); await expect(card.locator('.studio-tone-breakdown')).toHaveCount(0);
+  expect(context.saved.size).toBe(2);
 });
 
 test('repeats preserve first-answer counts and tone reset requires confirmation', async ({ page }) => {
@@ -83,10 +84,10 @@ test('repeats preserve first-answer counts and tone reset requires confirmation'
   expect(saved.size).toBe(2); expect(saved.get(questions[0]._id).correct).toBe(false);
   await page.goto('/progress');
   const card = page.locator('article').filter({ has: page.getByRole('link', { name: 'Tone listening', exact: true }) });
-  await expect(card).toContainText('1 of 2 answers correct');
+  await expect(card.getByRole('img', { name: 'Tone listening: 2 of 2 questions attempted, 100%' })).toBeVisible();
   page.once('dialog', d => d.accept()); await card.getByRole('button', { name: 'Reset Tone listening count' }).click();
   await expect(card.getByRole('button', { name: 'Reset Tone listening count' })).toBeDisabled();
-  await expect(card.locator('.studio-tone-breakdown')).not.toContainText('100%'); expect(saved.size).toBe(0);
+  await expect(card.getByRole('img', { name: 'Tone listening: 0 of 2 questions attempted, 0%' })).toBeVisible(); expect(saved.size).toBe(0);
 });
 
 test('save failure preserves the question and choice for a successful retry', async ({ page }) => {

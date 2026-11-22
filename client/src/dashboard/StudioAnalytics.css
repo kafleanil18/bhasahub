@@ -35,3 +35,21 @@
 .studio-tone-breakdown > div { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; margin-bottom: 12px; }
 .studio-tone-breakdown small { grid-column: 1 / -1; color: var(--mist); }
 .studio-tone-breakdown p { font-size: .8125rem; color: var(--mist); }
+
+/* Attempted vs. total questions, coloured with each studio's accent. */
+.studio-donut { display: flex; align-items: center; gap: 16px; margin: 0 0 12px; }
+.studio-donut svg { flex: 0 0 auto; width: 104px; height: 104px; }
+.studio-donut circle { fill: none; stroke-width: 12; }
+.studio-donut-track { stroke: var(--line); }
+.studio-donut-value { stroke: var(--studio-accent, var(--jade)); stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dasharray .4s ease; }
+.studio-donut text { text-anchor: middle; fill: currentColor; }
+.studio-donut-percent { font-size: 19px; font-weight: 700; }
+.studio-donut-caption { font-size: 9px; fill: var(--mist) !important; }
+.studio-donut figcaption { display: grid; gap: 6px; font-size: .875rem; }
+.studio-donut figcaption span { display: flex; align-items: center; gap: 8px; }
+.studio-donut figcaption strong { margin-left: auto; padding-left: 8px; }
+.studio-donut-key { width: 10px; height: 10px; border-radius: 50%; background: var(--line); }
+.studio-donut-key.is-done { background: var(--studio-accent, var(--jade)); }
+.studio-donut-total { color: var(--mist); font-size: .8125rem; }
+.studio-donut-empty { color: var(--mist); }
+@media (prefers-reduced-motion: reduce) { .studio-donut-value { transition: none; } }

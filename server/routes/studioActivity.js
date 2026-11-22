@@ -7,12 +7,49 @@ const HskAttempt = require('../models/HskAttempt');
 const Attempt = require('../models/Attempt');
 const PracticePaper = require('../models/PracticePaper');
 const tonePairs = require('../data/tonePairs.json').pairs;
+const sentenceCatalog = require('../data/hsk1Sentences.json');
+const PinyinTable = require('../models/PinyinTable');
+const PinyinRecording = require('../models/PinyinRecording');
+const TonePairWord = require('../models/TonePairWord');
+const HanziTraceCharacter = require('../models/HanziTraceCharacter');
+const SentenceAudio = require('../models/SentenceAudio');
+const Course = require('../models/Course');
+const Lesson = require('../models/Lesson');
+const Vocabulary = require('../models/Vocabulary');
+const { canAccessCourse } = require('../middleware/courseAccess');
 const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
 // Words whose spoken tones differ from the dictionary tones (third-tone, 不 and 一 changes).
 const toneChangePairs = new Set(tonePairs.filter(pair => pair.writtenTones.some((tone, index) => tone !== pair.tones[index])).map(pair => `pair:${pair.id}`));
 const summary = rows => ({ attempted: rows.length, correct: rows.filter(row => row.correct).length, accuracy: rows.length ? Math.round(rows.filter(row => row.correct).length / rows.length * 100) : null });
 const limiter = rateLimit({ windowMs: 60000, max: 180, standardHeaders: true, legacyHeaders: false });
+const sentenceIds = new Set(sentenceCatalog.sentences.map(sentence => sentence.id));
+
+// How many distinct questions each database-backed studio offers this user, counted the
+// same way POST / and the tone routes key their answers. Measures, numbers and
+// conversation ship with the client, which counts those itself.
+async function studioTotals(user) {
+  const [table, recordings, customPairs, characters, sentenceAudio, courses] = await Promise.all([
+    PinyinTable.findOne().select('syllables.syllable').lean(),
+    PinyinRecording.countDocuments({ tone: { $in: [1, 2, 3, 4] }, audioUrl: { $regex: '\\S' } }),
+    TonePairWord.countDocuments(),
+    HanziTraceCharacter.distinct('character'),
+    SentenceAudio.find({ audioUrl: { $regex: '\\S' } }).select('sentenceId').lean(),
+    Course.find({ language: 'chinese' }).select('_id').lean(),
+  ]);
+  const allowed = [];
+  for (const course of courses) if (await canAccessCourse(user, course._id)) allowed.push(course._id);
+  const lessons = allowed.length ? await Lesson.find({ course: { $in: allowed }, published: true, category: { $in: ['vocabulary', null, ''] } }).distinct('_id') : [];
+  const listening = lessons.length ? await Vocabulary.countDocuments({ lesson: { $in: lessons }, word: { $regex: '\\S' }, meaning: { $regex: '\\S' } }) : 0;
+  return {
+    pinyin: new Set((table?.syllables || []).map(row => row.syllable?.toLowerCase()).filter(Boolean)).size,
+    tones: recordings + tonePairs.length + customPairs,
+    trace: characters.filter(character => /^\p{Script=Han}$/u.test(character)).length,
+    listening,
+    sentences: sentenceIds.size,
+    dictation: new Set(sentenceAudio.map(row => row.sentenceId).filter(id => sentenceIds.has(id))).size,
+  };
+}
 
 router.post('/', requireAuth, limiter, async (req, res) => {
   const { studio, eventId, correct, itemKey } = req.body;
@@ -51,7 +88,7 @@ router.delete('/:studio', requireAuth, limiter, async (req, res) => {
 router.get('/me', requireAuth, async (req, res) => {
   try {
     const user = new mongoose.Types.ObjectId(req.user.id);
-    const [rows, papers, legacyTests, toneRows, pairRows] = await Promise.all([
+    const [rows, papers, legacyTests, toneRows, pairRows, totals] = await Promise.all([
       Activity.aggregate([
         // Older events without a question identity cannot be counted uniquely.
         { $match: { user, itemKey: { $type: 'string' } } },
@@ -73,11 +110,12 @@ router.get('/me', requireAuth, async (req, res) => {
       ]),
       // Answers are stored once per word (unique event per item), so each row is the first checked answer.
       Activity.find({ user, studio: 'tones', itemKey: { $regex: '^pair:' }, correct: { $type: 'bool' } }).select('itemKey correct').lean(),
+      studioTotals(req.user),
     ]);
     const customPapers = await PracticePaper.find({ _id: { $in: papers.map(row => row._id) } }).select('_id content.title').lean();
     const studios = Activity.studios.map(studio => {
       const row = rows.find(item => item._id === studio);
-      return { studio, activities: row?.activities || 0, graded: row?.graded || 0, correct: row?.correct || 0, accuracy: row?.graded ? Math.round(row.correct / row.graded * 100) : null, lastPracticed: row?.lastPracticed || null };
+      return { studio, activities: row?.activities || 0, total: totals[studio] ?? null, graded: row?.graded || 0, correct: row?.correct || 0, accuracy: row?.graded ? Math.round(row.correct / row.graded * 100) : null, lastPracticed: row?.lastPracticed || null };
     });
     const tonePerformance = [1, 2, 3, 4].map(tone => {
       const row = toneRows.find(item => item._id === tone);

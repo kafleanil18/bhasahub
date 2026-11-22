@@ -1,14 +1,47 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { practicePaths, testPath } from '../navigation/paths';
+import { MEASURE_QUESTIONS } from '../practice/measureQuiz';
+import { NUMBER_QUESTIONS } from '../practice/numberQuiz';
+import { bookLessons } from '../practice/conversationLessons';
 import './StudioAnalytics.css';
 
 const studios = {
-  pinyin: ['Pinyin & tones', 'Pinyin syllables practiced'], tones: ['Tone listening', 'Unique recordings & words answered'], trace: ['Trace characters', 'Characters practiced'],
-  listening: ['Listening practice', 'Unique questions answered'], sentences: ['Sentence builder', 'Unique questions answered'],
-  measures: ['Measure words', 'Unique questions answered'], numbers: ['Everyday numbers', 'Unique questions answered'],
-  dictation: ['Listening dictation', 'Unique questions answered'], conversation: ['Conversation', 'Unique phrases practiced'],
+  pinyin: 'Pinyin & tones', tones: 'Tone listening', trace: 'Trace characters', listening: 'Listening practice', sentences: 'Sentence builder',
+  measures: 'Measure words', numbers: 'Everyday numbers', dictation: 'Listening dictation', conversation: 'Conversation',
 };
+// These studios ship their questions with the app, so the server can't count them.
+// Conversation keys match ConversationPractice: every line and word you can play.
+const phrase = text => text.trim().replace(/\s+/g, ' ');
+const clientTotals = {
+  measures: MEASURE_QUESTIONS.length,
+  numbers: NUMBER_QUESTIONS.length,
+  conversation: new Set(bookLessons.flatMap(lesson => [
+    ...lesson.exchanges.flatMap(exchange => exchange.turns.map(turn => phrase(turn.chinese))),
+    ...lesson.words.map(word => phrase(word.chinese)),
+  ])).size,
+};
+const RADIUS = 42, CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+
+function ProgressDonut({ attempted, total, title }) {
+  if (!total) return <p className="studio-donut-empty">No questions available yet.</p>;
+  // Answers to questions that were later removed can push the count past the total.
+  const done = Math.min(attempted, total);
+  const percent = Math.round(done / total * 100);
+  return <figure className="studio-donut">
+    <svg viewBox="0 0 100 100" role="img" aria-label={`${title}: ${done} of ${total} questions attempted, ${percent}%`}>
+      <circle className="studio-donut-track" cx="50" cy="50" r={RADIUS} />
+      {done > 0 && <circle className="studio-donut-value" cx="50" cy="50" r={RADIUS} strokeDasharray={`${done / total * CIRCUMFERENCE} ${CIRCUMFERENCE}`} />}
+      <text x="50" y="49" className="studio-donut-percent">{percent}%</text>
+      <text x="50" y="63" className="studio-donut-caption">attempted</text>
+    </svg>
+    <figcaption>
+      <span><i className="studio-donut-key is-done" aria-hidden="true" />Attempted <strong>{done}</strong></span>
+      <span><i className="studio-donut-key" aria-hidden="true" />Not yet <strong>{total - done}</strong></span>
+      <span className="studio-donut-total">{total} questions in total</span>
+    </figcaption>
+  </figure>;
+}
 const date = value => value ? new Date(value).toLocaleDateString() : 'Not yet';
 
 export default function StudioAnalytics({ refreshKey }) {
@@ -42,7 +75,7 @@ export default function StudioAnalytics({ refreshKey }) {
         body: JSON.stringify({ confirmed: true }), signal: AbortSignal.timeout(15000),
       });
       if (!response.ok) throw new Error('Reset failed');
-      setState(previous => ({ ...previous, data: { ...previous.data, studios: previous.data.studios.map(row => row.studio === studio ? { ...row, activities: 0, graded: 0, correct: 0, accuracy: null, lastPracticed: null } : row), ...(studio === 'tones' ? { tonePerformance: [], tonePairPerformance: null } : {}) } }));
+      setState(previous => ({ ...previous, data: { ...previous.data, studios: previous.data.studios.map(row => row.studio === studio ? { ...row, activities: 0, graded: 0, correct: 0, accuracy: null, lastPracticed: null } : row) } }));
       setNotice(`${title} count reset. New practice will count again.`);
     } catch { setResetError(`Could not confirm the reset for ${title}. Refresh My Progress to check the current count before trying again.`); }
     finally { setResetting(''); }
@@ -53,17 +86,13 @@ export default function StudioAnalytics({ refreshKey }) {
     {state.loading ? <p role="status">Loading studio activity and test completions…</p> : state.error ? <div role="alert"><p>Studio analytics couldn’t load. Your saved work hasn’t changed.</p><button className="btn-primary" onClick={() => setAttempt(value => value + 1)}>Retry studio analytics</button></div> : <>
       {notice && <p role="status">{notice}</p>}
       {resetError && <p role="alert">{resetError}</p>}
-      <div className="studio-analytics-grid">{Object.entries(studios).map(([id, [title, unit]]) => {
+      <div className="studio-analytics-grid">{Object.entries(studios).map(([id, title]) => {
         const row = data.studios.find(item => item.studio === id);
         return <article className={`analytics-course-progress-card studio-skill-card studio-skill-${id}`} key={id}>
           <h3><Link to={practicePaths[id]}>{title}</Link></h3>
-          <dl><div><dt>{unit}</dt><dd>{row?.activities || 0}</dd></div><div><dt>Answer accuracy</dt><dd>{row?.accuracy == null ? '—' : `${row.accuracy}%`}</dd></div><div><dt>Last practiced</dt><dd>{date(row?.lastPracticed)}</dd></div></dl>
-          {row?.graded > 0 && <p>{row.correct} of {row.graded} answers correct</p>}
-          {id === 'tones' && <div className="studio-tone-breakdown" role="group" aria-label="Tone-by-tone accuracy">{[1, 2, 3, 4].map(tone => {
-            const value = data.tonePerformance?.find(item => item.tone === tone);
-            return <div key={tone}><span>Tone {tone}</span><strong>{value?.attempted ? `${value.accuracy}%` : '—'}</strong><small>{value?.correct || 0} of {value?.attempted || 0} correct</small></div>;
-          })}<p>First checked answers per recording. Reset to start a new cycle.</p></div>}
-          {id === 'tones' && data.tonePairPerformance?.attempted > 0 && <div className="studio-tone-breakdown studio-tone-pairs" role="group" aria-label="Tone pair accuracy">{[['Tone pairs', data.tonePairPerformance], ['Tone changes', data.tonePairPerformance.toneChanges]].map(([label, value]) => <div key={label}><span>{label}</span><strong>{value?.attempted ? `${value.accuracy}%` : '—'}</strong><small>{value?.correct || 0} of {value?.attempted || 0} correct</small></div>)}<p>Two-syllable words. Tone changes cover two 3rd tones, 不 and 一.</p></div>}
+          <ProgressDonut attempted={row?.activities || 0} total={row?.total ?? clientTotals[id] ?? 0} title={title} />
+          <dl>{id !== 'tones' && <div><dt>Answer accuracy</dt><dd>{row?.accuracy == null ? '—' : `${row.accuracy}%`}</dd></div>}<div><dt>Last practiced</dt><dd>{date(row?.lastPracticed)}</dd></div></dl>
+          {id !== 'tones' && row?.graded > 0 && <p>{row.correct} of {row.graded} answers correct</p>}
           <button type="button" className="studio-reset-button" disabled={!!resetting || !row?.activities} onClick={() => resetCount(id, title)} aria-label={`Reset ${title} count`}>{resetting === id ? 'Resetting…' : 'Reset count'}</button>
         </article>;
       })}</div>

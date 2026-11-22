@@ -36,7 +36,7 @@ async function prepare(page, { failSave = false, pairList = pairs } = {}) {
     if (path === '/studio-activity/me') {
       const rows = [...saved.values()], changes = rows.filter(row => row.toneChange);
       const summary = items => ({ attempted: items.length, correct: items.filter(x => x.correct).length, accuracy: items.length ? Math.round(items.filter(x => x.correct).length / items.length * 100) : null });
-      data = { studios: [{ studio: 'tones', activities: rows.length, graded: rows.length, correct: rows.filter(x => x.correct).length, accuracy: summary(rows).accuracy }], tonePerformance: [], tonePairPerformance: { ...summary(rows), toneChanges: summary(changes) }, hsk: [], otherTests: [] };
+      data = { studios: [{ studio: 'tones', activities: rows.length, total: pairs.length, graded: rows.length, correct: rows.filter(x => x.correct).length, accuracy: summary(rows).accuracy }], tonePerformance: [], tonePairPerformance: { ...summary(rows), toneChanges: summary(changes) }, hsk: [], otherTests: [] };
     }
     await r.fulfill({ json: data });
   });
@@ -47,7 +47,7 @@ const choose = async (page, syllable, tone) => {
   await expect(option).toBeEnabled({ timeout: 15000 }); await option.check({ force: true });
 };
 
-test('both syllables are answered, tone changes are explained, and progress shows pair accuracy', async ({ page }) => {
+test('both syllables are answered, tone changes are explained, and progress shows attempted words', async ({ page }) => {
   const context = await prepare(page);
   await page.goto('/practice/tones');
   await page.getByRole('button', { name: 'Tone pairs', exact: true }).click();
@@ -71,9 +71,9 @@ test('both syllables are answered, tone changes are explained, and progress show
   await expect(page.getByRole('table')).toContainText('tone change');
   expect(context.saved.size).toBe(2);
   await page.getByRole('link', { name: 'View My Progress' }).click();
-  const pairsBreakdown = page.locator('.studio-tone-pairs');
-  await expect(pairsBreakdown).toContainText('Tone pairs'); await expect(pairsBreakdown).toContainText('50%');
-  await expect(pairsBreakdown).toContainText('0 of 1 correct');
+  const card = page.locator('article').filter({ has: page.getByRole('link', { name: 'Tone listening', exact: true }) });
+  await expect(card.getByRole('img', { name: `Tone listening: 2 of ${pairs.length} questions attempted, ${Math.round(2 / pairs.length * 100)}%` })).toBeVisible();
+  await expect(card.locator('.studio-tone-pairs')).toHaveCount(0);
 });
 
 test('tone-change focus only uses rule words and save failures can be retried', async ({ page }) => {

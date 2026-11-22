@@ -5,6 +5,16 @@ const Activity = require('../models/StudioActivity');
 const HskAttempt = require('../models/HskAttempt');
 const Attempt = require('../models/Attempt');
 const PracticePaper = require('../models/PracticePaper');
+const PinyinTable = require('../models/PinyinTable');
+const PinyinRecording = require('../models/PinyinRecording');
+const TonePairWord = require('../models/TonePairWord');
+const HanziTraceCharacter = require('../models/HanziTraceCharacter');
+const SentenceAudio = require('../models/SentenceAudio');
+const Course = require('../models/Course');
+const Lesson = require('../models/Lesson');
+const Vocabulary = require('../models/Vocabulary');
+const sentenceCatalog = require('../data/hsk1Sentences.json');
+const builtInPairs = require('../data/tonePairs.json').pairs;
 const router = require('../routes/studioActivity');
 const handler = (method, path) => router.stack.find(layer => layer.route?.path === path && layer.route.methods[method]).route.stack.at(-1).handle;
 const user = { id: '507f1f77bcf86cd799439011' };
@@ -64,6 +74,20 @@ function summaries(rows = [], hsk = [], pairRows = []) {
     const chain = { select() { return chain; }, populate() { return chain; }, sort() { return chain; }, lean: async () => [] }; return chain;
   });
   mock.method(PracticePaper, 'find', () => ({ select: () => ({ lean: async () => [] }) }));
+  questionPools();
+}
+
+// Question pools behind each studio's total; no courses unless a test opts in.
+function questionPools({ courses = [] } = {}) {
+  const lean = value => ({ select: () => ({ lean: async () => value }) });
+  mock.method(PinyinTable, 'findOne', () => lean({ syllables: [{ syllable: 'ma' }, { syllable: 'MA' }, { syllable: 'ba' }] }));
+  mock.method(PinyinRecording, 'countDocuments', async () => 5);
+  mock.method(TonePairWord, 'countDocuments', async () => 1);
+  mock.method(HanziTraceCharacter, 'distinct', async () => ['中', '国', 'stroke']);
+  mock.method(SentenceAudio, 'find', () => lean([{ sentenceId: sentenceCatalog.sentences[0].id }, { sentenceId: 'removed-sentence' }]));
+  mock.method(Course, 'find', () => lean(courses));
+  mock.method(Lesson, 'find', filter => ({ distinct: async () => { assert.equal(filter.published, true); return ['lesson-1']; } }));
+  mock.method(Vocabulary, 'countDocuments', async () => 7);
 }
 
 test('summary returns all nine studios with accuracy only for graded answers', async () => {
@@ -83,6 +107,23 @@ test('empty history distinguishes no score from zero accuracy', async () => {
   const res = response(); await handler('get', '/me')({ user }, res);
   assert.ok(res.body.studios.every(row => row.activities === 0 && row.accuracy === null));
   assert.deepEqual(res.body.hsk, []);
+});
+
+test('each database-backed studio reports how many questions it offers', async () => {
+  summaries();
+  questionPools({ courses: [{ _id: 'course-1' }] });
+  const res = response(); await handler('get', '/me')({ user: { ...user, role: 'admin' } }, res);
+  const totals = Object.fromEntries(res.body.studios.map(row => [row.studio, row.total]));
+  assert.deepEqual(totals, {
+    pinyin: 2, tones: 5 + builtInPairs.length + 1, trace: 2, listening: 7, sentences: sentenceCatalog.sentences.length, dictation: 1,
+    measures: null, numbers: null, conversation: null,
+  });
+});
+
+test('listening has no questions when no Chinese course exists', async () => {
+  summaries();
+  const res = response(); await handler('get', '/me')({ user }, res);
+  assert.equal(res.body.studios.find(row => row.studio === 'listening').total, 0);
 });
 
 test('database failures report an error instead of empty analytics', async () => {

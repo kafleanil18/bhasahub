@@ -11,7 +11,7 @@ async function prepare(page, { fail = false, populated = true } = {}) {
     if (path === '/analytics/me') data = { streak: 0, totalAttempts: 0, completedLessons: 0, overallAccuracy: 0, scoreTrend: [], accuracyByCourse: [], accuracyByLesson: [], accuracyByTest: [], weakestWords: [] };
     if (path === '/studio-activity/me') {
       if (fail) return route.fulfill({ status: 500, json: { error: 'Unavailable' } });
-      data = { studios: populated ? [{ studio: 'sentences', activities: 4, graded: 4, correct: 3, accuracy: 75, lastPracticed: '2026-11-12' }] : [], hsk: populated ? [{ paper: 'h11226', completed: 2, unfinished: 1, bestPercent: 90, averagePercent: 75, lastCompleted: '2026-11-12' }] : [], otherTests: [] };
+      data = { studios: populated ? [{ studio: 'sentences', activities: 4, total: 10, graded: 4, correct: 3, accuracy: 75, lastPracticed: '2026-11-12' }] : [], hsk: populated ? [{ paper: 'h11226', completed: 2, unfinished: 1, bestPercent: 90, averagePercent: 75, lastCompleted: '2026-11-12' }] : [], otherTests: [] };
     }
     await route.fulfill({ json: data });
   });
@@ -26,6 +26,10 @@ test('My Progress shows nine studios and HSK completion details', async ({ page 
   const sentences = section.locator('article').filter({ has: page.getByRole('link', { name: 'Sentence builder', exact: true }) });
   await expect(sentences).toContainText('3 of 4 answers correct');
   await expect(sentences).toContainText('75%');
+  await expect(sentences.getByRole('img', { name: 'Sentence builder: 4 of 10 questions attempted, 40%' })).toBeVisible();
+  // Measure words ship with the app, so the page counts its questions itself.
+  const measures = section.locator('article').filter({ has: page.getByRole('link', { name: 'Measure words', exact: true }) });
+  await expect(measures.getByRole('img', { name: 'Measure words: 0 of 132 questions attempted, 0%' })).toBeVisible();
   await expect(section).toContainText('2 completed attempts · 1 papers completed · 1 unfinished attempts');
   await expect(section.getByRole('link', { name: /H11226/ })).toHaveAttribute('href', '/tests/h11226');
 });
