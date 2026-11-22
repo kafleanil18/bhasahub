@@ -11,6 +11,7 @@ const AuditLog = require('../models/AuditLog');
 const paper = require('../data/hsk11226');
 const h10901 = require('../data/hsk10901');
 const h11221 = require('../data/hsk11221');
+const h11112 = require('../data/hsk11112');
 const { publicPaper, grade, result } = require('../utils/hsk11226');
 // Independently transcribed from the PDF's printed answer key, A=0 and ✓=0.
 const key = [1,1,1,0,0, 0,2,2,0,1, 3,0,4,1,5, 2,1,1,2,0, 0,1,0,0,1, 2,0,1,5,3, 2,3,1,0,4, 2,4,5,0,1];
@@ -18,6 +19,8 @@ const key = [1,1,1,0,0, 0,2,2,0,1, 3,0,4,1,5, 2,1,1,2,0, 0,1,0,0,1, 2,0,1,5,3, 2
 const h10901Key = [0,1,1,1,0, 0,0,2,0,2, 3,1,0,4,5, 1,1,2,2,1, 0,0,1,1,0, 3,5,2,0,1, 2,3,0,1,4, 5,1,4,0,2];
 // H11221 printed answer sheet, transcribed independently of the paper definition.
 const h11221Key = [1,0,1,1,0, 2,2,0,1,2, 5,1,4,3,0, 2,1,1,0,0, 1,0,0,1,0, 0,3,1,5,2, 3,1,2,4,0, 1,4,5,2,0];
+// H11112答案.pdf, transcribed independently of the paper definition.
+const h11112Key = [1,0,0,1,0, 1,0,2,1,2, 0,1,5,3,4, 2,1,0,0,2, 0,1,1,1,0, 1,3,0,2,5, 4,0,1,2,3, 1,0,5,2,4];
 
 test('H11221 preserves the printed key, all eight examples, recreated pictures, and original audio', () => {
   const questions = h11221.groups.flatMap(group => group.questions);
@@ -140,6 +143,30 @@ async function setup() {
   return { app, base: `http://127.0.0.1:${server.address().port}/api/hsk1/h11226`, headers: headers('507f1f77bcf86cd799439011'), other: headers('507f1f77bcf86cd799439012'), admin: headers('admin'), superadmin: headers('superadmin') };
 }
 
+test('H11112 preserves the printed key and original audio', () => {
+  const questions = h11112.groups.flatMap(group => group.questions);
+  assert.equal(h11112.groups.length, 8);
+  assert.ok(h11112.groups.every(group => group.questions.length === 5 && group.example));
+  assert.deepEqual(questions.map(q => q.number), Array.from({ length: 40 }, (_, i) => i + 1));
+  assert.deepEqual(questions.map(q => q.correctIndex), h11112Key);
+  assert.ok(questions.slice(0, 20).every(q => q.listeningText));
+  assert.ok(questions.slice(20).every(q => q.text && q.pinyin));
+  assert.ok(questions.every(q => q.explanation));
+  const images = [...h11112.groups, ...questions].flatMap(row => [row.image, row.exampleImage]).filter(Boolean);
+  assert.equal(new Set(images).size, 20);
+  assert.ok(images.every(image => image.startsWith('/hsk1/h11112/')));
+  const crypto = require('node:crypto');
+  const audio = fs.readFileSync(path.join(__dirname, '../../client/public', h11112.audioUrl));
+  assert.equal(crypto.createHash('sha256').update(audio).digest('hex'), 'abb0680e126b15589a87e8108bc39f3870ffaf017c4626d73fdc93dc991c0478');
+  assert.equal(h11112.listeningSeconds, 922);
+  assert.equal(h11112.transferSeconds, 180);
+  assert.equal(h11112.readingSeconds, 1020);
+  const tools = require('../utils/hsk11226').createPaperTools(h11112);
+  assert.deepEqual(tools.grade(h11112Key), { listening: 20, reading: 20, score: 40 });
+  const json = JSON.stringify(tools.publicPaper());
+  for (const privateField of ['correctIndex', 'explanation', 'listeningText']) assert.ok(!json.includes(privateField));
+});
+
 test('H11221 starts and grades isolated attempts, preserves results, and supports visibility controls', async () => {
   const { base, headers, other, admin, superadmin } = await setup();
   const url = base.replace('/h11226', '/h11221');
@@ -249,6 +276,20 @@ test('H10901 uses the shared portal with isolated attempts, publication, and imm
   assert.equal((await fetch(attemptUrl, { headers })).status, 200);
 });
 
+test('H11112 starts hidden from students until staff publish it', async () => {
+  const { base, headers, admin } = await setup();
+  const root = base.replace('/h11226', '');
+  const url = `${root}/h11112`;
+  assert.ok(!(await (await fetch(root, { headers })).json()).some(row => row.id === 'h11112'));
+  assert.equal((await fetch(url, { headers })).status, 404);
+  const staffRow = (await (await fetch(root, { headers: admin })).json()).find(row => row.id === 'h11112');
+  assert.deepEqual([staffRow.published, staffRow.custom], [false, false]);
+  assert.equal((await fetch(url, { headers: admin })).status, 200);
+  assert.equal((await fetch(`${url}/publication`, { method: 'PUT', headers: admin, body: JSON.stringify({ published: true }) })).status, 200);
+  assert.equal((await (await fetch(url, { headers })).json()).code, 'H11112');
+  assert.ok((await (await fetch(root, { headers })).json()).some(row => row.id === 'h11112'));
+});
+
 test('admins control publication; hidden papers block students but allow staff preview', async () => {
   const { base, headers, admin, superadmin } = await setup();
   const url = `${base}/publication`;
@@ -308,8 +349,10 @@ test('superadmin creates and edits complete papers; incomplete drafts cannot be 
   assert.equal((await send(`${url}/publication`, admin, { published: true }, 'PUT')).status, 400);
   assert.equal((await send(`${url}/attempts`, superadmin, {})).status, 400);
   assert.equal((await fetch(url, { headers })).status, 404);
-  const bundledCount = Object.keys(require('../data/hskPapers')).length;
-  assert.equal((await (await fetch(root, { headers })).json()).length, bundledCount);
+  const bundled = Object.values(require('../data/hskPapers'));
+  const bundledCount = bundled.length;
+  const studentVisibleCount = bundled.filter(row => row.publishedByDefault !== false).length;
+  assert.equal((await (await fetch(root, { headers })).json()).length, studentVisibleCount);
   assert.equal((await (await fetch(root, { headers: superadmin })).json()).length, bundledCount + 1);
   assert.equal((await send(`${url}/content`, superadmin, content, 'PUT')).status, 200);
   assert.equal((await send(`${url}/publication`, admin, { published: true }, 'PUT')).status, 200);

@@ -15,7 +15,7 @@ router.use((req, res, next) => { res.set('Cache-Control', 'no-store'); next(); }
 router.get('/', async (req, res) => {
   try {
     const records = await PracticePaper.find();
-    const references = Object.entries(builtIns).map(([id, paper]) => metadata(id, paper, records.find(row => row._id === id)?.published ?? true));
+    const references = Object.entries(builtIns).map(([id, paper]) => metadata(id, paper, records.find(row => row._id === id)?.published ?? paper.publishedByDefault !== false));
     const list = [...references, ...records.filter(row => row.content && /^paper-[a-f0-9]{24}$/.test(row._id)).map(row => metadata(row._id, row.content, row.published))];
     res.json(list.filter(row => staff(req) || row.published));
   } catch { res.status(500).json({ error: 'Could not load practice papers.' }); }
@@ -38,7 +38,8 @@ router.param('paperId', async (req, res, next, id) => {
     if (!Object.hasOwn(builtIns, id) && !record?.content) return res.status(404).json({ error: 'Practice paper not found.' });
     req.paperId = id;
     req.paper = Object.hasOwn(builtIns, id) ? builtIns[id] : { ...record.content, id };
-    req.published = record?.published ?? true;
+    // Bundled papers are visible unless a staff member hid them; a paper can opt to start hidden.
+    req.published = record?.published ?? builtIns[id]?.publishedByDefault !== false;
     req.paperTools = createPaperTools(req.paper);
     next();
   } catch { res.status(500).json({ error: 'Could not load the practice paper.' }); }
