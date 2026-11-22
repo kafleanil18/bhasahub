@@ -76,7 +76,7 @@ router.post('/bulk', requireAuth, requireAdmin, async (req, res) => {
 // PUT /api/hanzi-trace/:id — admin: update a character
 router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
   try {
-    const character = await HanziTraceCharacter.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const character = await HanziTraceCharacter.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' });
     if (!character) return res.status(404).json({ error: 'Character not found' });
     logActivity(req, { action: 'update', resourceType: 'hanzi-trace-character', resourceId: character._id, label: character.character });
     res.json(character);

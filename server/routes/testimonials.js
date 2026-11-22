@@ -71,7 +71,7 @@ router.post('/', requireAuth, async (req, res) => {
 // PUT /api/testimonials/:id/approve — admin: approve
 router.put('/:id/approve', requireAuth, requireAdmin, async (req, res) => {
   try {
-    const testimonial = await Testimonial.findByIdAndUpdate(req.params.id, { approved: true }, { new: true });
+    const testimonial = await Testimonial.findByIdAndUpdate(req.params.id, { approved: true }, { returnDocument: 'after' });
     if (testimonial) {
       logActivity(req, { action: 'approve', resourceType: 'testimonial', resourceId: testimonial._id, label: testimonial.name });
     }

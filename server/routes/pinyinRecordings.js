@@ -22,7 +22,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
     const recording = await PinyinRecording.findOneAndUpdate(
       { syllable, tone },
       { syllable, tone, audioUrl },
-      { new: true, upsert: true }
+      { returnDocument: 'after', upsert: true }
     );
     res.status(201).json(recording);
   } catch (err) {

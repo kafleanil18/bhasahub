@@ -31,7 +31,7 @@ router.put('/:key', requireAuth, requireAdmin, async (req, res) => {
     const member = await TeamMember.findOneAndUpdate(
       { key },
       updateFields,
-      { new: true, upsert: true }
+      { returnDocument: 'after', upsert: true }
     );
     logActivity(req, { action: 'update', resourceType: 'team-member', resourceId: member._id, label: member.name });
     res.json(member);

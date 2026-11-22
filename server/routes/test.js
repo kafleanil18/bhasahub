@@ -48,7 +48,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
 // PUT /api/tests/:id — admin: update
 router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
   try {
-    const test = await Test.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const test = await Test.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' });
     if (!test) return res.status(404).json({ error: 'Test not found' });
     res.json(test);
   } catch {

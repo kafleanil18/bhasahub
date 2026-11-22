@@ -57,7 +57,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
 // PUT /api/lessons/:id — admin: update a lesson
 router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
   try {
-    const lesson = await Lesson.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const lesson = await Lesson.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' });
     if (!lesson) return res.status(404).json({ error: 'Lesson not found' });
     logActivity(req, { action: 'update', resourceType: 'lesson', resourceId: lesson._id, label: lesson.title });
     res.json(lesson);
@@ -153,7 +153,7 @@ router.put('/vocabulary/:vocabId', requireAuth, requireAdmin, async (req, res) =
     const item = await Vocabulary.findByIdAndUpdate(
       req.params.vocabId,
       { word, pronunciation, meaning },
-      { new: true }
+      { returnDocument: 'after' }
     );
     if (!item) return res.status(404).json({ error: 'Word not found' });
     res.json(item);
@@ -179,7 +179,7 @@ router.put('/vocabulary/:vocabId/audio', requireAuth, requireAdmin, async (req, 
     const item = await Vocabulary.findByIdAndUpdate(
       req.params.vocabId,
       { audioUrl: req.body.audioUrl },
-      { new: true }
+      { returnDocument: 'after' }
     );
     if (!item) return res.status(404).json({ error: 'Word not found' });
     res.json(item);
@@ -255,7 +255,7 @@ router.put('/:lessonId/dialogue-lines/:lineId', requireAuth, requireAdmin, async
           'dialogueLines.$.meaning': meaning,
         },
       },
-      { new: true }
+      { returnDocument: 'after' }
     );
     if (!lesson) return res.status(404).json({ error: 'Line not found' });
     res.json(sortLines(lesson.toObject()));
@@ -271,7 +271,7 @@ router.put('/:lessonId/dialogue-lines/:lineId/audio', requireAuth, requireAdmin,
     const lesson = await Lesson.findOneAndUpdate(
       { _id: req.params.lessonId, 'dialogueLines._id': req.params.lineId },
       { $set: { 'dialogueLines.$.audioUrl': req.body.audioUrl || '' } },
-      { new: true }
+      { returnDocument: 'after' }
     );
     if (!lesson) return res.status(404).json({ error: 'Line not found' });
     res.json(sortLines(lesson.toObject()));
@@ -287,7 +287,7 @@ router.delete('/:lessonId/dialogue-lines/:lineId', requireAuth, requireAdmin, as
     const lesson = await Lesson.findByIdAndUpdate(
       req.params.lessonId,
       { $pull: { dialogueLines: { _id: req.params.lineId } } },
-      { new: true }
+      { returnDocument: 'after' }
     );
     if (!lesson) return res.status(404).json({ error: 'Lesson not found' });
     res.json(sortLines(lesson.toObject()));

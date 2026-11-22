@@ -19,7 +19,7 @@ async function recordStudentSignIn(user, method) {
     // Check older audit history before recording this session, then atomically
     // claim the first sign-in so concurrent logins cannot both be first.
     const hasHistory = user.signInCount > 0 || !!await StudentSignIn.exists({ student: user._id });
-    const previous = await User.findOneAndUpdate({ _id: user._id }, { $inc: { signInCount: 1 } }, { new: false });
+    const previous = await User.findOneAndUpdate({ _id: user._id }, { $inc: { signInCount: 1 } }, { returnDocument: 'before' });
     isFirstLogin = !!previous && !(previous.signInCount > 0) && !hasHistory;
   } catch (err) {
     console.error('Student welcome tracking failed:', err.message);

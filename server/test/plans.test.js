@@ -70,7 +70,7 @@ test('students request a plan with the server price, super admins are emailed, a
     emailTransport.setEmailSettingsLoader(async () => ({ provider: 'test', send: async message => { sent.push(message); } }));
     stub(User, 'find', filter => { assert.deepEqual(filter, { role: 'superadmin' }); return { select: async () => [{ email: 'owner@example.com' }, { email: 'owner@example.com' }, { email: 'second@example.com' }] }; });
     stub(PlanRequest, 'findOneAndUpdate', async (filter, update, options) => {
-      assert.equal(options.new, false);
+      assert.equal(options.returnDocument, 'before');
       const before = pending;
       if (pending) pending = { ...pending, ...update.$set };
       return before;

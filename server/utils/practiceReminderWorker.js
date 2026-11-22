@@ -16,7 +16,7 @@ async function processNextReminder() {
   const campaign = await PracticeReminder.findOneAndUpdate({ 'recipients.status': 'pending' }, {
     $set: { 'recipients.$.status': 'sending', 'recipients.$.claimId': claimId, 'recipients.$.attemptedAt': new Date() },
   }, {
-    sort: { createdAt: 1 }, new: true,
+    sort: { createdAt: 1 }, returnDocument: 'after',
     projection: { subject: 1, message: 1, clientUrl: 1, recipients: { $elemMatch: { claimId } } },
   }).lean();
   if (!campaign) return false;

@@ -67,7 +67,7 @@ router.put('/:paperId/publication', requireAdmin, async (req, res) => {
     catch (err) { return res.status(400).json({ error: err.message }); }
   }
   try {
-    const saved = await PracticePaper.findByIdAndUpdate(req.paperId, { $set: { published: req.body.published } }, { upsert: true, new: true, runValidators: true });
+    const saved = await PracticePaper.findByIdAndUpdate(req.paperId, { $set: { published: req.body.published } }, { upsert: true, returnDocument: 'after', runValidators: true });
     logActivity(req, { action: 'update', resourceType: 'test', resourceId: req.paperId, label: `${req.paper.title} ${saved.published ? 'published' : 'hidden'}` });
     res.json({ published: saved.published });
   } catch { res.status(500).json({ error: 'Could not update paper visibility.' }); }
@@ -123,7 +123,7 @@ router.post('/:paperId/attempts/:id/submit', async (req, res) => {
     let scores;
     try { scores = createPaperTools(existing.paperSnapshot || req.paper).grade(req.body.answers); }
     catch (err) { return res.status(400).json({ error: err.message }); }
-    const attempt = await HskAttempt.findOneAndUpdate({ ...filter, status: 'started' }, { $set: { ...scores, answers: req.body.answers, status: 'submitted', submittedAt: new Date() } }, { new: true, runValidators: true });
+    const attempt = await HskAttempt.findOneAndUpdate({ ...filter, status: 'started' }, { $set: { ...scores, answers: req.body.answers, status: 'submitted', submittedAt: new Date() } }, { returnDocument: 'after', runValidators: true });
     const saved = attempt || await HskAttempt.findOne(filter);
     res.json(resultFor(req, saved));
   } catch { res.status(500).json({ error: 'Could not save your result. Your answers are preserved; please retry.' }); }

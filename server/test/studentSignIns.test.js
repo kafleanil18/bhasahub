@@ -98,7 +98,7 @@ test('only the first successful student session receives the first-login greetin
   mock(User, 'findOneAndUpdate', async (filter, update, options) => {
     assert.deepEqual(filter, { _id: user._id });
     assert.deepEqual(update, { $inc: { signInCount: 1 } });
-    assert.equal(options.new, false);
+    assert.equal(options.returnDocument, 'before');
     return { signInCount: count++ };
   });
   assert.deepEqual(await Promise.all([recordStudentSignIn(user, 'email'), recordStudentSignIn(user, 'google')]), [true, false]);

@@ -74,7 +74,7 @@ router.put('/:id/approve', requireAuth, requireAdmin, async (req, res) => {
       sub = await Subscription.findOneAndUpdate(
         { user: request.user, course: request.course },
         { $setOnInsert: { user: request.user, course: request.course, expiresAt: new Date(0) } },
-        { upsert: true, new: true }
+        { upsert: true, returnDocument: 'after' }
       ).catch(async err => {
         if (err.code !== 11000) throw err;
         return Subscription.findOne({ user: request.user, course: request.course });
@@ -87,7 +87,7 @@ router.put('/:id/approve', requireAuth, requireAdmin, async (req, res) => {
         grantedBy: new Types.ObjectId(req.user.id),
         appliedRequests: { $concatArrays: [{ $ifNull: ['$appliedRequests', []] }, [request._id]] },
       } }],
-      { new: true, updatePipeline: true }
+      { returnDocument: 'after', updatePipeline: true }
     );
     sub = granted || await Subscription.findById(sub._id);
 
@@ -123,7 +123,7 @@ router.put('/:id/deny', requireAuth, requireAdmin, async (req, res) => {
     const request = await AccessRequest.findOneAndUpdate(
       { _id: req.params.id, status: 'pending' },
       { status: 'denied' },
-      { new: true }
+      { returnDocument: 'after' }
     ).populate('user', 'name').populate('course', 'title');
     if (!request) return res.status(409).json({ error: 'Request is no longer pending' });
     logActivity(req, {

@@ -145,7 +145,7 @@ router.post('/pairs/:id/audio', requireAuth, requireSuperAdmin, knownPair, uploa
     const recording = await TonePairAudio.findOneAndUpdate(
       { pairId: req.params.id },
       { $set: { audioUrl: result.secure_url, uploadedBy: req.user.id } },
-      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true }
+      { returnDocument: 'after', upsert: true, runValidators: true, setDefaultsOnInsert: true }
     );
     logActivity(req, { action: 'record', resourceType: 'tone-pair-audio', resourceId: recording._id, label: req.pair.hanzi });
     res.status(201).json({ pairId: recording.pairId, audioUrl: recording.audioUrl });

@@ -27,7 +27,7 @@ router.put('/', async (req, res) => {
         draft.connectionError = safeError(error) ? error.message : 'Settings saved, but provider verification failed. Check your API key permissions, verified sender, and account status, then enable and save again.';
       }
     }
-    await EmailApiSettings.findOneAndUpdate({ key: 'main' }, { $set: draft }, { upsert: true, new: true, runValidators: true });
+    await EmailApiSettings.findOneAndUpdate({ key: 'main' }, { $set: draft }, { upsert: true, returnDocument: 'after', runValidators: true });
     logActivity(req, { action: 'update', resourceType: 'email-settings', label: `${draft.provider} HTTPS email ${draft.enabled ? 'enabled' : 'disabled'}` });
     res.json(settings.publicSettings(draft));
   } catch (error) { fail(res, error); }

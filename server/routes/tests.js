@@ -49,7 +49,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
 
 router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
   try {
-    const test = await Test.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const test = await Test.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' });
     if (!test) return res.status(404).json({ error: 'Test not found' });
     logActivity(req, { action: 'update', resourceType: 'test', resourceId: test._id, label: test.title });
     res.json(test);

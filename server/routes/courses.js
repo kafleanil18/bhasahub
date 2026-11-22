@@ -46,7 +46,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
 router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
   try {
     if (req.body.language !== undefined && req.body.language !== 'chinese') return res.status(400).json({ error: 'Only Chinese courses are supported' });
-    const course = await Course.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const course = await Course.findByIdAndUpdate(req.params.id, req.body, { returnDocument: 'after' });
     if (!course) return res.status(404).json({ error: 'Course not found' });
     logActivity(req, { action: 'update', resourceType: 'course', resourceId: course._id, label: course.title });
     res.json(course);

@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
     const settings = await SiteSettings.findOneAndUpdate(
       { key: 'main' },
       {},
-      { new: true, upsert: true }
+      { returnDocument: 'after', upsert: true }
     );
     res.json(settings);
   } catch {
@@ -47,7 +47,7 @@ router.put('/', requireAuth, requireSuperAdmin, async (req, res) => {
     const settings = await SiteSettings.findOneAndUpdate(
       { key: 'main' },
       updateFields,
-      { new: true, upsert: true }
+      { returnDocument: 'after', upsert: true }
     );
     logActivity(req, { action: 'update', resourceType: 'site-settings', resourceId: settings._id, label: updateFields.conversationLessons ? 'Conversation lessons' : 'Welcome video' });
     res.json(settings);

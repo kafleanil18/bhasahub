@@ -38,7 +38,7 @@ router.post('/:id/audio', requireAuth, requireSuperAdmin, knownSentence, uploadL
     const recording = await SentenceAudio.findOneAndUpdate(
       { sentenceId: req.params.id },
       { $set: { audioUrl: result.secure_url, uploadedBy: req.user.id } },
-      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true }
+      { returnDocument: 'after', upsert: true, runValidators: true, setDefaultsOnInsert: true }
     );
     logActivity(req, { action: 'record', resourceType: 'sentence-audio', resourceId: recording._id, label: req.params.id });
     res.status(201).json({ sentenceId: recording.sentenceId, audioUrl: recording.audioUrl });

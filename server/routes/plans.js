@@ -38,7 +38,7 @@ router.post('/requests', requireAuth, async (req, res) => {
     const activePass = await PlatformPass.findOne({ user: req.user.id, expiresAt: { $gt: new Date() } }).select('expiresAt').lean();
     if (activePass) return res.status(409).json({ error: `Your plan is already active until ${new Date(activePass.expiresAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}. You can choose a new plan when it ends.` });
     const fields = { plan: plan.id, price: plan.price, days: plan.days };
-    const previous = await PlanRequest.findOneAndUpdate({ user: req.user.id, status: 'pending' }, { $set: fields }, { new: false });
+    const previous = await PlanRequest.findOneAndUpdate({ user: req.user.id, status: 'pending' }, { $set: fields }, { returnDocument: 'before' });
     const request = previous ? { ...(previous.toObject ? previous.toObject() : previous), ...fields } : await PlanRequest.create({ user: req.user.id, ...fields });
     res.status(previous ? 200 : 201).json(request);
     // Tell the super admins after responding; a failed email never blocks the student.
@@ -88,7 +88,7 @@ router.put('/requests/:id/approve', requireAuth, requireAdmin, async (req, res) 
     const request = await PlanRequest.findOneAndUpdate(
       { _id: req.params.id, status: 'pending' },
       { $set: { status: 'approved', reviewedBy: req.user.id, reviewedAt: new Date() } },
-      { new: true }
+      { returnDocument: 'after' }
     );
     if (!request) {
       const exists = await PlanRequest.exists({ _id: req.params.id });
@@ -108,7 +108,7 @@ router.put('/requests/:id/approve', requireAuth, requireAdmin, async (req, res) 
         grantedBy: new Types.ObjectId(req.user.id),
         appliedRequests: { $concatArrays: [{ $ifNull: ['$appliedRequests', []] }, [request._id]] },
       } }],
-      { new: true, updatePipeline: true }
+      { returnDocument: 'after', updatePipeline: true }
     ) || await PlatformPass.findOne({ user: request.user });
     const student = await User.findById(request.user).select('name');
     logActivity(req, {
@@ -141,7 +141,7 @@ router.put('/requests/:id/deny', requireAuth, requireAdmin, async (req, res) => 
     const request = await PlanRequest.findOneAndUpdate(
       { _id: req.params.id, status: 'pending' },
       { $set: { status: 'denied', reviewedBy: req.user.id, reviewedAt: new Date() } },
-      { new: true }
+      { returnDocument: 'after' }
     ).populate('user', 'name');
     if (!request) {
       const exists = await PlanRequest.exists({ _id: req.params.id });

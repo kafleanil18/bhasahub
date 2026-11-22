@@ -38,7 +38,7 @@ router.put('/', async (req, res) => {
           : 'Settings saved, but Google SMTP could not be reached or verified. SMTP remains disabled. Check that your hosting plan allows outbound ports 465 or 587, then enable SMTP and save again.';
       }
     }
-    await EmailSettings.findOneAndUpdate({ key: 'google-smtp' }, { $set: draft }, { upsert: true, new: true, runValidators: true });
+    await EmailSettings.findOneAndUpdate({ key: 'google-smtp' }, { $set: draft }, { upsert: true, returnDocument: 'after', runValidators: true });
     logActivity(req, { action: 'update', resourceType: 'email-settings', label: `Google SMTP ${draft.enabled ? 'enabled' : 'disabled'}` });
     res.json(settings.publicSettings(draft));
   } catch (error) { fail(res, error); }

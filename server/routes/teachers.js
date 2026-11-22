@@ -33,7 +33,7 @@ router.put('/:id', requireAuth, requireSuperAdmin, async (req, res) => {
     for (const field of ['name', 'title', 'bio', 'photo']) {
       if (req.body[field] !== undefined) updateFields[field] = req.body[field];
     }
-    const teacher = await Teacher.findByIdAndUpdate(req.params.id, updateFields, { new: true });
+    const teacher = await Teacher.findByIdAndUpdate(req.params.id, updateFields, { returnDocument: 'after' });
     if (!teacher) return res.status(404).json({ error: 'Teacher not found' });
     logActivity(req, { action: 'update', resourceType: 'teacher', resourceId: teacher._id, label: teacher.name });
     res.json(teacher);

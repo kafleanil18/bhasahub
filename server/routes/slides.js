@@ -52,7 +52,7 @@ router.put('/:id', requireAuth, requireSuperAdmin, async (req, res) => {
     if (!body.pdfUrl && body.embedUrl) {
       body.pdfUrl = body.embedUrl;
     }
-    const slide = await Slide.findByIdAndUpdate(req.params.id, body, { new: true });
+    const slide = await Slide.findByIdAndUpdate(req.params.id, body, { returnDocument: 'after' });
     if (!slide) return res.status(404).json({ error: 'Slide not found' });
     res.json(slide);
   } catch {
