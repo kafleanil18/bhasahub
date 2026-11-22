@@ -9,15 +9,22 @@ const { cleanContent, validateReady } = require('../utils/practicePaperContent')
 const builtIns = require('../data/hskPapers');
 const router = express.Router();
 const staff = req => ['admin', 'superadmin'].includes(req.user.role);
-const metadata = (id, content, published) => ({ id, title: content.title, code: content.code || id.toUpperCase(), published, custom: !Object.hasOwn(builtIns, id) });
+const isBuiltIn = id => Object.hasOwn(builtIns, id);
+// `edited`: a built-in paper whose content a superadmin has replaced. `deleted`: soft-deleted, restorable.
+const metadata = (id, content, published, extra = {}) => ({ id, title: content.title, code: content.code || id.toUpperCase(), published, custom: !isBuiltIn(id), edited: false, deleted: false, ...extra });
 router.use(requireAuth);
 router.use((req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
 router.get('/', async (req, res) => {
   try {
     const records = await PracticePaper.find();
-    const references = Object.entries(builtIns).map(([id, paper]) => metadata(id, paper, records.find(row => row._id === id)?.published ?? paper.publishedByDefault !== false));
-    const list = [...references, ...records.filter(row => row.content && /^paper-[a-f0-9]{24}$/.test(row._id)).map(row => metadata(row._id, row.content, row.published))];
-    res.json(list.filter(row => staff(req) || row.published));
+    const byId = new Map(records.map(row => [row._id, row]));
+    const references = Object.entries(builtIns).map(([id, paper]) => {
+      const record = byId.get(id);
+      return metadata(id, record?.content || paper, !record?.deleted && (record?.published ?? paper.publishedByDefault !== false), { edited: Boolean(record?.content), deleted: Boolean(record?.deleted) });
+    });
+    const custom = records.filter(row => row.content && /^paper-[a-f0-9]{24}$/.test(row._id)).map(row => metadata(row._id, row.content, !row.deleted && row.published, { deleted: Boolean(row.deleted) }));
+    const list = [...references, ...custom];
+    res.json(staff(req) ? list : list.filter(row => row.published && !row.deleted));
   } catch { res.status(500).json({ error: 'Could not load practice papers.' }); }
 });
 router.post('/', requireSuperAdmin, async (req, res) => {
@@ -32,38 +39,70 @@ router.post('/', requireSuperAdmin, async (req, res) => {
   } catch { res.status(500).json({ error: 'Could not save the draft.' }); }
 });
 router.param('paperId', async (req, res, next, id) => {
-  if (!Object.hasOwn(builtIns, id) && !/^paper-[a-f0-9]{24}$/.test(id)) return res.status(404).json({ error: 'Practice paper not found.' });
+  if (!isBuiltIn(id) && !/^paper-[a-f0-9]{24}$/.test(id)) return res.status(404).json({ error: 'Practice paper not found.' });
   try {
     const record = await PracticePaper.findById(id);
-    if (!Object.hasOwn(builtIns, id) && !record?.content) return res.status(404).json({ error: 'Practice paper not found.' });
+    if (!isBuiltIn(id) && !record?.content) return res.status(404).json({ error: 'Practice paper not found.' });
+    // Deleted papers disappear for students, including their past attempts; staff can still preview and restore them.
+    if (record?.deleted && !staff(req)) return res.status(404).json({ error: 'Practice paper not found.' });
     req.paperId = id;
-    req.paper = Object.hasOwn(builtIns, id) ? builtIns[id] : { ...record.content, id };
+    req.record = record;
+    req.deleted = Boolean(record?.deleted);
+    // A built-in paper uses the bundled file unless a superadmin saved replacement content.
+    req.paper = record?.content ? { ...record.content, id } : builtIns[id];
     // Bundled papers are visible unless a staff member hid them; a paper can opt to start hidden.
-    req.published = record?.published ?? builtIns[id]?.publishedByDefault !== false;
+    req.published = !req.deleted && (record?.published ?? builtIns[id]?.publishedByDefault !== false);
     req.paperTools = createPaperTools(req.paper);
     next();
   } catch { res.status(500).json({ error: 'Could not load the practice paper.' }); }
 });
-router.get('/:paperId/editor', requireSuperAdmin, (req, res) => {
-  if (Object.hasOwn(builtIns, req.paperId)) return res.status(400).json({ error: 'The reference paper cannot be edited. Create a new paper instead.' });
-  res.json(req.paper);
-});
+router.get('/:paperId/editor', requireSuperAdmin, (req, res) => res.json(req.paper));
 router.put('/:paperId/content', requireSuperAdmin, async (req, res) => {
-  if (Object.hasOwn(builtIns, req.paperId)) return res.status(400).json({ error: 'The reference paper cannot be edited.' });
   let content;
   try { content = cleanContent(req.body); }
   catch (err) { return res.status(400).json({ error: err.message }); }
+  // A live paper stays live when the edited content is still complete; otherwise it returns to a hidden draft.
+  // Existing attempts keep the paper version they started with.
+  let published = false;
+  let notice;
+  if (req.published) {
+    try { validateReady(content); published = true; }
+    catch (err) { notice = `Saved as hidden because the paper is incomplete: ${err.message}`; }
+  }
   try {
-    // Every edit returns to draft. Existing attempts retain their original paper.
-    await PracticePaper.findByIdAndUpdate(req.paperId, { $set: { content, published: false } }, { runValidators: true });
+    await PracticePaper.findByIdAndUpdate(req.paperId, { $set: { content, published } }, { upsert: true, runValidators: true });
     logActivity(req, { action: 'update', resourceType: 'test', resourceId: req.paperId, label: content.title });
-    res.json(metadata(req.paperId, content, false));
-  } catch { res.status(500).json({ error: 'Could not save the draft.' }); }
+    res.json({ ...metadata(req.paperId, content, published, { edited: isBuiltIn(req.paperId), deleted: req.deleted }), ...(notice ? { notice } : {}) });
+  } catch { res.status(500).json({ error: 'Could not save the paper.' }); }
+});
+router.delete('/:paperId/content', requireSuperAdmin, async (req, res) => {
+  if (!isBuiltIn(req.paperId)) return res.status(400).json({ error: 'Only built-in papers have an original version to restore.' });
+  try {
+    await PracticePaper.findByIdAndUpdate(req.paperId, { $set: { content: null } }, { upsert: true, runValidators: true });
+    logActivity(req, { action: 'update', resourceType: 'test', resourceId: req.paperId, label: `${builtIns[req.paperId].title} restored to original` });
+    res.json(metadata(req.paperId, builtIns[req.paperId], req.published, { deleted: req.deleted }));
+  } catch { res.status(500).json({ error: 'Could not restore the original paper.' }); }
+});
+router.delete('/:paperId', requireSuperAdmin, async (req, res) => {
+  try {
+    await PracticePaper.findByIdAndUpdate(req.paperId, { $set: { deleted: true, published: false } }, { upsert: true, runValidators: true });
+    logActivity(req, { action: 'delete', resourceType: 'test', resourceId: req.paperId, label: req.paper.title });
+    res.json({ deleted: true, published: false });
+  } catch { res.status(500).json({ error: 'Could not delete the paper.' }); }
+});
+router.post('/:paperId/restore', requireSuperAdmin, async (req, res) => {
+  try {
+    // Restored papers come back hidden so staff can check them before making them live.
+    await PracticePaper.findByIdAndUpdate(req.paperId, { $set: { deleted: false, published: false } }, { upsert: true, runValidators: true });
+    logActivity(req, { action: 'update', resourceType: 'test', resourceId: req.paperId, label: `${req.paper.title} restored` });
+    res.json({ deleted: false, published: false });
+  } catch { res.status(500).json({ error: 'Could not restore the paper.' }); }
 });
 router.get('/:paperId/publication', (req, res) => res.json({ published: req.published }));
 router.put('/:paperId/publication', requireAdmin, async (req, res) => {
   if (typeof req.body.published !== 'boolean') return res.status(400).json({ error: 'Published must be true or false.' });
-  if (req.body.published && !Object.hasOwn(builtIns, req.paperId)) {
+  if (req.body.published && req.deleted) return res.status(400).json({ error: 'Restore this paper before making it live.' });
+  if (req.body.published && (!isBuiltIn(req.paperId) || req.record?.content)) {
     try { validateReady(req.paper); }
     catch (err) { return res.status(400).json({ error: err.message }); }
   }
@@ -100,7 +139,7 @@ router.get('/:paperId/attempts', async (req, res) => {
   } catch { res.status(500).json({ error: 'Could not load your results.' }); }
 });
 router.post('/:paperId/attempts', requirePublishedPaper, async (req, res) => {
-  if (!Object.hasOwn(builtIns, req.paperId)) {
+  if (!isBuiltIn(req.paperId) || req.record?.content) {
     try { validateReady(req.paper); }
     catch (err) { return res.status(400).json({ error: `Paper is not ready: ${err.message}` }); }
   }

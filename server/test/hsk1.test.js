@@ -188,7 +188,7 @@ test('H11221 starts and grades isolated attempts, preserves results, and support
   assert.equal(submitted.review.length, 40);
   const retry = await (await fetch(`${attemptUrl}/submit`, { method: 'POST', headers, body: JSON.stringify({ answers: Array(40).fill(null) }) })).json();
   assert.equal(retry.score, 40);
-  assert.equal((await fetch(`${url}/editor`, { headers: superadmin })).status, 400);
+  assert.equal((await fetch(`${url}/editor`, { headers: superadmin })).status, 200);
   await fetch(`${url}/publication`, { method: 'PUT', headers: admin, body: JSON.stringify({ published: false }) });
   assert.equal((await fetch(url, { headers })).status, 404);
   assert.equal((await fetch(url, { headers: admin })).status, 200);
@@ -265,8 +265,8 @@ test('H10901 uses the shared portal with isolated attempts, publication, and imm
   assert.equal(submitted.review.length, 40);
   const retry = await (await fetch(`${attemptUrl}/submit`, { method: 'POST', headers, body: JSON.stringify({ answers: Array(40).fill(null) }) })).json();
   assert.equal(retry.score, 40);
-  assert.equal((await fetch(`${url}/editor`, { headers: superadmin })).status, 400);
-  assert.equal((await fetch(`${url}/content`, { method: 'PUT', headers: superadmin, body: JSON.stringify(h10901) })).status, 400);
+  assert.equal((await fetch(`${url}/editor`, { headers: admin })).status, 403);
+  assert.equal((await fetch(`${url}/content`, { method: 'PUT', headers: admin, body: JSON.stringify(h10901) })).status, 403);
   const hidden = await fetch(`${url}/publication`, { method: 'PUT', headers: admin, body: JSON.stringify({ published: false }) });
   assert.equal(hidden.status, 200);
   assert.equal((await fetch(url, { headers })).status, 404);
@@ -288,6 +288,63 @@ test('H11112 starts hidden from students until staff publish it', async () => {
   assert.equal((await fetch(`${url}/publication`, { method: 'PUT', headers: admin, body: JSON.stringify({ published: true }) })).status, 200);
   assert.equal((await (await fetch(url, { headers })).json()).code, 'H11112');
   assert.ok((await (await fetch(root, { headers })).json()).some(row => row.id === 'h11112'));
+});
+
+test('superadmin edits a live built-in paper, keeps it live, and can restore the original', async () => {
+  const { base, headers, admin, superadmin } = await setup();
+  const root = base.replace('/h11226', '');
+  const url = `${root}/h11221`;
+  const loaded = await fetch(`${url}/editor`, { headers: superadmin });
+  assert.equal(loaded.status, 200);
+  const draft = await loaded.json();
+  assert.equal(draft.code, 'H11221');
+  draft.title = 'HSK 1 · H11221 (revised)';
+  draft.groups[0].questions[0].image = 'https://res.cloudinary.com/demo/image/upload/new-q1.jpg';
+  const saved = await fetch(`${url}/content`, { method: 'PUT', headers: superadmin, body: JSON.stringify(draft) });
+  assert.equal(saved.status, 200);
+  const savedBody = await saved.json();
+  assert.deepEqual([savedBody.published, savedBody.edited, savedBody.notice], [true, true, undefined]);
+  const studentView = await (await fetch(url, { headers })).json();
+  assert.equal(studentView.title, 'HSK 1 · H11221 (revised)');
+  assert.equal(studentView.groups[0].questions[0].image, 'https://res.cloudinary.com/demo/image/upload/new-q1.jpg');
+  // Worked-example pictures survive the round trip through the editor.
+  assert.equal(studentView.groups[0].exampleImage, h11221.groups[0].exampleImage);
+  const created = await (await fetch(`${url}/attempts`, { method: 'POST', headers })).json();
+  assert.equal(created.paperDefinition.title, 'HSK 1 · H11221 (revised)');
+  // Removing a required picture from a live paper hides it instead of breaking it for students.
+  draft.groups[0].questions[1].image = '';
+  const incomplete = await (await fetch(`${url}/content`, { method: 'PUT', headers: superadmin, body: JSON.stringify(draft) })).json();
+  assert.equal(incomplete.published, false);
+  assert.match(incomplete.notice, /Question 2: upload a question picture/);
+  assert.equal((await fetch(url, { headers })).status, 404);
+  assert.equal((await fetch(`${url}/publication`, { method: 'PUT', headers: admin, body: JSON.stringify({ published: true }) })).status, 400);
+  assert.equal((await fetch(`${url}/content`, { method: 'DELETE', headers: admin })).status, 403);
+  const restored = await fetch(`${url}/content`, { method: 'DELETE', headers: superadmin });
+  assert.equal(restored.status, 200);
+  assert.equal((await restored.json()).edited, false);
+  assert.equal((await (await fetch(`${url}/editor`, { headers: superadmin })).json()).title, h11221.title);
+  assert.equal((await fetch(`${base}/content`.replace('/h11226', '/paper-0123456789abcdef01234567'), { method: 'DELETE', headers: superadmin })).status, 404);
+});
+
+test('superadmin soft-deletes and restores papers; deleted papers are closed to students', async () => {
+  const { base, headers, admin, superadmin } = await setup();
+  const root = base.replace('/h11226', '');
+  const url = `${root}/h11556`;
+  assert.equal((await fetch(url, { method: 'DELETE', headers: admin })).status, 403);
+  const removed = await fetch(url, { method: 'DELETE', headers: superadmin });
+  assert.deepEqual(await removed.json(), { deleted: true, published: false });
+  assert.ok(!(await (await fetch(root, { headers })).json()).some(row => row.id === 'h11556'));
+  assert.equal((await fetch(url, { headers })).status, 404);
+  assert.equal((await fetch(`${url}/attempts`, { method: 'POST', headers })).status, 404);
+  const staffRow = (await (await fetch(root, { headers: admin })).json()).find(row => row.id === 'h11556');
+  assert.deepEqual([staffRow.deleted, staffRow.published], [true, false]);
+  assert.equal((await fetch(url, { headers: superadmin })).status, 200);
+  assert.equal((await fetch(`${url}/publication`, { method: 'PUT', headers: admin, body: JSON.stringify({ published: true }) })).status, 400);
+  assert.equal((await fetch(`${url}/restore`, { method: 'POST', headers: admin })).status, 403);
+  assert.deepEqual(await (await fetch(`${url}/restore`, { method: 'POST', headers: superadmin })).json(), { deleted: false, published: false });
+  assert.equal((await fetch(url, { headers })).status, 404, 'restored papers stay hidden until made live');
+  assert.equal((await fetch(`${url}/publication`, { method: 'PUT', headers: admin, body: JSON.stringify({ published: true }) })).status, 200);
+  assert.equal((await fetch(url, { headers })).status, 200);
 });
 
 test('admins control publication; hidden papers block students but allow staff preview', async () => {
@@ -366,10 +423,11 @@ test('superadmin creates and edits complete papers; incomplete drafts cannot be 
   assert.ok(listing.some(row => row.id === created.id));
   assert.ok(!JSON.stringify(listing).includes('correctIndex'));
   assert.equal((await fetch(root + '/hg1002', { headers: superadmin })).status, 404);
-  assert.equal((await send(`${base}/content`, superadmin, content, 'PUT')).status, 400);
+  // Built-in papers are editable too; the edit is stored as a replacement for the bundled file.
+  assert.equal((await send(`${base}/content`, superadmin, content, 'PUT')).status, 200);
 });
 
-test('editing a custom paper hides it and preserves grading and questions of existing attempts', async () => {
+test('editing a live custom paper keeps it live and preserves grading and questions of existing attempts', async () => {
   const { base, headers, superadmin } = await setup();
   const root = base.replace('/h11226', '');
   const content = structuredClone(paper); content.title = 'Original teacher version';
@@ -383,7 +441,7 @@ test('editing a custom paper hides it and preserves grading and questions of exi
   const changed = structuredClone(content); changed.title = 'Revised teacher version';
   changed.groups[0].questions[0].correctIndex = 0;
   await fetch(`${url}/content`, { method: 'PUT', headers: superadmin, body: JSON.stringify(changed) });
-  assert.equal((await fetch(url, { headers })).status, 404);
+  assert.equal((await (await fetch(url, { headers })).json()).title, 'Revised teacher version');
   assert.equal((await fetch(`${base}/attempts/${started._id}`, { headers })).status, 404);
   const submitted = await fetch(`${url}/attempts/${started._id}/submit`, { method: 'POST', headers, body: JSON.stringify({ answers: key }) });
   assert.equal(submitted.status, 200);

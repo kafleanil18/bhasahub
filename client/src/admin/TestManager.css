@@ -42,3 +42,13 @@
 .paper-editor :is(button, input, select, textarea):focus-visible, .paper-create-button:focus-visible { outline: 3px solid var(--seal); outline-offset: 3px; }
 .paper-error { color: var(--seal); padding: 12px; border: 1px solid currentColor; border-radius: 6px; }
 @media (max-width: 640px) { .paper-editor { padding: 16px; } .paper-timers { grid-template-columns: 1fr; } .paper-fields, .paper-question-editor { padding: 12px; } .paper-part-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); } .paper-option-row { grid-template-columns: 20px minmax(0, 1fr); } .paper-option-row label:last-child { grid-column: 2; } }
+.test-studio .paper-delete-button { color: var(--seal); border-color: currentColor; }
+.paper-deleted { margin-top: 32px; padding: 20px; border: 1px dashed var(--line); border-radius: 12px; }
+.paper-deleted h2 { margin: 0 0 8px; font-size: 20px; }
+.paper-deleted > p { color: var(--mist); margin: 0 0 16px; line-height: 1.6; }
+.paper-deleted ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.paper-deleted li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; }
+.paper-deleted li small { color: var(--mist); margin-right: 8px; }
+.paper-deleted li span:last-child { display: flex; gap: 8px; }
+.paper-deleted button { min-height: 44px; padding: 10px 16px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); font: inherit; cursor: pointer; }
+.paper-deleted button:focus-visible { outline: 3px solid var(--seal); outline-offset: 3px; }

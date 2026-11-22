@@ -52,7 +52,7 @@ export default function PracticePaperEditor({ initial, paperId, onSaved, onCance
     finally { setBusy(false); }
   };
   return <form className="paper-editor" onSubmit={save} aria-labelledby="paper-editor-title">
-    <div className="paper-editor-heading"><div><h2 id="paper-editor-title">{paperId ? 'Edit practice paper' : 'New complete practice paper'}</h2><p>20 listening + 20 reading questions. Save at any point; complete all required content before making it live.</p></div></div>
+    <div className="paper-editor-heading"><div><h2 id="paper-editor-title">{paperId ? 'Edit practice paper' : 'New complete practice paper'}</h2><p>20 listening + 20 reading questions. Save at any point. A live paper stays live when its content is still complete; otherwise it is saved as hidden.</p></div></div>
     {error && <p className="paper-error" role="alert">{error}</p>}
     <fieldset disabled={busy} className="paper-fields"><legend>Paper details</legend>
       <label>Paper title *<input required maxLength={150} value={paper.title} onChange={e => change({ title: e.target.value })} placeholder="HSK 1 · Listening & Reading"/></label>
@@ -66,6 +66,8 @@ export default function PracticePaperEditor({ initial, paperId, onSaved, onCance
       <label>Part title<input value={group.title} onChange={e => changeGroup({ title: e.target.value })}/></label>
       <label>Instructions<textarea value={group.instruction} onChange={e => changeGroup({ instruction: e.target.value })}/></label>
       <label>Example (optional)<textarea value={group.example || ''} onChange={e => changeGroup({ example: e.target.value })}/></label>
+      <MediaUpload label="Example picture (optional)" value={group.exampleImage} onChange={exampleImage => changeGroup({ exampleImage })} onBusy={uploadBusy}/>
+      {group.exampleImage && <label>Example picture description (for screen readers)<input maxLength={500} value={group.exampleImageAlt || ''} onChange={e => changeGroup({ exampleImageAlt: e.target.value })}/></label>}
       {['l3','r2'].includes(group.id) && <><MediaUpload label="Shared A–F picture sheet" value={group.image} onChange={image => changeGroup({ image })} onBusy={uploadBusy}/><label>Picture caption<input value={group.imageCaption || ''} onChange={e => changeGroup({ imageCaption: e.target.value })}/></label><p className="paper-help">Upload one sheet containing six clearly labelled pictures, A–F.</p></>}
       {group.choices && <div className="paper-word-bank"><h3>Shared answer bank A–F</h3>{group.choices.map((choice, index) => <div key={index} className="paper-option-row"><strong>{String.fromCharCode(65 + index)}</strong><label>Chinese text<input value={choice.text} onChange={e => changeGroup({ choices: group.choices.map((c, i) => i === index ? { ...c, text: e.target.value } : c) })}/></label><label>Pinyin<input value={choice.pinyin || ''} onChange={e => changeGroup({ choices: group.choices.map((c, i) => i === index ? { ...c, pinyin: e.target.value } : c) })}/></label></div>)}</div>}
       {group.questions.map((q, qi) => <fieldset key={q.number} className="paper-question-editor"><legend>Question {q.number}</legend>
@@ -78,6 +80,6 @@ export default function PracticePaperEditor({ initial, paperId, onSaved, onCance
         <label>Answer explanation<textarea value={q.explanation} onChange={e => changeQuestion(qi, { explanation: e.target.value })} placeholder="Explain why this answer is correct. Shown after submission."/></label>
       </fieldset>)}
     </fieldset>
-    <div className="paper-editor-actions"><button type="submit" disabled={busy || uploads > 0}>{busy ? 'Saving…' : 'Save hidden draft'}</button><button type="button" disabled={busy || uploads > 0} onClick={() => { if (!dirty || window.confirm('Discard unsaved changes to this paper?')) onCancel(); }}>Cancel</button><span>Edits save as hidden until you choose Make live.</span></div>
+    <div className="paper-editor-actions"><button type="submit" disabled={busy || uploads > 0}>{busy ? 'Saving…' : paperId ? 'Save changes' : 'Save hidden draft'}</button><button type="button" disabled={busy || uploads > 0} onClick={() => { if (!dirty || window.confirm('Discard unsaved changes to this paper?')) onCancel(); }}>Cancel</button><span>{paperId ? 'Live papers stay live if still complete. Students already taking it keep the version they started.' : 'New papers save as hidden until you choose Make live.'}</span></div>
   </form>;
 }

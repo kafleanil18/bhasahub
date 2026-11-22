@@ -40,8 +40,26 @@ The portal uses its original 1,200-pixel desktop maximum width and original text
 
 Super admins can open **Manage tests → Create complete practice paper**. The editor starts with the same eight parts as H11226: four listening parts and four reading parts, with five questions per part. Teachers enter Chinese text, pinyin, answer choices, correct answers, explanations, and optional private listening scripts. Uploads support pictures for individual questions, A/B/C strips, shared A–F sheets, and a full listening recording. Each upload has a preview and can be replaced or removed before saving.
 
-New papers save as hidden drafts. Super admins can reopen **Edit questions & pictures** to continue. The **Make live** control validates the recording, picture-dependent questions, shared answer banks, reading text and pinyin, correct answers, and explanations. Admins and super admins can manage visibility and preview; creating or editing content requires a current super admin role. Saving edits hides the paper again until it is ready to publish.
+New papers save as hidden drafts. Super admins can reopen **Edit questions & pictures** to continue. The **Make live** control validates the recording, picture-dependent questions, shared answer banks, reading text and pinyin, correct answers, and explanations. Admins and super admins can manage visibility and preview; creating or editing content requires a current super admin role. When a live paper is edited, it stays live if the saved content still passes those checks. Otherwise it is saved as hidden and the editor explains what is missing.
 
-Custom papers use a `paper-` ID and are stored in `PracticePaper.content`. The authenticated `/api/hsk1` catalogue returns only metadata and hides unpublished papers from students. Content editing uses `POST /api/hsk1` and `GET /api/hsk1/:paperId/editor` / `PUT /api/hsk1/:paperId/content`. The original H11226 remains available as a fixed reference. The generated HG1002 paper and its assets have been removed.
+Custom papers use a `paper-` ID and are stored in `PracticePaper.content`. The authenticated `/api/hsk1` catalogue returns only metadata and hides unpublished papers from students. Content editing uses `POST /api/hsk1` and `GET /api/hsk1/:paperId/editor` / `PUT /api/hsk1/:paperId/content`. The generated HG1002 paper and its assets have been removed.
 
 Each new attempt stores a private snapshot of its question version. Grading and answer review use that snapshot even after edits. Public responses strip answer keys and teacher listening scripts; snapshot definitions returned for resuming attempts are sanitized in the same way. Results and local drafts remain scoped to the paper and student.
+
+## Editing, deleting and restoring papers
+
+Super admins can edit **every** paper, including the built-in ones (H11226, H10901, H11556, H11221, H11112).
+
+- **Edits to a built-in paper** are saved in `PracticePaper.content` under the paper's id, and replace the bundled file in `server/data/`. The card shows "Edited copy of the built-in paper". **Restore original** (`DELETE /api/hsk1/:paperId/content`) discards the edits.
+- **Pictures:** every question picture, A/B/C strip, A–F sheet, worked-example picture and the recording can be replaced. Uploads go to Cloudinary through `/api/upload`, so `CLOUDINARY_URL` must be set; it is set in production but empty in a fresh local `.env`.
+- **Live papers stay live after an edit** if the content still passes the Make live checks. Otherwise they are saved as hidden, and the response's `notice` says why.
+- **Students mid-test keep their version.** Students who already started or finished an attempt keep the version they started with, because each attempt stores its own snapshot.
+
+**Delete paper** (`DELETE /api/hsk1/:paperId`) is a soft delete:
+
+- The paper disappears from the student catalogue.
+- Students can't open it, start it, or reopen their past results for it.
+- Attempts stay in the database.
+- Deleted papers are listed under **Deleted papers** in Test Studio. **Restore** (`POST /api/hsk1/:paperId/restore`) brings a paper back hidden, so staff can check it before choosing Make live.
+
+Editing, deleting and restoring require the super admin role. Admins can still preview papers and change their visibility.

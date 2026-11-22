@@ -25,7 +25,7 @@ function cleanContent(input) {
     });
     const choices = Array.isArray(group.choices) ? group.choices.slice(0, 6).map(option) : undefined;
     if ([6, 7].includes(gi) && choices?.length !== 6) throw new Error('Reading parts 3 and 4 need a shared bank of six choices.');
-    return { id: IDS[gi], section: gi < 4 ? 'listening' : 'reading', title: text(group.title, 150), instruction: text(group.instruction), image: url(group.image), imageCaption: text(group.imageCaption, 500), example: text(group.example), ...(choices ? { choices } : {}), questions };
+    return { id: IDS[gi], section: gi < 4 ? 'listening' : 'reading', title: text(group.title, 150), instruction: text(group.instruction), image: url(group.image), imageCaption: text(group.imageCaption, 500), example: text(group.example), exampleImage: url(group.exampleImage), exampleImageAlt: text(group.exampleImageAlt, 500), ...(group.exampleImageCompact === true ? { exampleImageCompact: true } : {}), ...(choices ? { choices } : {}), questions };
   });
   return { title, code: text(input.code, 60) || 'Custom paper', audioUrl: url(input.audioUrl), listeningSeconds: seconds('listeningSeconds'), transferSeconds: seconds('transferSeconds'), readingSeconds: seconds('readingSeconds'), groups };
 }
