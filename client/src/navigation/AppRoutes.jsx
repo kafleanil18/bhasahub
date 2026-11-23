@@ -1,6 +1,7 @@
 import { lazy, useEffect, useState } from 'react';
 import { Link, Navigate, Route, Routes, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { AdminLayout, AuthLayout, PublicLayout, RequireSession, StudentLayout } from './Layouts';
+import PracticeGate from '../access/PracticeGate';
 import { adminPaths, homePath, manageCoursePath, safeReturnPath, testPath } from './paths';
 const Login = lazy(() => import('../auth/Login'));
 const Register = lazy(() => import('../auth/Register'));
@@ -121,6 +122,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
       <Route path="/pricing" element={<PricingPage user={user} />} />
       <Route path="/email/reminders/unsubscribe" element={<ReminderUnsubscribe />} />
       <Route path="/" element={<HomeRoute user={user} home={home} />} />
+      {/* The pinyin chart stays open to everyone; the other practice tools need approved access. */}
       <Route path="/practice/pinyin" element={<PinyinPage onBack={onHome} isSuperAdmin={staff} backLabel="← Back to home" />} />
     </Route>
     <Route element={<AuthLayout />}>
@@ -131,19 +133,21 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
     </Route>
     <Route element={<RequireSession user={user} />}>
       <Route element={<StudentLayout />}>
-        <Route path="/practice/tones" element={<TonePractice onBack={onHome} />} />
         <Route path="/continue" element={<ContinueLearning />} />
         <Route path="/my-courses" element={<Dashboard user={user} onOpenCourse={(course, resume) => navigate(resume ? `/continue?course=${encodeURIComponent(course._id)}` : `/courses/${encodeURIComponent(course._id)}`)} onBrowse={onHome} />} />
         <Route path="/progress" element={<ProgressAnalytics user={user} onBack={onHome} />} />
         <Route path="/courses/:courseId" element={<CourseRoute user={user} onHome={onHome} />} />
         <Route path="/courses/:courseId/lessons/:lessonId" element={<CourseRoute user={user} onHome={onHome} />} />
-        <Route path="/practice/characters" element={<HanziTracePage user={user} token={localStorage.getItem('token')} onBack={onHome} />} />
-        <Route path="/practice/listening" element={<ListeningPractice user={user} onBack={onHome} onSignIn={openLogin} />} />
-        <Route path="/practice/sentences" element={<SentencePractice user={user} onBack={onHome} />} />
-        <Route path="/practice/measure-words" element={<MeasureWordPractice onBack={onHome} />} />
-        <Route path="/practice/numbers" element={<NumberTrainer onBack={onHome} />} />
-        <Route path="/practice/dictation" element={<ListeningDictation onBack={onHome} onRecordAudio={user?.role === 'superadmin' ? () => navigate('/admin/sentence-audio') : undefined} />} />
-        <Route path="/practice/conversations" element={<ConversationPracticePage onBack={onHome} />} />
+        <Route element={<PracticeGate user={user} onHome={onHome} />}>
+          <Route path="/practice/tones" element={<TonePractice onBack={onHome} />} />
+          <Route path="/practice/characters" element={<HanziTracePage user={user} token={localStorage.getItem('token')} onBack={onHome} />} />
+          <Route path="/practice/listening" element={<ListeningPractice user={user} onBack={onHome} onSignIn={openLogin} />} />
+          <Route path="/practice/sentences" element={<SentencePractice user={user} onBack={onHome} />} />
+          <Route path="/practice/measure-words" element={<MeasureWordPractice onBack={onHome} />} />
+          <Route path="/practice/numbers" element={<NumberTrainer onBack={onHome} />} />
+          <Route path="/practice/dictation" element={<ListeningDictation onBack={onHome} onRecordAudio={user?.role === 'superadmin' ? () => navigate('/admin/sentence-audio') : undefined} />} />
+          <Route path="/practice/conversations" element={<ConversationPracticePage onBack={onHome} />} />
+        </Route>
         <Route path="/tests" element={<TestRoute user={user} onHome={onHome} />} />
         <Route path="/tests/:testId" element={<TestRoute user={user} onHome={onHome} />} />
       </Route>

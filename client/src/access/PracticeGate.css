@@ -1,0 +1,32 @@
+.practice-gate { position: relative; }
+.practice-gate-content { filter: grayscale(0.4) blur(1.5px); opacity: 0.55; pointer-events: none; user-select: none; }
+
+.practice-gate-panel {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 50;
+  width: min(440px, calc(100vw - 32px));
+  box-sizing: border-box;
+  padding: 28px 24px 22px;
+  border-radius: 20px;
+  background: var(--paper, #fff);
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(42, 35, 32, 0.3);
+  border: 1px solid rgba(42, 35, 32, 0.08);
+}
+.practice-gate-icon {
+  display: inline-grid; place-items: center;
+  width: 52px; height: 52px; border-radius: 50%;
+  background: rgba(178, 34, 34, 0.1); font-size: 24px; margin-bottom: 10px;
+}
+.practice-gate-panel h2 { margin: 0 0 8px; font-size: 1.25rem; }
+.practice-gate-panel p { margin: 0 0 14px; line-height: 1.5; opacity: 0.85; }
+.practice-gate-panel .practice-gate-error { color: #b3261e; opacity: 1; }
+.practice-gate-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.practice-gate-actions button { min-height: 44px; padding: 0 20px; border-radius: 999px; font-weight: 600; cursor: pointer; }
+.practice-gate-primary { background: #a3221c; color: #fff; border: 1px solid #a3221c; }
+.practice-gate-secondary { background: transparent; color: inherit; border: 1px solid currentColor; }
+.practice-gate-actions button:disabled { opacity: 0.6; cursor: progress; }
+@media (max-width: 420px) { .practice-gate-actions { flex-direction: column-reverse; } .practice-gate-actions button { width: 100%; } }

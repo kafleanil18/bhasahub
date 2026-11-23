@@ -16,6 +16,7 @@ import { forgetPushDevice } from './pwa/usePushReminders';
 const NO_ATTENTION = { feedback: [], testimonials: [], access: [], plans: [] };
 const ChangePassword = lazy(() => import('./auth/ChangePassword'));
 const TestimonialModal = lazy(() => import('./components/TestimonialModal'));
+const TestAccessPrompt = lazy(() => import('./components/TestAccessPrompt'));
 
 function readStoredUser() {
   try {
@@ -36,6 +37,9 @@ function AppContent() {
   const [levelFilter, setLevelFilter] = useState('all');
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showTestimonial, setShowTestimonial] = useState(false);
+  // Reminder to request mock-test access, shown once per sign-in to students only.
+  const [showTestAccessPrompt, setShowTestAccessPrompt] = useState(false);
+  const closeTestAccessPrompt = useCallback(() => setShowTestAccessPrompt(false), []);
   const [testimonials, setTestimonials] = useState([]);
   // Items that need a staff member's attention, grouped by type.
   const [attention, setAttention] = useState(NO_ATTENTION);
@@ -186,6 +190,7 @@ function AppContent() {
     // see a signed-out user on the previous protected page.
     startTransition(() => {
       setUser(null); setMyAccessDays(null); setAccess({});
+      setShowTestAccessPrompt(false);
       setShowChangePassword(false);
       navigate('/', { replace: true });
     });
@@ -194,6 +199,7 @@ function AppContent() {
     const next = new URLSearchParams(location.search).get('next');
     startTransition(() => {
       setUser(loggedInUser);
+      setShowTestAccessPrompt(!['admin', 'superadmin'].includes(loggedInUser?.role));
       navigate(safeReturnPath(next, homePath(loggedInUser)), { replace: true });
     });
   };
@@ -230,6 +236,7 @@ function AppContent() {
       <div className="ambient-orb orb-1" /><div className="ambient-orb orb-2" /><div className="ambient-orb orb-3" /><div className="ambient-orb orb-4" /><div className="ambient-mesh-grid" />
     </div>
     {showChangePassword && <ChangePassword onClose={() => setShowChangePassword(false)} />}
+    {showTestAccessPrompt && user && <Suspense fallback={null}><TestAccessPrompt user={user} onClose={closeTestAccessPrompt} onOpenTests={() => navigate(practicePaths.tests)} /></Suspense>}
     {showTestimonial && <TestimonialModal user={user} onClose={() => { setShowTestimonial(false); loadTestimonials(); }} />}
     <SiteHeader adminSidebarOpen={adminSidebarOpen} attention={attention} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} hideForAuth={['/sign-in', '/register', '/reset-password'].includes(location.pathname)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={value => { if (!adminArea) navigate('/admin'); setAdminSidebarOpen(value); }} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} onNavigate={navigate} setShowChangePassword={setShowChangePassword} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
     <StudioSaveStatus />

@@ -62,7 +62,7 @@ export default function AdminDashboard({ onNavigate, user }) {
 
   const queue = [
     { target: 'subscriptions', label: 'Plan requests', count: stats?.plans?.pending || 0, description: 'Waiting for payment' },
-    { target: 'subscriptions', label: 'Course access requests', count: stats?.accessRequests?.pending || 0, description: 'Awaiting review' },
+    { target: 'subscriptions', label: 'Access requests', count: stats?.accessRequests?.pending || 0, description: 'Awaiting review' },
     { target: 'testimonials', label: 'Student testimonials', count: stats?.testimonials?.pending || 0, description: 'Awaiting review' },
     { target: 'inbox', label: 'Feedback inbox', count: stats?.feedback?.unread || 0, description: 'Unread messages' },
   ];

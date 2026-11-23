@@ -1,0 +1,48 @@
+.test-access-prompt-overlay { padding: 20px; }
+
+.test-access-prompt {
+  background: var(--paper, #fff);
+  color: inherit;
+  border-radius: 20px;
+  padding: 32px 28px 24px;
+  max-width: 440px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(42, 35, 32, 0.3);
+  animation: modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.test-access-prompt-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(178, 34, 34, 0.1);
+  color: #a3221c;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.test-access-prompt h2 { margin: 0 0 8px; font-size: 1.3rem; }
+.test-access-prompt p { margin: 0 0 16px; line-height: 1.5; opacity: 0.85; }
+.test-access-prompt .test-access-prompt-error { color: #b3261e; opacity: 1; }
+
+.test-access-prompt-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+.test-access-prompt-actions button {
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.test-access-prompt-primary { background: #a3221c; color: #fff; border: 1px solid #a3221c; }
+.test-access-prompt-secondary { background: transparent; color: inherit; border: 1px solid currentColor; }
+.test-access-prompt-actions button:disabled { opacity: 0.6; cursor: progress; }
+
+@media (max-width: 420px) {
+  .test-access-prompt-actions { flex-direction: column-reverse; }
+  .test-access-prompt-actions button { width: 100%; }
+}

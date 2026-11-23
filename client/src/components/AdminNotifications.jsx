@@ -5,7 +5,9 @@ import './AdminNotifications.css';
 // Each tag knows how to describe its items and where they are handled.
 const ATTENTION_TAGS = [
   { key: 'plans', label: 'Plan requests', path: '/admin/subscriptions?view=plans', describe: item => ({ title: `${item.user?.name || 'A student'} chose the ${planLabel(item.plan)} plan`, detail: 'Waiting for payment' }) },
-  { key: 'access', label: 'Course access requests', path: '/admin/subscriptions?view=requests', describe: item => ({ title: `${item.user?.name || 'A student'} asked for course access`, detail: item.course?.title || 'Deleted course' }) },
+  { key: 'access', label: 'Access requests', path: '/admin/subscriptions?view=requests', describe: item => item.scope === 'tests'
+    ? { title: `${item.user?.name || 'A student'} asked for mock test access`, detail: 'All HSK mock tests' }
+    : { title: `${item.user?.name || 'A student'} asked for course access`, detail: item.course?.title || 'Deleted course' } },
   { key: 'testimonials', label: 'Student testimonials', path: '/admin/testimonials', describe: item => ({ title: `${item.name || 'A student'} sent a testimonial`, detail: item.text }) },
   { key: 'feedback', label: 'Feedback inbox', path: '/admin/inbox', describe: item => ({ title: `New feedback from ${item.name || item.user?.name || 'a visitor'}`, detail: item.message }) },
 ];
