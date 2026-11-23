@@ -601,6 +601,13 @@
   display: none;
 }
 
+/* Links that only appear inside the mobile menu drawer. */
+@media (min-width: 1361px) {
+  .nav-mobile-only {
+    display: none !important;
+  }
+}
+
 /* ==========================================================================
    RESPONSIVE NAVIGATION (Tablet & Mobile)
    ========================================================================== */

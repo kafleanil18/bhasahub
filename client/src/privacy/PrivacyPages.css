@@ -18,6 +18,4 @@
 .privacy-document thead { background: var(--rice); }
 .privacy-document caption { color: var(--mist); caption-side: top; }
 .privacy-document th:first-child { min-width: 110px; }
-.privacy-footer { padding-block: 24px; border-top: 1px solid var(--line); }
-.privacy-footer .privacy-links { justify-content: center; }
 .privacy-links a { min-height: 44px; display: inline-flex; align-items: center; }

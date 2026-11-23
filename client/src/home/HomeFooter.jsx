@@ -1,4 +1,6 @@
 import BrandLogo from '../components/BrandLogo';
+import { Link } from 'react-router-dom';
+import { liveClassInquiryHref } from '../components/contactPhone';
 import PrivacyLinks from '../privacy/PrivacyLinks';
 
 export default function HomeFooter({ goHome, isSuperAdmin, serverOk }) {
@@ -13,8 +15,10 @@ export default function HomeFooter({ goHome, isSuperAdmin, serverOk }) {
             <p className="footer-tag">Small steps. Real conversations.</p>
           </div>
           <nav className="footer-quick-links" aria-label="Footer navigation">
-            <a href="#courses">Explore courses <span aria-hidden="true">↗</span></a>
-            <a href="#practice-studio">Practice studio <span aria-hidden="true">↗</span></a>
+            <Link to="/#courses">Explore courses <span aria-hidden="true">↗</span></Link>
+            <Link to="/#practice-studio">Practice studio <span aria-hidden="true">↗</span></Link>
+            <Link to="/pricing">Pricing plans <span aria-hidden="true">↗</span></Link>
+            {liveClassInquiryHref() && <a href={liveClassInquiryHref()} target="_blank" rel="noopener noreferrer">Live class inquiry <span aria-hidden="true">↗</span></a>}
           </nav>
           <div className="footer-social-wrap">
             <span className="footer-social-label">Keep in touch</span>

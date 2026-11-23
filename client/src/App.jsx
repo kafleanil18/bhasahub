@@ -1,7 +1,6 @@
 import AdminSidebar from './components/AdminSidebar';
 import SiteHeader from './components/SiteHeader';
 import HomeFooter from './home/HomeFooter';
-import PrivacyLinks from './privacy/PrivacyLinks';
 import HomeTestimonials from './home/HomeTestimonials';
 import HomeCourses from './home/HomeCourses';
 import HomeHero from './home/HomeHero';
@@ -14,6 +13,7 @@ import './home.css';
 import './flag-theme.css';
 import { forgetPushDevice } from './pwa/usePushReminders';
 
+const NO_ATTENTION = { feedback: [], testimonials: [], access: [], plans: [] };
 const ChangePassword = lazy(() => import('./auth/ChangePassword'));
 const TestimonialModal = lazy(() => import('./components/TestimonialModal'));
 
@@ -37,9 +37,11 @@ function AppContent() {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showTestimonial, setShowTestimonial] = useState(false);
   const [testimonials, setTestimonials] = useState([]);
-  const [unreadFeedbackCount, setUnreadFeedbackCount] = useState(0);
-  const [pendingTestimonialsCount, setPendingTestimonialsCount] = useState(0);
-  const [pendingAccessRequestsCount, setPendingAccessRequestsCount] = useState(0);
+  // Items that need a staff member's attention, grouped by type.
+  const [attention, setAttention] = useState(NO_ATTENTION);
+  const unreadFeedbackCount = attention.feedback.length;
+  const pendingTestimonialsCount = attention.testimonials.length;
+  const pendingAccessRequestsCount = attention.access.length + attention.plans.length;
   const [myAccessDays, setMyAccessDays] = useState(null);
   const [adminSidebarOpen, setAdminSidebarOpen] = useState(false);
   const [desktopAdminNavigation, setDesktopAdminNavigation] = useState(() => window.matchMedia('(min-width: 1100px)').matches);
@@ -129,60 +131,29 @@ function AppContent() {
 
   const loadAdminNotificationCounts = useCallback(() => {
     const token = localStorage.getItem('token');
-    const currentUser = user;
-    if (!token || !currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'superadmin')) return;
-
-    // Load unread feedback
-    fetch(window.API_BASE_URL + '/api/feedback', {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          const unread = data.filter(item => !item.read).length;
-          setUnreadFeedbackCount(unread);
-        }
-      })
-      .catch(() => {});
-
-    // Load pending testimonials
-    fetch(window.API_BASE_URL + '/api/testimonials/all', {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          const pending = data.filter(item => !item.approved).length;
-          setPendingTestimonialsCount(pending);
-        }
-      })
-      .catch(() => {});
-
-    // Load pending access requests
-    fetch(window.API_BASE_URL + '/api/access-requests', {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          const pending = data.filter(item => item.status === 'pending').length;
-          setPendingAccessRequestsCount(pending);
-        }
-      })
-      .catch(() => {});
+    if (!token || !user || (user.role !== 'admin' && user.role !== 'superadmin')) return;
+    // Each list keeps its last value if its request fails.
+    const sources = {
+      feedback: ['/api/feedback', item => !item.read],
+      testimonials: ['/api/testimonials/all', item => !item.approved],
+      access: ['/api/access-requests', item => item.status === 'pending'],
+      plans: ['/api/plans/requests', item => item.status === 'pending'],
+    };
+    for (const [key, [path, needsAttention]] of Object.entries(sources)) {
+      fetch(window.API_BASE_URL + path, { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => res.json())
+        .then(data => { if (Array.isArray(data)) setAttention(previous => ({ ...previous, [key]: data.filter(needsAttention) })); })
+        .catch(() => {});
+    }
   }, [user]);
 
   useEffect(() => {
-    const currentUser = user;
-    if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'superadmin')) {
+    if (user && (user.role === 'admin' || user.role === 'superadmin')) {
       loadAdminNotificationCounts();
       const interval = setInterval(loadAdminNotificationCounts, 15000); // Check every 15 seconds
       return () => clearInterval(interval);
-    } else {
-      setUnreadFeedbackCount(0);
-      setPendingTestimonialsCount(0);
-      setPendingAccessRequestsCount(0);
     }
+    setAttention(NO_ATTENTION);
   }, [user, loadAdminNotificationCounts]);
 
   useEffect(() => {
@@ -260,10 +231,10 @@ function AppContent() {
     </div>
     {showChangePassword && <ChangePassword onClose={() => setShowChangePassword(false)} />}
     {showTestimonial && <TestimonialModal user={user} onClose={() => { setShowTestimonial(false); loadTestimonials(); }} />}
-    <SiteHeader adminSidebarOpen={adminSidebarOpen} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} hideForAuth={['/sign-in', '/register', '/reset-password'].includes(location.pathname)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={value => { if (!adminArea) navigate('/admin'); setAdminSidebarOpen(value); }} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} onNavigate={navigate} setShowChangePassword={setShowChangePassword} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
+    <SiteHeader adminSidebarOpen={adminSidebarOpen} attention={attention} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} hideForAuth={['/sign-in', '/register', '/reset-password'].includes(location.pathname)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={value => { if (!adminArea) navigate('/admin'); setAdminSidebarOpen(value); }} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} onNavigate={navigate} setShowChangePassword={setShowChangePassword} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
     <StudioSaveStatus />
     <AppRoutes user={user} home={home} sidebar={sidebar} onHome={goHome} onLogin={handleLogin} openLogin={openLogin} />
-    {location.pathname !== '/' && <footer className="privacy-footer"><div className="container"><PrivacyLinks /></div></footer>}
+    {location.pathname !== '/' && <div className="home-page"><HomeFooter goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} /></div>}
   </div>;
 }
 

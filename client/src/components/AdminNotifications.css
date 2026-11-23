@@ -1,0 +1,113 @@
+.admin-notifications { position: relative; display: inline-flex; }
+
+.admin-notifications-trigger {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color .2s ease, color .2s ease;
+}
+.admin-notifications-trigger:hover,
+.admin-notifications-trigger[aria-expanded='true'] { border-color: var(--seal); color: var(--seal); }
+.admin-notifications-trigger:focus-visible { outline: 2px solid var(--seal); outline-offset: 3px; }
+
+.admin-notifications-count {
+  position: absolute;
+  top: -6px;
+  right: -7px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--seal);
+  color: #fff;
+  font: 700 11px/18px 'Inter', sans-serif;
+  text-align: center;
+}
+
+.admin-notifications-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  width: min(380px, calc(100vw - 24px));
+  max-height: min(560px, calc(100vh - 90px));
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: 0 18px 44px rgba(42, 35, 32, .18);
+  overflow: hidden;
+}
+
+.admin-notifications-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 14px 16px 8px; }
+.admin-notifications-head h2 { margin: 0; font-size: 16px; }
+.admin-notifications-head span { color: var(--mist); font-size: 12.5px; }
+
+.admin-notifications-tags { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 16px 12px; border-bottom: 1px solid var(--line); }
+.admin-notifications-tags button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--mist);
+  font: 600 12px 'Inter', sans-serif;
+  cursor: pointer;
+}
+.admin-notifications-tags button span { color: var(--ink); }
+.admin-notifications-tags button[aria-pressed='true'] { border-color: var(--seal); background: var(--seal); color: #fff; }
+.admin-notifications-tags button[aria-pressed='true'] span { color: #fff; }
+
+.admin-notifications-list { margin: 0; padding: 4px 0; list-style: none; overflow-y: auto; }
+.admin-notifications-list button {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  padding: 11px 16px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  font: 400 13px 'Inter', sans-serif;
+  text-align: left;
+  cursor: pointer;
+}
+.admin-notifications-list li:last-child button { border-bottom: 0; }
+.admin-notifications-list button:hover,
+.admin-notifications-list button:focus-visible { background: var(--rice); outline: none; }
+.admin-notifications-list strong { font-size: 13.5px; font-weight: 600; }
+.admin-notifications-detail { overflow: hidden; color: var(--mist); text-overflow: ellipsis; white-space: nowrap; }
+.admin-notifications-list time { color: var(--mist); font-size: 11.5px; }
+
+.admin-notifications-tag {
+  justify-self: start;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+.admin-notifications-tag.is-plans { background: #fbe9d0; color: #8a4b08; }
+.admin-notifications-tag.is-access { background: #dcebf7; color: #1d4f7a; }
+.admin-notifications-tag.is-testimonials { background: #e7f3e2; color: #2f6b2a; }
+.admin-notifications-tag.is-feedback { background: #efe4f6; color: #5f2f80; }
+
+.admin-notifications-empty { margin: 0; padding: 26px 16px; color: var(--mist); text-align: center; font-size: 13.5px; }
+
+@media (max-width: 600px) {
+  .admin-notifications { position: static; }
+  .admin-notifications-panel { position: fixed; top: 68px; right: 12px; left: 12px; width: auto; }
+  .admin-notifications-trigger { width: 42px; height: 42px; }
+}

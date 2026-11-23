@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import useSubscriptionData, { accessRequest } from './subscriptions/useSubscriptionData';
 import GrantAccessDialog from './subscriptions/GrantAccessDialog';
 import AccessDialog from './subscriptions/AccessDialog';
@@ -11,7 +12,10 @@ import './SubscriptionManager.css';
 
 export default function SubscriptionManager({ onBack }) {
   const { students, courses, subs, requests, planRequests, members, errors, loading, refreshing, updatedAt, reload } = useSubscriptionData();
-  const [view, setView] = useState('access');
+  // ?view=plans or ?view=requests opens that list, e.g. from the notifications menu.
+  const [searchParams] = useSearchParams();
+  const linkedView = ['plans', 'requests'].includes(searchParams.get('view')) ? searchParams.get('view') : null;
+  const [view, setView] = useState(linkedView || 'access');
   const [status, setStatus] = useState('active');
   const [query, setQuery] = useState('');
   const [requestDays, setRequestDays] = useState({});
@@ -33,6 +37,11 @@ export default function SubscriptionManager({ onBack }) {
   const openGrant = (sub = {}) => { setActionError(''); setGrantForm(sub); };
   const openConfirmation = action => { setActionError(''); setConfirmation(action); };
   const chooseView = next => { setView(next); setQuery(''); if (next === 'access') { setStatus('active'); void reload(['subs']); } };
+  useEffect(() => {
+    if (!linkedView) return;
+    setView(linkedView); setQuery('');
+    contentRef.current?.scrollIntoView({ block: 'start', behavior: 'auto' });
+  }, [linkedView, searchParams]);
   const filterByStatus = next => { setView('access'); setStatus(next); setQuery(''); void reload(['subs']); contentRef.current?.scrollIntoView({ block: 'start', behavior: 'auto' }); };
 
   const mutate = async (key, path, options, success, refresh) => {
