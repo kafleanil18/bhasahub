@@ -6,6 +6,50 @@ const API = window.API_BASE_URL + '/api';
 
 const CATEGORIES = ['All', 'Basic Strokes', 'HSK 1', 'HSK 2', 'Radicals', 'Common Hanzi'];
 const CANVAS_SIZE = 320;
+const STAGE_MAX = 400;
+const STAGE_PADDING = 0.075;
+const EMPTY_QUIZ = { stroke: 0, total: 0, mistakes: 0, done: false, hint: false, wrong: false };
+const MODES = [
+  ['watch', 'Watch'],
+  ['trace', 'Trace'],
+  ['memory', 'From memory'],
+];
+
+// hanzi-writer only understands hex colours, but theme variables can be any CSS colour (e.g. color-mix),
+// so each one is resolved by the browser and read back as hex.
+function toHex(value, fallback) {
+  try {
+    const probe = document.createElement('span');
+    probe.style.color = fallback;
+    probe.style.color = value;
+    document.body.appendChild(probe);
+    const resolved = getComputedStyle(probe).color;
+    probe.remove();
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 1;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = fallback;
+    ctx.fillStyle = resolved;
+    ctx.fillRect(0, 0, 1, 1);
+    const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+    return `#${[r, g, b].map((n) => n.toString(16).padStart(2, '0')).join('')}`;
+  } catch {
+    return fallback;
+  }
+}
+
+function themeColors() {
+  const style = getComputedStyle(document.documentElement);
+  const read = (name, fallback) => toHex(style.getPropertyValue(name).trim() || fallback, fallback);
+  const dark = document.documentElement.classList.contains('dark');
+  return {
+    dark,
+    ink: dark ? '#ffffff' : read('--ink', '#2a2320'),
+    seal: read('--seal', '#a92316'),
+    line: read('--line', '#e6dcc6'),
+    success: read('--answer-success', '#28734e'),
+  };
+}
 const CSV_HEADER_WORDS = ['character', 'hanzi', 'char', 'word'];
 
 // Parses CSV text into rows of fields, honoring quoted fields that may contain commas/newlines.
@@ -68,56 +112,115 @@ function HanziTracePage({ user, onBack, token }) {
   const canvasRef = useRef(null);
   const drawingRef = useRef(false);
   const currentStrokeRef = useRef([]);
-  const inkColorRef = useRef('#2a2320');
-  const sealColorRef = useRef('#a92316');
-  const lineColorRef = useRef('#e6dcc6');
 
+  // Practice modes share one stage: watch the animation, trace over the outline, or write from memory.
+  const [mode, setMode] = useState('watch');
+  const [attempt, setAttempt] = useState(0);
+  const [quiz, setQuiz] = useState(EMPTY_QUIZ);
   const [demoUnavailable, setDemoUnavailable] = useState(false);
-  const demoContainerRef = useRef(null);
+  const [themeKey, setThemeKey] = useState(0);
+  const [stageSize, setStageSize] = useState(0);
+  const stageSizeRef = useRef(0);
+  const stageRef = useRef(null);
+  const writerHostRef = useRef(null);
   const writerRef = useRef(null);
 
   useEffect(() => {
     fetchCharacters();
-    const rootStyle = getComputedStyle(document.documentElement);
-    inkColorRef.current = rootStyle.getPropertyValue('--ink').trim() || '#2a2320';
-    sealColorRef.current = rootStyle.getPropertyValue('--seal').trim() || '#a92316';
-    lineColorRef.current = rootStyle.getPropertyValue('--line').trim() || '#e6dcc6';
+    // Re-read the ink colours when the light/dark theme changes.
+    const observer = new MutationObserver(() => setThemeKey((k) => k + 1));
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    const character = characters.find((c) => c._id === activeCharacterId) || null;
-    if (!character || !demoContainerRef.current) return;
+  const activeCharacter = characters.find((c) => c._id === activeCharacterId) || null;
+  const activeGlyph = activeCharacter?.character || '';
 
-    if (character.character.length !== 1) {
+  // The writer maps pointer positions in screen pixels, so it is sized to the stage rather than scaled by CSS.
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const measure = () => {
+      const size = Math.round(Math.min(stage.clientWidth, STAGE_MAX));
+      if (!size || size === stageSizeRef.current) return;
+      stageSizeRef.current = size;
+      setStageSize(size);
+      writerRef.current?.updateDimensions({ width: size, height: size, padding: Math.round(size * STAGE_PADDING) });
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(stage);
+    return () => observer.disconnect();
+  }, [activeCharacterId]);
+
+  const markPracticed = (character) => {
+    if (!character || practicedCharactersRef.current.has(character)) return;
+    practicedCharactersRef.current.add(character);
+    recordStudioActivity('trace', null, character);
+  };
+
+  const stageReady = stageSize > 0;
+  useEffect(() => {
+    const container = writerHostRef.current;
+    if (!activeGlyph || !stageReady || !container) return;
+    if ([...activeGlyph].length !== 1) {
       setDemoUnavailable(true);
       return;
     }
-
     setDemoUnavailable(false);
-    const container = demoContainerRef.current;
+    setQuiz(EMPTY_QUIZ);
     container.innerHTML = '';
 
-    const writer = HanziWriter.create(container, character.character, {
-      width: CANVAS_SIZE,
-      height: CANVAS_SIZE,
-      padding: 24,
-      strokeColor: inkColorRef.current,
-      radicalColor: sealColorRef.current,
-      outlineColor: lineColorRef.current,
+    const colors = themeColors();
+    const size = stageSizeRef.current;
+    const hintAfter = mode === 'memory' ? 3 : 2;
+    const writer = HanziWriter.create(container, activeGlyph, {
+      width: size,
+      height: size,
+      padding: Math.round(size * STAGE_PADDING),
+      strokeColor: colors.ink,
+      radicalColor: mode === 'watch' && !colors.dark ? colors.seal : null,
+      outlineColor: colors.line,
+      drawingColor: colors.ink,
+      highlightColor: colors.seal,
+      highlightCompleteColor: colors.success,
+      drawingWidth: 18,
       showCharacter: false,
+      showOutline: mode !== 'memory',
+      onLoadCharDataSuccess: (data) => setQuiz((q) => ({ ...q, total: data.strokes.length })),
       onLoadCharDataError: () => setDemoUnavailable(true),
     });
     writerRef.current = writer;
-    writer.animateCharacter();
+
+    if (mode === 'watch') {
+      writer.animateCharacter();
+    } else {
+      writer.quiz({
+        showHintAfterMisses: hintAfter,
+        onCorrectStroke: (d) => setQuiz((q) => ({ ...q, stroke: d.strokeNum + 1, mistakes: d.totalMistakes, hint: false, wrong: false })),
+        onMistake: (d) => setQuiz((q) => ({ ...q, mistakes: d.totalMistakes, hint: d.mistakesOnStroke >= hintAfter, wrong: true })),
+        onComplete: ({ totalMistakes }) => {
+          setQuiz((q) => ({ ...q, stroke: q.total, mistakes: totalMistakes, done: true, hint: false, wrong: false }));
+          markPracticed(activeGlyph);
+        },
+      });
+    }
 
     return () => {
+      writer.cancelQuiz();
       writerRef.current = null;
       container.innerHTML = '';
     };
-  }, [activeCharacterId, characters]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeCharacterId, activeGlyph, mode, attempt, stageReady, themeKey]);
 
   const handleReplayDemo = () => {
     writerRef.current?.animateCharacter();
+  };
+
+  const changeMode = (next) => {
+    setMode(next);
+    setAttempt((n) => n + 1);
   };
 
   const fetchCharacters = async () => {
@@ -143,10 +246,9 @@ function HanziTracePage({ user, onBack, token }) {
     return matchesCategory && matchesSearch;
   });
 
-  const activeCharacter = characters.find((c) => c._id === activeCharacterId) || null;
-
   const selectCharacter = (c) => {
     setActiveCharacterId(c._id);
+    setMode('watch');
     setStrokes([]);
   };
 
@@ -161,6 +263,7 @@ function HanziTracePage({ user, onBack, token }) {
     if (idx === -1 || list.length === 0) return;
     const nextIdx = (idx + offset + list.length) % list.length;
     setActiveCharacterId(list[nextIdx]._id);
+    setMode('watch');
     setStrokes([]);
   };
 
@@ -191,7 +294,7 @@ function HanziTracePage({ user, onBack, token }) {
     pts.push(pos);
 
     const ctx = canvas.getContext('2d');
-    ctx.strokeStyle = inkColorRef.current;
+    ctx.strokeStyle = themeColors().ink;
     ctx.lineWidth = 10;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
@@ -207,11 +310,7 @@ function HanziTracePage({ user, onBack, token }) {
     const finishedStroke = currentStrokeRef.current;
     currentStrokeRef.current = [];
     if (finishedStroke.length > 1) {
-      const character = activeCharacter?.character;
-      if (character && !practicedCharactersRef.current.has(character)) {
-        practicedCharactersRef.current.add(character);
-        recordStudioActivity('trace', null, character);
-      }
+      markPracticed(activeGlyph);
       setStrokes((prev) => [...prev, finishedStroke]);
     }
   };
@@ -221,7 +320,7 @@ function HanziTracePage({ user, onBack, token }) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.strokeStyle = inkColorRef.current;
+    ctx.strokeStyle = themeColors().ink;
     ctx.lineWidth = 10;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
@@ -384,32 +483,51 @@ function HanziTracePage({ user, onBack, token }) {
           box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
         }
 
+        .trace-surface { background: var(--card); color: var(--ink); border: 1px solid var(--line); }
+        .trace-muted { color: var(--mist) !important; }
+        .trace-ink { color: var(--ink) !important; }
+        .trace-chip { display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--rice); color: var(--mist); font-size: .75rem; font-weight: 700; }
+        .trace-filter { border: 1.5px solid var(--line); background: var(--card); color: var(--ink); }
+        .trace-filter:hover { border-color: var(--seal); color: var(--seal); }
+        .trace-filter.is-active { background: var(--seal); border-color: var(--seal); color: #fff; }
+        .trace-search { border: 1.5px solid var(--line); background: var(--card); }
+        .trace-search .input-group-text, .trace-search .form-control, .trace-search .btn { background: transparent; color: var(--ink); }
+        .trace-search .form-control::placeholder { color: var(--mist); }
+        .trace-card { width: 100%; border: 1px solid var(--line) !important; font: inherit; }
+        .trace-card:focus-visible { outline: 2px solid var(--seal); outline-offset: 3px; }
+
+        .trace-practice { max-width: 480px; }
+        .trace-practice-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+        .trace-practice-pinyin { margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--seal); line-height: 1.2; }
+        .trace-practice-meaning { margin: 2px 0 0; color: var(--mist); }
+        .trace-modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; margin-bottom: 14px; border-radius: 12px; background: var(--rice); }
+        .trace-mode { min-height: 40px; padding: 6px 8px; border: 0; border-radius: 9px; background: transparent; color: var(--mist); font: inherit; font-size: .9rem; font-weight: 700; cursor: pointer; transition: background .15s ease, color .15s ease; }
+        .trace-mode:hover { color: var(--ink); }
+        .trace-mode.is-active { background: var(--card); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+        .trace-mode:focus-visible { outline: 2px solid var(--seal); outline-offset: 1px; }
+
         .tracing-stage-box {
           position: relative;
-          width: ${CANVAS_SIZE}px;
-          height: ${CANVAS_SIZE}px;
+          width: 100%;
+          max-width: ${STAGE_MAX}px;
+          aspect-ratio: 1;
           margin: 0 auto;
-          border-radius: 20px;
-          background: var(--card, #fffdf8);
-          border: 2px solid var(--line, #e6dcc6);
-          box-shadow: inset 0 2px 8px rgba(0,0,0,0.03), 0 8px 24px rgba(0,0,0,0.04);
+          border-radius: 16px;
+          background: var(--paper);
+          border: 2px solid var(--line);
           overflow: hidden;
+          touch-action: none;
+          transition: border-color .2s ease, box-shadow .2s ease;
         }
+        .tracing-stage-box.is-wrong { border-color: var(--seal); }
+        .tracing-stage-box.is-done { border-color: var(--answer-success); box-shadow: 0 0 0 3px var(--answer-success-bg); }
 
-        .tracing-grid {
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-        }
-
-        .grid-line {
-          position: absolute;
-        }
-
-        .grid-line-v { top: 0; bottom: 0; left: 50%; width: 1px; border-left: 1px dashed var(--line, #e6dcc6); }
-        .grid-line-h { left: 0; right: 0; top: 50%; height: 1px; border-top: 1px dashed var(--line, #e6dcc6); }
-        .grid-line-d1 { top: 0; left: 0; width: 141.4%; height: 1px; border-top: 1px dotted var(--line, #e6dcc6); transform-origin: 0 0; transform: rotate(45deg); }
-        .grid-line-d2 { bottom: 0; left: 0; width: 141.4%; height: 1px; border-top: 1px dotted var(--line, #e6dcc6); transform-origin: 0 0; transform: rotate(-45deg); }
+        .tracing-grid { position: absolute; inset: 0; pointer-events: none; }
+        .grid-line { position: absolute; }
+        .grid-line-v { top: 0; bottom: 0; left: 50%; width: 1px; border-left: 1px dashed var(--line); }
+        .grid-line-h { left: 0; right: 0; top: 50%; height: 1px; border-top: 1px dashed var(--line); }
+        .grid-line-d1 { top: 0; left: 0; width: 141.4%; height: 1px; border-top: 1px dotted var(--line); transform-origin: 0 0; transform: rotate(45deg); }
+        .grid-line-d2 { bottom: 0; left: 0; width: 141.4%; height: 1px; border-top: 1px dotted var(--line); transform-origin: 0 0; transform: rotate(-45deg); }
 
         .tracing-guide-glyph {
           position: absolute;
@@ -417,43 +535,37 @@ function HanziTracePage({ user, onBack, token }) {
           display: flex;
           align-items: center;
           justify-content: center;
-          color: var(--line, #e6dcc6);
-          opacity: 0.45;
+          color: var(--line);
+          font-size: min(70vw, 280px);
           user-select: none;
           pointer-events: none;
           font-family: 'Noto Serif SC', serif;
         }
+        .tracing-canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: crosshair; touch-action: none; }
+        .stroke-demo-canvas { position: absolute; inset: 0; cursor: crosshair; }
+        .stroke-demo-canvas[hidden] { display: none; }
+        .stroke-demo-canvas svg { display: block; }
 
-        .tracing-canvas {
-          position: absolute;
-          inset: 0;
-          cursor: crosshair;
-          touch-action: none;
-        }
-
-        .stroke-demo-canvas svg {
-          width: 100%;
-          height: 100%;
-        }
-
-        .stroke-demo-fallback {
-          position: absolute;
-          inset: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 24px;
-          text-align: center;
-          color: var(--mist, #7a7266);
-          font-size: 0.9rem;
-          background: rgba(255, 255, 255, 0.9);
-        }
+        .trace-status { min-height: 48px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 10px 4px 4px; color: var(--mist); }
+        .trace-status p { margin: 0; }
+        .trace-status strong { color: var(--ink); }
+        .trace-status-done strong { color: var(--answer-success); }
+        .trace-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 8px; }
+        .trace-btn { min-height: 44px; padding: 8px 18px; border: 1.5px solid var(--line); border-radius: 999px; background: var(--card); color: var(--ink); font: inherit; font-weight: 700; cursor: pointer; transition: border-color .15s ease, background .15s ease, color .15s ease; }
+        .trace-btn:hover:not(:disabled) { border-color: var(--seal); color: var(--seal); }
+        .trace-btn:disabled { opacity: .45; cursor: not-allowed; }
+        .trace-btn:focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
+        .trace-btn.is-primary { background: var(--seal); border-color: var(--seal); color: #fff; }
+        .trace-btn.is-primary:hover { filter: brightness(1.08); color: #fff; }
+        .trace-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; }
+        .trace-nav-count { color: var(--mist); font-size: .9rem; font-weight: 600; }
+        @media (prefers-reduced-motion: reduce) { .trace-mode, .trace-btn, .tracing-stage-box { transition: none; } }
       `}</style>
 
       {/* Top Header Controls Bar */}
       <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
         <button
-          className="btn btn-outline-secondary rounded-pill d-inline-flex align-items-center gap-2 px-3 py-2 fw-semibold shadow-sm hover-lift"
+          className="trace-btn d-inline-flex align-items-center gap-2 shadow-sm"
           onClick={activeCharacter ? backToBrowse : onBack}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -504,7 +616,7 @@ function HanziTracePage({ user, onBack, token }) {
       {!activeCharacter ? (
         <>
           {/* Hero Section */}
-          <div className="card border-0 rounded-4 shadow-sm mb-4 p-4 p-md-5 text-center text-md-start" style={{ background: 'var(--card, #ffffff)' }}>
+          <div className="trace-surface rounded-4 shadow-sm mb-4 p-4 p-md-5 text-center text-md-start">
             <div className="row align-items-center g-4">
               <div className="col-12 col-md-8">
                 <span className="badge bg-danger-subtle text-danger rounded-pill px-3 py-2 text-uppercase fw-bold letter-spacing-1 mb-2 d-inline-flex align-items-center gap-2">
@@ -514,16 +626,16 @@ function HanziTracePage({ user, onBack, token }) {
                   </svg>
                   Writing Practice
                 </span>
-                <h1 className="fw-extrabold display-5 mb-2" style={{ color: 'var(--ink, #2a2320)' }}>
+                <h1 className="fw-extrabold display-5 mb-2 trace-ink">
                   Trace Chinese Characters
                 </h1>
-                <p className="lead text-secondary mb-0" style={{ fontSize: '1.05rem' }}>
+                <p className="lead trace-muted mb-0" style={{ fontSize: '1.05rem' }}>
                   Pick a character below and trace it stroke-by-stroke over a traditional rice grid guide.
                 </p>
               </div>
 
               <div className="col-12 col-md-4 text-center text-md-end">
-                <div className="d-inline-flex p-3 rounded-4 bg-light text-danger display-4 fw-bold zh border shadow-sm">
+                <div className="d-inline-flex p-3 rounded-4 trace-surface display-4 fw-bold zh shadow-sm" style={{ color: 'var(--seal)' }}>
                   字
                 </div>
               </div>
@@ -533,8 +645,8 @@ function HanziTracePage({ user, onBack, token }) {
             <div className="mt-4 pt-3 border-top">
               <div className="row g-3">
                 <div className="col-12 col-md-6 col-lg-5">
-                  <div className="input-group input-group-lg rounded-pill shadow-sm overflow-hidden border">
-                    <span className="input-group-text bg-white border-0 ps-3">
+                  <div className="input-group input-group-lg rounded-pill shadow-sm overflow-hidden trace-search">
+                    <span className="input-group-text border-0 ps-3">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -548,7 +660,7 @@ function HanziTracePage({ user, onBack, token }) {
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
                     {searchQuery && (
-                      <button className="btn bg-white border-0 text-muted px-3" onClick={() => setSearchQuery('')}>
+                      <button className="btn border-0 px-3" aria-label="Clear search" onClick={() => setSearchQuery('')}>
                         ✕
                       </button>
                     )}
@@ -561,11 +673,8 @@ function HanziTracePage({ user, onBack, token }) {
                       <button
                         key={cat}
                         type="button"
-                        className={`btn btn-sm rounded-pill px-3 py-2 text-nowrap fw-semibold transition-all ${
-                          selectedCategory === cat
-                            ? 'btn-danger shadow-sm'
-                            : 'btn-outline-secondary bg-white'
-                        }`}
+                        className={`btn btn-sm rounded-pill px-3 py-2 text-nowrap fw-semibold trace-filter${selectedCategory === cat ? ' is-active' : ''}`}
+                        aria-pressed={selectedCategory === cat}
                         onClick={() => setSelectedCategory(cat)}
                       >
                         {cat}
@@ -581,29 +690,27 @@ function HanziTracePage({ user, onBack, token }) {
           {loading ? (
             <div className="text-center py-5">
               <div className="spinner-border text-danger mb-3" role="status" style={{ width: '2.5rem', height: '2.5rem' }}></div>
-              <p className="text-secondary fw-semibold">Loading character catalog...</p>
+              <p className="trace-muted fw-semibold">Loading character catalog...</p>
             </div>
           ) : filteredCharacters.length === 0 ? (
-            <div className="card border-0 rounded-4 shadow-sm text-center py-5 px-3">
+            <div className="trace-surface rounded-4 shadow-sm text-center py-5 px-3">
               <div className="display-4 text-muted mb-3">✍️</div>
               <h4 className="fw-bold mb-1">No characters found</h4>
-              <p className="text-secondary mb-0">Try clearing your search query or selecting another category filter.</p>
+              <p className="trace-muted mb-0">Try clearing your search query or selecting another category filter.</p>
             </div>
           ) : (
             <div className="row g-3 g-md-4">
               {filteredCharacters.map((c) => (
                 <div key={c._id} className="col-6 col-sm-4 col-md-3 col-lg-2">
                   <div
-                    className="card h-100 border-0 rounded-4 shadow-sm hover-lift cursor-pointer text-center p-3 transition-all bg-white"
+                    className="card h-100 rounded-4 shadow-sm hover-lift cursor-pointer text-center p-3 trace-surface trace-card"
                     onClick={() => selectCharacter(c)}
                   >
-                    <div className="display-4 fw-bold zh text-dark my-1">{c.character}</div>
+                    <div className="display-4 fw-bold zh trace-ink my-1">{c.character}</div>
                     <div className="mt-auto">
-                      <span className="badge bg-secondary-subtle text-secondary rounded-pill px-2 py-1 small mb-1">
-                        {c.category || 'General'}
-                      </span>
-                      {c.pinyin && <div className="fw-semibold text-danger small">{c.pinyin}</div>}
-                      {c.meaning && <div className="text-muted small text-truncate">"{c.meaning}"</div>}
+                      <span className="trace-chip mb-1">{c.category || 'General'}</span>
+                      {c.pinyin && <div className="fw-semibold small" style={{ color: 'var(--seal)' }}>{c.pinyin}</div>}
+                      {c.meaning && <div className="trace-muted small text-truncate">"{c.meaning}"</div>}
                     </div>
 
                     {canManage && (
@@ -633,86 +740,57 @@ function HanziTracePage({ user, onBack, token }) {
           )}
         </>
       ) : (
-        /* Tracing View Mode */
-        <div>
-          {/* Header Card */}
-          <div className="card border-0 rounded-4 shadow-sm p-4 mb-4 text-center bg-white">
-            <div className="display-2 fw-bold zh text-danger mb-1">{activeCharacter.character}</div>
-            <div className="d-flex align-items-center justify-content-center gap-2 flex-wrap">
-              {activeCharacter.pinyin && <span className="fs-5 fw-bold text-dark">{activeCharacter.pinyin}</span>}
-              {activeCharacter.meaning && <span className="fs-6 text-muted">"{activeCharacter.meaning}"</span>}
-              {activeCharacter.category && (
-                <span className="badge bg-danger-subtle text-danger rounded-pill px-3 py-1 ms-2">
-                  {activeCharacter.category}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Tracing Steps side-by-side grid */}
-          <div className="row g-4 justify-content-center">
-            {/* Step 1: Stroke Order Animation */}
-            <div className="col-12 col-md-6 col-lg-5 text-center">
-              <div className="card border-0 rounded-4 shadow-sm p-4 h-100 bg-white">
-                <span className="badge bg-secondary-subtle text-secondary rounded-pill px-3 py-2 text-uppercase fw-bold mb-3 d-inline-block">
-                  Step 1 · Watch stroke order
-                </span>
-
-                <div className="tracing-stage-box">
-                  <div className="tracing-grid">
-                    <span className="grid-line grid-line-v" />
-                    <span className="grid-line grid-line-h" />
-                    <span className="grid-line grid-line-d1" />
-                    <span className="grid-line grid-line-d2" />
-                  </div>
-                  <div ref={demoContainerRef} className="stroke-demo-canvas" />
-                  {demoUnavailable && (
-                    <div className="stroke-demo-fallback">
-                      Stroke order demo isn't available for this character.
-                    </div>
-                  )}
-                </div>
-
-                {!demoUnavailable && (
-                  <div className="mt-3">
-                    <button
-                      type="button"
-                      className="btn btn-outline-secondary rounded-pill px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm"
-                      onClick={handleReplayDemo}
-                    >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <polyline points="23 4 23 10 17 10"></polyline>
-                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
-                      </svg>
-                      Replay Demo
-                    </button>
-                  </div>
-                )}
+        /* Practice view: one stage, three modes */
+        <div className="trace-practice mx-auto">
+          <div className="trace-surface rounded-4 shadow-sm p-3 p-md-4">
+            <header className="trace-practice-head">
+              <div>
+                {activeCharacter.pinyin && <p className="trace-practice-pinyin">{activeCharacter.pinyin}</p>}
+                {activeCharacter.meaning && <p className="trace-practice-meaning">{activeCharacter.meaning}</p>}
               </div>
-            </div>
+              {activeCharacter.category && <span className="trace-chip">{activeCharacter.category}</span>}
+            </header>
 
-            {/* Step 2: Practice Canvas */}
-            <div className="col-12 col-md-6 col-lg-5 text-center">
-              <div className="card border-0 rounded-4 shadow-sm p-4 h-100 bg-white">
-                <span className="badge bg-danger-subtle text-danger rounded-pill px-3 py-2 text-uppercase fw-bold mb-3 d-inline-block">
-                  Step 2 · Trace it yourself
-                </span>
+            {!demoUnavailable && (
+              <div className="trace-modes" role="radiogroup" aria-label="Practice mode">
+                {MODES.map(([id, label]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    role="radio"
+                    aria-checked={mode === id}
+                    className={`trace-mode${mode === id ? ' is-active' : ''}`}
+                    onClick={() => changeMode(id)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
 
-                <div className="tracing-stage-box">
-                  <div className="tracing-grid">
-                    <span className="grid-line grid-line-v" />
-                    <span className="grid-line grid-line-h" />
-                    <span className="grid-line grid-line-d1" />
-                    <span className="grid-line grid-line-d2" />
-                  </div>
-                  <div className="tracing-guide-glyph zh" style={{ fontSize: 'clamp(140px, 40vw, 220px)' }}>
-                    {activeCharacter.character}
-                  </div>
+            <div ref={stageRef} className={`tracing-stage-box${quiz.wrong ? ' is-wrong' : ''}${quiz.done ? ' is-done' : ''}`}>
+              <div className="tracing-grid" aria-hidden="true">
+                <span className="grid-line grid-line-v" />
+                <span className="grid-line grid-line-h" />
+                <span className="grid-line grid-line-d1" />
+                <span className="grid-line grid-line-d2" />
+              </div>
+              <div
+                ref={writerHostRef}
+                className="stroke-demo-canvas"
+                role="img"
+                hidden={demoUnavailable}
+                aria-label={mode === 'watch' ? `Stroke order of ${activeCharacter.character}` : `Writing area for ${activeCharacter.pinyin || activeCharacter.character}`}
+              />
+              {demoUnavailable && (
+                <>
+                  <div className="tracing-guide-glyph zh" aria-hidden="true">{activeCharacter.character}</div>
                   <canvas
                     ref={canvasRef}
                     width={CANVAS_SIZE}
                     height={CANVAS_SIZE}
                     className="tracing-canvas"
+                    aria-label={`Drawing area for ${activeCharacter.character}`}
                     onMouseDown={startDraw}
                     onMouseMove={moveDraw}
                     onMouseUp={endDraw}
@@ -721,28 +799,56 @@ function HanziTracePage({ user, onBack, token }) {
                     onTouchMove={moveDraw}
                     onTouchEnd={endDraw}
                   />
-                </div>
+                </>
+              )}
+            </div>
 
-                <p className="small text-muted mt-3 mb-0">Use your mouse or finger to draw strokes over the guide lines.</p>
-              </div>
+            <div className="trace-status" aria-live="polite">
+              {demoUnavailable ? (
+                <p>Stroke checking isn't available for this entry. Draw over the guide freely.</p>
+              ) : mode === 'watch' ? (
+                <p>Watch the stroke order, then trace it yourself.</p>
+              ) : quiz.done ? (
+                <p className="trace-status-done">
+                  <strong>Well done!</strong> {quiz.mistakes === 0 ? 'No mistakes.' : `${quiz.mistakes} ${quiz.mistakes === 1 ? 'mistake' : 'mistakes'}.`}
+                </p>
+              ) : (
+                <p>
+                  {quiz.total > 0 && <strong>Stroke {Math.min(quiz.stroke + 1, quiz.total)} of {quiz.total}</strong>}
+                  {quiz.hint ? ' · Follow the highlighted stroke.' : quiz.wrong ? ' · Not quite. Try that stroke again.' : mode === 'memory' ? ' · Write it without the outline.' : ' · Trace over the outline in stroke order.'}
+                </p>
+              )}
+            </div>
+
+            <div className="trace-actions">
+              {demoUnavailable ? (
+                <>
+                  <button type="button" className="trace-btn" onClick={handleUndo} disabled={strokes.length === 0}>Undo</button>
+                  <button type="button" className="trace-btn" onClick={handleClear} disabled={strokes.length === 0}>Clear</button>
+                </>
+              ) : mode === 'watch' ? (
+                <>
+                  <button type="button" className="trace-btn" onClick={handleReplayDemo}>Replay</button>
+                  <button type="button" className="trace-btn is-primary" onClick={() => changeMode('trace')}>Start tracing →</button>
+                </>
+              ) : quiz.done ? (
+                <>
+                  <button type="button" className="trace-btn" onClick={() => setAttempt((n) => n + 1)}>Try again</button>
+                  {mode === 'trace'
+                    ? <button type="button" className="trace-btn is-primary" onClick={() => changeMode('memory')}>Write from memory →</button>
+                    : <button type="button" className="trace-btn is-primary" onClick={() => goToOffset(1)}>Next character →</button>}
+                </>
+              ) : (
+                <button type="button" className="trace-btn" onClick={() => setAttempt((n) => n + 1)}>Start again</button>
+              )}
             </div>
           </div>
 
-          {/* Tracing Controls Toolbar */}
-          <div className="d-flex flex-wrap justify-content-center align-items-center gap-2 mt-4 p-3 bg-white rounded-pill shadow-sm border border-light mx-auto" style={{ maxWidth: '540px' }}>
-            <button type="button" className="btn btn-outline-secondary rounded-pill px-3 py-2 fw-semibold" onClick={() => goToOffset(-1)}>
-              ← Previous
-            </button>
-            <button type="button" className="btn btn-outline-primary rounded-pill px-3 py-2 fw-semibold" onClick={handleUndo} disabled={strokes.length === 0}>
-              Undo
-            </button>
-            <button type="button" className="btn btn-outline-danger rounded-pill px-3 py-2 fw-semibold" onClick={handleClear} disabled={strokes.length === 0}>
-              Clear
-            </button>
-            <button type="button" className="btn btn-outline-secondary rounded-pill px-3 py-2 fw-semibold" onClick={() => goToOffset(1)}>
-              Next →
-            </button>
-          </div>
+          <nav className="trace-nav" aria-label="Characters">
+            <button type="button" className="trace-btn" onClick={() => goToOffset(-1)}>← Previous</button>
+            <span className="trace-nav-count">{filteredCharacters.findIndex((c) => c._id === activeCharacterId) + 1} of {filteredCharacters.length}</span>
+            <button type="button" className="trace-btn" onClick={() => goToOffset(1)}>Next →</button>
+          </nav>
         </div>
       )}
 
