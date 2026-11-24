@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { liveClassInquiryHref } from '../components/contactPhone';
 import PrivacyLinks from '../privacy/PrivacyLinks';
 
-export default function HomeFooter({ goHome, isSuperAdmin, serverOk }) {
+export default function HomeFooter({ goHome, isSuperAdmin, serverOk, onStartTour }) {
   return (
     <footer className="site-footer home-footer">
       <div className="container footer-inner">
@@ -18,6 +18,7 @@ export default function HomeFooter({ goHome, isSuperAdmin, serverOk }) {
             <Link to="/#courses">Explore courses <span aria-hidden="true">↗</span></Link>
             <Link to="/#practice-studio">Practice studio <span aria-hidden="true">↗</span></Link>
             <Link to="/pricing">Pricing plans <span aria-hidden="true">↗</span></Link>
+            {onStartTour && <button type="button" className="footer-tour-link" onClick={onStartTour}><span className="footer-tour-star" aria-hidden="true">✦</span> Take the studio tour</button>}
             {liveClassInquiryHref() && <a href={liveClassInquiryHref()} target="_blank" rel="noopener noreferrer">Live class inquiry <span aria-hidden="true">↗</span></a>}
           </nav>
           <div className="footer-social-wrap">

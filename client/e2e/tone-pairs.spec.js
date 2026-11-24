@@ -22,6 +22,7 @@ async function prepare(page, { failSave = false, pairList = pairs } = {}) {
   await page.route('**/pair-test.wav', r => r.fulfill({ body: audio(), contentType: 'audio/wav' }));
   await page.route('**/api/**', async r => {
     const path = new URL(r.request().url()).pathname.replace('/api', ''); let data = [];
+    if (path === '/access-requests/my') data = [{ scope: 'tests', status: 'approved' }];
     if (path === '/tone-practice/questions') data = { questions: [] };
     if (path === '/tone-practice/pairs') data = { pairs: pairList };
     if (path === '/tone-practice/pairs/answer') {
@@ -104,4 +105,25 @@ test('tone pair choices fit a phone screen', async ({ page }) => {
   await page.goto('/practice/tones'); await page.getByRole('button', { name: 'Tone pairs', exact: true }).click();
   await expect(page.getByRole('radio').first()).toBeEnabled();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('tone pairs without a recording are spoken with the Google Mandarin voice when the browser has it', async ({ page }) => {
+  await prepare(page, { pairList: pairs.map(pair => ({ ...pair, audioUrl: '' })) });
+  await page.addInitScript(() => {
+    const voices = [
+      { name: 'Tingting', lang: 'zh-CN', voiceURI: 'tingting', localService: true, default: true },
+      { name: 'Google 普通话（中国大陆）', lang: 'zh-CN', voiceURI: 'google-zh', localService: false, default: false },
+      { name: 'Google US English', lang: 'en-US', voiceURI: 'google-en', localService: false, default: false },
+    ];
+    window.__spoken = [];
+    const synth = { getVoices: () => voices, speak: utterance => { window.__spoken.push({ text: utterance.text, voice: utterance.voice?.name, lang: utterance.lang }); setTimeout(() => utterance.onstart?.(), 0); setTimeout(() => utterance.onend?.(), 10); }, cancel() {}, addEventListener() {}, removeEventListener() {} };
+    Object.defineProperty(window, 'speechSynthesis', { value: synth });
+    window.SpeechSynthesisUtterance = class { constructor(text) { this.text = text; } };
+  });
+  await page.goto('/practice/tones');
+  await page.getByRole('button', { name: 'Tone pairs', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => window.__spoken.length)).toBeGreaterThan(0);
+  const spoken = await page.evaluate(() => window.__spoken[0]);
+  expect(spoken.voice).toBe('Google 普通话（中国大陆）');
+  expect(spoken.lang).toBe('zh-CN');
 });

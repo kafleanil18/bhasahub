@@ -30,3 +30,4 @@
 .practice-gate-secondary { background: transparent; color: inherit; border: 1px solid currentColor; }
 .practice-gate-actions button:disabled { opacity: 0.6; cursor: progress; }
 @media (max-width: 420px) { .practice-gate-actions { flex-direction: column-reverse; } .practice-gate-actions button { width: 100%; } }
+.practice-gate-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; border-radius: 999px; font-weight: 600; text-decoration: none; }

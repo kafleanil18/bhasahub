@@ -6,6 +6,8 @@ const accessRequestSchema = new mongoose.Schema(
     scope: { type: String, enum: ['course', 'tests'], default: 'course' },
     course: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: function () { return this.scope !== 'tests'; } },
     status: { type: String, enum: ['pending', 'approved', 'denied'], default: 'pending' },
+    // Free (tests-scope) access ends here. Approvals made before the one-week limit have none and never expire.
+    expiresAt: { type: Date },
   },
   { timestamps: true }
 );

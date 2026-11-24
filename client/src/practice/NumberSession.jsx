@@ -7,7 +7,7 @@ import NumberAnswerFields from './NumberAnswerFields';
 import useNumberSpeech from './useNumberSpeech';
 import { PlayButton, ProgressDots, ScoreRing, SlowButton } from './ToneVisuals';
 
-export default function NumberSession({ initialQuestions, voice, onRestart, onExit }) {
+export default function NumberSession({ initialQuestions, speaker, onRestart, onExit }) {
   const [questions, setQuestions] = useState(initialQuestions);
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState({});
@@ -20,7 +20,7 @@ export default function NumberSession({ initialQuestions, voice, onRestart, onEx
   const titleRef = useRef(null), checkedRef = useRef(false), nextRef = useRef(null);
   const question = questions[index];
   const mode = NUMBER_MODES.find(item => item.id === question.mode);
-  const { heard, playing, error, reset, play, stop } = useNumberSpeech(voice);
+  const { heard, playing, error, reset, play, stop } = useNumberSpeech(speaker);
   const missed = results.filter(result => !result.correct);
 
   useEffect(() => { titleRef.current?.focus(); }, [index, questions, finished]);

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NUMBER_MODES, numberRound } from './numberQuiz';
-import useChineseVoice from './useChineseVoice';
+import useMandarinSpeaker from './useMandarinSpeaker';
+import VoiceSwitch from './VoiceSwitch';
 import NumberSession from './NumberSession';
 import './SentencePractice.css';
 import './TonePractice.css';
@@ -15,8 +16,9 @@ const examples = {
 export default function NumberTrainer({ onBack }) {
   const [session, setSession] = useState(null);
   const [sessionKey, setSessionKey] = useState(0);
-  // Google's female Mandarin voice when the browser has it, otherwise the device's best female Mandarin voice.
-  const { supported, loading, refresh, voice } = useChineseVoice({ preferGoogleFemale: true });
+  // Google's female Mandarin voice (or the device's best), or the male voice, as the student chooses.
+  const speaker = useMandarinSpeaker();
+  const { supported, loading, refresh, available } = speaker;
   const mode = session && NUMBER_MODES.find(item => item.id === session.mode);
   const start = id => { setSession({ mode: id, questions: numberRound(id) }); setSessionKey(value => value + 1); };
 
@@ -26,13 +28,14 @@ export default function NumberTrainer({ onBack }) {
       {mode && <span className="number-mode-chip"><span aria-hidden="true">{mode.symbol}</span> {mode.title}</span>}
     </div>
     <h1 id="number-trainer-title" className={session ? 'tone-visually-hidden' : 'number-title'}>Everyday Chinese Numbers</h1>
-    {session ? <NumberSession key={sessionKey} initialQuestions={session.questions} voice={voice} onRestart={() => start(session.mode)} onExit={() => setSession(null)} /> : <>
+    {session ? <NumberSession key={sessionKey} initialQuestions={session.questions} speaker={speaker} onRestart={() => start(session.mode)} onExit={() => setSession(null)} /> : <>
       <p className="number-intro">Hear a number in Chinese, then type what you heard.</p>
-      {!voice && <div className="number-voice-warning" role="status">{loading ? <p>Loading Chinese voices…</p> : <>
+      <VoiceSwitch speaker={speaker}/>
+      {!available && <div className="number-voice-warning" role="status">{loading ? <p>Loading Chinese voices…</p> : <>
         <p>{supported ? 'No Mandarin voice was found on this device. Add a Chinese (Mandarin) voice in your device’s speech settings, or open this page in Google Chrome, then refresh.' : 'Speech playback is unavailable in this browser. Open this page in Google Chrome.'}</p>
         {supported && <button className="sentence-secondary" onClick={refresh}>Refresh voices</button>}
       </>}</div>}
-      <div className="number-mode-cards">{NUMBER_MODES.map(item => <button type="button" key={item.id} className="number-mode-card" disabled={!voice} onClick={() => start(item.id)} aria-label={item.title} aria-describedby={`number-mode-${item.id}`}>
+      <div className="number-mode-cards">{NUMBER_MODES.map(item => <button type="button" key={item.id} className="number-mode-card" disabled={!available} onClick={() => start(item.id)} aria-label={item.title} aria-describedby={`number-mode-${item.id}`}>
         <span className="number-mode-art" aria-hidden="true"><b>{examples[item.id][0]}</b><small lang="zh-CN">{examples[item.id][1]}</small></span>
         <span className="number-mode-body"><strong>{item.title}</strong><span id={`number-mode-${item.id}`}>{item.description}</span></span>
       </button>)}</div>

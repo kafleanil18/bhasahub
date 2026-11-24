@@ -8,6 +8,7 @@ const Enrollment = require('../models/Enrollment');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { logActivity } = require('../utils/auditLog');
 const { activePassExpiry } = require('../utils/platformAccess');
+const { FREE_ACCESS_DAYS, activeFreeAccessFilter } = require('../utils/testAccess');
 
 const router = express.Router();
 
@@ -40,8 +41,10 @@ router.post('/', requireAuth, async (req, res) => {
   try {
     const { courseId, scope } = req.body;
     if (scope === 'tests') {
-      const approved = await AccessRequest.findOne({ user: req.user.id, scope: 'tests', status: 'approved' });
+      const approved = await AccessRequest.findOne(activeFreeAccessFilter(req.user.id));
       if (approved) return res.status(400).json({ error: 'You already have access to all mock tests' });
+      // Free access is a one-time week; after it ends a student continues with a plan.
+      if (await AccessRequest.exists({ user: req.user.id, scope: 'tests', status: 'approved' })) return res.status(400).json({ error: `Your free ${FREE_ACCESS_DAYS}-day access has ended. Choose a plan to keep practising.`, code: 'FREE_ACCESS_USED' });
       const pending = await AccessRequest.findOne({ user: req.user.id, scope: 'tests', status: 'pending' });
       if (pending) return res.status(200).json(pending);
       const request = await AccessRequest.create({ user: req.user.id, scope: 'tests', status: 'pending' });
@@ -76,13 +79,14 @@ router.put('/:id/approve', requireAuth, requireAdmin, async (req, res) => {
     if (request.status !== 'pending') return res.status(409).json({ error: 'Request has already been processed' });
     if (request.scope === 'tests') {
       request.status = 'approved';
+      request.expiresAt = new Date(Date.now() + FREE_ACCESS_DAYS * 86400000);
       await request.save();
       const reqUser = await User.findById(request.user).select('name');
       logActivity(req, {
         action: 'approve',
         resourceType: 'access-request',
         resourceId: request._id,
-        label: `${reqUser ? reqUser.name : 'Unknown'} → All mock tests`,
+        label: `${reqUser ? reqUser.name : 'Unknown'} → Free access (${FREE_ACCESS_DAYS} days)`,
       });
       return res.json({ request });
     }

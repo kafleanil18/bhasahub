@@ -23,6 +23,7 @@ const HskPortal = lazy(() => import('../tests/hsk1/HskPortal'));
 const TestimonialManager = lazy(() => import('../admin/TestimonialManager'));
 const SubscriptionManager = lazy(() => import('../admin/SubscriptionManager'));
 const UserManager = lazy(() => import('../admin/UserManager'));
+const StudentManager = lazy(() => import('../admin/StudentManager'));
 const AdminDashboard = lazy(() => import('../admin/AdminDashboard'));
 const AuditLog = lazy(() => import('../admin/AuditLog'));
 const HanziTracePage = lazy(() => import('../practice/HanziTracePage'));
@@ -161,6 +162,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
           <Route path="courses" element={<AdminPanel onBack={onHome} onManageLessons={course => navigate(manageCoursePath(course._id))} />} />
           <Route path="courses/:courseId/lessons" element={<CourseRoute user={user} manage onHome={onHome} />} />
           <Route path="users" element={<UserManager onBack={onHome} />} />
+          <Route path="students" element={<StudentManager onBack={onHome} />} />
           <Route path="conversations" element={<ConversationManager onBack={onHome} />} />
           <Route path="testimonials" element={<TestimonialManager onBack={onHome} />} />
           <Route path="teachers" element={<TeacherManager onBack={onHome} />} />

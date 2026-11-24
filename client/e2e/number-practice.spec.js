@@ -10,7 +10,7 @@ async function prepare(page, voices) {
     window.SpeechSynthesisUtterance = class { constructor(text) { this.text = text; } };
   }, voices);
   await page.route('https://**/*', route => route.abort());
-  await page.route('**/api/**', route => route.fulfill({ json: [] }));
+  await page.route('**/api/**', route => route.fulfill({ json: route.request().url().includes('/access-requests/my') ? [{ scope: 'tests', status: 'approved' }] : [] }));
 }
 
 test('numbers prefer the Google Mandarin voice over other device voices', async ({ page }) => {
@@ -42,4 +42,23 @@ test('with no Mandarin voice at all, students are told how to add one', async ({
   await page.goto('/practice/numbers');
   await expect(page.getByRole('status')).toContainText('No Mandarin voice was found', { timeout: 5000 });
   await expect(page.getByRole('button', { name: 'Prices', exact: true })).toBeDisabled();
+});
+
+test('choosing the male voice reads numbers with the server male voice', async ({ page }) => {
+  await prepare(page, [{ name: 'Google 普通话（中国大陆）', lang: 'zh-CN', voiceURI: 'google-zh' }]);
+  const tts = [];
+  await page.route('**/api/tts/status', route => route.fulfill({ json: { enabled: true } }));
+  await page.route('**/api/tts?*', route => {
+    tts.push(Object.fromEntries(new URL(route.request().url()).searchParams));
+    const b = Buffer.alloc(1644); b.write('RIFF'); b.writeUInt32LE(b.length - 8, 4); b.write('WAVEfmt ', 8); b.writeUInt32LE(16, 16); b.writeUInt16LE(1, 20); b.writeUInt16LE(1, 22); b.writeUInt32LE(8000, 24); b.writeUInt32LE(16000, 28); b.writeUInt16LE(2, 32); b.writeUInt16LE(16, 34); b.write('data', 36); b.writeUInt32LE(1600, 40);
+    return route.fulfill({ status: 200, contentType: 'audio/wav', body: b });
+  });
+  await page.goto('/practice/numbers');
+  await page.getByRole('button', { name: /Male voice/ }).click();
+  await page.getByRole('button', { name: 'Ages', exact: true }).click();
+  await expect.poll(() => tts.length).toBeGreaterThanOrEqual(1);
+  expect(tts[0].speaker).toBe('B');
+  expect(tts[0].text).toMatch(/[一-鿿]/);
+  await expect(page.getByRole('button', { name: 'Check answer' })).toBeEnabled();
+  expect(await page.evaluate(() => window.__spoken.length)).toBe(0);
 });

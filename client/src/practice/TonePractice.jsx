@@ -5,7 +5,8 @@ import { mediaUrl } from '../utils/mediaUrl';
 import { shuffleSentences } from './sentenceQuiz';
 import SyllablePicker from './SingleSyllableStart';
 import TonePairSession from './TonePairSession';
-import useChineseVoice from './useChineseVoice';
+import useMandarinSpeaker from './useMandarinSpeaker';
+import VoiceSwitch from './VoiceSwitch';
 import { markSyllable, pairRound } from './tonePairs';
 import { AdvanceBar, PlayButton, ProgressDots, ScoreRing, SlowButton, SoundToggle, ToneContour } from './ToneVisuals';
 import useToneKeys from './useToneKeys';
@@ -146,7 +147,8 @@ function ToneSession({ questions, onRestart }) {
 function useTonePairs() {
   const [state, setState] = useState({ loading: true });
   const [attempt, setAttempt] = useState(0);
-  const speech = useChineseVoice();
+  // Pairs without a teacher recording use the chosen voice: Google's female Mandarin voice (or the device's best), or the male voice.
+  const speech = useMandarinSpeaker();
   useEffect(() => {
     const controller = new AbortController(); setState({ loading: true });
     request('/pairs', { signal: AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]) }).then(data => {
@@ -155,10 +157,10 @@ function useTonePairs() {
     }).catch(err => { if (!controller.signal.aborted) setState({ error: err.message }); });
     return () => controller.abort();
   }, [attempt]);
-  // Words without a teacher recording need a Mandarin device voice.
-  const canSpeak = speech.supported && !!speech.voice;
+  // Words without a teacher recording need a Mandarin voice.
+  const canSpeak = speech.available;
   const playable = state.pairs?.filter(pair => pair.audioUrl || canSpeak) || [];
-  return { ...state, loading: state.loading || (speech.loading && !!state.pairs), playable, voice: speech.voice, canSpeak, retry: () => setAttempt(value => value + 1) };
+  return { ...state, loading: state.loading || (speech.loading && !!state.pairs), playable, speaker: speech, canSpeak, retry: () => setAttempt(value => value + 1) };
 }
 
 function ModeCard({ id, title, text, hint, art, onClick }) {
@@ -219,10 +221,11 @@ export default function TonePractice({ onBack }) {
     </div>
     {round
       ? (round.mode === 'pairs'
-        ? <TonePairSession key={roundKey} pairs={round.questions} voice={pairs.voice} onRestart={restart} />
+        ? <TonePairSession key={roundKey} pairs={round.questions} speaker={pairs.speaker} onRestart={restart} />
         : <ToneSession key={roundKey} questions={round.questions} onRestart={restart} />)
       : <>
         <h2 className="tone-choose-title">Choose how to practise</h2>
+        <VoiceSwitch speaker={pairs.speaker} className="tone-voice-switch" label="Tone pair voice"/>
         <div className="tone-mode-cards">
           <ModeCard id="single" title="Single syllables" text="Hear one syllable and pick its tone." hint={singleHint} onClick={() => start(pool)}
             art={<div className="tone-art-single">

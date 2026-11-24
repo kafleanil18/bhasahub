@@ -1,0 +1,8 @@
+.voice-switch { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; margin: 8px 0 16px; }
+.voice-switch-buttons { display: inline-flex; padding: 3px; border: 1px solid var(--line, #ddd); border-radius: 999px; background: var(--card, #fff); }
+.voice-switch-buttons button { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 6px 14px; border: 0; border-radius: 999px; background: transparent; color: inherit; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.voice-switch-buttons button[aria-pressed="true"] { background: var(--seal, #a3221c); color: #fff; }
+.voice-switch-buttons button:focus-visible { outline: 3px solid #f5ce69; outline-offset: 2px; }
+.voice-switch-note { margin: 0; font-size: 13px; opacity: .8; }
+.voice-switch-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.voice-switch-label { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; opacity: .75; }

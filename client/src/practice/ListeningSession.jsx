@@ -4,14 +4,14 @@ import useNumberSpeech from './useNumberSpeech';
 import useAnswerSound from './useAnswerSound';
 import { AdvanceBar, PlayButton, ProgressDots, ScoreRing, SlowButton } from './ToneVisuals';
 
-export default function ListeningSession({ initialQuestions, voice, onRestart, onExit }) {
+export default function ListeningSession({ initialQuestions, speaker, onRestart, onExit }) {
   const [questions, setQuestions] = useState(initialQuestions);
   const [index, setIndex] = useState(0);
   const [selection, setSelection] = useState(null);
   const [mistakes, setMistakes] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [finished, setFinished] = useState(false);
-  const { heard, playing, error: audioError, reset, play: speak, stop } = useNumberSpeech(voice);
+  const { heard, playing, error: audioError, reset, play: speak, stop } = useNumberSpeech(speaker);
   const feedbackSound = useAnswerSound(true);
   const answeredRef = useRef(false);
   const titleRef = useRef(null);
@@ -22,7 +22,7 @@ export default function ListeningSession({ initialQuestions, voice, onRestart, o
 
   useEffect(() => { titleRef.current?.focus(); }, [index, finished]);
   useEffect(() => { if (checked && !correct) nextRef.current?.focus(); }, [checked, correct]);
-  // Google's Mandarin voice reads each word as it appears.
+  // The chosen Mandarin voice (Google female, or the male voice) reads each word as it appears.
   useEffect(() => {
     if (finished) return;
     reset(); speak(question.word, 0.85);

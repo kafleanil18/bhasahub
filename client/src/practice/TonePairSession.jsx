@@ -8,15 +8,17 @@ import useToneKeys from './useToneKeys';
 
 const spokenTones = tones => tones.join(' + ');
 
-// Plays the teacher recording when there is one, otherwise the device's Mandarin voice.
-function usePairAudio(pair, voice) {
+// Plays the teacher recording when there is one, otherwise the chosen Mandarin voice (female or male).
+function usePairAudio(pair, speaker) {
   const audioRef = useRef(null);
   const activeRef = useRef(true);
   const playbackRef = useRef(0);
   const [heard, setHeard] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [audioError, setAudioError] = useState('');
-  useEffect(() => { activeRef.current = true; return () => { activeRef.current = false; window.speechSynthesis?.cancel(); }; }, []);
+  const speakerRef = useRef(speaker);
+  speakerRef.current = speaker;
+  useEffect(() => { activeRef.current = true; return () => { activeRef.current = false; speakerRef.current?.stop(); }; }, []);
 
   const play = useCallback(async (rate, userStarted = false) => {
     if (!pair) return;
@@ -35,25 +37,22 @@ function usePairAudio(pair, voice) {
       }
       return;
     }
-    const synth = window.speechSynthesis;
-    synth.cancel();
-    const utterance = new SpeechSynthesisUtterance(pair.hanzi);
-    utterance.lang = voice?.lang || 'zh-CN';
-    if (voice) utterance.voice = voice;
-    utterance.rate = rate < 1 ? .55 : .8;
-    utterance.onstart = () => { if (!stale()) { setHeard(true); setPlaying(true); } };
-    utterance.onend = () => { if (!stale()) { setHeard(true); setPlaying(false); } };
-    utterance.onerror = event => {
-      if (!stale()) setPlaying(false);
-      if (stale() || ['interrupted', 'canceled'].includes(event.error)) return;
-      setAudioError(event.error === 'not-allowed'
-        ? 'Your browser blocked automatic playback. Tap Play word to start the audio.'
-        : 'Could not play this word with your device voice. Try again or skip it.');
-    };
-    synth.speak(utterance);
+    const spoken = speakerRef.current?.speak(pair.hanzi, {
+      rate: rate < 1 ? .55 : .8,
+      onStart: () => { if (!stale()) { setHeard(true); setPlaying(true); } },
+      onEnd: () => { if (!stale()) { setHeard(true); setPlaying(false); } },
+      onError: error => {
+        if (stale()) return;
+        setPlaying(false);
+        setAudioError(error === 'not-allowed'
+          ? 'Your browser blocked automatic playback. Tap Play word to start the audio.'
+          : 'Could not play this word. Try again or skip it.');
+      },
+    });
+    if (!spoken) { setAudioError('No Mandarin voice is available on this device. Try again or skip it.'); return; }
     // Some speech engines never report onstart; a student-started play counts as heard.
     if (userStarted) setHeard(true);
-  }, [pair, voice]);
+  }, [pair]);
 
   useEffect(() => {
     if (!pair) return;
@@ -61,10 +60,11 @@ function usePairAudio(pair, voice) {
     const audio = audioRef.current;
     void play(1);
     const playback = playbackRef;
-    return () => { playback.current++; audio?.pause(); window.speechSynthesis?.cancel(); };
+    const current = speakerRef;
+    return () => { playback.current++; audio?.pause(); current.current?.stop(); };
   }, [pair, play]);
 
-  const stop = useCallback(() => { setPlaying(false); playbackRef.current++; audioRef.current?.pause(); window.speechSynthesis?.cancel(); }, []);
+  const stop = useCallback(() => { setPlaying(false); playbackRef.current++; audioRef.current?.pause(); speakerRef.current?.stop(); }, []);
   const element = pair?.audioUrl ? <audio ref={audioRef} src={mediaUrl(pair.audioUrl)} preload="none" onPlaying={() => { setHeard(true); setPlaying(true); setAudioError(''); }} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} onError={() => { setPlaying(false); setAudioError('This recording is unavailable. Try again or skip it.'); }} /> : null;
   return { play, stop, heard, playing, audioError, element };
 }
@@ -80,7 +80,7 @@ async function submitPair(pairId, selectedTones) {
   return data;
 }
 
-export default function TonePairSession({ pairs, voice, onRestart }) {
+export default function TonePairSession({ pairs, speaker, onRestart }) {
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState([null, null]);
   const [result, setResult] = useState(null);
@@ -97,7 +97,7 @@ export default function TonePairSession({ pairs, voice, onRestart }) {
   const activeRef = useRef(true);
   const pair = pairs[index];
   const finished = index >= pairs.length;
-  const { play, stop, heard, playing, audioError, element } = usePairAudio(finished ? null : pair, voice);
+  const { play, stop, heard, playing, audioError, element } = usePairAudio(finished ? null : pair, speaker);
   useEffect(() => { activeRef.current = true; return () => { activeRef.current = false; }; }, []);
   useEffect(() => { advancingRef.current = false; headingRef.current?.focus(); }, [index]);
 

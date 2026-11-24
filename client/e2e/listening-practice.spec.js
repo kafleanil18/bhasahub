@@ -16,6 +16,7 @@ async function prepare(page, voices = [{ name: 'Tingting', lang: 'zh-CN', voiceU
   await page.route('**/teacher.mp3', route => route.abort());
   await page.route('**/api/**', route => {
     const path = new URL(route.request().url()).pathname.replace('/api', '');
+    if (path === '/access-requests/my') return route.fulfill({ json: [{ scope: 'tests', status: 'approved' }] });
     if (path === '/courses') return route.fulfill({ json: [{ _id: 'c1', title: 'HSK 1 Chinese', language: 'chinese' }, { _id: 'c2', title: 'HSK 2 Chinese', language: 'chinese' }, { _id: 'c3', title: 'Spanish', language: 'spanish' }] });
     if (path === '/subscriptions/my') return route.fulfill({ json: [{ course: { _id: 'c1' } }, { course: { _id: 'c2' } }] });
     if (path === '/lessons/course/c1') return route.fulfill({ json: [{ _id: 'l1', title: 'Greetings', category: 'vocabulary' }, { _id: 'l2', title: 'One word only', category: 'vocabulary' }, { _id: 'l3', title: 'Grammar', category: 'grammar' }] });

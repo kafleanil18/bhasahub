@@ -1,0 +1,41 @@
+.studio-tour { position: fixed; inset: 0; z-index: 2000; }
+.studio-tour-blocker { position: absolute; inset: 0; }
+.studio-tour-dim { position: absolute; inset: 0; background: rgba(15, 12, 10, 0.72); }
+.studio-tour-spotlight {
+  position: fixed;
+  border-radius: 14px;
+  box-shadow: 0 0 0 9999px rgba(15, 12, 10, 0.72), 0 0 0 3px #f5ce69, 0 0 28px 6px rgba(245, 206, 105, 0.45);
+  pointer-events: none;
+  transition: top .35s ease, left .35s ease, width .35s ease, height .35s ease;
+}
+.studio-tour-card {
+  position: fixed;
+  width: min(380px, calc(100vw - 32px));
+  box-sizing: border-box;
+  padding: 18px 20px 16px;
+  border-radius: 16px;
+  background: var(--card, #fff);
+  color: var(--ink, #2a2320);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.45);
+  border-top: 4px solid var(--accent-red, #a3221c);
+  animation: studioTourIn .25s ease;
+}
+.studio-tour-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+.studio-tour-step { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent-red, #a3221c); }
+.studio-tour-skip { background: none; border: 0; padding: 6px 0; color: var(--mist, #6b625c); font-size: 13px; text-decoration: underline; cursor: pointer; }
+.studio-tour-card h2 { margin: 0 0 8px; font-family: var(--font-body); font-size: 20px; line-height: 1.25; }
+.studio-tour-card p { margin: 0 0 14px; font-size: 15px; line-height: 1.55; }
+.studio-tour-tip-label { display: inline-block; margin-right: 8px; padding: 1px 8px; border-radius: 999px; background: #f5ce69; color: #2a2320; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; vertical-align: 1px; }
+.studio-tour-progress { display: flex; gap: 5px; margin-bottom: 14px; }
+.studio-tour-progress span { flex: 1; height: 4px; border-radius: 2px; background: var(--line, #e6dfd8); }
+.studio-tour-progress .is-done { background: color-mix(in srgb, var(--accent-red, #a3221c) 45%, transparent); }
+.studio-tour-progress .is-current { background: var(--accent-red, #a3221c); }
+.studio-tour-actions { display: flex; justify-content: space-between; gap: 10px; }
+.studio-tour-actions button { min-height: 44px; padding: 0 18px; border-radius: 999px; font-weight: 600; cursor: pointer; }
+.studio-tour-back { background: transparent; color: inherit; border: 1px solid var(--line, #d8d0c8); }
+.studio-tour-back:disabled { opacity: .4; cursor: default; }
+.studio-tour-next { background: var(--accent-red, #a3221c); color: #fff; border: 1px solid var(--accent-red, #a3221c); }
+.studio-tour-next:focus-visible, .studio-tour-back:focus-visible, .studio-tour-skip:focus-visible { outline: 3px solid #f5ce69; outline-offset: 2px; }
+@keyframes studioTourIn { from { opacity: 0; transform: translateY(6px); } }
+@media (prefers-reduced-motion: reduce) { .studio-tour-spotlight { transition: none; } .studio-tour-card { animation: none; } }
+@media (max-width: 600px) { .studio-tour-card { padding: 16px; } .studio-tour-card h2 { font-size: 18px; } }

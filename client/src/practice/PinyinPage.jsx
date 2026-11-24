@@ -2,6 +2,9 @@ import { Link } from 'react-router-dom';
 import { recordStudioActivity } from './recordStudioActivity';
 import { useState, useEffect, useRef } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
+import useMandarinSpeaker from './useMandarinSpeaker';
+import VoiceSwitch from './VoiceSwitch';
+import { toneCharacter } from './pinyinToneChars';
 
 const API = (window.API_BASE_URL || '') + '/api';
 
@@ -113,6 +116,8 @@ function extForMimeType(mimeType) {
 function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
   const [selected, setSelected] = useState(null);
   const [recordings, setRecordings] = useState({});
+  // The chosen voice: Google's female Mandarin voice (or the device's best), or the male voice.
+  const speech = useMandarinSpeaker();
   const [recordingTone, setRecordingTone] = useState(null);
   const [uploadingTone, setUploadingTone] = useState(null);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
@@ -262,8 +267,17 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
     }));
   };
 
+  // Say the syllable in this tone by reading a character with that exact sound (妈 mā, 麻 má, 马 mǎ, 骂 mà).
+  const speakTone = (syllable, tone) => {
+    const character = toneCharacter(syllable, tone);
+    if (!character || !speech.available) return false;
+    return speech.speak(character, { rate: 0.75, onError: () => playTone(syllable, tone) });
+  };
+  const playFallback = (syllable, tone) => { if (!speakTone(syllable, tone)) playTone(syllable, tone); };
+
   const handleToneClick = (tone) => {
     const rec = recordings[keyFor(selected, tone)];
+    speech.stop();
     if (rec && audioPlayerRef.current) {
       try {
         audioPlayerRef.current.pause();
@@ -274,14 +288,14 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
         if (playPromise !== undefined) {
           playPromise.catch((err) => {
             console.warn('Audio play error, falling back to synth tone:', err);
-            playTone(selected, tone);
+            playFallback(selected, tone);
           });
         }
       } catch {
-        playTone(selected, tone);
+        playFallback(selected, tone);
       }
     } else {
-      playTone(selected, tone);
+      playFallback(selected, tone);
     }
   };
 
@@ -516,6 +530,15 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
           align-items: center;
           gap: 6px;
         }
+        .pinyin-tone-btn .pinyin-tone-char {
+          display: block;
+          margin-top: 2px;
+          font-size: 0.55em;
+          font-weight: 500;
+          opacity: 0.7;
+          line-height: 1.2;
+        }
+
         .pinyin-tone-recorded-badge {
           display: inline-flex;
           align-items: center;
@@ -884,6 +907,7 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
                     <span className="pinyin-admin-mode-pill">🎙️ Admin Voice Studio</span>
                   )}
                 </div>
+                <VoiceSwitch speaker={speech} label="Voice" />
                 <div className="pinyin-tone-buttons">
                   {[1, 2, 3, 4].map((tone) => {
                     const rec = recordings[keyFor(selected, tone)];
@@ -895,9 +919,10 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
                           type="button"
                           className="pinyin-tone-btn"
                           onClick={() => handleToneClick(tone)}
-                          title={rec ? 'Click to play teacher recording' : 'Click to play tone'}
+                          title={rec ? 'Click to play teacher recording' : toneCharacter(selected, tone) ? `Click to hear ${toneCharacter(selected, tone)} (${applyTone(selected, tone)})` : 'Click to play tone'}
                         >
                           {applyTone(selected, tone)}
+                          {toneCharacter(selected, tone) && <span className="pinyin-tone-char" lang="zh-CN">{toneCharacter(selected, tone)}</span>}
                           {rec && (
                             <span className="pinyin-tone-recorded-badge" title="Teacher voice recorded (click to play)" />
                           )}

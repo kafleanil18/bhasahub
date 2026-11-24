@@ -1,0 +1,14 @@
+.free-access-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 999px;
+  background: #1f7a4d; color: #fff;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; white-space: nowrap;
+}
+.free-access-note {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  margin: 0 0 16px; padding: 12px 14px; border-radius: 12px;
+  background: color-mix(in srgb, #1f7a4d 10%, transparent);
+  border: 1px solid color-mix(in srgb, #1f7a4d 35%, transparent);
+  font-size: 14px; line-height: 1.45; text-align: center;
+}
+.free-access-note.is-compact { flex-direction: row; flex-wrap: wrap; justify-content: flex-start; text-align: left; margin: 8px 0 0; padding: 8px 12px; }

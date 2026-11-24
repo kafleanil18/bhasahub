@@ -1,46 +1,41 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-export default function useNumberSpeech(voice) {
+// Plays Chinese text with the page's Mandarin speaker (female or male) and tracks whether it was heard.
+export default function useNumberSpeech(speaker) {
   const [heard, setHeard] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [error, setError] = useState('');
-  const utteranceRef = useRef(null);
+  const attemptRef = useRef(0);
   const watchdogRef = useRef(null);
+  const speakerRef = useRef(speaker);
+  speakerRef.current = speaker;
   const stop = useCallback(() => {
-    utteranceRef.current = null;
+    attemptRef.current++;
     window.clearTimeout(watchdogRef.current);
-    window.speechSynthesis?.cancel();
+    speakerRef.current?.stop();
   }, []);
   useEffect(() => stop, [stop]);
   const reset = useCallback(() => { stop(); setHeard(false); setPlaying(false); setError(''); }, [stop]);
   const play = useCallback((text, rate = 1) => {
     stop(); setPlaying(false); setError('');
-    if (!voice || !window.speechSynthesis || !window.SpeechSynthesisUtterance) {
-      setError('Chinese audio is unavailable. Choose a Mandarin voice on the practice page and try again.');
-      return;
-    }
+    const attempt = attemptRef.current;
+    const current = () => attempt === attemptRef.current;
     try {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.voice = voice; utterance.lang = voice.lang; utterance.rate = rate;
-      utteranceRef.current = utterance;
-      utterance.onstart = () => {
-        if (utteranceRef.current !== utterance) return;
-        window.clearTimeout(watchdogRef.current); setHeard(true); setPlaying(true);
-      };
-      utterance.onend = () => { if (utteranceRef.current === utterance) { window.clearTimeout(watchdogRef.current); setHeard(true); setPlaying(false); } };
-      utterance.onerror = () => {
-        if (utteranceRef.current !== utterance) return;
-        window.clearTimeout(watchdogRef.current); setPlaying(false);
-        setError('Audio could not play. Tap Listen to try again, or skip this question.');
-      };
+      const started = speakerRef.current?.speak(text, {
+        rate,
+        onStart: () => { if (!current()) return; window.clearTimeout(watchdogRef.current); setHeard(true); setPlaying(true); },
+        onEnd: () => { if (!current()) return; window.clearTimeout(watchdogRef.current); setHeard(true); setPlaying(false); },
+        onError: () => { if (!current()) return; window.clearTimeout(watchdogRef.current); setPlaying(false); setError('Audio could not play. Tap Listen to try again, or skip this question.'); },
+      });
+      if (!started) { setError('Chinese audio is unavailable. Choose a Mandarin voice on the practice page and try again.'); return; }
+      // The server voice may take a moment to download, so allow a little longer than the device voice.
       watchdogRef.current = window.setTimeout(() => {
-        if (utteranceRef.current !== utterance) return;
+        if (!current()) return;
         stop(); setPlaying(false); setError('Audio did not start. Tap Listen to try again, or skip this question.');
-      }, 5000);
-      window.speechSynthesis.speak(utterance);
+      }, 8000);
     } catch {
       stop(); setPlaying(false); setError('Audio could not play. Tap Listen to try again, or skip this question.');
     }
-  }, [voice, stop]);
+  }, [stop]);
   return { heard, playing, error, reset, play, stop };
 }

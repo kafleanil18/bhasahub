@@ -61,7 +61,7 @@ export default function SubscriptionManager({ onBack }) {
   };
   const approve = async request => {
     if (request.scope === 'tests') {
-      await mutate(`approve-${request._id}`, `/access-requests/${request._id}/approve`, { method: 'PUT', body: JSON.stringify({}) }, `Request approved. ${request.user.name} can now take all mock tests.`, ['requests']);
+      await mutate(`approve-${request._id}`, `/access-requests/${request._id}/approve`, { method: 'PUT', body: JSON.stringify({}) }, `Request approved. ${request.user.name} now has free access to the practice studio and all mock tests for 7 days.`, ['requests']);
       return;
     }
     const days = Number(requestDays[request._id] ?? 30);

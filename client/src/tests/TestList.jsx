@@ -2,6 +2,9 @@ import usePracticePapers from './hsk1/usePracticePapers';
 import { useState, useEffect, useMemo } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 import FeaturedPaper from './hsk1/FeaturedPaper';
+import FreeAccessNote from '../access/FreeAccessNote';
+import { FREE_ACCESS_DAYS, freeAccessLive } from '../access/practiceAccess';
+import { Link } from 'react-router-dom';
 
 const API = window.API_BASE_URL + '/api';
 const LEVELS = ['HSK 1', 'HSK 2', 'HSK 3', 'HSK 4'];
@@ -30,15 +33,20 @@ function TestList({ onOpenTest, onBack, user }) {
   useEffect(() => {
     if (isStaff) return;
     let active = true;
-    fetch(`${API}/access-requests/my`, { headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` } })
-      .then(res => res.json())
+    const check = () => fetch(`${API}/access-requests/my`, { headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` } })
+      .then(res => { if (!res.ok) throw new Error(); return res.json(); })
       .then(data => {
         if (!active) return;
-        const request = Array.isArray(data) ? data.find(row => row.scope === 'tests') : null;
-        setAccessStatus(request ? request.status : 'none');
+        const rows = Array.isArray(data) ? data.filter(row => row.scope === 'tests') : [];
+        const status = rows.some(freeAccessLive) ? 'approved' : rows.some(row => row.status === 'pending') ? 'pending' : rows.some(row => row.status === 'approved') ? 'expired' : rows.some(row => row.status === 'denied') ? 'denied' : 'none';
+        setAccessStatus(status);
       })
-      .catch(() => { if (active) setAccessStatus('none'); });
-    return () => { active = false; };
+      .catch(() => { if (active) setAccessStatus(previous => previous === 'loading' ? 'none' : previous); });
+    void check();
+    // Re-check while the page is open so an approval unlocks the tests without a reload.
+    const interval = window.setInterval(check, 15000);
+    window.addEventListener('focus', check);
+    return () => { active = false; window.clearInterval(interval); window.removeEventListener('focus', check); };
   }, [isStaff]);
 
   const unlocked = isStaff || accessStatus === 'approved';
@@ -109,10 +117,12 @@ function TestList({ onOpenTest, onBack, user }) {
       {!unlocked && accessStatus !== 'loading' && (
         <div className={`test-access-banner${accessStatus === 'pending' ? ' is-pending' : ''}`} role="status">
           <div>
-            <strong>{accessStatus === 'pending' ? 'Your access request is under review' : accessStatus === 'denied' ? 'Your previous request was declined' : 'One mock test is free — unlock the rest'}</strong>
-            <p>{accessStatus === 'pending' ? 'An admin will review your request. Check back soon — the H11226 test is free to take meanwhile.' : 'You can take the H11226 test for free. To open all other mock tests, send a request and an admin will approve it.'}</p>
+            <strong>{accessStatus === 'expired' ? 'Your free week has ended' : accessStatus === 'pending' ? 'Your access request is under review' : accessStatus === 'denied' ? 'Your previous request was declined' : 'One mock test is free — unlock the rest for free too'}</strong>
+            <p>{accessStatus === 'expired' ? `Your ${FREE_ACCESS_DAYS}-day free access is over. The H11226 test stays free — choose a plan to open every other mock test again.` : accessStatus === 'pending' ? 'An admin will review your request. Check back soon — the H11226 test is free to take meanwhile.' : 'You can take the H11226 test for free. To open all other mock tests, send a request and an admin will approve it.'}</p>
+            {(accessStatus === 'none' || accessStatus === 'denied') && <FreeAccessNote compact/>}
           </div>
-          {accessStatus !== 'pending' && <button className="test-access-request-btn" disabled={requesting} onClick={requestAccess}>{requesting ? 'Sending request…' : accessStatus === 'denied' ? 'Request access again' : 'Request access to all tests'}</button>}
+          {accessStatus === 'expired' && <Link className="test-access-request-btn" to="/pricing">See plans →</Link>}
+          {(accessStatus === 'none' || accessStatus === 'denied') && <button className="test-access-request-btn" disabled={requesting} onClick={requestAccess}>{requesting ? 'Sending request…' : accessStatus === 'denied' ? 'Request free access again' : 'Request free access to all tests'}</button>}
           {requestError && <p className="test-access-error" role="alert">{requestError}</p>}
         </div>
       )}

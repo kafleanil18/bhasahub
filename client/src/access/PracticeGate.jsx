@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
-import { usePracticeAccess } from './practiceAccess';
+import { Link, Outlet } from 'react-router-dom';
+import { FREE_ACCESS_DAYS, usePracticeAccess } from './practiceAccess';
+import FreeAccessNote from './FreeAccessNote';
 import './PracticeGate.css';
 
 // Wraps the practice studio pages: students can look inside, but until an access
@@ -16,8 +17,9 @@ export default function PracticeGate({ user, onHome }) {
     try { await request(); } catch (err) { setError(err.message); } finally { setSending(false); }
   };
   const copy = {
-    none: ['Request access to start practicing', 'You can look around, but practicing needs approval from an administrator. Send a request and you will be able to start once it is approved.'],
-    denied: ['Request access to start practicing', 'Your earlier request was declined. You can send a new request to the administrator.'],
+    none: ['Unlock practice for free', 'You can look around, but practicing needs approval from an administrator. Send a free request and you can start as soon as it is approved.'],
+    denied: ['Unlock practice for free', 'Your earlier request was declined. You can send a new free request to the administrator.'],
+    expired: ['Your free week has ended', `Thanks for trying the practice studio. Your ${FREE_ACCESS_DAYS}-day free access is over. Choose a plan to keep practising.`],
     pending: ['Waiting for approval', 'Your access request has been sent. You can start practicing as soon as an administrator approves it.'],
   }[status];
 
@@ -25,13 +27,15 @@ export default function PracticeGate({ user, onHome }) {
     {/* inert keeps the page visible but stops every click, key press and focus inside it. */}
     <div className="practice-gate-content" inert aria-hidden="true"><Outlet /></div>
     {copy && <div className="practice-gate-panel" role="region" aria-labelledby="practice-gate-title">
-      <span className="practice-gate-icon" aria-hidden="true">{status === 'pending' ? '⏳' : '🔒'}</span>
+      <span className="practice-gate-icon" aria-hidden="true">{status === 'pending' ? '⏳' : status === 'expired' ? '⌛' : '🔒'}</span>
       <h2 id="practice-gate-title">{copy[0]}</h2>
       <p>{copy[1]}</p>
+      {(status === 'none' || status === 'denied') && <FreeAccessNote/>}
       {error && <p className="practice-gate-error" role="alert">{error}</p>}
       <div className="practice-gate-actions">
         <button className="practice-gate-secondary" onClick={onHome}>← Back to home</button>
-        {(status === 'none' || status === 'denied') && <button className="practice-gate-primary" onClick={send} disabled={sending}>{sending ? 'Sending…' : error ? 'Try again' : 'Request access'}</button>}
+        {status === 'expired' && <Link className="practice-gate-primary practice-gate-link" to="/pricing">See plans →</Link>}
+        {(status === 'none' || status === 'denied') && <button className="practice-gate-primary" onClick={send} disabled={sending}>{sending ? 'Sending…' : error ? 'Try again' : 'Request free access'}</button>}
       </div>
     </div>}
   </div>;

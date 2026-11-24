@@ -57,6 +57,7 @@ app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/plans', require('./routes/plans'));
 app.use('/api/sentences', require('./routes/sentences'));
 app.use('/api/users', userRoutes);
+app.use('/api/students', require('./routes/students'));
 app.use('/api/slides', slideRoutes);
 app.use('/api/pinyin-recordings', pinyinRecordingRoutes);
 app.use('/api/pinyin-table', pinyinTableRoutes);

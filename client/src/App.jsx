@@ -17,6 +17,7 @@ const NO_ATTENTION = { feedback: [], testimonials: [], access: [], plans: [] };
 const ChangePassword = lazy(() => import('./auth/ChangePassword'));
 const TestimonialModal = lazy(() => import('./components/TestimonialModal'));
 const TestAccessPrompt = lazy(() => import('./components/TestAccessPrompt'));
+const StudioTour = lazy(() => import('./home/StudioTour'));
 
 function readStoredUser() {
   try {
@@ -40,6 +41,8 @@ function AppContent() {
   // Reminder to request mock-test access, shown once per sign-in to students only.
   const [showTestAccessPrompt, setShowTestAccessPrompt] = useState(false);
   const closeTestAccessPrompt = useCallback(() => setShowTestAccessPrompt(false), []);
+  const [showStudioTour, setShowStudioTour] = useState(false);
+  const closeStudioTour = useCallback(() => setShowStudioTour(false), []);
   const [testimonials, setTestimonials] = useState([]);
   // Items that need a staff member's attention, grouped by type.
   const [attention, setAttention] = useState(NO_ATTENTION);
@@ -118,15 +121,15 @@ function AppContent() {
   const loadMyAccess = () => {
     const t = localStorage.getItem('token');
     if (!t) { setMyAccessDays(null); return; }
-    fetch(window.API_BASE_URL + '/api/subscriptions/my', {
-      headers: { Authorization: `Bearer ${t}` },
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (!Array.isArray(data) || data.length === 0) { setMyAccessDays(null); return; }
+    const load = path => fetch(window.API_BASE_URL + path, { headers: { Authorization: `Bearer ${t}` } })
+      .then(res => res.json()).then(data => Array.isArray(data) ? data : []).catch(() => []);
+    // Paid access plus a free week from an approved access request.
+    Promise.all([load('/api/subscriptions/my'), load('/api/access-requests/my')])
+      .then(([subs, requests]) => {
         const now = new Date();
-        const daysList = data
-          .map(s => Math.ceil((new Date(s.expiresAt) - now) / (1000 * 60 * 60 * 24)))
+        const ends = [...subs.map(s => s.expiresAt), ...requests.filter(r => r.scope === 'tests' && r.status === 'approved' && r.expiresAt).map(r => r.expiresAt)];
+        const daysList = ends
+          .map(end => Math.ceil((new Date(end) - now) / (1000 * 60 * 60 * 24)))
           .filter(d => d > 0);
         setMyAccessDays(daysList.length ? Math.min(...daysList) : null);
       })
@@ -191,6 +194,7 @@ function AppContent() {
     startTransition(() => {
       setUser(null); setMyAccessDays(null); setAccess({});
       setShowTestAccessPrompt(false);
+      setShowStudioTour(false);
       setShowChangePassword(false);
       navigate('/', { replace: true });
     });
@@ -207,6 +211,7 @@ function AppContent() {
     const next = typeof destination === 'string' ? destination : location.pathname + location.search + location.hash;
     navigate(signInPath(safeReturnPath(next)));
   };
+  const startStudioTour = () => { if (location.pathname !== '/') navigate('/'); setShowStudioTour(true); };
   const openPractice = id => { if (practicePaths[id]) navigate(practicePaths[id]); };
   const openCourse = course => navigate(coursePath(course._id));
   const scrollTestimonials = direction => {
@@ -224,7 +229,7 @@ function AppContent() {
     <HomeHero onContinueLearning={() => navigate('/continue')} onPinyinPractice={() => navigate('/practice/pinyin')} user={user} hasStartedCourse={Object.values(access).some(course => course.completed > 0)} onOpenPractice={openPractice} />
     <HomeCourses filteredCourses={filteredCourses} hskLevels={hskLevels} levelFilter={levelFilter} onOpenCourse={openCourse} setLevelFilter={setLevelFilter} />
     <HomeTestimonials openLogin={openLogin} scrollTestimonials={scrollTestimonials} setShowTestimonial={setShowTestimonial} testimonials={testimonials} testimonialsScrollRef={testimonialsScrollRef} user={user} />
-    <HomeFooter goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} />
+    <HomeFooter goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} onStartTour={user?.role === 'student' ? startStudioTour : undefined} />
   </main>;
   const sidebar = isSuperAdmin ? <>
     <div className={`admin-sidebar-backdrop ${adminSidebarOpen ? 'is-visible' : ''}`} onClick={() => setAdminSidebarOpen(false)} aria-hidden="true" />
@@ -236,12 +241,13 @@ function AppContent() {
       <div className="ambient-orb orb-1" /><div className="ambient-orb orb-2" /><div className="ambient-orb orb-3" /><div className="ambient-orb orb-4" /><div className="ambient-mesh-grid" />
     </div>
     {showChangePassword && <ChangePassword onClose={() => setShowChangePassword(false)} />}
-    {showTestAccessPrompt && user && <Suspense fallback={null}><TestAccessPrompt user={user} onClose={closeTestAccessPrompt} onOpenTests={() => navigate(practicePaths.tests)} /></Suspense>}
+    {showTestAccessPrompt && user && <Suspense fallback={null}><TestAccessPrompt user={user} onClose={closeTestAccessPrompt} onStartTour={startStudioTour} /></Suspense>}
+    {showStudioTour && <Suspense fallback={null}><StudioTour onClose={closeStudioTour} /></Suspense>}
     {showTestimonial && <TestimonialModal user={user} onClose={() => { setShowTestimonial(false); loadTestimonials(); }} />}
     <SiteHeader adminSidebarOpen={adminSidebarOpen} attention={attention} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} hideForAuth={['/sign-in', '/register', '/reset-password'].includes(location.pathname)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={value => { if (!adminArea) navigate('/admin'); setAdminSidebarOpen(value); }} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} onNavigate={navigate} setShowChangePassword={setShowChangePassword} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
     <StudioSaveStatus />
     <AppRoutes user={user} home={home} sidebar={sidebar} onHome={goHome} onLogin={handleLogin} openLogin={openLogin} />
-    {location.pathname !== '/' && <div className="home-page"><HomeFooter goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} /></div>}
+    {location.pathname !== '/' && <div className="home-page"><HomeFooter goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} onStartTour={user?.role === 'student' ? startStudioTour : undefined} /></div>}
   </div>;
 }
 

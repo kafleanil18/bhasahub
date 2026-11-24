@@ -112,6 +112,13 @@ export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen,
               </div>
               <div className="admin-sidebar-group">
                 <p className="admin-sidebar-group-title">People & access</p>
+              {isSuperAdmin && <button className={activeView === 'students' ? 'is-current' : undefined} aria-current={activeView === 'students' ? 'page' : undefined} onClick={() => onNavigate('students')}>
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M22 10 12 5 2 10l10 5 10-5z"></path>
+                  <path d="M6 12v5c3 2 9 2 12 0v-5"></path>
+                </svg>
+                Manage students
+              </button>}
               <button className={activeView === 'admins' ? 'is-current' : undefined} aria-current={activeView === 'admins' ? 'page' : undefined} onClick={() => onNavigate('admins')}>
                 <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
