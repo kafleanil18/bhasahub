@@ -22,6 +22,13 @@ export default function SiteHeader({ adminSidebarOpen, attention, darkMode, goHo
                 <span>Home</span>
               </button>
               {isAdmin && !isSuperAdmin && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/admin/tests'); }}>Manage tests</button>}
+              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/about-hsk'); }}>
+                <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M22 10 12 5 2 10l10 5 10-5z"></path>
+                  <path d="M6 12v5c3 2.5 9 2.5 12 0v-5"></path>
+                </svg>
+                <span>About HSK</span>
+              </button>
               {!isAdmin && !isSuperAdmin && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/pricing'); }}>
                 <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"></path>

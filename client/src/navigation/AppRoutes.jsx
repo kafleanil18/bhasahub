@@ -41,6 +41,7 @@ const PracticeReminders = lazy(() => import('../admin/PracticeReminders'));
 const TeacherManager = lazy(() => import('../admin/TeacherManager'));
 const ReminderUnsubscribe = lazy(() => import('../ReminderUnsubscribe'));
 const PricingPage = lazy(() => import('../pricing/PricingPage'));
+const AboutHsk = lazy(() => import('../hsk/AboutHsk'));
 const PrivacyPolicy = lazy(() => import('../privacy/PrivacyPages').then(module => ({ default: module.PrivacyPolicy })));
 const BrowserStoragePolicy = lazy(() => import('../privacy/PrivacyPages').then(module => ({ default: module.BrowserStoragePolicy })));
 
@@ -121,6 +122,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
       <Route path="/privacy" element={<PrivacyPolicy user={user} />} />
       <Route path="/cookies" element={<BrowserStoragePolicy />} />
       <Route path="/pricing" element={<PricingPage user={user} />} />
+      <Route path="/about-hsk" element={<AboutHsk />} />
       <Route path="/email/reminders/unsubscribe" element={<ReminderUnsubscribe />} />
       <Route path="/" element={<HomeRoute user={user} home={home} />} />
       {/* The pinyin chart stays open to everyone; the other practice tools need approved access. */}
