@@ -38,6 +38,20 @@ async function eligibleStudents(userId) {
   return [...students.values()].sort((a, b) => a.email.localeCompare(b.email));
 }
 
+// When each student's Chinese course access ends: the latest active subscription, so the page can
+// find students whose access is running out. Kept out of eligibleStudents so preview fingerprints stay unchanged.
+async function accessEndDates(students, now = new Date()) {
+  const subs = await Subscription.find({ user: { $in: students.map(student => student.user) }, expiresAt: { $gt: now } })
+    .populate('course', 'language published').select('user expiresAt course').lean();
+  const ends = new Map();
+  for (const sub of subs) {
+    if (sub.course?.language !== 'chinese' || !sub.course.published) continue;
+    const id = String(sub.user), time = new Date(sub.expiresAt).getTime();
+    if (!ends.has(id) || time > ends.get(id)) ends.set(id, time);
+  }
+  return ends;
+}
+
 function audienceSummary(students) {
   return { count: students.length, students: students.slice(0, 25).map(({ name, email }) => ({ name, email })) };
 }
@@ -104,4 +118,4 @@ function campaignSummary(campaign) {
   };
 }
 
-module.exports = { ReminderError, validateMessage, clientUrl, eligibleStudents, selectedStudents, audienceSummary, previewToken, checkPreview, unsubscribeToken, unsubscribeUserId, reminderEmail, campaignSummary };
+module.exports = { ReminderError, validateMessage, clientUrl, eligibleStudents, accessEndDates, selectedStudents, audienceSummary, previewToken, checkPreview, unsubscribeToken, unsubscribeUserId, reminderEmail, campaignSummary };

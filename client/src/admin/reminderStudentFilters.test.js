@@ -30,3 +30,13 @@ test('practice labels avoid inventing an inactivity period for missing history',
   assert.equal(practiceLabel(students[1]), '3 days ago');
   assert.equal(practiceLabel(students[4]), 'No recorded practice');
 });
+
+test('the access-ending view only lists students whose access ends within 14 days', () => {
+  const people = [
+    { user: 'soon', name: 'Soon', email: 'soon@example.com', accessDaysLeft: 3 },
+    { user: 'edge', name: 'Edge', email: 'edge@example.com', accessDaysLeft: 14 },
+    { user: 'later', name: 'Later', email: 'later@example.com', accessDaysLeft: 15 },
+    { user: 'none', name: 'None', email: 'none@example.com', accessDaysLeft: null },
+  ];
+  assert.deepEqual(filterStudents(people, 'ending', '', new Set(), 'name').map(student => student.user), ['edge', 'soon']);
+});

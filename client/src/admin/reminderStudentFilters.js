@@ -1,12 +1,15 @@
+export const ENDING_DAYS = 14;
+
 export const inactivityFilters = [
   ['all', 'All students'], ['3', 'Inactive 3+ days'], ['7', 'Inactive 7+ days'],
-  ['14', 'Inactive 14+ days'], ['unrecorded', 'No recorded practice'], ['selected', 'Selected'],
+  ['14', 'Inactive 14+ days'], ['unrecorded', 'No recorded practice'], ['ending', 'Access ends in 14 days'], ['selected', 'Selected'],
 ];
 
 export function matchesActivity(student, filter, selected) {
   if (filter === 'all') return true;
   if (filter === 'selected') return selected.has(student.user);
   if (filter === 'unrecorded') return student.lastPracticeAt === null;
+  if (filter === 'ending') return Number.isFinite(student.accessDaysLeft) && student.accessDaysLeft <= ENDING_DAYS;
   return Number.isFinite(student.inactiveDays) && student.inactiveDays >= Number(filter);
 }
 

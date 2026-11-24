@@ -36,7 +36,8 @@ router.get('/students', async (_req, res) => {
     const students = await reminders.eligibleStudents();
     if (students.length > 5000) throw new reminders.ReminderError('The interactive student list supports up to 5,000 eligible students.');
     const asOf = new Date();
-    res.json({ students: await reminderStudentActivity(students, asOf), asOf });
+    const [activity, ends] = await Promise.all([reminderStudentActivity(students, asOf), reminders.accessEndDates(students, asOf)]);
+    res.json({ students: activity.map(student => ({ ...student, accessEndsAt: ends.has(student.user) ? new Date(ends.get(student.user)).toISOString() : null, accessDaysLeft: ends.has(student.user) ? Math.ceil((ends.get(student.user) - asOf.getTime()) / 86400000) : null })), asOf });
   } catch (error) { fail(res, error); }
 });
 

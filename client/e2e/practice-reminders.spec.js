@@ -56,7 +56,7 @@ test('superadmin reviews the exact message and recipient count before queuing a 
   await page.getByLabel('Subject', { exact: true }).fill('Your Chinese practice today');
   await page.getByLabel('Message', { exact: true }).fill('Take ten minutes to practice speaking Chinese today.');
   await page.getByRole('button', { name: 'Select all matching', exact: true }).click();
-  await page.getByRole('button', { name: 'Review reminder', exact: true }).click();
+  await page.getByRole('button', { name: /^Review & send/ }).click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toContainText('Your Chinese practice today');
   await expect(dialog).toContainText('Take ten minutes to practice speaking Chinese today.');
@@ -78,7 +78,7 @@ test('failed confirmation remains in the dialog and retries keep the same reques
   const { requests, setSendFailure } = await prepare(page);
   await page.goto('/admin/reminders');
   await page.getByRole('button', { name: 'Select all matching', exact: true }).click();
-  await page.getByRole('button', { name: 'Review reminder', exact: true }).click();
+  await page.getByRole('button', { name: /^Review & send/ }).click();
   setSendFailure(true);
   const dialog = page.getByRole('dialog');
   await dialog.getByRole('button', { name: 'Send to 2 students', exact: true }).click();
@@ -94,7 +94,7 @@ test('review can be cancelled with the keyboard without sending and restores foc
   const { requests } = await prepare(page);
   await page.goto('/admin/reminders');
   await page.getByRole('button', { name: 'Select all matching', exact: true }).click();
-  const button = page.getByRole('button', { name: 'Review reminder', exact: true });
+  const button = page.getByRole('button', { name: /^Review & send/ });
   await button.click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await page.keyboard.press('Escape');
@@ -106,13 +106,13 @@ test('review can be cancelled with the keyboard without sending and restores foc
 test('no active students or missing email configuration disables reminder sending', async ({ page }) => {
   await prepare(page, { count: 0 });
   await page.goto('/admin/reminders');
-  await expect(page.getByText('There are no eligible subscribed students to remind right now.')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Review reminder', exact: true })).toBeDisabled();
+  await expect(page.locator('#reminder-review-help')).toContainText('No students have active Chinese course access right now.');
+  await expect(page.getByRole('button', { name: /^Review & send/ })).toBeDisabled();
   await page.unroute('**/api/**');
   await prepare(page, { emailConfigured: false });
   await page.goto('/admin/reminders');
   await expect(page.getByRole('link', { name: 'Open Email settings' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Review reminder', exact: true })).toBeDisabled();
+  await expect(page.getByRole('button', { name: /^Review & send/ })).toBeDisabled();
 });
 
 test('ordinary admins and students cannot open practice reminders', async ({ page }) => {
@@ -144,7 +144,7 @@ test('compose and review fit mobile, tablet, and desktop screens without runtime
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   }
   await page.setViewportSize({ width: 320, height: 800 });
-  await page.getByRole('button', { name: 'Review reminder', exact: true }).click();
+  await page.getByRole('button', { name: /^Review & send/ }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Send to 2 students', exact: true })).toBeVisible();
   expect(await page.getByRole('dialog').evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
@@ -163,7 +163,7 @@ const activityStudents = [
 test('activity filters and search preserve explicit selections and preview only the chosen students', async ({ page }) => {
   const { requests } = await prepare(page, { studentRows: activityStudents });
   await page.goto('/admin/reminders');
-  await expect(page.getByRole('button', { name: 'Review reminder', exact: true })).toBeDisabled();
+  await expect(page.getByRole('button', { name: /^Review & send/ })).toBeDisabled();
   await page.getByRole('button', { name: /Inactive 7\+ days/ }).click();
   await expect(page.getByRole('checkbox')).toHaveCount(2);
   await page.getByRole('button', { name: 'Select all matching', exact: true }).click();
@@ -174,7 +174,7 @@ test('activity filters and search preserve explicit selections and preview only 
   await page.getByRole('checkbox', { name: /Select Recent Student/ }).check();
   await page.getByRole('button', { name: 'Show selected', exact: true }).click();
   await expect(page.getByRole('checkbox')).toHaveCount(3);
-  await page.getByRole('button', { name: 'Review reminder', exact: true }).click();
+  await page.getByRole('button', { name: /^Review & send/ }).click();
   await expect(page.getByRole('dialog')).toContainText('3 subscribed students');
   await page.getByRole('dialog').getByText('Review recipients', { exact: true }).click();
   await expect(page.getByRole('dialog')).toContainText('recent@example.com');
@@ -192,7 +192,7 @@ test('unrecorded activity is separate from inactivity and a row reminder targets
   await expect(page.getByRole('checkbox')).toHaveCount(1);
   await page.getByRole('button', { name: 'Prepare reminder for Unrecorded Student', exact: true }).click();
   await expect(page.getByLabel('Subject', { exact: true })).toBeFocused();
-  await page.getByRole('button', { name: 'Review reminder', exact: true }).click();
+  await page.getByRole('button', { name: /^Review & send/ }).click();
   await expect(page.getByRole('dialog')).toContainText('1 subscribed student');
   expect(requests.find(request => request.path.endsWith('/preview')).body.studentIds).toEqual([activityStudents[4].user]);
   expect(requests.filter(request => request.path.endsWith('/campaigns'))).toHaveLength(0);
@@ -211,7 +211,7 @@ test('selection persists across pages and can be cleared without sending', async
   await page.getByRole('button', { name: 'Show selected', exact: true }).click();
   await expect(page.getByRole('checkbox')).toHaveCount(2);
   await page.getByRole('button', { name: 'Clear selection', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Review reminder', exact: true })).toBeDisabled();
+  await expect(page.getByRole('button', { name: /^Review & send/ })).toBeDisabled();
 });
 
 test('activity outages block review and refreshing eligibility requires removing unavailable selections', async ({ page }) => {
@@ -221,24 +221,24 @@ test('activity outages block review and refreshing eligibility requires removing
   setStudentFailure(true);
   await page.getByRole('button', { name: 'Refresh students', exact: true }).click();
   await expect(page.getByRole('alert')).toContainText('Could not refresh student activity');
-  await expect(page.getByRole('button', { name: 'Review reminder', exact: true })).toBeDisabled();
+  await expect(page.getByRole('button', { name: /^Review & send/ })).toBeDisabled();
   setStudentFailure(false); setStudents(activityStudents.slice(1));
   await page.getByRole('button', { name: 'Refresh students', exact: true }).click();
   await expect(page.getByRole('alert')).toContainText('no longer eligible');
-  await expect(page.getByRole('button', { name: 'Review reminder', exact: true })).toBeDisabled();
+  await expect(page.getByRole('button', { name: /^Review & send/ })).toBeDisabled();
   await page.getByRole('button', { name: 'Remove unavailable selections', exact: true }).click();
   await expect(page.getByRole('alert')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Review reminder', exact: true })).toBeDisabled();
+  await expect(page.getByRole('button', { name: /^Review & send/ })).toBeDisabled();
 });
 
 test('review explains missing selections and remains available when only old reminder history fails', async ({ page }) => {
   await prepare(page);
   await page.route('**/api/practice-reminders/campaigns', route => route.fulfill({ status: 503, json: { error: 'History temporarily unavailable' } }));
   await page.goto('/admin/reminders');
-  await expect(page.locator('#reminder-review-help')).toContainText('Select at least one student');
+  await expect(page.locator('#reminder-review-help')).toContainText('Choose who should receive this reminder.');
   await page.getByRole('button', { name: 'Select all matching', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Review reminder', exact: true })).toBeEnabled();
-  await page.getByRole('button', { name: 'Review reminder', exact: true }).click();
+  await expect(page.getByRole('button', { name: /^Review & send/ })).toBeEnabled();
+  await page.getByRole('button', { name: /^Review & send/ }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
 });
 
@@ -246,6 +246,41 @@ test('review explains when the live email service has not been configured', asyn
   await prepare(page, { emailConfigured: false });
   await page.goto('/admin/reminders');
   await page.getByRole('button', { name: 'Select all matching', exact: true }).click();
-  await expect(page.locator('#reminder-review-help')).toContainText('Enable and save an email service');
-  await expect(page.getByRole('button', { name: 'Review reminder', exact: true })).toBeDisabled();
+  await expect(page.locator('#reminder-review-help')).toContainText('Turn on an email service in Email settings first.');
+  await expect(page.getByRole('button', { name: /^Review & send/ })).toBeDisabled();
+});
+
+test('templates fill the message and pick the right students, and the reminder sits above the student list', async ({ page }) => {
+  const rows = activityStudents.map((student, index) => ({ ...student, accessDaysLeft: [3, 40, 20, 10, 90][index], accessEndsAt: '2026-12-01T00:00:00Z' }));
+  const { requests } = await prepare(page, { studentRows: rows });
+  await page.goto('/admin/reminders');
+  const templates = page.getByRole('radiogroup', { name: 'Reminder template' }).getByRole('radio');
+  await expect(templates).toHaveCount(4);
+  await expect(templates).toHaveText([/Daily practice/, /We miss you/, /Mock test challenge/, /Access ending soon/]);
+  await expect(page.getByRole('radio', { name: /Daily practice/ })).toHaveAttribute('aria-checked', 'true');
+
+  // "We miss you" selects students inactive 7+ days (seven and fourteen days).
+  await page.getByRole('radio', { name: /We miss you/ }).click();
+  await expect(page.getByLabel('Subject', { exact: true })).toHaveValue('Your Chinese is waiting for you');
+  await expect(page.getByRole('radio', { name: /Inactive 7\+ days/ })).toHaveAttribute('aria-checked', 'true');
+  await expect(page.locator('.reminder-selected')).toContainText('2 students will receive');
+
+  // "Access ending soon" selects students whose access ends within 14 days (3 and 10 days left).
+  await page.getByRole('radio', { name: /Access ending soon/ }).click();
+  await expect(page.getByLabel('Message', { exact: true })).toHaveValue(/Your course access ends soon/);
+  await page.getByRole('button', { name: /^Review & send to 2/ }).click();
+  await expect(page.getByRole('dialog')).toContainText('2 subscribed students');
+  const ids = requests.find(request => request.path.endsWith('/preview')).body.studentIds;
+  expect([...ids].sort()).toEqual([rows[0].user, rows[3].user]);
+  await page.keyboard.press('Escape');
+
+  // Edits can be undone with one click.
+  await page.getByLabel('Subject', { exact: true }).fill('Custom subject');
+  await page.getByRole('button', { name: 'Reset to template' }).click();
+  await expect(page.getByLabel('Subject', { exact: true })).toHaveValue('Make the most of your Chinese course access');
+
+  // The send card comes before the history and the student table.
+  const top = async selector => (await page.locator(selector).boundingBox()).y;
+  expect(await top('.reminder-send')).toBeLessThan(await top('.reminder-history'));
+  expect(await top('.reminder-history')).toBeLessThan(await top('.reminder-student-picker'));
 });
