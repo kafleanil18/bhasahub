@@ -4,6 +4,7 @@ import GrammarLesson from './GrammarLesson';
 import Quiz from './Quiz';
 import SrsReview from './SrsReview';
 import { mediaUrl } from '../utils/mediaUrl';
+import Icon from '../components/Icon';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
@@ -149,7 +150,7 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, co
 
       {supportsConversation(course) && (lesson.dialogueImage || (lesson.dialogueLines && lesson.dialogueLines.length > 0)) && (
         <div className="lesson-dialogue">
-          <h3 className="dialogue-heading">💬 Conversation</h3>
+          <h3 className="dialogue-heading"><Icon name="chat"/> Conversation</h3>
           {lesson.dialogueImage && (
             <img
               src={mediaUrl(lesson.dialogueImage)}
@@ -166,7 +167,7 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, co
                   onClick={() => new Audio(mediaUrl(line.audioUrl)).play()}
                   title="Play audio"
                 >
-                  ▶
+                  <Icon name="play"/>
                 </button>
               )}
               {line.text && (
@@ -402,7 +403,7 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, co
                   onClick={() => new Audio(mediaUrl(w.audioUrl)).play()}
                   title="Listen to the teacher"
                 >
-                  ▶
+                  <Icon name="play"/>
                 </button>
                 <button
                   className="record-btn"
@@ -410,7 +411,7 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, co
                   disabled={recordingIds.has(w._id)}
                   title="Record yourself and hear it back"
                 >
-                  {recordingIds.has(w._id) ? '● Recording...' : '🎤 Record'}
+                  {recordingIds.has(w._id) ? '● Recording...' : <><Icon name="mic"/> Record</>}
                 </button>
               </div>
             )}

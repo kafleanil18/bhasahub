@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import Icon from '../components/Icon';
 
 const TONE_PRACTICE_SET = [
   {
@@ -207,7 +208,7 @@ function ToneScorer({ onBack }) {
           ← Back to Practice
         </button>
         <span className="dash-eyebrow">Mandarin Speech AI</span>
-        <h1 className="tone-title">Tone & Pronunciation Scorer 🎙️</h1>
+        <h1 className="tone-title">Tone & Pronunciation Scorer</h1>
         <p className="tone-subtitle">
           Master the 4 Mandarin Chinese tones. Record your voice to compare your pitch contour directly with native speaker models.
         </p>
@@ -239,14 +240,14 @@ function ToneScorer({ onBack }) {
             <div className="tone-pinyin-wrap">
               <span className="tone-pinyin-text">{currentWord.pinyin}</span>
               <button className="tone-speaker-btn" onClick={playNativeAudio} title="Listen to native audio">
-                🔊 Listen Native
+                <Icon name="speaker"/> Listen Native
               </button>
             </div>
             <span className="tone-meaning-label">{currentWord.meaning} · {currentWord.contour}</span>
           </div>
 
           <div className="tone-tip-box">
-            <h4>💡 Pronunciation Tip</h4>
+            <h4><Icon name="bulb"/> Pronunciation Tip</h4>
             <p>{currentWord.tip}</p>
           </div>
         </div>
@@ -267,12 +268,12 @@ function ToneScorer({ onBack }) {
           <div className="tone-recorder-controls">
             {!isRecording ? (
               <button className="tone-record-btn" onClick={startRecording}>
-                <span className="record-mic-icon">🎤</span>
+                <span className="record-mic-icon"><Icon name="mic"/></span>
                 <span>Record Your Voice</span>
               </button>
             ) : (
               <button className="tone-record-btn recording" onClick={stopRecording}>
-                <span className="record-mic-icon">⏹</span>
+                <span className="record-mic-icon"><Icon name="stop"/></span>
                 <span>Stop Recording...</span>
               </button>
             )}
@@ -297,7 +298,7 @@ function ToneScorer({ onBack }) {
             </div>
 
             <div className="result-details">
-              <h3>{scoreResult.overallScore >= 80 ? '🎉 Excellent Pronunciation!' : '👍 Good Practice Effort!'}</h3>
+              <h3>{scoreResult.overallScore >= 80 ? <><Icon name="lantern"/> Excellent Pronunciation!</> : <><Icon name="thumbsUp"/> Good Practice Effort!</>}</h3>
               <p className="result-feedback">{scoreResult.feedbackText}</p>
 
               <div className="result-metrics-row">

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import usePushReminders, { formatTime } from '../pwa/usePushReminders';
 import './DailyReminderCard.css';
+import Icon from '../components/Icon';
 
 const TIMES = Array.from({ length: 30 }, (_, index) => {
   const minutes = 6 * 60 + index * 30; // 6:00 am – 8:30 pm
@@ -18,7 +19,7 @@ export default function DailyReminderCard() {
 
   return <section className="daily-reminder" aria-labelledby="daily-reminder-title">
     <div className="daily-reminder-copy">
-      <span className="daily-reminder-icon" aria-hidden="true">🔔</span>
+      <span className="daily-reminder-icon" aria-hidden="true"><Icon name="bell"/></span>
       <div>
         <h2 id="daily-reminder-title">Daily practice reminder</h2>
         <p>{on ? `On for this device · ${formatTime(reminders.time)} (${reminders.timezone}). Skipped on days you’ve already practised.` : 'Get one notification a day at a time you choose, only if you haven’t practised yet.'}</p>

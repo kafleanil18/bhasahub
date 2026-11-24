@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { parseCSV, downloadCSV } from '../utils/csv';
 import { mediaUrl } from '../utils/mediaUrl';
 import RichTextEditor from '../components/RichTextEditor';
+import Icon from '../components/Icon';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -563,10 +564,10 @@ function LessonManager({ course, focusLessonId, onBack }) {
             <h2 style={{ marginBottom: 0 }}>Words ({words.length})</h2>
             <div className="csv-toolbar-actions">
               <button className="nav-btn" type="button" onClick={exportWordsCSV} disabled={words.length === 0}>
-                ⬇ Export CSV
+                <Icon name="download"/> Export CSV
               </button>
               <button className="nav-btn" type="button" onClick={() => csvInputRef.current?.click()} disabled={importing}>
-                {importing ? 'Importing…' : '⬆ Import CSV'}
+                {importing ? 'Importing…' : <><Icon name="upload"/> Import CSV</>}
               </button>
               <input
                 ref={csvInputRef}
@@ -598,7 +599,7 @@ function LessonManager({ course, focusLessonId, onBack }) {
               {w.audioUrl && <audio controls src={mediaUrl(w.audioUrl)} className="row-audio" />}
               {recordingWordId === w._id ? (
                 <button type="button" className="pill pill-draft recording-pill" onClick={stopRecording}>
-                  ⏹ Stop
+                  <Icon name="stop"/> Stop
                 </button>
               ) : (
                 <button
@@ -607,7 +608,7 @@ function LessonManager({ course, focusLessonId, onBack }) {
                   onClick={() => startRecording(w)}
                   disabled={recordingWordId !== null}
                 >
-                  {w.audioUrl ? '🎙 Re-record' : '🎙 Record'}
+                  <><Icon name="mic"/> {w.audioUrl ? 'Re-record' : 'Record'}</>
                 </button>
               )}
               <button className="row-delete" onClick={() => deleteWord(w._id)}>Delete</button>
@@ -814,13 +815,13 @@ function LessonManager({ course, focusLessonId, onBack }) {
                         className="pill pill-play"
                         onClick={() => lineAudioRefs.current[i]?.play()}
                       >
-                        ▶ Play
+                        <Icon name="play"/> Play
                       </button>
                     </>
                   )}
                   {recordingLineIndex === i ? (
                     <button type="button" className="pill pill-draft recording-pill" onClick={stopLineRecording}>
-                      ⏹ Stop
+                      <Icon name="stop"/> Stop
                     </button>
                   ) : (
                     <button
@@ -829,7 +830,7 @@ function LessonManager({ course, focusLessonId, onBack }) {
                       onClick={() => startLineRecording(i)}
                       disabled={recordingLineIndex !== null}
                     >
-                      {line.audioUrl ? '🎙 Re-record' : '🎙 Record'}
+                      <><Icon name="mic"/> {line.audioUrl ? 'Re-record' : 'Record'}</>
                     </button>
                   )}
                   <button className="row-delete" onClick={() => removeDialogueLine(i)} type="button">Remove</button>

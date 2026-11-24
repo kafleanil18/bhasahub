@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
+import Icon from '../components/Icon';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -64,7 +65,7 @@ function SlidesPage({ onBack }) {
       <div className="course-cards">
         {slides.map((s) => (
           <div className="course-card" key={s._id} onClick={() => setActive(s)}>
-            <div className="course-card-glyph"><span>📊</span></div>
+            <div className="course-card-glyph"><Icon name="chart" size="1em"/></div>
             <div className="course-card-body">
               <h3 className="course-card-title">{s.title}</h3>
               {s.description && <p className="course-card-desc">{s.description}</p>}

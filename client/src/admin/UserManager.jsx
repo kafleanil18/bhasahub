@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import Icon from '../components/Icon';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -579,7 +580,7 @@ function UserManager({ initialSearch = '', onBack }) {
 
                 <div className="card-actions-wrapper">
                   {userRole === 'superadmin' ? (
-                    <span className="user-locked-note">🔒 System Protected</span>
+                    <span className="user-locked-note"><Icon name="lock"/> System Protected</span>
                   ) : userRole === 'admin' ? (
                     <button className="um-btn-action demote" onClick={() => setRole(u._id, 'student')}>
                       Demote to Student

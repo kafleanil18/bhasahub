@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FREE_ACCESS_DAYS, usePracticeAccess } from '../access/practiceAccess';
 import FreeAccessNote from '../access/FreeAccessNote';
 import './TestAccessPrompt.css';
+import Icon from './Icon';
 
 // Shown every time a student signs in until one of their access requests (course or
 // mock tests) has been approved. "Request access" files a tests-scope request, which
@@ -37,7 +38,7 @@ export default function TestAccessPrompt({ user, onClose, onStartTour }) {
     <div className="modal-overlay test-access-prompt-overlay" onClick={event => { if (event.target === event.currentTarget) onClose(); }}>
       <div className="test-access-prompt" role="dialog" aria-modal="true" aria-labelledby="test-access-prompt-title" aria-describedby="test-access-prompt-text">
         <button className="test-access-prompt-close" onClick={onClose} disabled={sending} aria-label="Close">×</button>
-        <span className="test-access-prompt-icon" aria-hidden="true">{sent ? '✓' : waiting ? '⏳' : expired ? '⌛' : '🔒'}</span>
+        <span className="test-access-prompt-icon" aria-hidden="true">{sent ? '✓' : <Icon name={waiting ? 'hourglass' : expired ? 'hourglassDone' : 'lock'} size={26}/>}</span>
         <h2 id="test-access-prompt-title">{sent ? 'Request sent' : waiting ? 'Waiting for approval' : expired ? 'Your free week has ended' : status === 'denied' ? 'Ask again for practice access?' : 'Unlock practice for free'}</h2>
         <p id="test-access-prompt-text">{sent
           ? 'An administrator has been notified and will review your request. You can keep using the website meanwhile.'

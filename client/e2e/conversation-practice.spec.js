@@ -17,6 +17,7 @@ async function prepare(page, voices, { natural = false } = {}) {
   await page.route('**/api/settings', r => r.fulfill({ json: { conversationLessons: [] } }));
   await page.route('**/api/**', r => r.fulfill({ json: {} }));
   await page.route('**/api/tts/status', r => r.fulfill({ json: { enabled: natural } }));
+  await page.route('**/api/access-requests/my', r => r.fulfill({ json: [{ scope: 'tests', status: 'approved' }] }));
   await page.route('https://**/*', r => r.abort());
   await page.goto('/practice/conversations');
 }

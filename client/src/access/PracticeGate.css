@@ -19,7 +19,7 @@
 .practice-gate-icon {
   display: inline-grid; place-items: center;
   width: 52px; height: 52px; border-radius: 50%;
-  background: rgba(178, 34, 34, 0.1); font-size: 24px; margin-bottom: 10px;
+  background: rgba(178, 34, 34, 0.1); color: #a3221c; font-size: 24px; margin-bottom: 10px;
 }
 .practice-gate-panel h2 { margin: 0 0 8px; font-size: 1.25rem; }
 .practice-gate-panel p { margin: 0 0 14px; line-height: 1.5; opacity: 0.85; }

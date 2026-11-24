@@ -2,10 +2,10 @@ import { shuffleSentences } from './sentenceQuiz.js';
 
 export const NUMBER_MODES = [
   { id: 'prices', title: 'Prices', symbol: '¥', description: 'Recognize yuan and jiao while shopping.', question: 'What price do you hear?' },
-  { id: 'time', title: 'Time', symbol: '◷', description: 'Understand morning, afternoon, and evening times.', question: 'What time do you hear?' },
+  { id: 'time', title: 'Time', symbol: '时', description: 'Understand morning, afternoon, and evening times.', question: 'What time do you hear?' },
   { id: 'dates', title: 'Dates', symbol: '日', description: 'Recognize the month and day.', question: 'What date do you hear?' },
   { id: 'ages', title: 'Ages', symbol: '岁', description: 'Understand how old someone is.', question: 'What age do you hear?' },
-  { id: 'phones', title: 'Phone numbers', symbol: '☎', description: 'Listen carefully and enter every digit in order.', question: 'What phone number do you hear?' },
+  { id: 'phones', title: 'Phone numbers', symbol: '话', description: 'Listen carefully and enter every digit in order.', question: 'What phone number do you hear?' },
 ];
 const digits = '零一二三四五六七八九';
 export function chineseNumber(number) {

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import Icon from '../components/Icon';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -213,7 +214,7 @@ function SrsReview({ lessonId, language, token, onExit }) {
         </div>
       ) : (
         <p className="keyboard-shortcut-hint">
-          💡 Press <strong>Space</strong> to flip, <strong>R</strong> to repeat audio, then <strong>1-4</strong> to grade (Again / Hard / Good / Easy).
+          <Icon name="bulb"/> Press <strong>Space</strong> to flip, <strong>R</strong> to repeat audio, then <strong>1-4</strong> to grade (Again / Hard / Good / Easy).
         </p>
       )}
     </div>

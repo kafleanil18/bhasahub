@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
+import Icon from '../components/Icon';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -282,7 +283,7 @@ function TestTaker({ testId, onBack }) {
               {progressDelta.deltaFromLast == null
                 ? 'First attempt on record — keep it up!'
                 : progressDelta.isNewBest
-                  ? `🎉 New best! ${progressDelta.deltaFromLast >= 0 ? '+' : ''}${progressDelta.deltaFromLast}% vs your last attempt`
+                  ? <><Icon name="lantern"/> {`New best! ${progressDelta.deltaFromLast >= 0 ? '+' : ''}${progressDelta.deltaFromLast}% vs your last attempt`}</>
                   : progressDelta.deltaFromLast >= 0
                     ? `▲ +${progressDelta.deltaFromLast}% vs your last attempt`
                     : `▼ ${progressDelta.deltaFromLast}% vs your last attempt`}
@@ -416,7 +417,7 @@ function TestTaker({ testId, onBack }) {
 
       {test.testType === 'listening' && test.audioUrl && (
         <div className="test-media">
-          <h3 className="dialogue-heading">🎧 Listening Audio</h3>
+          <h3 className="dialogue-heading"><Icon name="headphones"/> Listening Audio</h3>
           <AudioPlayer
             src={mediaUrl(test.audioUrl)}
             onPlay={() => setTimerStarted(true)}
@@ -427,7 +428,7 @@ function TestTaker({ testId, onBack }) {
 
       {test.pdfUrl ? (
         <div className="test-pdf-container">
-          <h3 className="dialogue-heading">📄 Question paper</h3>
+          <h3 className="dialogue-heading"><Icon name="file"/> Question paper</h3>
           <div className="pdf-iframe-container" onContextMenu={(e) => e.preventDefault()}>
             <iframe
               src={`${mediaUrl(test.pdfUrl)}#toolbar=0`}
@@ -539,7 +540,7 @@ function TestTaker({ testId, onBack }) {
           }}
           title="Time elapsed"
         >
-          ⏱ {formatElapsed(elapsed)}
+          <Icon name="timer"/> {formatElapsed(elapsed)}
         </div>
       )}
 

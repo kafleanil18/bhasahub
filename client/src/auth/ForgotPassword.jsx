@@ -1,6 +1,7 @@
 import BrandLogo from '../components/BrandLogo';
 import { useState, useEffect, useRef } from 'react';
 import './Login.css';
+import Icon from '../components/Icon';
 
 function ForgotPassword({ onBack, onSwitch }) {
   // Step: 'request' | 'verify_reset' | 'success'
@@ -248,7 +249,7 @@ function ForgotPassword({ onBack, onSwitch }) {
 
               {devOtp && (
                 <div style={{ background: 'rgba(201, 154, 60, 0.12)', border: '1px dashed #c99a3c', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: 14, color: '#8a6214' }}>
-                  🔑 <strong>Dev Notice:</strong> Your local test code is: <code style={{ fontSize: 16, fontWeight: 700, letterSpacing: 2 }}>{devOtp}</code>
+                  <Icon name="key"/> <strong>Dev Notice:</strong> Your local test code is: <code style={{ fontSize: 16, fontWeight: 700, letterSpacing: 2 }}>{devOtp}</code>
                 </div>
               )}
 

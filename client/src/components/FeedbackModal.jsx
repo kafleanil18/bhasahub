@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import Icon from './Icon';
 
 function FeedbackModal({ user, onClose, privacyRequest = false }) {
   const [name, setName] = useState(user ? user.name : '');
@@ -254,7 +255,7 @@ function FeedbackModal({ user, onClose, privacyRequest = false }) {
 
         {sent ? (
           <div className="fb-success">
-            <span className="fb-success-icon">🙏</span>
+            <span className="fb-success-icon"><Icon name="heart"/></span>
             <h1 className="fb-title">Thank you!</h1>
             <p className="fb-sub" style={{ marginBottom: 0 }}>
               {privacyRequest ? 'Your privacy request has been sent to the team. We will use your email to respond.' : 'Your feedback has been successfully shared. We sincerely appreciate you taking the time to help us improve.'}

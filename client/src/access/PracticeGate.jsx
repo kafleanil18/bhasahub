@@ -3,6 +3,7 @@ import { Link, Outlet } from 'react-router-dom';
 import { FREE_ACCESS_DAYS, usePracticeAccess } from './practiceAccess';
 import FreeAccessNote from './FreeAccessNote';
 import './PracticeGate.css';
+import Icon from '../components/Icon';
 
 // Wraps the practice studio pages: students can look inside, but until an access
 // request is approved the page is locked and they are asked to request access.
@@ -27,7 +28,7 @@ export default function PracticeGate({ user, onHome }) {
     {/* inert keeps the page visible but stops every click, key press and focus inside it. */}
     <div className="practice-gate-content" inert aria-hidden="true"><Outlet /></div>
     {copy && <div className="practice-gate-panel" role="region" aria-labelledby="practice-gate-title">
-      <span className="practice-gate-icon" aria-hidden="true">{status === 'pending' ? '⏳' : status === 'expired' ? '⌛' : '🔒'}</span>
+      <span className="practice-gate-icon" aria-hidden="true"><Icon name={status === 'pending' ? 'hourglass' : status === 'expired' ? 'hourglassDone' : 'lock'} size={26}/></span>
       <h2 id="practice-gate-title">{copy[0]}</h2>
       <p>{copy[1]}</p>
       {(status === 'none' || status === 'denied') && <FreeAccessNote/>}

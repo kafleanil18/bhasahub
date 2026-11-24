@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
+import Icon from '../components/Icon';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -371,7 +372,7 @@ function TestimonialManager({ onBack }) {
       {/* Metrics Section */}
       <div className="tmm-metrics-grid">
         <div className="tmm-metric-card">
-          <div className="tmm-metric-icon">💬</div>
+          <div className="tmm-metric-icon"><Icon name="chat"/></div>
           <div className="tmm-metric-details">
             <span className="tmm-metric-value">{stats.total}</span>
             <span className="tmm-metric-label">Total Reviews</span>

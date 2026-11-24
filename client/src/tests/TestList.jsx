@@ -5,6 +5,7 @@ import FeaturedPaper from './hsk1/FeaturedPaper';
 import FreeAccessNote from '../access/FreeAccessNote';
 import { FREE_ACCESS_DAYS, freeAccessLive } from '../access/practiceAccess';
 import { Link } from 'react-router-dom';
+import Icon from '../components/Icon';
 
 const API = window.API_BASE_URL + '/api';
 const LEVELS = ['HSK 1', 'HSK 2', 'HSK 3', 'HSK 4'];
@@ -173,7 +174,7 @@ function TestList({ onOpenTest, onBack, user }) {
               </div>
             )}
             <div className="course-card-body">
-              {!unlocked && <span className="mock-test-lock-tag">🔒 Approval needed</span>}
+              {!unlocked && <span className="mock-test-lock-tag"><Icon name="lock"/> Approval needed</span>}
               {typeof completionByTest[t._id] === 'boolean' && <span className={`mock-test-completion${completionByTest[t._id] ? ' is-done' : ''}`}>{completionByTest[t._id] ? '✓ Completed' : 'Not started'}</span>}
               <h3 className="course-card-title">{t.title}</h3>
               <p className="course-card-desc">{t.description}</p>

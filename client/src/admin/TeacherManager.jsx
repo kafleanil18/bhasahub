@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
+import Icon from '../components/Icon';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -151,7 +152,7 @@ function TeacherManager({ onBack }) {
           <h1>Teachers</h1>
           <p>Edit the teacher introductions shown on the live classes enquiry form</p>
         </div>
-        <button className="tcm-add-btn" onClick={createTeacher}>➕ Add Teacher</button>
+        <button className="tcm-add-btn" onClick={createTeacher}><Icon name="plus"/> Add Teacher</button>
       </div>
 
       {error && <p className="tcm-error">{error}</p>}
@@ -194,7 +195,7 @@ function TeacherManager({ onBack }) {
                 {saving[teacher._id] ? 'Saving...' : savedFeedback[teacher._id] ? '✓ Saved!' : 'Save Details'}
               </button>
 
-              <button className="tcm-delete-btn" onClick={() => deleteTeacher(teacher._id)}>🗑️ Delete Teacher</button>
+              <button className="tcm-delete-btn" onClick={() => deleteTeacher(teacher._id)}><Icon name="trash"/> Delete Teacher</button>
             </div>
           ))}
         </div>

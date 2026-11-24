@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
+import Icon from './Icon';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -167,7 +168,7 @@ function TestimonialModal({ user, onClose }) {
 
         {sent ? (
           <div className="tm-success-state">
-            <span className="tm-success-icon">🙏</span>
+            <span className="tm-success-icon"><Icon name="heart"/></span>
             <h1 className="tm-title">Thank you!</h1>
             <p className="tm-sub" style={{ marginBottom: 0 }}>
               Your testimonial has been safely submitted and will appear live once approved by management.

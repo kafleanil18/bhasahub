@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import Icon from '../components/Icon';
 
 function ChangePassword({ onClose }) {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -314,21 +315,21 @@ function ChangePassword({ onClose }) {
         <button className="cp-close-btn" onClick={onClose} aria-label="Close">✕</button>
         
         <div className="cp-icon-header">
-          <div className="cp-lock-badge">🔒</div>
+          <div className="cp-lock-badge"><Icon name="lock"/></div>
           <h1>Change Password</h1>
           <p className="cp-sub">Protect your account with a secure credentials update.</p>
         </div>
 
         {error && (
           <div className="cp-alert cp-alert-error">
-            <span>⚠️</span>
+            <span><Icon name="warning"/></span>
             <span>{error}</span>
           </div>
         )}
         
         {message && (
           <div className="cp-alert cp-alert-success">
-            <span>✅</span>
+            <span><Icon name="checkCircle"/></span>
             <span>{message}</span>
           </div>
         )}
@@ -349,7 +350,7 @@ function ChangePassword({ onClose }) {
               onClick={() => setShowCurrent(!showCurrent)}
               title={showCurrent ? 'Hide password' : 'Show password'}
             >
-              {showCurrent ? '👁️' : '🙈'}
+              <Icon name={showCurrent ? 'eye' : 'eyeOff'}/>
             </button>
           </div>
         </div>
@@ -370,7 +371,7 @@ function ChangePassword({ onClose }) {
               onClick={() => setShowNew(!showNew)}
               title={showNew ? 'Hide password' : 'Show password'}
             >
-              {showNew ? '👁️' : '🙈'}
+              <Icon name={showNew ? 'eye' : 'eyeOff'}/>
             </button>
           </div>
           
@@ -398,7 +399,7 @@ function ChangePassword({ onClose }) {
               onClick={() => setShowConfirm(!showConfirm)}
               title={showConfirm ? 'Hide password' : 'Show password'}
             >
-              {showConfirm ? '👁️' : '🙈'}
+              <Icon name={showConfirm ? 'eye' : 'eyeOff'}/>
             </button>
           </div>
 

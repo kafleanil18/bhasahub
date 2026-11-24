@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { downloadCSV } from '../utils/csv';
 import StudioAnalytics from './StudioAnalytics';
 import DailyReminderCard from './DailyReminderCard';
+import Icon from '../components/Icon';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -203,7 +204,7 @@ function ProgressAnalytics({ user, onBack }) {
           <button className="btn-back-pill analytics-refresh" onClick={() => setRefreshKey(value => value + 1)} disabled={loading} aria-label="Refresh learning analytics">{loading ? 'Refreshing…' : '↻ Refresh'}</button>
           {data.scoreTrend.length > 0 && (
             <button className="btn-export-csv" onClick={exportCsv}>
-              ⬇ Export CSV Report
+              <Icon name="download"/> Export CSV Report
             </button>
           )}
           </div>
@@ -367,7 +368,7 @@ function ProgressAnalytics({ user, onBack }) {
                 className={`tab-btn-pill ${activeTab === 'lessons' ? 'active' : ''}`}
                 onClick={() => setActiveTab('lessons')}
               >
-                📖 Lesson Performance
+                <Icon name="book"/> Lesson Performance
               </button>
             )}
             {hasTestData && (
@@ -375,7 +376,7 @@ function ProgressAnalytics({ user, onBack }) {
                 className={`tab-btn-pill ${activeTab === 'tests' ? 'active' : ''}`}
                 onClick={() => setActiveTab('tests')}
               >
-                🎯 Mock Tests
+                <Icon name="target"/> Mock Tests
               </button>
             )}
           </div>
@@ -398,7 +399,7 @@ function ProgressAnalytics({ user, onBack }) {
       {data.weakestWords.length > 0 && (
         <div className="analytics-section" style={{ marginTop: 44 }}>
           <h3 className="analytics-heading" style={{ fontSize: '20px', fontFamily: 'var(--font-body)', marginBottom: 6 }}>
-            Vocabulary Focus Deck 🎴
+            <Icon name="cards"/> Vocabulary Focus Deck
           </h3>
           <p className="review-cards-intro">
             These words were missed during recent quizzes. Tap a card to reveal its translation, or click the speaker button to hear native pronunciation.
@@ -435,7 +436,7 @@ function ProgressAnalytics({ user, onBack }) {
                         onClick={(e) => playWordAudio(e, w)}
                         title="Listen to native audio pronunciation"
                       >
-                        🔊
+                        <Icon name="speaker"/>
                       </button>
                       <span className="vocab-misses-tag">
                         Missed {w.misses}×
@@ -467,7 +468,7 @@ function ProgressAnalytics({ user, onBack }) {
 
       {data.totalAttempts === 0 && !data.completedLessons && !data.hasStudioActivity && (
         <div className="analytics-first-step">
-          <span className="analytics-first-step-icon" aria-hidden="true">✦</span>
+          <span className="analytics-first-step-icon" aria-hidden="true"><Icon name="seedling"/></span>
           <div><h2>Your learning record starts here</h2><p>Complete a lesson or a short vocabulary quiz and your progress will appear on this page.</p></div>
           <button className="btn-primary" onClick={onBack}>Explore my courses</button>
         </div>

@@ -1,0 +1,3 @@
+.ui-icon { display: inline-block; flex-shrink: 0; vertical-align: -0.15em; }
+/* Icons inline with text get a little breathing room. */
+.ui-icon + .ui-icon-text, .ui-icon-gap { margin-left: 0.4em; }

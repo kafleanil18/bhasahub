@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 import SentenceText, { PinyinText } from './SentenceText';
 import { isCorrectSentence, sentenceTiles, shuffleSentences } from './sentenceQuiz';
+import Icon from '../components/Icon';
 
 export default function SentenceSession({ initialSentences, onExit, onMastered }) {
   const [sentences, setSentences] = useState(initialSentences);
@@ -124,7 +125,7 @@ export default function SentenceSession({ initialSentences, onExit, onMastered }
       </h3>
       {feedback === 'incorrect' && <p>Compare your answer with this correct sentence:</p>}
       <p className="sentence-chinese"><SentenceText sentence={sentence} /></p>
-      <p className="sb-explanation"><span aria-hidden="true">💡 </span>{sentence.explanation}</p>
+      <p className="sb-explanation"><Icon name="bulb"/> {sentence.explanation}</p>
       {sentence.audioUrl ? <div className="sentence-recording sb-recording"><button className="sentence-secondary" onClick={listen}>▷ Replay sentence</button>{audioError && <p role="alert" className="sb-audio-error">{audioError}</p>}</div> : <p className="sentence-muted sentence-recording">Audio has not been added for this sentence yet.</p>}
     </div>}
     {sentence.audioUrl && <audio key={sentence.id} ref={audioRef} src={mediaUrl(sentence.audioUrl)} preload="none" onError={() => setAudioError('The recording is unavailable. Please try again later.')} />}

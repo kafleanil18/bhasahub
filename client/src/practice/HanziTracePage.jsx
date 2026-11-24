@@ -1,6 +1,7 @@
 import { recordStudioActivity } from './recordStudioActivity';
 import { useState, useEffect, useRef } from 'react';
 import HanziWriter from 'hanzi-writer';
+import Icon from '../components/Icon';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -694,7 +695,7 @@ function HanziTracePage({ user, onBack, token }) {
             </div>
           ) : filteredCharacters.length === 0 ? (
             <div className="trace-surface rounded-4 shadow-sm text-center py-5 px-3">
-              <div className="display-4 text-muted mb-3">✍️</div>
+              <div className="display-4 text-muted mb-3"><Icon name="brush" size="1em"/></div>
               <h4 className="fw-bold mb-1">No characters found</h4>
               <p className="trace-muted mb-0">Try clearing your search query or selecting another category filter.</p>
             </div>

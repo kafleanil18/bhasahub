@@ -5,6 +5,7 @@ import { mediaUrl } from '../utils/mediaUrl';
 import useMandarinSpeaker from './useMandarinSpeaker';
 import VoiceSwitch from './VoiceSwitch';
 import { toneCharacter } from './pinyinToneChars';
+import Icon from '../components/Icon';
 
 const API = (window.API_BASE_URL || '') + '/api';
 
@@ -904,7 +905,7 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
                 <div className="pinyin-selected-syllable">
                   Syllable: <span style={{ textDecoration: 'underline' }}>{selected}</span>
                   {isSuperAdmin && (
-                    <span className="pinyin-admin-mode-pill">🎙️ Admin Voice Studio</span>
+                    <span className="pinyin-admin-mode-pill"><Icon name="mic"/> Admin Voice Studio</span>
                   )}
                 </div>
                 <VoiceSwitch speaker={speech} label="Voice" />
@@ -936,7 +937,7 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
                                 onClick={stopRecording}
                                 title="Click to stop and save recording"
                               >
-                                ⏹ Stop {recordingSeconds > 0 ? `(${recordingSeconds}s)` : ''}
+                                <Icon name="stop"/> Stop {recordingSeconds > 0 ? `(${recordingSeconds}s)` : ''}
                               </button>
                             ) : (
                               <button
@@ -946,7 +947,7 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
                                 disabled={recordingTone !== null || uploadingTone !== null}
                                 title={rec ? 'Record again to replace this sound' : 'Record teacher voice for this tone'}
                               >
-                                {isUploadingThis ? 'Saving…' : rec ? '🔄 Replace' : '🎙️ Record'}
+                                {isUploadingThis ? 'Saving…' : rec ? <><Icon name="refresh"/> Replace</> : <><Icon name="mic"/> Record</>}
                               </button>
                             )}
                             {rec && !isRecordingThis && !isUploadingThis && (
@@ -956,7 +957,7 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
                                 onClick={() => deleteRecording(tone, rec._id)}
                                 title="Delete recording and revert to default tone"
                               >
-                                🗑
+                                <Icon name="trash"/>
                               </button>
                             )}
                           </div>
@@ -965,7 +966,7 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
                     );
                   })}
                 </div>
-                {micError && <p className="pinyin-mic-error">⚠️ {micError}</p>}
+                {micError && <p className="pinyin-mic-error"><Icon name="warning"/> {micError}</p>}
                 {successMsg && <p className="pinyin-mic-success">✓ {successMsg}</p>}
                 <audio ref={audioPlayerRef} style={{ display: 'none' }} />
               </div>

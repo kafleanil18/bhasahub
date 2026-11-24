@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
+import Icon from '../components/Icon';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -372,7 +373,7 @@ function TeamManager({ onBack }) {
             transition: 'all 0.2s ease'
           }}
         >
-          ➕ Add Team Member
+          <Icon name="plus"/> Add Team Member
         </button>
       </div>
 
@@ -581,7 +582,7 @@ function TeamManager({ onBack }) {
                     transition: 'all 0.2s'
                   }}
                 >
-                  🗑️ Delete Member
+                  <Icon name="trash"/> Delete Member
                 </button>
 
                 <p className="tmg-hint">Images display inside a consistent frame. Adjust zoom & position above to fit it perfectly.</p>

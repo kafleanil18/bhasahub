@@ -5,6 +5,7 @@ import useChineseVoice from './useChineseVoice';
 import { pickConversationVoice } from './conversationVoice';
 import { checkNaturalVoice, naturalVoiceUrl } from './naturalVoice';
 import './ConversationPractice.css';
+import Icon from '../components/Icon';
 
 const lessons = [
   {
@@ -229,9 +230,9 @@ function ConversationPracticePage({ onBack }) {
             <p className="cp-eyebrow">Lesson {lesson.number} · {lesson.topic}</p>
             <h1 id="cp-title" ref={headingRef} tabIndex={-1}><span lang="zh-CN">{lesson.title}</span> <small>{lesson.subtitle}</small></h1>
             <p className="cp-intro-text">{lesson.intro}</p>
-            <p className="cp-intro-meta"><span>💬 {lines.length} lines</span><span>文 {lesson.words.length} words</span></p>
-            <button type="button" className="cp-primary cp-start" onClick={() => goTo(0)}>▶ Start conversation</button>
-            {voiceNote && <p className="cp-voice-note">🔊 {voiceNote}</p>}
+            <p className="cp-intro-meta"><span><Icon name="chat"/> {lines.length} lines</span><span>文 {lesson.words.length} words</span></p>
+            <button type="button" className="cp-primary cp-start" onClick={() => goTo(0)}><Icon name="play"/> Start conversation</button>
+            {voiceNote && <p className="cp-voice-note"><Icon name="speaker"/> {voiceNote}</p>}
           </div>
         </div>}
 
@@ -263,7 +264,7 @@ function ConversationPracticePage({ onBack }) {
         </>}
 
         {done && <div className="cp-done">
-          <p className="cp-eyebrow">Lesson complete 🎉</p>
+          <p className="cp-eyebrow"><Icon name="lantern"/> Lesson complete</p>
           <h1 id="cp-title" ref={headingRef} tabIndex={-1}>Nice work!</h1>
           <p className="cp-intro-text">Review the new words — tap one to hear it.</p>
           <ul className="cp-words">{lesson.words.map(word => {

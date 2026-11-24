@@ -4,6 +4,7 @@ import { shuffleSentences } from './sentenceQuiz';
 import SentenceSession from './SentenceSession';
 import './SentencePractice.css';
 import './SentenceBuilder.css';
+import Icon from '../components/Icon';
 
 const COLLAPSED_TOPICS = 8;
 
@@ -80,8 +81,8 @@ export default function SentencePractice({ user, onBack }) {
         <div className="sb-overall" aria-hidden="true"><i style={{ width: `${pct}%` }} /></div>
       </div>
       <div className="sb-start">
-        <div className="sentence-mixed sb-start-card"><span className="sb-start-icon" aria-hidden="true">🎲</span><div><h2>A little of everything</h2><p>Warm up with 10 sentences from across the collection.</p></div><button className="sentence-primary" onClick={() => setSession(shuffleSentences(catalog.sentences).slice(0, 10))}>Start mixed practice →</button></div>
-        {resume && <div className="sentence-mixed sb-start-card sb-resume"><span className="sb-start-icon" aria-hidden="true">▶</span><div><h2>Continue: {resume.title}</h2><p>{resume.done} of {resume.total} answered correctly so far.</p></div><button className="sentence-secondary" onClick={() => startTopic(resume.sentences)}>Continue topic</button></div>}
+        <div className="sentence-mixed sb-start-card"><span className="sb-start-icon" aria-hidden="true"><Icon name="shuffle"/></span><div><h2>A little of everything</h2><p>Warm up with 10 sentences from across the collection.</p></div><button className="sentence-primary" onClick={() => setSession(shuffleSentences(catalog.sentences).slice(0, 10))}>Start mixed practice →</button></div>
+        {resume && <div className="sentence-mixed sb-start-card sb-resume"><span className="sb-start-icon" aria-hidden="true"><Icon name="play"/></span><div><h2>Continue: {resume.title}</h2><p>{resume.done} of {resume.total} answered correctly so far.</p></div><button className="sentence-secondary" onClick={() => startTopic(resume.sentences)}>Continue topic</button></div>}
       </div>
       <TopicList topics={topics} onStart={startTopic} />
       <p className="sentence-muted sentence-local-note">Progress is saved in this browser{user ? ' for your account' : ''}. Original practice sentences; these are not official exam questions.</p>

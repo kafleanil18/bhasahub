@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
+import Icon from '../components/Icon';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -332,7 +333,7 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
           onClick={onToggleMute}
           title={muted ? 'Unmute audio' : 'Mute audio'}
         >
-          {muted ? '🔇 Unmute' : '🔊 Mute'}
+          <><Icon name={muted ? 'speakerOff' : 'speaker'}/> {muted ? 'Unmute' : 'Mute'}</>
         </button>
       )}
 
