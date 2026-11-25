@@ -13,7 +13,8 @@ function remaining(ms) {
 }
 
 // Live countdown to the soonest end of the student's active course access (plan or per-course).
-export default function AccessCountdown({ token }) {
+// onSettled runs once the access check has finished, so My Courses can hold its loading screen until then.
+export default function AccessCountdown({ token, onSettled }) {
   const [access, setAccess] = useState({ loading: true, error: false, entries: [] });
   const [now, setNow] = useState(() => Date.now());
 
@@ -37,6 +38,8 @@ export default function AccessCountdown({ token }) {
       .catch(() => { if (!controller.signal.aborted) setAccess({ loading: false, error: true, entries: [] }); });
     return () => controller.abort();
   }, [token]);
+
+  useEffect(() => { if (!access.loading) onSettled?.(); }, [access.loading, onSettled]);
 
   const next = access.entries.find(entry => entry.expiresAt > now);
   const left = next ? next.expiresAt - now : 0;

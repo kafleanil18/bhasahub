@@ -6,6 +6,8 @@ export default function useLearningSpace(token) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [attempt, setAttempt] = useState(0);
+  // True once the first load has finished (with data or an error); retries don't reset it.
+  const [settled, setSettled] = useState(false);
   useEffect(() => {
     const controller = new AbortController();
     setLoading(true); setError(''); setCourses([]); setProgress({});
@@ -30,10 +32,10 @@ export default function useLearningSpace(token) {
         if (!controller.signal.aborted) { setCourses(available); setProgress(Object.fromEntries(entries)); }
       } catch (err) {
         if (!controller.signal.aborted) setError(err.message || 'Could not load your courses. Please try again.');
-      } finally { if (!controller.signal.aborted) setLoading(false); }
+      } finally { if (!controller.signal.aborted) { setLoading(false); setSettled(true); } }
     };
     void load();
     return () => controller.abort();
   }, [token, attempt]);
-  return { courses, progress, loading, error, reload: () => setAttempt(value => value + 1) };
+  return { courses, progress, loading, settled, error, reload: () => setAttempt(value => value + 1) };
 }
