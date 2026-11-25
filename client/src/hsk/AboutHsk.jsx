@@ -153,7 +153,7 @@ export default function AboutHsk() {
           <p>Get a feel for the exam and see which sections you need to practise.</p>
           <div className="hsk-cta-actions">
             <Link className="hsk-button" to="/tests">Take a mock test</Link>
-            <Link to="/pricing">See courses <span aria-hidden="true">→</span></Link>
+            <Link to="/#courses">See courses <span aria-hidden="true">→</span></Link>
           </div>
         </section>
       </div>
