@@ -27,10 +27,8 @@ export default function Dashboard({ user, onOpenCourse, onBrowse }) {
   const nextCourse = startedCourses[0] || courses.find(course => stateOf(course) === 'new') || courses.find(course => stateOf(course) === 'completed') || courses[0];
   const nextState = nextCourse && stateOf(nextCourse);
   const visibleCourses = courses.filter(course => (filter === 'all' || stateOf(course) === filter) && `${course.title || ''} ${course.level || ''} ${course.description || ''}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
-  const browse = () => {
-    onBrowse();
-    requestAnimationFrame(() => document.getElementById('courses')?.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }));
-  };
+  // Opens the home page at its HSK courses section; App scrolls to the #courses target once it renders.
+  const browse = () => onBrowse();
 
   return <main className="container learning-space" aria-labelledby="learning-space-title">
     <button className="back-btn" onClick={browse}>← Explore courses</button>

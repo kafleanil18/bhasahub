@@ -137,7 +137,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
     <Route element={<RequireSession user={user} />}>
       <Route element={<StudentLayout />}>
         <Route path="/continue" element={<ContinueLearning />} />
-        <Route path="/my-courses" element={<Dashboard user={user} onOpenCourse={(course, resume) => navigate(resume ? `/continue?course=${encodeURIComponent(course._id)}` : `/courses/${encodeURIComponent(course._id)}`)} onBrowse={onHome} />} />
+        <Route path="/my-courses" element={<Dashboard user={user} onOpenCourse={(course, resume) => navigate(resume ? `/continue?course=${encodeURIComponent(course._id)}` : `/courses/${encodeURIComponent(course._id)}`)} onBrowse={() => navigate('/#courses')} />} />
         <Route path="/progress" element={<ProgressAnalytics user={user} onBack={onHome} />} />
         <Route path="/courses/:courseId" element={<CourseRoute user={user} onHome={onHome} />} />
         <Route path="/courses/:courseId/lessons/:lessonId" element={<CourseRoute user={user} onHome={onHome} />} />
