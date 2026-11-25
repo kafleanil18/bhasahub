@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { downloadCSV } from '../utils/csv';
 import StudioAnalytics from './StudioAnalytics';
+import useStudioActivity from './useStudioActivity';
 import DailyReminderCard from './DailyReminderCard';
 import InkLoader from '../components/InkLoader';
 import Icon from '../components/Icon';
@@ -95,6 +96,8 @@ function ProgressAnalytics({ user, onBack }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
+  // Loads in parallel with the analytics below; the first load keeps the loading screen up too.
+  const studioActivity = useStudioActivity(refreshKey);
   const token = localStorage.getItem('token');
 
   useEffect(() => {
@@ -163,7 +166,7 @@ function ProgressAnalytics({ user, onBack }) {
     }
   };
 
-  if (loading && !data) {
+  if ((loading && !data) || !studioActivity.settled) {
     return (
       <section className="course-page container analytics-page">
         <InkLoader message="Gathering your learning activity…" />
@@ -223,7 +226,7 @@ function ProgressAnalytics({ user, onBack }) {
 
       <DailyReminderCard />
 
-      <StudioAnalytics refreshKey={refreshKey} />
+      <StudioAnalytics activity={studioActivity} />
 
       {/* SVG score trend chart */}
       {data.scoreTrend.length > 0 && (

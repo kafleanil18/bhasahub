@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { practicePaths, testPath } from '../navigation/paths';
 import { MEASURE_QUESTIONS } from '../practice/measureQuiz';
@@ -44,26 +44,12 @@ function ProgressDonut({ attempted, total, title }) {
 }
 const date = value => value ? new Date(value).toLocaleDateString() : 'Not yet';
 
-export default function StudioAnalytics({ refreshKey }) {
-  const [state, setState] = useState({ loading: true });
-  const [attempt, setAttempt] = useState(0);
+// `activity` comes from useStudioActivity, called by My Progress so it loads alongside the rest of the page.
+export default function StudioAnalytics({ activity }) {
+  const { state, setState, retry } = activity;
   const [resetting, setResetting] = useState('');
   const [notice, setNotice] = useState('');
   const [resetError, setResetError] = useState('');
-  useEffect(() => {
-    const controller = new AbortController();
-    setState({ loading: true });
-    fetch(`${window.API_BASE_URL}/api/studio-activity/me`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` },
-      signal: AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]),
-    }).then(async response => {
-      if (!response.ok) throw new Error('Analytics unavailable');
-      const data = await response.json();
-      if (!Array.isArray(data.studios) || !Array.isArray(data.hsk) || !Array.isArray(data.otherTests)) throw new Error('Invalid analytics');
-      if (!controller.signal.aborted) setState({ data });
-    }).catch(() => { if (!controller.signal.aborted) setState({ error: true }); });
-    return () => controller.abort();
-  }, [refreshKey, attempt]);
   const resetCount = async (studio, title) => {
     if (resetting) return;
     const confirmed = window.confirm(`Reset your ${title} count? This clears this studio’s unique count, answer accuracy, and last-practiced date. You can count the same questions again afterward. Course completion, HSK test results, and other studios are kept. This cannot be undone.`);
@@ -83,7 +69,7 @@ export default function StudioAnalytics({ refreshKey }) {
   const data = state.data;
   return <section className="studio-analytics" aria-labelledby="studio-analytics-title">
     <div className="analytics-course-progress-heading"><div><span className="dash-eyebrow">YOUR PRACTICE STUDIO</span><h2 id="studio-analytics-title">Nine skills. Every practice counts.</h2></div></div>
-    {state.loading ? <p role="status">Loading studio activity and test completions…</p> : state.error ? <div role="alert"><p>Studio analytics couldn’t load. Your saved work hasn’t changed.</p><button className="btn-primary" onClick={() => setAttempt(value => value + 1)}>Retry studio analytics</button></div> : <>
+    {state.loading ? <p role="status">Loading studio activity and test completions…</p> : state.error ? <div role="alert"><p>Studio analytics couldn’t load. Your saved work hasn’t changed.</p><button className="btn-primary" onClick={retry}>Retry studio analytics</button></div> : <>
       {notice && <p role="status">{notice}</p>}
       {resetError && <p role="alert">{resetError}</p>}
       <div className="studio-analytics-grid">{Object.entries(studios).map(([id, title]) => {
