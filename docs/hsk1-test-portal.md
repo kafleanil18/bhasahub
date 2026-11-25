@@ -1,6 +1,12 @@
 # HSK 1 H11226 portal
 
-Open HanziGo → sign in → HSK 1 Mock Test / Practice Tools → Mock Tests → Enter test portal.
+Sign in, then open **Practice Tools → Mock Tests** (`/tests`) and choose a paper (`/tests/<paper id>`).
+
+## Who can open which paper
+
+- **H11226** is free for every signed-in student.
+- **The other papers** need an admin role, or an approved free week that hasn't expired. Otherwise `/api/hsk1/:paperId` and `/api/tests` answer `403` with `code: 'TESTS_LOCKED'`, and the test list offers to request access.
+- The rules are in `server/utils/testAccess.js`. See [practice-access.md](practice-access.md) for requests, the free week and plans.
 
 The bundled H11226 paper has 40 questions, in eight parts of five. Questions, pinyin, pictures, listening transcripts used for explanations, and the answer key were transcribed from the user-provided `11226试题及答案.pdf` (14 pages). The original scan crops are retained as source references. The student portal now uses seventeen optimized full-color illustrations in `client/public/hsk1/h11226/color/`, generated with the built-in image generation tool. Every subject and A/B/C or A–F choice order is checked against the original paper, preserving the printed answer key. The complete paper and answer-key page are not shipped to the browser. The user-provided `H11226.mp3` is actually AAC in an M4A container, so the unchanged audio bytes are shipped as `client/public/hsk1/h11226/listening.m4a`. Its decoded duration is 909.819 seconds.
 
@@ -14,7 +20,19 @@ Section deadlines and answers are saved per account to localStorage on the same 
 
 `/api/hsk1/h11226` requires the existing authenticated session and returns questions without answer indices or explanations. `/attempts` creates an attempt or lists up to twenty completed attempts owned by the student. `/attempts/:id` retrieves only that student's attempt; `/attempts/:id/submit` validates exactly forty integer-or-null answers, grades on the server, and atomically finalizes the `HskAttempt` document. Retried submissions return the original saved result. Responses use `Cache-Control: no-store`.
 
-Each correct answer earns one point. The result reports listening /20, reading /20, total /40, percentage, unanswered count, and answer explanations. It is labelled a practice score, with no official HSK scale conversion or pass/fail claim. Results appear privately after submission, can be reopened from portal history, and can be printed/saved as PDF. This paper is built in; the existing test manager and other mock tests are unchanged.
+Each correct answer earns one point. The result reports listening /20, reading /20, total /40, percentage, unanswered count, and answer explanations. It is labelled a practice score, with no official HSK scale conversion or pass/fail claim. Results appear privately after submission, can be reopened from portal history, and can be printed or saved as PDF. This paper is built in; the existing test manager and other mock tests are unchanged.
+
+## Printing a result
+
+**Print / save result** calls `window.print()`. Two rules decide what's printed:
+
+- **The site-wide anti-copy rule** (`client/src/styles/navigation.css`) hides the whole page when printing, so lessons and exam questions can't be printed. It now applies to every page *except* one showing a result (`body:not(:has(.hsk-result))`).
+- **The result page's own print rule** (`client/src/tests/hsk1/HskPortal.css`) hides everything but the score card, and prints it in black on white with no buttons:
+  - paper code and student name;
+  - total score and percentage;
+  - listening, reading and unanswered counts.
+
+The answer review sits outside the card, so it isn't printed. Before 25 November 2026, both rules were broken and the button printed a blank page (fixed in `0d69b2b`).
 
 ## Validation
 

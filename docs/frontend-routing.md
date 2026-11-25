@@ -7,15 +7,19 @@ React state. Route components remain lazy loaded.
 
 | Area | URLs | Access |
 | --- | --- | --- |
-| Home | `/` | Public; superadmins go to `/admin` |
-| Authentication | `/sign-in`, `/register`, `/forgot-password`, `/reset-password?token=…` | Public |
+| Home | `/` | Public. Superadmins go to `/admin`. |
+| Public pages | `/pricing`, `/about-hsk`, `/privacy`, `/cookies`, `/email/reminders/unsubscribe` | Public |
+| Authentication | `/sign-in`, `/register`, `/forgot-password`, `/reset-password?token=…` | Public. Header and footer are hidden. |
 | Pinyin | `/practice/pinyin` | Public |
-| Learning | `/my-courses`, `/progress` | Signed in |
-| Courses | `/courses/:courseId`, `/courses/:courseId/lessons/:lessonId` | Signed in; lesson access checks still apply |
-| Practice | `/practice/characters`, `/practice/listening`, `/practice/sentences`, `/practice/measure-words`, `/practice/numbers`, `/practice/dictation`, `/practice/conversations` | Signed in |
-| Tests | `/tests`, `/tests/:testId` | Signed in |
-| Administration | `/admin/tests`, `/admin/subscriptions` | Admin or superadmin |
-| Content and platform management | `/admin`, `/admin/courses`, `/admin/courses/:courseId/lessons`, `/admin/users`, `/admin/conversations`, `/admin/testimonials`, `/admin/sentence-audio`, `/admin/characters`, `/admin/pinyin`, `/admin/inbox`, `/admin/audit` | Superadmin; ordinary admins visiting `/admin` go to test management |
+| Learning | `/continue`, `/my-courses`, `/progress` | Signed in |
+| Courses | `/courses/:courseId`, `/courses/:courseId/lessons/:lessonId` | Signed in. Course access checks still apply. |
+| Practice | `/practice/tones`, `/practice/characters`, `/practice/listening`, `/practice/sentences`, `/practice/measure-words`, `/practice/numbers`, `/practice/dictation`, `/practice/conversations` | Signed in, behind `PracticeGate`. The page is locked until access is approved (see [practice-access.md](practice-access.md)). |
+| Tests | `/tests`, `/tests/:testId` | Signed in. Papers other than H11226 need approved access. |
+| Administration | `/admin/tests`, `/admin/subscriptions` | Admin or superadmin. `/admin/subscriptions?view=plans` or `?view=requests` opens that list. |
+| Content and platform management | `/admin`, `/admin/courses`, `/admin/courses/:courseId/lessons`, `/admin/users`, `/admin/students`, `/admin/conversations`, `/admin/testimonials`, `/admin/teachers`, `/admin/sentence-audio`, `/admin/tone-pair-audio`, `/admin/characters`, `/admin/pinyin`, `/admin/inbox`, `/admin/audit`, `/admin/settings/email`, `/admin/reminders` | Superadmin. Ordinary admins visiting `/admin` go to test management. |
+| Anything else | `*` | Not found page |
+
+Route components are lazy loaded. While a page's code loads, `App.jsx` shows the ink loader (`InkLoader`) in the page area and keeps the header in place. The very first load shows the same loader from `client/index.html`.
 
 `Layouts.jsx` separates public, authentication, student, and admin route trees.
 `RequireSession` redirects anonymous visitors to sign-in with an internal `next`

@@ -1,4 +1,25 @@
+# Practice reminder emails
+
 Super admins can send Chinese practice reminders manually from **Practice reminders** in the sidebar or dashboard (`/admin/reminders`). The page uses the existing Google SMTP, SMTP, or Resend email configuration. Configure it from **Email settings** first.
+
+The page puts sending first.
+
+**Quick groups.** One click selects one of these groups of eligible students:
+- All eligible students
+- Inactive 7+ days
+- Never practised
+- Access ends in 14 days
+
+**Templates.** Each ready-made message fills in the subject and text, and selects the group it suits:
+
+| Template subject | Selects |
+|---|---|
+| Don't forget your Chinese practice today | All eligible students |
+| Your Chinese is waiting for you | Inactive 7+ days |
+| Try an HSK mock test this week | All eligible students |
+| Make the most of your Chinese course access | Access ends in 14 days |
+
+The templates are defined in `client/src/admin/reminderTemplates.js`. You can still edit the message, or build the selection by hand as described below.
 
 Use **Choose students** to search by name or email, filter by inactivity, and select recipients. **Select all matching** adds the current filtered group to your selection; **Show selected** lets you inspect selections across searches and pages. A row's **Remind** button prepares a reminder for just that student. Edit the subject and message, select **Review reminder**, inspect the recipient count and email preview, then select **Send to … students**. Reviewing does not send mail. Only students with an unexpired subscription to a published Chinese course are eligible. Accounts with several eligible subscriptions receive one email. Deleted users, staff, expired subscriptions, unpublished courses, invalid addresses, and students who have stopped reminders are excluded.
 

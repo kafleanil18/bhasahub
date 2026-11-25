@@ -2,7 +2,7 @@
 
 Git already carries the code. This guide covers what Git does not: ignored files, secrets, local database data, and machine setup.
 
-Put everything you copy from the old computer into [`migration-export/`](../migration-export/README.md). That folder is git-ignored apart from its README, so secrets placed there are never committed.
+Put everything you copy from the old computer into a `migration-export/` folder at the repository root, or a zip of it. `.gitignore` excludes `migration-export/` and any `*migration-export*.zip`, so Git won't pick them up. Still delete them as soon as the new computer works, because they hold every secret.
 
 ## What lives where
 
@@ -30,7 +30,7 @@ Transfer these securely (AirDrop, `scp`, an encrypted USB drive, or a password m
 
 | # | Item | Why | How |
 |---|---|---|---|
-| B1 | Node v26 and MongoDB 9.0.8 | Both live under `~/.local` and are not on PATH. | Add `export PATH=~/.local/node-v26.13.0-darwin-arm64/bin:$PATH` to `~/.zshrc`. Start MongoDB with `~/.local/mongodb-macos-aarch64--9.0.8/bin/mongod --dbpath ~/.local/mongodb-data --bind_ip 127.0.0.1 --port 27017` |
+| B1 | Node v26 and MongoDB 9.0.8 | Both live under `~/.local` and are not on PATH by default. | **Linux (current computer):** `~/.bashrc` adds `~/.local/node-v26.13.0-linux-x64/bin` and `~/.local/mongodb-linux-x86_64-debian13-9.0.8/bin` to PATH. It also defines `bhasahub-mongod`, which runs `mongod --dbpath ~/.local/mongodb-data --logpath ~/.local/mongodb-logs/mongod.log --fork`. **macOS (old computer):** `~/.local/node-v26.13.0-darwin-arm64/bin` and `~/.local/mongodb-macos-aarch64--9.0.8/bin/mongod --dbpath ~/.local/mongodb-data --bind_ip 127.0.0.1 --port 27017`. |
 | B2 | Localhost values in `server/.env` | These differ from production. | `PORT=5001`, `MONGO_URI=mongodb://127.0.0.1:27017/language-lms`, `CLIENT_URL=http://localhost:5173`, `NODE_ENV=development`. `SKIP_EMAIL_VERIFICATION=true` is for local testing only and also needs `NODE_ENV=development`. |
 | B3 | `client/.env` (optional) | Without it, Google sign-in is turned off (`client/src/auth/GoogleAuthButton.jsx`). The API address is found automatically: `client/index.html` uses port 5001 when the page is served on port 5173. | `cp client/.env.example client/.env`, then set `VITE_GOOGLE_CLIENT_ID`. Set `VITE_API_BASE_URL` only to use a different API. |
 | B4 | Atlas database name in `MONGO_URI_ATLAS` | A placeholder such as `/YOUR_DATABASE_NAME` makes the import script stop with "No courses found". | Use the real database name from Atlas. Prefer a read-only database user. |
@@ -65,11 +65,12 @@ Transfer these securely (AirDrop, `scp`, an encrypted USB drive, or a password m
 | `RESEND_API_KEY` | Optional | Email fallback | resend.com |
 | `EMAIL_SETTINGS_KEY` | Optional | Separate encryption key. Falls back to `JWT_SECRET`. | See A2 |
 | `GEMINI_API_KEY` | Optional | AI tone feedback (`server/routes/aiTone.js`) | Google AI Studio |
-| `AZURE_SPEECH_KEY`, `AZURE_SPEECH_REGION` | Optional | Natural Mandarin voice. Falls back to the browser voice. | Azure portal → Speech resource → Keys and Endpoint |
+| `AZURE_SPEECH_KEY`, `AZURE_SPEECH_REGION` | Strongly recommended | Natural Mandarin voice, used first on every browser and device. Without it, numbers, tones and listening depend on the browser having a Mandarin voice. | Azure portal → Speech resource (free F0 tier is enough) → Keys and Endpoint |
 | `AZURE_SPEECH_VOICE_A`, `AZURE_SPEECH_VOICE_B` | Optional | Voice choice. Defaults: `zh-CN-XiaoxiaoNeural`, `zh-CN-YunxiNeural` | — |
 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | Optional | Daily push notifications | A4, or generate (C5) |
 | `PUSH_CRON_SECRET` | Optional locally | Protects `/api/push/run`. Also a GitHub Actions secret used by `.github/workflows/daily-reminders.yml`. | Choose one. In production it must match Render and GitHub. |
 | `VITE_API_BASE_URL` | Optional | Override the API address the client uses | — |
+| `VITE_CONTACT_PHONE` | Optional | WhatsApp/Viber number for live-class links. Defaults to the number in `client/src/components/contactPhone.js`. | — |
 
 Production values on Render, Vercel and GitHub stay on those services and are not affected by changing computers.
 
@@ -106,12 +107,36 @@ If you'd rather use MongoDB's own tools (`mongodump`/`mongorestore` from MongoDB
 
 ## Final check on the new computer
 
+On Linux, the `bhasahub` shell function in `~/.bashrc` does everything in one go:
+
+- starts MongoDB if nothing is listening on 27017;
+- stops early, with a message, if ports 5001 or 5173 are already taken;
+- runs the API and the client together.
+
 ```sh
-export PATH=~/.local/node-v26.13.0-darwin-arm64/bin:$PATH
-~/.local/mongodb-macos-aarch64--9.0.8/bin/mongod --dbpath ~/.local/mongodb-data --bind_ip 127.0.0.1 --port 27017 &
-npm run server   # http://localhost:5001, should log "MongoDB connected"
-npm run client   # http://localhost:5173
+bhasahub         # API on http://localhost:5001 (should log "MongoDB connected"), client on http://localhost:5173
 npm test         # server tests
 ```
 
-When everything works, delete the copied secrets from `migration-export/` and from any transfer media.
+By hand, from the repository root:
+
+```sh
+bhasahub-mongod  # or: mongod --dbpath ~/.local/mongodb-data --bind_ip 127.0.0.1 --port 27017 &
+npm run server
+npm run client
+```
+
+When everything works, delete the copied secrets from `migration-export/`, the export zip, and any transfer media.
+
+## Problems hit when moving to the Linux computer (November 2026)
+
+| Problem | Cause | Fix |
+|---|---|---|
+| `Push notifications are misconfigured. Check the VAPID settings.` | `VAPID_SUBJECT` must be a `mailto:` address or an `https://` URL | Set `VAPID_SUBJECT=mailto:<an address you control>` in `server/.env` |
+| `Server startup failed`, port 5173 already in use | An earlier `npm run client` was still running | Stop the old process, or use `bhasahub`, which checks the ports first |
+| Mongoose warnings about the `new` option | Mongoose 9 replaced it with `returnDocument` | Fixed in code (`bd92e82`) |
+| Pinyin chart audio silent locally | The pinyin recordings (Cloudinary links) were not in the local database | Import them from the cloud. Only 73 syllables have uploaded recordings; the rest of the chart uses the voice described in [README.md](README.md#mandarin-voices). |
+| Everyday numbers, tones and listening have no voice in Brave on Linux | The browser has no Mandarin voice, and the Azure voice is off | Set `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION` (see [everyday-chinese-numbers.md](everyday-chinese-numbers.md)), or test in Chrome |
+| `importCloudContent.js` fails to sign in to Atlas | `MONGO_URI_ATLAS` has an old password or the placeholder database name | Copy a fresh connection string from Atlas, ideally for a read-only user |
+| Image uploads fail locally | `CLOUDINARY_URL` is empty in the local `.env` | Copy it from Render's environment if you need local uploads |
+| Google sign-in hidden locally | `VITE_GOOGLE_CLIENT_ID` in `client/.env` is a placeholder | Set the real client ID, and add `http://localhost:5173` to its authorised origins |

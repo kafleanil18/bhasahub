@@ -2,7 +2,23 @@
 
 Open **Practice Tools → Everyday Chinese Numbers**. Choose Prices, Time, Dates, Ages, or Phone numbers. Each round chooses 10 distinct prompts from that mode; missed questions can be retried. The bank contains 282 prompts: 60 prices, 60 times, 72 dates, 60 ages, and 30 sample phone-number digit sequences.
 
-The trainer uses the browser/device's Mandarin speech voice through the Web Speech API. It does not call a paid AI service or use the sentence recording library. A Mandarin voice must be available on the student's device. The page discovers voices initially and on `voiceschanged`, prioritizes mainland Mandarin, offers a voice selector, and excludes Cantonese. If no Mandarin voice is available, the page explains how to add one in device speech settings and provides a refresh button. Unsupported browsers show an explanation. Voice availability and audio quality depend on the device/browser.
+## Voice
+
+The trainer speaks each prompt with the shared Mandarin speaker (`client/src/practice/useMandarinSpeaker.js`). Students pick **Female** or **Male** with the switch on the page, and the choice is remembered for every practice tool. There are no uploaded recordings for numbers, so the voice comes from one of these, in order:
+
+1. **The server's Azure voice**, when `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION` are set on the API:
+   - Female is `zh-CN-XiaoxiaoNeural` and male is `zh-CN-YunxiNeural`.
+   - The browser plays an MP3 from `/api/tts`, so every browser and device hears the same voice, including ones with no Mandarin voice installed.
+   - **Slow · 0.75×** asks for the server's slow reading.
+   - Each phrase is generated once and then served from the `ttsaudios` collection. All 282 prompts in both voices and both speeds come to roughly 7,000 Azure characters in total. That's well inside Azure's free tier of 500,000 a month.
+2. **The browser's own Mandarin voice**, when the server voice is off or a clip fails to load: Google's female Mandarin voice in Chrome, otherwise the device's best mainland Mandarin voice. Cantonese voices are skipped. For the male choice, a male device voice is used if there is one.
+
+**Without the Azure voice, the page depends on the browser.**
+- macOS, iOS, Windows Edge and Chrome all have a Mandarin voice.
+- Brave and Firefox on Linux usually have none. There, the page says "No Mandarin voice was found" and the mode cards stay disabled.
+- So the live site can work on one computer and not on another. Turning on the Azure voice fixes this for everyone.
+
+The page waits up to 30 seconds for the API to say whether the server voice is available, because a sleeping Render server is slow to answer. If that check fails, the next visit asks again.
 
 Selecting a mode attempts to speak the first prompt; subsequent questions also attempt playback automatically. **Listen** replays it and **Slow · 0.75×** changes its speaking rate. Students must hear playback before grading is enabled. If playback fails or never starts, students can retry or skip; skipped questions are excluded from the score. Leaving the page, submitting an answer, or advancing cancels the current speech.
 
@@ -23,5 +39,6 @@ Validation:
 - `node --test client/src/practice/numberQuiz.test.js client/src/practice/dictationQuiz.test.js client/src/practice/sentenceQuiz.test.js client/src/practice/listeningQuiz.test.js client/src/admin/sentenceRecording.test.js`
 - `npm run build --prefix client`
 - `npm run lint --prefix client`
+- `npm --prefix client run test:navigation -- e2e/number-practice.spec.js` (device voices, the male server voice, the server voice taking priority, and a device with no Mandarin voice)
 
 Browser checks use simulated speech to verify all modes, completed rounds, validation, scoring, retry, playback rates, speech cancellation, unavailable voices, voice refresh, failed playback skips, and mobile layouts. Live checks verify the page and native voice availability; simulated speech tests do not establish a device voice's pronunciation quality.
