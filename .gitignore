@@ -7,3 +7,7 @@ uploads/
 # Generated browser test output
 test-results/
 playwright-report/
+
+# Migration bundles hold every secret (.env files, database exports). Never commit them.
+migration-export/
+*migration-export*.zip
