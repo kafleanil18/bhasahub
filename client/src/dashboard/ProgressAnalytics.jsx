@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { downloadCSV } from '../utils/csv';
 import StudioAnalytics from './StudioAnalytics';
 import DailyReminderCard from './DailyReminderCard';
+import InkLoader from '../components/InkLoader';
 import Icon from '../components/Icon';
 
 const API = window.API_BASE_URL + '/api';
@@ -165,7 +166,7 @@ function ProgressAnalytics({ user, onBack }) {
   if (loading && !data) {
     return (
       <section className="course-page container analytics-page">
-        <div className="analytics-state"><span className="analytics-state-mark" aria-hidden="true">↗</span><p>Gathering your learning activity…</p></div>
+        <InkLoader message="Gathering your learning activity…" />
       </section>
     );
   }
