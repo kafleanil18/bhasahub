@@ -879,9 +879,10 @@ h1, h2, h3, h4, h5, h6,
   }
 }
 
-/* Anti-copy and Anti-download print block */
+/* Anti-copy and anti-download print block. Mock-test result pages are exempt so
+   "Print / save result" works; HskPortal.css then prints only the score card. */
 @media print {
-  body {
+  body:not(:has(.hsk-result)) {
     display: none !important;
   }
 }
