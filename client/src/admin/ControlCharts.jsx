@@ -17,7 +17,7 @@ export default function ControlCharts({ stats }) {
       <div className="control-growth-summary"><strong>{stats.students.newLast30Days.toLocaleString()}</strong><span>new students</span></div>
       <div className="control-bars" aria-label="Daily student signups">{days.map(day => <button type="button" key={day.date} className={selected === day.date ? 'selected' : ''} aria-label={`${shortDate(day.date)}: ${day.count} signups`} onMouseEnter={() => setSelected(day.date)} onMouseLeave={() => setSelected(null)} onFocus={() => setSelected(day.date)} onBlur={() => setSelected(null)} onClick={() => setSelected(day.date)}><span style={{height:`${day.count / max * 100}%`}} /></button>)}</div>
       <div className="control-chart-axis"><span>{shortDate(days[0].date)}</span><span>{shortDate(days.at(-1).date)}</span></div>
-      <p className="control-chart-caption" aria-live="polite">{selected ? `${shortDate(selected)} · ${days.find(day => day.date === selected).count} student signups` : 'Hover or select a bar to explore daily signups.'}</p>
+      <p className="control-chart-caption" aria-live="polite">{selected ? `${shortDate(selected)}: ${days.find(day => day.date === selected).count} student signups` : 'Hover or select a bar to explore daily signups.'}</p>
     </section>
     <section className="control-panel" aria-labelledby="control-courses-title">
       <div className="control-panel-heading"><h3 id="control-courses-title">Most enrolled courses</h3></div>

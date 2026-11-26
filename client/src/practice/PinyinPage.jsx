@@ -114,7 +114,7 @@ function extForMimeType(mimeType) {
   return 'webm';
 }
 
-function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
+function PinyinPage({ onBack, isSuperAdmin, backLabel = 'Back to home' }) {
   const [selected, setSelected] = useState(null);
   const [recordings, setRecordings] = useState({});
   // The chosen voice: Google's female Mandarin voice (or the device's best), or the male voice.
@@ -825,9 +825,9 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = '← Back to home' }) {
         <button className="back-btn" onClick={onBack} style={{ marginBottom: 16 }}>{backLabel}</button>
 
         <div className="pinyin-card">
-          <h1 className="pinyin-h1">汉语拼音 · Mandarin Pinyin Chart</h1>
+          <h1 className="pinyin-h1"><span lang="zh-CN">汉语拼音</span> Mandarin Pinyin Chart</h1>
           <p className="pinyin-subtitle">Click any syllable below to listen to all four tones (ā, á, ǎ, à).</p>
-          <p><Link className="btn-primary pinyin-tone-quiz-link" to="/practice/tones">Practice identifying tones →</Link></p>
+          <p><Link className="btn-primary pinyin-tone-quiz-link" to="/practice/tones">Practice identifying tones</Link></p>
 
           {isSuperAdmin && (
             <div className="pinyin-admin-bar">

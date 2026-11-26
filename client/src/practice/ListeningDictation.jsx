@@ -23,7 +23,7 @@ export default function ListeningDictation({ onBack, onRecordAudio }) {
 
   return <main className="sentence-page tone-practice dictation-page" aria-labelledby="dictation-title">
     <div className="dictation-header">
-      <button className="sentence-back" onClick={session ? () => setSession(null) : onBack}>{session ? '← All topics' : '← Back to home'}</button>
+      <button className="sentence-back" onClick={session ? () => setSession(null) : onBack}>{session ? 'All topics' : 'Back to home'}</button>
       {session && <span className="dictation-chip">{session.title}</span>}
     </div>
     <h1 id="dictation-title" className={session ? 'tone-visually-hidden' : 'dictation-title'}>Listening dictation</h1>
@@ -35,7 +35,7 @@ export default function ListeningDictation({ onBack, onRecordAudio }) {
         <p className="dictation-intro">Listen to your teacher, then type the sentence in Chinese.</p>
         <button type="button" className="dictation-card-mixed" onClick={() => start('Mixed', ready)} aria-label="Mixed dictation" aria-describedby="dictation-mixed-text">
           <span className="dictation-card-art" aria-hidden="true"><span className="dictation-art-icon">听写</span><small lang="zh-CN">{sample?.chinese}</small></span>
-          <span className="dictation-card-body"><strong>Mixed dictation</strong><span id="dictation-mixed-text">Up to 10 recordings from across the library · {ready.length} ready</span><span className="dictation-card-cta" aria-hidden="true">Start →</span></span>
+          <span className="dictation-card-body"><strong>Mixed dictation</strong><span id="dictation-mixed-text">Up to 10 recordings from across the library, {ready.length} ready</span><span className="dictation-card-cta" aria-hidden="true">Start</span></span>
         </button>
         <h2 className="dictation-section-title">Or choose a topic</h2>
         <div className="dictation-topics">{topics.map(topic => <button type="button" key={topic.id} className="dictation-topic" onClick={() => start(topic.title, topic.sentences)} aria-label={topic.title} aria-describedby={`dictation-topic-${topic.id}`}>

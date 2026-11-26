@@ -28,7 +28,7 @@ export default function StudentAccessDialog({ student, plans, courses, busy, err
 
     <section className="student-access-block" aria-labelledby="student-trial-title">
       <div className="student-access-head"><h3 id="student-trial-title">Free trial <span className="access-free-tag">Free</span></h3>
-        <span className={`student-chip is-${trialLive ? 'trial' : trial.status === 'pending' ? 'pending' : 'muted'}`}>{trialLive ? (trial.expiresAt ? `${daysUntil(trial.expiresAt)} days left · ends ${formatDate(trial.expiresAt)}` : 'Active · no end date') : trial.status === 'expired' ? `Ended ${formatDate(trial.expiresAt)}` : trial.status === 'pending' ? 'Request waiting' : trial.status === 'denied' ? 'Declined' : 'Not started'}</span></div>
+        <span className={`student-chip is-${trialLive ? 'trial' : trial.status === 'pending' ? 'pending' : 'muted'}`}>{trialLive ? (trial.expiresAt ? `${daysUntil(trial.expiresAt)} days left, ends ${formatDate(trial.expiresAt)}` : 'Active, no end date') : trial.status === 'expired' ? `Ended ${formatDate(trial.expiresAt)}` : trial.status === 'pending' ? 'Request waiting' : trial.status === 'denied' ? 'Declined' : 'Not started'}</span></div>
       <p className="access-help">Unlocks the practice studio and every HSK mock test.</p>
       <div className="student-access-row">
         <DaysField id="trial-days" value={trialDays} onChange={setTrialDays}/>
@@ -39,10 +39,10 @@ export default function StudentAccessDialog({ student, plans, courses, busy, err
 
     <section className="student-access-block" aria-labelledby="student-plan-title">
       <div className="student-access-head"><h3 id="student-plan-title">Plan</h3>
-        <span className={`student-chip is-${student.plan ? 'paid' : 'muted'}`}>{student.plan ? `${student.plan.label} · ${daysUntil(student.plan.expiresAt)} days left · ends ${formatDate(student.plan.expiresAt)}` : 'No plan'}</span></div>
+        <span className={`student-chip is-${student.plan ? 'paid' : 'muted'}`}>{student.plan ? `${student.plan.label}, ${daysUntil(student.plan.expiresAt)} days left, ends ${formatDate(student.plan.expiresAt)}` : 'No plan'}</span></div>
       <p className="access-help">Unlocks every published course. Granting while a plan runs adds the days to it.</p>
       <div className="student-access-row">
-        <label className="student-days" htmlFor="plan-choice">Plan<select id="plan-choice" value={planId} onChange={event => { setPlanId(event.target.value); setPlanDays(plans.find(plan => plan.id === event.target.value)?.days || 30); }}>{plans.map(plan => <option key={plan.id} value={plan.id}>{plan.label} · Rs {plan.price.toLocaleString()}</option>)}</select></label>
+        <label className="student-days" htmlFor="plan-choice">Plan<select id="plan-choice" value={planId} onChange={event => { setPlanId(event.target.value); setPlanDays(plans.find(plan => plan.id === event.target.value)?.days || 30); }}>{plans.map(plan => <option key={plan.id} value={plan.id}>{plan.label}, Rs {plan.price.toLocaleString()}</option>)}</select></label>
         <DaysField id="plan-days" value={planDays} onChange={setPlanDays}/>
         <button className="access-button is-primary" disabled={!!busy || !planId || !validDays(planDays)} onClick={() => onAction('plan', { method: 'PUT', body: { planId, days: Number(planDays) } }, `${student.plan ? 'Extended' : 'Granted'} the plan by ${planDays} days.`)}>{busy === 'plan' ? 'Saving…' : student.plan ? 'Extend plan' : 'Grant plan'}</button>
         {student.plan && <button className="access-link is-danger" disabled={!!busy} onClick={() => ask('plan', () => onAction('plan', { method: 'DELETE' }, 'Plan revoked.'))}>{confirm === 'plan' ? 'Confirm revoke' : 'Revoke'}</button>}
@@ -51,7 +51,7 @@ export default function StudentAccessDialog({ student, plans, courses, busy, err
 
     <section className="student-access-block" aria-labelledby="student-course-title">
       <div className="student-access-head"><h3 id="student-course-title">Course access</h3><span className={`student-chip is-${liveCourses.length ? 'paid' : 'muted'}`}>{liveCourses.length ? `${liveCourses.length} active` : 'None'}</span></div>
-      {liveCourses.length > 0 && <ul className="student-course-list">{liveCourses.map(sub => <li key={sub._id}><span><strong>{sub.course?.title || 'Deleted course'}</strong><small>{daysUntil(sub.expiresAt)} days left · ends {formatDate(sub.expiresAt)}</small></span><button className="access-link is-danger" disabled={!!busy} onClick={() => ask(sub._id, () => onAction(`course-${sub._id}`, { path: `/subscriptions/${sub._id}`, method: 'DELETE' }, `Removed access to ${sub.course?.title || 'the course'}.`))}>{busy === `course-${sub._id}` ? 'Removing…' : confirm === sub._id ? 'Confirm revoke' : 'Revoke'}</button></li>)}</ul>}
+      {liveCourses.length > 0 && <ul className="student-course-list">{liveCourses.map(sub => <li key={sub._id}><span><strong>{sub.course?.title || 'Deleted course'}</strong><small>{daysUntil(sub.expiresAt)} days left, ends {formatDate(sub.expiresAt)}</small></span><button className="access-link is-danger" disabled={!!busy} onClick={() => ask(sub._id, () => onAction(`course-${sub._id}`, { path: `/subscriptions/${sub._id}`, method: 'DELETE' }, `Removed access to ${sub.course?.title || 'the course'}.`))}>{busy === `course-${sub._id}` ? 'Removing…' : confirm === sub._id ? 'Confirm revoke' : 'Revoke'}</button></li>)}</ul>}
       <div className="student-access-row">
         <label className="student-days student-course-select" htmlFor="course-choice">Course<select id="course-choice" value={courseId} onChange={event => setCourseId(event.target.value)}><option value="">Choose a course…</option>{courses.map(course => <option key={course._id} value={course._id}>{course.title}</option>)}</select></label>
         <DaysField id="course-days" value={courseDays} onChange={setCourseDays}/>

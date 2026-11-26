@@ -16,15 +16,15 @@ export default function PracticeStudio({ user, onOpenPractice }) {
     {practiceTools.map(([id, title, description]) => {
       const locked = !user && id !== 'pinyin';
       return (
-      <button key={id} type="button" className={`hero-practice-link hero-practice-${id}${locked ? ' is-locked' : ''}`} onClick={() => onOpenPractice(id)} aria-label={locked ? `${id === 'tests' ? 'HSK mock tests' : title} — sign in required` : undefined}>
+      <button key={id} type="button" className={`hero-practice-link hero-practice-${id}${locked ? ' is-locked' : ''}`} onClick={() => onOpenPractice(id)} aria-label={locked ? `${id === 'tests' ? 'HSK mock tests' : title}, sign in required` : undefined}>
         {id !== 'tests' && <span className="hero-practice-glyph" aria-hidden="true"><span className="practice-symbol-flip"><span className="practice-symbol-face"><PracticeToolIcon tool={id}/></span><span className="practice-symbol-face is-back" lang="zh-CN">{practiceCharacters[id]}</span></span></span>}
         <span className="hero-practice-copy">
           {id === 'tests' && <span className="studio-test-label">READY FOR YOUR HSK EXAM?</span>}
           <strong>{id === 'tests' ? 'HSK mock tests' : title}</strong>
           <small>{description}</small>
         </span>
-        {id === 'tests' && <span className="studio-test-action" aria-hidden="true">{locked ? 'Sign in to start' : 'Take a mock test'} <span>{locked ? <LockIcon/> : '→'}</span></span>}
-        {id !== 'tests' && <span className="hero-practice-arrow" aria-hidden="true">{locked ? <LockIcon/> : '↗'}</span>}
+        {id === 'tests' && <span className="studio-test-action" aria-hidden="true">{locked ? 'Sign in to start' : 'Take a mock test'} <span>{locked && <LockIcon/>}</span></span>}
+        {id !== 'tests' && <span className="hero-practice-arrow" aria-hidden="true">{locked && <LockIcon/>}</span>}
       </button>
       );
     })}

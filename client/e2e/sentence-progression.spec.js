@@ -55,7 +55,7 @@ test('analytics setup errors cannot lock a sentence after several answers', asyn
 
 test('topics can be searched and expanded, and undo removes the last placed word', async ({ page }) => {
   await prepare(page);
-  await page.getByRole('button', { name: '← Choose another topic' }).click();
+  await page.getByRole('button', { name: 'Choose another topic' }).click();
   const topics = page.locator('.sb-topic');
   await expect(topics).toHaveCount(8);
   await page.getByRole('button', { name: `Show all ${catalog.topics.length} topics` }).click();

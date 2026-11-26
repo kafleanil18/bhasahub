@@ -22,7 +22,7 @@ function SlidesPage({ onBack }) {
   if (active) {
     return (
       <section className="course-page container">
-        <button className="back-btn" onClick={() => setActive(null)}>← Back to slides</button>
+        <button className="back-btn" onClick={() => setActive(null)}>Back to slides</button>
         <h1 className="section-title">{active.title}</h1>
         {active.description && <p className="course-desc">{active.description}</p>}
 
@@ -55,7 +55,7 @@ function SlidesPage({ onBack }) {
   // ---------- Slides list ----------
   return (
     <section className="course-page container">
-      <button className="back-btn" onClick={onBack}>← Back to home</button>
+      <button className="back-btn" onClick={onBack}>Back to home</button>
       <h1 className="section-title">Slides</h1>
       <p className="course-desc">PDF slide packs for your lessons.</p>
 
@@ -69,7 +69,7 @@ function SlidesPage({ onBack }) {
             <div className="course-card-body">
               <h3 className="course-card-title">{s.title}</h3>
               {s.description && <p className="course-card-desc">{s.description}</p>}
-              <span className="tag">View PDF →</span>
+              <span className="tag">View PDF</span>
             </div>
           </div>
         ))}

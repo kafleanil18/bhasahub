@@ -57,7 +57,7 @@ export default function AccessCountdown({ token, onSettled }) {
   const note = access.loading ? 'Checking your access…'
     : access.error ? 'Couldn’t check your access right now'
     : !next ? (access.entries.length ? 'Your access has ended' : 'No active course access')
-    : `${allPlan ? 'Plan' : next.free ? 'Free access' : next.title ? `${next.title} access` : 'Access'} ends ${formatDate(next.expiresAt)}${!allPlan && !allFree && others > 0 ? ` · ${others} more ${others === 1 ? 'date' : 'dates'}` : ''}`;
+    : `${allPlan ? 'Plan' : next.free ? 'Free access' : next.title ? `${next.title} access` : 'Access'} ends ${formatDate(next.expiresAt)}${!allPlan && !allFree && others > 0 ? `, plus ${others} more ${others === 1 ? 'date' : 'dates'}` : ''}`;
 
   return <div className={`learning-overview-item learning-access-timer ${tone}`} role="timer" aria-live="off" aria-label={next ? `Course access ends ${formatDate(next.expiresAt)}` : 'Course access'}>
     <span>{next?.free ? <>Access expires in <span className="learning-free-tag">Free</span></> : 'Access expires in'}</span>

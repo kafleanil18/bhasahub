@@ -31,7 +31,7 @@ test('My Progress shows nine studios and HSK completion details', async ({ page 
   // Measure words ship with the app, so the page counts its questions itself.
   const measures = section.locator('article').filter({ has: page.getByRole('link', { name: 'Measure words', exact: true }) });
   await expect(measures.getByRole('img', { name: 'Measure words: 0 of 132 questions attempted, 0%' })).toBeVisible();
-  await expect(section).toContainText('2 completed attempts · 1 papers completed · 1 unfinished attempts');
+  await expect(section).toContainText('2 completed attempts, 1 papers completed, 1 unfinished attempts');
   await expect(section.getByRole('link', { name: /H11226/ })).toHaveAttribute('href', '/tests/h11226');
 });
 
@@ -122,7 +122,7 @@ test('reset warns first, cancel preserves data, and confirmation resets only tha
   await expect(card).not.toContainText('3 of 4 answers correct');
   await expect(card).toContainText('Not yet');
   await expect(button).toBeDisabled();
-  await expect(page.getByText('2 completed attempts · 1 papers completed · 1 unfinished attempts')).toBeVisible();
+  await expect(page.getByText('2 completed attempts, 1 papers completed, 1 unfinished attempts')).toBeVisible();
 });
 
 test('reset failure keeps the current count and reports the uncertainty', async ({ page }) => {

@@ -94,7 +94,7 @@
 .sb-score strong { font-size: 26px; line-height: 1; }
 .sb-score small { color: var(--mist); font-size: 12px; }
 .sb-review-title { margin: 28px 0 4px; font-size: 18px; }
-.sentence-builder .sb-review li { padding: 14px 16px; margin-top: 8px; border: 1px solid var(--line); border-left: 4px solid var(--seal); border-radius: 10px; }
+.sentence-builder .sb-review li { padding: 14px 16px; margin-top: 8px; border: 1px solid var(--line); border-radius: 10px; }
 
 @media (max-width: 860px) {
   .sb-hero { grid-template-columns: 1fr; gap: 24px; padding: 28px 24px; }

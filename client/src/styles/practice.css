@@ -814,7 +814,6 @@
 .lesson-dialogue {
   background: var(--rice);
   border: 1px solid var(--line);
-  border-left: 3px solid var(--seal);
   border-radius: 10px;
   padding: 20px 24px;
   margin: 8px 0 24px;
@@ -844,7 +843,7 @@
 .grammar-explanation-text p { overflow-wrap: anywhere; }
 .grammar-explanation-text .grammar-course-meta { color: var(--mist); font-size: clamp(12px, calc(13px + 0.4vw), 14px); }
 .grammar-explanation-text .grammar-pattern { padding: 12px 16px; background: var(--rice); border-radius: 8px; }
-.grammar-explanation-text blockquote { margin: 16px 0; padding: 12px 16px; border-left: 3px solid var(--seal); background: var(--paper); }
+.grammar-explanation-text blockquote { margin: 16px 0; padding: 12px 16px; border-radius: 8px; background: var(--paper); }
 .grammar-explanation-text blockquote p { margin: 4px 0; }
 .grammar-explanation-text blockquote .zh { font-size: 22px; }
 .grammar-explanation-text .grammar-self-check { margin: 20px 0; }

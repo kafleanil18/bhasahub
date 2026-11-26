@@ -110,17 +110,17 @@ function TestList({ onOpenTest, onBack, user }) {
 
   return (
     <section className="course-page container">
-      <button className="back-btn" onClick={onBack}>← Back to home</button>
+      <button className="back-btn" onClick={onBack}>Back to home</button>
       <h1 className="section-title">HSK Mock Tests</h1>
 
       {!unlocked && accessStatus !== 'loading' && (
         <div className={`test-access-banner${accessStatus === 'pending' ? ' is-pending' : ''}`} role="status">
           <div>
-            <strong>{accessStatus === 'expired' ? 'Your free week has ended' : accessStatus === 'pending' ? 'Your access request is under review' : accessStatus === 'denied' ? 'Your previous request was declined' : 'One mock test is free — unlock the rest for free too'}</strong>
-            <p>{accessStatus === 'expired' ? `Your ${FREE_ACCESS_DAYS}-day free access is over. The H11226 test stays free — choose a plan to open every other mock test again.` : accessStatus === 'pending' ? 'An admin will review your request. Check back soon — the H11226 test is free to take meanwhile.' : 'You can take the H11226 test for free. To open all other mock tests, send a request and an admin will approve it.'}</p>
+            <strong>{accessStatus === 'expired' ? 'Your free week has ended' : accessStatus === 'pending' ? 'Your access request is under review' : accessStatus === 'denied' ? 'Your previous request was declined' : 'One mock test is free. Unlock the rest for free too.'}</strong>
+            <p>{accessStatus === 'expired' ? `Your ${FREE_ACCESS_DAYS}-day free access is over. The H11226 test stays free. Choose a plan to open every other mock test again.` : accessStatus === 'pending' ? 'An admin will review your request. Check back soon. The H11226 test is free to take meanwhile.' : 'You can take the H11226 test for free. To open all other mock tests, send a request and an admin will approve it.'}</p>
             {(accessStatus === 'none' || accessStatus === 'denied') && <FreeAccessNote compact/>}
           </div>
-          {accessStatus === 'expired' && <Link className="test-access-request-btn" to="/pricing">See plans →</Link>}
+          {accessStatus === 'expired' && <Link className="test-access-request-btn" to="/pricing">See plans</Link>}
           {(accessStatus === 'none' || accessStatus === 'denied') && <button className="test-access-request-btn" disabled={requesting} onClick={requestAccess}>{requesting ? 'Sending request…' : accessStatus === 'denied' ? 'Request free access again' : 'Request free access to all tests'}</button>}
           {requestError && <p className="test-access-error" role="alert">{requestError}</p>}
         </div>
@@ -158,7 +158,7 @@ function TestList({ onOpenTest, onBack, user }) {
       {loading && <p className="courses-empty">Loading tests...</p>}
       <div className="course-cards">
         {filteredTests.map((t) => (
-          <div className={`course-card mock-test-card${completionByTest[t._id] === true ? ' is-completed' : ''}${!unlocked ? ' is-locked' : ''}`} key={t._id} role="button" tabIndex={0} aria-label={!unlocked ? `${t.title}, locked — request access to unlock` : `Open ${t.title}${completionByTest[t._id] === true ? ', completed' : ''}`} aria-disabled={!unlocked || undefined} onClick={() => { if (unlocked) onOpenTest(t._id); }} onKeyDown={event => { if ((event.key === 'Enter' || event.key === ' ') && unlocked) { event.preventDefault(); onOpenTest(t._id); } }}>
+          <div className={`course-card mock-test-card${completionByTest[t._id] === true ? ' is-completed' : ''}${!unlocked ? ' is-locked' : ''}`} key={t._id} role="button" tabIndex={0} aria-label={!unlocked ? `${t.title}, locked, request access to unlock` : `Open ${t.title}${completionByTest[t._id] === true ? ', completed' : ''}`} aria-disabled={!unlocked || undefined} onClick={() => { if (unlocked) onOpenTest(t._id); }} onKeyDown={event => { if ((event.key === 'Enter' || event.key === ' ') && unlocked) { event.preventDefault(); onOpenTest(t._id); } }}>
             {t.image ? (
               <img className="course-card-img" src={mediaUrl(t.image)} alt={t.title} />
             ) : (
@@ -176,7 +176,7 @@ function TestList({ onOpenTest, onBack, user }) {
               {typeof completionByTest[t._id] === 'boolean' && <span className={`mock-test-completion${completionByTest[t._id] ? ' is-done' : ''}`}>{completionByTest[t._id] ? '✓ Completed' : 'Not started'}</span>}
               <h3 className="course-card-title">{t.title}</h3>
               <p className="course-card-desc">{t.description}</p>
-              <span className="tag">{t.level} · {t.questions?.length || 0} questions</span>
+              <span className="tag">{t.level}, {t.questions?.length || 0} questions</span>
             </div>
           </div>
         ))}

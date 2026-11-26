@@ -52,7 +52,7 @@ test('when the free week is over and there is no plan, practice locks with a poi
 test('a plan unlocks every mock test, not just the free one', async ({ page }) => {
   await prepare(page, { subscriptions: plan });
   await page.goto('/tests');
-  await expect(page.getByText('H10901 · HSK 1')).toBeVisible();
+  await expect(page.getByText('HSK 1 paper H10901')).toBeVisible();
   await expect(page.locator('.mock-test-lock-tag')).toHaveCount(0);
   await expect(page.locator('.test-access-banner')).toHaveCount(0);
 });
@@ -60,7 +60,7 @@ test('a plan unlocks every mock test, not just the free one', async ({ page }) =
 test('without a plan or free week, only the free mock test is open', async ({ page }) => {
   await prepare(page);
   await page.goto('/tests');
-  await expect(page.getByText('H10901 · HSK 1')).toBeVisible();
+  await expect(page.getByText('HSK 1 paper H10901')).toBeVisible();
   await expect(page.locator('.test-access-banner')).toContainText('One mock test is free');
   await expect(page.locator('.mock-test-lock-tag')).toHaveCount(1);
 });

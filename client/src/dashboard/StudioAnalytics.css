@@ -16,7 +16,6 @@
 .studio-skill-dictation { --studio-accent: #286d6c; --studio-accent-dark: #89d4cf; }
 .studio-skill-conversation { --studio-accent: #964d70; --studio-accent-dark: #edaccb; }
 .studio-analytics .studio-skill-card {
-  border-top: 4px solid var(--studio-accent);
   background: color-mix(in srgb, var(--studio-accent) 7%, var(--card));
 }
 .studio-analytics .studio-skill-card h3 a { color: var(--studio-accent); }

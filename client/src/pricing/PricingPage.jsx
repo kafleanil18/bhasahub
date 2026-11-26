@@ -95,11 +95,10 @@ export default function PricingPage({ user }) {
               {active ? <span className="pricing-badge is-active"><Check/> Active plan</span> : featured ? <span className="pricing-badge">Best value</span> : <span className="pricing-note">{plan.note}</span>}
             </div>
             <p className="pricing-price"><strong>{formatRs(plan.price)}</strong><span>{plan.months === 1 ? 'for 1 month' : `for ${plan.months} months`}</span></p>
-            <p className="pricing-monthly">{plan.months === 1 ? 'Billed once. No auto-renewal.' : <>{formatRs(monthlyPrice(plan))} a month · <b>Save {saving}%</b></>}</p>
+            <p className="pricing-monthly">{plan.months === 1 ? 'Billed once. No auto-renewal.' : <>{formatRs(monthlyPrice(plan))} a month, <b>save {saving}%</b></>}</p>
             {active ? <p className="pricing-active-until" role="status"><Check/> Active until {formatDate(activePass.expiresAt)}</p>
               : <button type="button" className="pricing-choose" disabled={staff || locked || requested || !!busy || loading} onClick={() => choose(plan)} aria-label={locked ? `${plan.label} plan, available when your current plan ends` : requested ? `${plan.label} plan requested` : `Choose the ${plan.label} plan, ${formatRs(plan.price)}`}>
                 {busy === plan.id ? 'Sending request…' : locked ? 'Available when your plan ends' : requested ? <>Requested <Check/></> : !user ? 'Sign in to choose' : pending ? `Switch to ${plan.label}` : `Choose ${plan.label}`}
-                {!requested && !locked && busy !== plan.id && <span aria-hidden="true">→</span>}
               </button>}
           </article>;
         })}

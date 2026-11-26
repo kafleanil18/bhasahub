@@ -283,7 +283,7 @@ function TestTaker({ testId, onBack }) {
               }}
             >
               {progressDelta.deltaFromLast == null
-                ? 'First attempt on record — keep it up!'
+                ? 'First attempt on record. Keep it up!'
                 : progressDelta.isNewBest
                   ? <><Icon name="lantern"/> {`New best! ${progressDelta.deltaFromLast >= 0 ? '+' : ''}${progressDelta.deltaFromLast}% vs your last attempt`}</>
                   : progressDelta.deltaFromLast >= 0
@@ -577,8 +577,9 @@ function TestTaker({ testId, onBack }) {
             }}
             className="scroll-to-top-btn"
             title="Scroll to top"
+            aria-label="Scroll to top"
           >
-            ↑
+            <Icon name="chevronUp" size="20px" />
           </button>
         </>
       )}

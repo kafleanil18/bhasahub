@@ -215,10 +215,10 @@ function ConversationPracticePage({ onBack }) {
   return (
     <main className="container conversation-page cp-page" aria-labelledby="cp-title">
       <div className="cp-topbar">
-        <button className="cp-back" type="button" onClick={onBack}>← Practice studio</button>
+        <button className="cp-back" type="button" onClick={onBack}>Practice studio</button>
         <label className="cp-lesson-select"><span className="cp-visually-hidden">Choose lesson</span>
           <select value={lesson.id} onChange={event => selectLesson(event.target.value)}>
-            {availableLessons.map(item => <option key={item.id} value={item.id}>Lesson {item.number} · {item.title} — {item.subtitle}</option>)}
+            {availableLessons.map(item => <option key={item.id} value={item.id}>Lesson {item.number}: {item.title}, {item.subtitle}</option>)}
           </select>
         </label>
       </div>
@@ -227,7 +227,7 @@ function ConversationPracticePage({ onBack }) {
         {step < 0 && <div className="cp-intro">
           <div className="cp-intro-image"><img src={lesson.image} alt={lesson.imageAlt} width="1672" height="942" /></div>
           <div className="cp-intro-body">
-            <p className="cp-eyebrow">Lesson {lesson.number} · {lesson.topic}</p>
+            <p className="cp-eyebrow">Lesson {lesson.number}: {lesson.topic}</p>
             <h1 id="cp-title" ref={headingRef} tabIndex={-1}><span lang="zh-CN">{lesson.title}</span> <small>{lesson.subtitle}</small></h1>
             <p className="cp-intro-text">{lesson.intro}</p>
             <p className="cp-intro-meta"><span><Icon name="chat"/> {lines.length} lines</span><span>文 {lesson.words.length} words</span></p>
@@ -257,16 +257,16 @@ function ConversationPracticePage({ onBack }) {
             <button type="button" aria-pressed={showEnglish} onClick={() => setShowEnglish(value => !value)}>English</button>
           </div>
           <div className="cp-nav">
-            <button type="button" className="cp-secondary" onClick={() => goTo(step - 1)}>← Back</button>
-            <button type="button" className="cp-primary" onClick={() => goTo(step + 1)}>{step === lines.length - 1 ? 'Finish ✓' : 'Next →'}</button>
+            <button type="button" className="cp-secondary" onClick={() => goTo(step - 1)}>Back</button>
+            <button type="button" className="cp-primary" onClick={() => goTo(step + 1)}>{step === lines.length - 1 ? 'Finish' : 'Next'}</button>
           </div>
-          <p className="cp-hint" aria-hidden="true">Swipe or use ← → keys</p>
+          <p className="cp-hint" aria-hidden="true">Swipe or use the arrow keys</p>
         </>}
 
         {done && <div className="cp-done">
           <p className="cp-eyebrow"><Icon name="lantern"/> Lesson complete</p>
           <h1 id="cp-title" ref={headingRef} tabIndex={-1}>Nice work!</h1>
-          <p className="cp-intro-text">Review the new words — tap one to hear it.</p>
+          <p className="cp-intro-text">Review the new words. Tap one to hear it.</p>
           <ul className="cp-words">{lesson.words.map(word => {
             const key = `word-${word.chinese}`;
             return <li key={word.chinese}><button type="button" className={playingKey === key ? 'is-playing' : ''} onClick={() => say(key, word.chinese)} aria-label={`Listen to ${word.chinese}, ${word.pinyin}: ${word.meaning}`}>
@@ -274,8 +274,8 @@ function ConversationPracticePage({ onBack }) {
             </button></li>;
           })}</ul>
           <div className="cp-nav">
-            <button type="button" className="cp-secondary" onClick={() => goTo(0)}>↺ Practise again</button>
-            {nextLesson ? <button type="button" className="cp-primary" onClick={() => selectLesson(nextLesson.id)}>Next lesson →</button>
+            <button type="button" className="cp-secondary" onClick={() => goTo(0)}>Practise again</button>
+            {nextLesson ? <button type="button" className="cp-primary" onClick={() => selectLesson(nextLesson.id)}>Next lesson</button>
               : <button type="button" className="cp-primary" onClick={onBack}>Back to studio</button>}
           </div>
         </div>}

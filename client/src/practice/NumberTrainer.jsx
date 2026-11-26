@@ -27,7 +27,7 @@ export default function NumberTrainer({ onBack }) {
 
   return <main className="sentence-page tone-practice number-trainer" aria-labelledby="number-trainer-title">
     <div className="number-header">
-      <button className="sentence-back" onClick={session ? () => setSession(null) : onBack}>{session ? '← All number modes' : '← Back to home'}</button>
+      <button className="sentence-back" onClick={session ? () => setSession(null) : onBack}>{session ? 'All number modes' : 'Back to home'}</button>
       {mode && <span className="number-mode-chip"><span aria-hidden="true">{mode.symbol}</span> {mode.title}</span>}
     </div>
     <h1 id="number-trainer-title" className={session ? 'tone-visually-hidden' : 'number-title'}>Everyday Chinese Numbers</h1>

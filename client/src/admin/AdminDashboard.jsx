@@ -114,7 +114,7 @@ export default function AdminDashboard({ onNavigate, user }) {
               <small>{stats ? count ? description : 'No pending items' : loading ? 'Checking…' : 'Count unavailable'}</small>
             </span>
             <span className={`control-review-number ${stats && count ? 'is-pending' : ''}`}>{stats ? count.toLocaleString() : '—'}</span>
-            <span className="control-review-arrow" aria-hidden="true">→</span>
+           
           </button>
         </li>)}
       </ul>
@@ -123,7 +123,7 @@ export default function AdminDashboard({ onNavigate, user }) {
       <div className="control-section-heading"><h2 id="control-overview-title">Platform overview</h2><span>All-time totals</span></div>
       {!stats && loading ? <div className="control-metrics control-loading" role="status" aria-label="Loading platform overview">{Array.from({ length: 4 }, (_, i) => <div className="control-metric" key={i} aria-hidden="true"><span/><span/><span/></div>)}</div> : stats ? <>
         <dl className="control-metrics">{metrics.map(([label, value, note]) => <div className="control-metric" key={label}><dt>{label}</dt><dd className="control-metric-value">{value.toLocaleString()}</dd><dd className="control-metric-note">{note}</dd></div>)}</dl>
-        <div className="control-details-strip">{[['Total enrollments', stats.enrollments.total, 'subscriptions'], ['Bundled HSK 1 mock tests', stats.tests.bundled, 'tests'], ['Admins & staff', stats.admins.total, 'admins']].map(([label, value, target]) => <button key={label} onClick={() => onNavigate(target)}><span>{label}</span><strong>{value} <span aria-hidden="true">→</span></strong></button>)}</div>
+        <div className="control-details-strip">{[['Total enrollments', stats.enrollments.total, 'subscriptions'], ['Bundled HSK 1 mock tests', stats.tests.bundled, 'tests'], ['Admins & staff', stats.admins.total, 'admins']].map(([label, value, target]) => <button key={label} onClick={() => onNavigate(target)}><span>{label}</span><strong>{value}</strong></button>)}</div>
         <div className="control-pie-grid">
           <div className="control-pie-section">
             <h3>Enrollment share by HSK level</h3>
@@ -167,14 +167,14 @@ export default function AdminDashboard({ onNavigate, user }) {
       <div className="control-section-heading"><h2 id="control-tools-title">Quick access</h2></div>
       <div className="control-quick-links">
         {shortcuts.map(([target, icon, label]) => <button className="control-quick-link" key={target} onClick={() => onNavigate(target)}>
-          <ControlIcon name={icon}/><span>{label}</span><span className="control-quick-arrow" aria-hidden="true">→</span>
+          <ControlIcon name={icon}/><span>{label}</span>
         </button>)}
         <div className="control-quick-audio" role="group" aria-labelledby="control-audio-title">
           <span className="control-quick-audio-title" id="control-audio-title"><ControlIcon name="audio"/>Audio tools</span>
           <div className="control-quick-audio-links">
-            <button onClick={() => onNavigate('pinyin')} aria-label="Pinyin audio">Pinyin <span aria-hidden="true">→</span></button>
-            <button onClick={() => onNavigate('sentence-audio')} aria-label="Sentence audio">Sentences <span aria-hidden="true">→</span></button>
-            <button onClick={() => onNavigate('tone-pair-audio')} aria-label="Tone pair studio">Tone pairs <span aria-hidden="true">→</span></button>
+            <button onClick={() => onNavigate('pinyin')} aria-label="Pinyin audio">Pinyin</button>
+            <button onClick={() => onNavigate('sentence-audio')} aria-label="Sentence audio">Sentences</button>
+            <button onClick={() => onNavigate('tone-pair-audio')} aria-label="Tone pair studio">Tone pairs</button>
           </div>
         </div>
       </div>

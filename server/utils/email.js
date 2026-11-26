@@ -29,7 +29,7 @@ async function sendPasswordResetOtpEmail(to, otp) {
         </div>
         <p style="font-size: 13px; color: #666; line-height: 1.4;">This code is valid for <strong>10 minutes</strong>. If you did not request a password reset, you can safely ignore this email.</p>
         <hr style="border: none; border-top: 1px solid #e2dcd2; margin: 24px 0;" />
-        <p style="font-size: 12px; color: #999; margin-bottom: 0;">Xiao Ao · Chinese Made Simple</p>
+        <p style="font-size: 12px; color: #999; margin-bottom: 0;">Xiao Ao, Chinese made simple</p>
       </div>
     `,
   }, `Password reset code for ${to}: ${otp} (expires in 10 minutes)`);

@@ -110,9 +110,9 @@ function SrsReview({ lessonId, language, token, onExit }) {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 6 }}>
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
-          Nothing due for review right now — check back later!
+          Nothing is due for review right now. Check back later!
         </p>
-        <button className="nav-btn" onClick={onExit}>← Back to word list</button>
+        <button className="nav-btn" onClick={onExit}>Back to word list</button>
       </div>
     );
   }
@@ -141,7 +141,7 @@ function SrsReview({ lessonId, language, token, onExit }) {
         <div className="flash-progress-fill" style={{ width: `${((index + 1) / cards.length) * 100}%` }}></div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <span className="flash-count">{index + 1} / {cards.length}{card.isNew ? ' · new' : ''}</span>
+        <span className="flash-count">{index + 1} / {cards.length}{card.isNew ? ', new word' : ''}</span>
         <button
           className="nav-btn flash-repeat-word-btn"
           onClick={() => playCurrentCardAudio()}

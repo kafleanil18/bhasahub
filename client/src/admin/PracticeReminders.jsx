@@ -87,8 +87,8 @@ export default function PracticeReminders({ onBack }) {
   };
 
   return <section className="container email-settings practice-reminders" aria-labelledby="practice-reminders-title">
-    <button className="email-back" disabled={Boolean(busy)} onClick={onBack}>← Back to control center</button>
-    <div className="email-heading"><div><h1 id="practice-reminders-title">Practice reminders</h1><p>Pick a template, choose who gets it, and send.</p></div><Link to="/admin/settings/email">Email settings →</Link></div>
+    <button className="email-back" disabled={Boolean(busy)} onClick={onBack}>Back to control center</button>
+    <div className="email-heading"><div><h1 id="practice-reminders-title">Practice reminders</h1><p>Pick a template, choose who gets it, and send.</p></div><Link to="/admin/settings/email">Email settings</Link></div>
     {loadError && <div className="email-message email-error" role="alert">{loadError} <RefreshButton onClick={refresh}>Refresh</RefreshButton></div>}
     {audience && !audience.emailConfigured && <div className="email-message email-error" role="alert">Email isn’t set up yet, so reminders can’t be sent. <Link to="/admin/settings/email">Open Email settings</Link></div>}
     {error && !preview && <div className="email-message email-error" role="alert">{error}</div>}
@@ -109,9 +109,9 @@ export default function PracticeReminders({ onBack }) {
         <div className="reminder-groups" role="radiogroup" aria-label="Recipients">{groups.map(item => <button key={item.key} type="button" role="radio" aria-checked={group === item.key} className="reminder-group" onClick={() => chooseGroup(item.key)}>
           {item.label}<span>{studentData.loading ? '…' : groupCount(item.key)}</span>
         </button>)}
-          <button type="button" className="reminder-group is-link" aria-pressed={group === 'custom'} onClick={() => { setGroup('custom'); studentsSection.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>Pick students below ↓</button>
+          <button type="button" className="reminder-group is-link" aria-pressed={group === 'custom'} onClick={() => { setGroup('custom'); studentsSection.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>Pick students below</button>
         </div>
-        <p className="reminder-selected" role="status"><strong>{selectedCount}</strong> {selectedCount === 1 ? 'student' : 'students'} will receive this reminder{audience ? ` · ${audience.count} eligible in total` : ''}.</p>
+        <p className="reminder-selected" role="status"><strong>{selectedCount}</strong> {selectedCount === 1 ? 'student' : 'students'} will receive this reminder{audience ? ` (${audience.count} eligible in total)` : ''}.</p>
       </fieldset>
 
       <fieldset className="reminder-step" disabled={composeDisabled}>
@@ -129,7 +129,7 @@ export default function PracticeReminders({ onBack }) {
     <section className="reminder-history" aria-labelledby="reminder-history-title"><div className="reminder-history-heading"><h2 id="reminder-history-title">Recent reminders</h2><RefreshButton onClick={refresh}>Refresh progress</RefreshButton></div>
       {loading && <p role="status">Loading…</p>}
       {!loading && !campaigns.length && <p className="reminder-muted">No reminders sent yet.</p>}
-      <ul>{(showAllHistory ? campaigns : campaigns.slice(0, 5)).map(campaign => <li className="reminder-campaign" key={campaign.id}><div><h3>{campaign.subject}</h3><span>{new Date(campaign.createdAt).toLocaleString()}</span></div><strong>{campaign.complete ? 'Finished' : 'Sending…'}</strong><p role="status">{campaign.counts.sent} sent · {campaign.counts.failed} failed · {campaign.counts.skipped} skipped · {campaign.counts.pending + campaign.counts.sending} remaining{campaign.counts.uncertain ? ` · ${campaign.counts.uncertain} unconfirmed` : ''}</p>{campaign.counts.failed > 0 && <p className="email-footnote">Some emails could not be sent. Check Email settings and your provider before sending another reminder.</p>}{campaign.counts.uncertain > 0 && <p className="email-footnote">Some sends were interrupted and could not be confirmed. They will not be sent again automatically.</p>}</li>)}</ul>
+      <ul>{(showAllHistory ? campaigns : campaigns.slice(0, 5)).map(campaign => <li className="reminder-campaign" key={campaign.id}><div><h3>{campaign.subject}</h3><span>{new Date(campaign.createdAt).toLocaleString()}</span></div><strong>{campaign.complete ? 'Finished' : 'Sending…'}</strong><p role="status">{campaign.counts.sent} sent, {campaign.counts.failed} failed, {campaign.counts.skipped} skipped, {campaign.counts.pending + campaign.counts.sending} remaining{campaign.counts.uncertain ? `, ${campaign.counts.uncertain} unconfirmed` : ''}</p>{campaign.counts.failed > 0 && <p className="email-footnote">Some emails could not be sent. Check Email settings and your provider before sending another reminder.</p>}{campaign.counts.uncertain > 0 && <p className="email-footnote">Some sends were interrupted and could not be confirmed. They will not be sent again automatically.</p>}</li>)}</ul>
       {campaigns.length > 5 && <button className="email-button reminder-show-all" onClick={() => setShowAllHistory(value => !value)}>{showAllHistory ? 'Show latest 5' : `Show all ${campaigns.length}`}</button>}
       {campaigns.length > 0 && <p className="email-footnote">“Sent” means accepted by your email service; inbox delivery can vary. Sending continues if you leave this page.</p>}
     </section>

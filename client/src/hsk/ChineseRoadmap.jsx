@@ -56,7 +56,7 @@ export default function ChineseRoadmap() {
           <p className="roadmap-level">{milestone.level}</p>
           <h3>{milestone.title}</h3>
           <ul>{milestone.tasks.map(task => <li key={task}>{task}</li>)}</ul>
-          <Link to={milestone.to}>{milestone.action} <span aria-hidden="true">→</span></Link>
+          <Link to={milestone.to}>{milestone.action}</Link>
         </div>
         <figure className="roadmap-example">
           <p lang="zh-Hans">{milestone.example}</p>

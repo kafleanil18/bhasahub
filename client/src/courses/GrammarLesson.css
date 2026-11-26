@@ -31,10 +31,9 @@
   padding: 32px 36px; border: 1px solid var(--gs-border); border-radius: 16px;
   background: var(--gs-paper); position: relative; overflow: hidden;
 }
-.gs-overview::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--gs-red); }
+.gs-overview::after { content: none; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--gs-red); }
 .gs-overview-copy { max-width: 640px; }
 .gs-overview-copy > .gs-eyebrow { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-.gs-live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gs-red); }
 .gs-overview-copy > p:not(.gs-eyebrow) { color: var(--gs-muted); margin-top: 12px; line-height: 1.7; max-width: 580px; }
 .gs-module-meta { display: inline-block; color: var(--gs-muted); font-size: clamp(12px, calc(11px + 0.4vw), 14px); margin-top: 16px; }
 .gs-overview-art { display: flex; gap: 28px; align-items: center; flex-shrink: 0; }
@@ -138,7 +137,7 @@
 .gs-reflection label { display: flex; align-items: baseline; gap: 10px; font-size: clamp(12px, calc(13px + 0.4vw), 14px); line-height: 1.7; }
 .gs-question-number { display: inline-flex; justify-content: center; align-items: center; min-width: 22px; height: 22px; background: var(--gs-warm); border-radius: 4px; font-size: clamp(12px, calc(10px + 0.4vw), 14px); color: var(--gs-muted); flex-shrink: 0; }
 .gs-reflection textarea { display: block; width: 100%; resize: vertical; min-height: 80px; border: 1px solid var(--gs-border); background: var(--gs-surface); color: var(--gs-ink); padding: 12px; margin-top: 12px; border-radius: 8px; font-size: 16px; }
-.gs-model-answer { padding: 16px; background: var(--gs-paper); border-left: 2px solid var(--gs-red); font-size: clamp(12px, calc(12px + 0.4vw), 14px); line-height: 1.8; overflow-wrap: anywhere; }
+.gs-model-answer { padding: 16px; background: var(--gs-paper); border-radius: 8px; font-size: clamp(12px, calc(12px + 0.4vw), 14px); line-height: 1.8; overflow-wrap: anywhere; }
 .gs-model-answer p { margin-top: 8px; color: var(--gs-muted); }
 .gs-model-answer small { display: block; margin-top: 8px; color: var(--gs-muted); font-size: clamp(12px, calc(10px + 0.4vw), 14px); }
 .gs-review-panel > .gs-eyebrow { margin-bottom: 8px; }

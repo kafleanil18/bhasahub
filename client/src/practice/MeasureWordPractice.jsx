@@ -26,7 +26,7 @@ export default function MeasureWordPractice({ onBack }) {
 
   return <main className="sentence-page tone-practice measure-page" aria-labelledby="measure-title">
     <div className="measure-header">
-      <button className="sentence-back" onClick={session ? () => setSession(null) : onBack}>{session ? '← All topics' : '← Back to home'}</button>
+      <button className="sentence-back" onClick={session ? () => setSession(null) : onBack}>{session ? 'All topics' : 'Back to home'}</button>
       {topic && <span className="measure-chip">{topic.title}</span>}
     </div>
     <h1 id="measure-title" className={session ? 'tone-visually-hidden' : 'measure-title'}>Measure word practice</h1>
@@ -34,7 +34,7 @@ export default function MeasureWordPractice({ onBack }) {
       <p className="measure-intro">Pick the word that joins a number to the thing you count.</p>
       <button type="button" className="measure-card measure-card-mixed" onClick={() => start('mixed')} aria-label="Mixed practice" aria-describedby="measure-card-mixed">
         <span className="measure-card-art"><PhraseArt id="mixed" /></span>
-        <span className="measure-card-body"><strong>Mixed practice</strong><span id="measure-card-mixed">One question for each of the {MEASURE_GROUPS.length} measure words.</span><span className="measure-card-cta" aria-hidden="true">Start →</span></span>
+        <span className="measure-card-body"><strong>Mixed practice</strong><span id="measure-card-mixed">One question for each of the {MEASURE_GROUPS.length} measure words.</span><span className="measure-card-cta" aria-hidden="true">Start</span></span>
       </button>
       <h2 className="measure-section-title">Or choose a topic</h2>
       <div className="measure-cards">{MEASURE_TOPICS.map(item => <button type="button" key={item.id} className="measure-card" onClick={() => start(item.id)} aria-label={item.title} aria-describedby={`measure-card-${item.id}`}>
@@ -47,8 +47,8 @@ export default function MeasureWordPractice({ onBack }) {
           return <article key={group.word}><h3><PinyinText text={group.word} readings={[group.pinyin]} /></h3><div><strong>{group.meaning}</strong><p><SentenceText sentence={example} /></p><p className="measure-reference-english">{example.english}</p></div></article>;
         })}</div>
       </details>
-      {voices.length > 1 && <details className="measure-voice"><summary>Voice · {voice?.name}</summary>
-        <label>Chinese voice for answer playback<select value={selected} onChange={event => setSelected(event.target.value)}>{voices.map(option => <option key={voiceKey(option)} value={voiceKey(option)}>{option.name} · {option.lang}</option>)}</select></label>
+      {voices.length > 1 && <details className="measure-voice"><summary>Voice: {voice?.name}</summary>
+        <label>Chinese voice for answer playback<select value={selected} onChange={event => setSelected(event.target.value)}>{voices.map(option => <option key={voiceKey(option)} value={voiceKey(option)}>{option.name} ({option.lang})</option>)}</select></label>
       </details>}
     </>}
   </main>;

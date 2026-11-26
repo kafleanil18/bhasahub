@@ -9,7 +9,7 @@
 .listening-empty h2 { color: var(--ink); font-size: 20px; }
 .listening-alert { display: grid; justify-items: center; gap: 8px; }
 .listening-hint { color: var(--mist); text-align: center; }
-.listening-voice-warning { padding: 16px 18px; margin-bottom: 16px; border: 1px solid var(--line); border-left: 4px solid var(--accent-red); border-radius: 12px; background: var(--card); }
+.listening-voice-warning { padding: 16px 18px; margin-bottom: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
 .listening-voice-warning p { margin: 0 0 10px; line-height: 1.6; }
 
 /* Course cards */
@@ -27,7 +27,7 @@
 
 /* Lesson tiles */
 .listening-lessons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.listening-lesson { display: grid; align-content: start; gap: 4px; min-width: 0; padding: 14px 16px; border: 1px solid var(--line); border-left: 4px solid var(--accent-red); border-radius: 14px; background: var(--card); color: var(--ink); font: inherit; text-align: start; cursor: pointer; transition: transform .15s, border-color .15s, box-shadow .15s; }
+.listening-lesson { display: grid; align-content: start; gap: 4px; min-width: 0; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); color: var(--ink); font: inherit; text-align: start; cursor: pointer; transition: transform .15s, border-color .15s, box-shadow .15s; }
 .listening-lesson:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--accent-red); box-shadow: 0 14px 28px -24px var(--accent-red); }
 .listening-lesson:disabled { cursor: default; }
 .listening-lesson[aria-busy="true"] { border-color: var(--accent-red); opacity: 1 !important; }

@@ -17,7 +17,7 @@
 .sentence-primary:hover:not(:disabled) { background: var(--accent-red); border-color: var(--accent-red); }
 .sentence-secondary { border: 1px solid var(--line); background: var(--card); color: var(--ink); }
 .sentence-secondary:hover:not(:disabled) { border-color: var(--seal); }
-.sentence-mixed { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--seal); padding: 28px; margin-bottom: 48px; }
+.sentence-mixed { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 28px; margin-bottom: 48px; }
 .sentence-mixed h2 { margin: 0 0 8px; font-size: 24px; }
 .sentence-mixed p { margin: 0; color: var(--mist); }
 .sentence-section-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
@@ -42,7 +42,7 @@
 .sentence-bank .sentence-tile:disabled { opacity: .25; }
 .sentence-punctuation { font-size: 24px; color: var(--mist); }
 .sentence-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
-.sentence-feedback { border-left: 4px solid var(--seal); padding: 20px 24px; background: var(--rice); margin: 24px 0; }
+.sentence-feedback { border-radius: 10px; padding: 20px 24px; background: var(--rice); margin: 24px 0; }
 .sentence-answer.correct, .sentence-feedback.correct { --sentence-result-color: #28734e; }
 .sentence-answer.incorrect, .sentence-feedback.incorrect { --sentence-result-color: var(--seal); }
 :root.dark .sentence-answer.correct, :root.dark .sentence-feedback.correct { --sentence-result-color: #86d6a4; }
@@ -61,7 +61,7 @@
 .sentence-review li > span[lang] { font-size: 24px; }
 .sentence-review li > .sentence-annotated { display: flex; }
 .sentence-error { color: var(--seal); border: 1px solid var(--seal); border-radius: 6px; padding: 16px; line-height: 1.6; }
-.sentence-success { background: var(--rice); border-left: 3px solid #28734e; padding: 16px; }
+.sentence-success { background: color-mix(in srgb, #28734e 9%, var(--card)); border-radius: 10px; padding: 16px; }
 .sentence-filters { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; margin: 24px 0; }
 .sentence-filters label { display: grid; gap: 8px; font-size: 14px; font-weight: 600; min-width: 0; }
 .sentence-filters :is(input, select) { min-width: 0; width: 100%; min-height: 48px; background: var(--card); color: var(--ink); border: 1px solid var(--line); padding: 8px 12px; border-radius: 6px; }

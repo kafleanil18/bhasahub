@@ -48,12 +48,12 @@ test('mixed dictation grades characters, explains mistakes and shows results', a
       await page.getByRole('button', { name: 'Check answer' }).click({ timeout: 15000 });
       await expect(page.locator('.dictation-feedback')).toContainText(/Correct!|Not quite/);
     }
-    const next = page.getByRole('button', { name: question === 2 ? 'See results' : 'Next →' });
+    const next = page.getByRole('button', { name: question === 2 ? 'See results' : 'Next', exact: true });
     await expect(next).toBeFocused();
     await next.click();
   }
   await expect(page.getByRole('heading', { name: /of 2 sentences correct/ })).toBeVisible();
-  await page.getByRole('button', { name: 'All topics', exact: true }).click();
+  await page.getByRole('region').getByRole('button', { name: 'All topics', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Listening dictation' })).toBeVisible();
 });
 

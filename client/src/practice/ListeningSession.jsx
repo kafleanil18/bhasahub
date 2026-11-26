@@ -105,9 +105,9 @@ export default function ListeningSession({ initialQuestions, speaker, onRestart,
     </fieldset>
     {checked && <div className={`listening-feedback ${correct ? 'correct' : 'incorrect'}`} role="status">
       <span className="tone-feedback-icon" aria-hidden="true">{correct ? '✓' : '✕'}</span>
-      <div><h3>{correct ? 'Correct!' : 'Not quite'}</h3><p><span lang="zh-CN">{question.word}</span> · {question.pronunciation} · {question.answer}</p></div>
+      <div><h3>{correct ? 'Correct!' : 'Not quite'}</h3><p><span lang="zh-CN">{question.word}</span> {question.pronunciation}, {question.answer}</p></div>
       {correct && <AdvanceBar duration={1100} />}
     </div>}
-    {checked && !correct && <button ref={nextRef} className="sentence-primary listening-next" onClick={next}>{index === questions.length - 1 ? 'See results' : 'Next →'}</button>}
+    {checked && !correct && <button ref={nextRef} className="sentence-primary listening-next" onClick={next}>{index === questions.length - 1 ? 'See results' : 'Next'}</button>}
   </section>;
 }

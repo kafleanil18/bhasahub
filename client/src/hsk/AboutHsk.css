@@ -169,14 +169,14 @@
 .hsk-skills {
   display: flex;
   flex-wrap: wrap;
-  gap: .25rem .625rem;
+  gap: .25rem .375rem;
   margin: .25rem 0 0;
   padding: 0;
   list-style: none;
   color: var(--hsk-muted);
   font-size: .875rem;
 }
-.hsk-skills li + li::before { content: '·' / ''; margin-right: .625rem; }
+.hsk-skills li:not(:last-child)::after { content: ','; }
 
 .hsk-exam-skills { margin: 0; border-top: 1px solid var(--hsk-rule); }
 .hsk-exam-skills div {
@@ -209,7 +209,7 @@
 .hsk-steps p, .hsk-booking-note { color: var(--hsk-muted); }
 .hsk-booking-note { margin: 1rem 0 0; font-size: .875rem; }
 
-.hsk-update { padding-left: 1rem; border-left: 2px solid var(--hsk-accent); }
+.hsk-update { padding: 1rem 1.25rem; border-radius: 10px; background: color-mix(in srgb, var(--hsk-accent) 7%, transparent); }
 .hsk-update p { max-width: 66ch; margin: 0; }
 .hsk-update p + p { margin-top: .5rem; }
 

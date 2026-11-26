@@ -51,7 +51,7 @@ export default function TestManager({ onBack, onPreviewTest, user }) {
   const busy = Boolean(opening || working);
   return (
     <section className="container test-studio" aria-labelledby="test-studio-title">
-      {!editor && <button className="back-btn" onClick={onBack}>← Back</button>}
+      {!editor && <button className="back-btn" onClick={onBack}>Back</button>}
       <header className="test-studio-heading">
         <h1 id="test-studio-title">Test Studio</h1>
         <p>Create, edit and delete practice papers, upload pictures and audio, and control when students can take them.</p>

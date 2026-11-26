@@ -16,12 +16,12 @@ export default function HomeFooter({ goHome, isSuperAdmin, serverOk, onStartTour
             <p className="footer-tag">Small steps. Real conversations.</p>
           </div>
           <nav className="footer-quick-links" aria-label="Footer navigation">
-            <Link to="/#courses">Explore courses <span aria-hidden="true">↗</span></Link>
-            <Link to="/#practice-studio">Practice studio <span aria-hidden="true">↗</span></Link>
-            <Link to="/about-hsk">About HSK <span aria-hidden="true">↗</span></Link>
-            <Link to="/pricing">Pricing plans <span aria-hidden="true">↗</span></Link>
+            <Link to="/#courses">Explore courses</Link>
+            <Link to="/#practice-studio">Practice studio</Link>
+            <Link to="/about-hsk">About HSK</Link>
+            <Link to="/pricing">Pricing plans</Link>
             {onStartTour && <button type="button" className="footer-tour-link" onClick={onStartTour}><Icon name="compass" className="footer-tour-star"/> Take the studio tour</button>}
-            {liveClassInquiryHref() && <a href={liveClassInquiryHref()} target="_blank" rel="noopener noreferrer">Live class inquiry <span aria-hidden="true">↗</span></a>}
+            {liveClassInquiryHref() && <a href={liveClassInquiryHref()} target="_blank" rel="noopener noreferrer">Live class inquiry</a>}
           </nav>
           <div className="footer-social-wrap">
             <span className="footer-social-label">Keep in touch</span>
@@ -44,7 +44,7 @@ export default function HomeFooter({ goHome, isSuperAdmin, serverOk, onStartTour
 
         <PrivacyLinks />
         <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} Xiao Ao · Learn Chinese, one step at a time.</span>
+          <span>© {new Date().getFullYear()} Xiao Ao. Learn Chinese, one step at a time.</span>
           {isSuperAdmin && (
             <p className="status">
               {serverOk === null && <span>Checking server...</span>}

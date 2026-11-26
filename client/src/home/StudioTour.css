@@ -17,7 +17,6 @@
   background: var(--card, #fff);
   color: var(--ink, #2a2320);
   box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.45);
-  border-top: 4px solid var(--accent-red, #a3221c);
   animation: studioTourIn .25s ease;
 }
 .studio-tour-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }

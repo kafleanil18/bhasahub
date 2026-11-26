@@ -147,7 +147,7 @@ function TeacherManager({ onBack }) {
         .tcm-delete-btn { background: none; border: 1px solid var(--line); color: var(--seal); padding: 8px 16px; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; width: 100%; }
       `}</style>
 
-      <button className="tcm-back-btn" onClick={onBack}>← Back to home</button>
+      <button className="tcm-back-btn" onClick={onBack}>Back to home</button>
 
       <div className="tcm-header">
         <div>

@@ -523,7 +523,7 @@ function LessonManager({ course, focusLessonId, onBack }) {
     return (
       <section className="course-page container">
         <button className="back-btn" onClick={() => setActiveLesson(null)}>
-          ← Back to {course.title}
+          Back to {course.title}
         </button>
         <p className="eyebrow">Lesson {activeLesson.order}</p>
         <h1 className="section-title">{activeLesson.title}</h1>
@@ -622,7 +622,7 @@ function LessonManager({ course, focusLessonId, onBack }) {
   // ---------- LESSON VIEW ----------
   return (
     <section className="course-page container">
-      <button className="back-btn" onClick={onBack}>← Back to courses</button>
+      <button className="back-btn" onClick={onBack}>Back to courses</button>
 
       <div className="course-head">
         <span className={`glyph ${course.language === 'chinese' ? 'zh' : 'en'}`}>
@@ -844,9 +844,9 @@ function LessonManager({ course, focusLessonId, onBack }) {
       <h2 className="lessons-heading">
         {lessonCategory.charAt(0).toUpperCase() + lessonCategory.slice(1)} lessons ({visibleLessons.length})
       </h2>
-      {lessons.length === 0 && <p className="courses-empty">No lessons yet — add one above.</p>}
+      {lessons.length === 0 && <p className="courses-empty">No lessons yet. Add one above.</p>}
       {lessons.length > 0 && visibleLessons.length === 0 && (
-        <p className="courses-empty">No {lessonCategory} lessons yet — add one above.</p>
+        <p className="courses-empty">No {lessonCategory} lessons yet. Add one above.</p>
       )}
 
       <div className="lesson-list">

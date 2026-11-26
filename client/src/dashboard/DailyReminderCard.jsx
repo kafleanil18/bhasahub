@@ -22,10 +22,10 @@ export default function DailyReminderCard() {
       <span className="daily-reminder-icon" aria-hidden="true"><Icon name="bell"/></span>
       <div>
         <h2 id="daily-reminder-title">Daily practice reminder</h2>
-        <p>{on ? `On for this device · ${formatTime(reminders.time)} (${reminders.timezone}). Skipped on days you’ve already practised.` : 'Get one notification a day at a time you choose, only if you haven’t practised yet.'}</p>
+        <p>{on ? `On for this device at ${formatTime(reminders.time)} (${reminders.timezone}). Skipped on days you’ve already practised.` : 'Get one notification a day at a time you choose, only if you haven’t practised yet.'}</p>
       </div>
     </div>
-    {reminders.status === 'ios-install' ? <p className="daily-reminder-hint">On iPhone and iPad, reminders work in the installed app. Tap <strong>Share</strong> → <strong>Add to Home Screen</strong>, open Xiao Ao from your Home Screen, and turn reminders on there.</p>
+    {reminders.status === 'ios-install' ? <p className="daily-reminder-hint">On iPhone and iPad, reminders work in the installed app. Tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>, open Xiao Ao from your Home Screen, and turn reminders on there.</p>
       : reminders.status === 'unsupported' ? <p className="daily-reminder-hint">This browser can’t show notifications. Try Chrome, Edge, Firefox or Safari, or install the app.</p>
         : reminders.status === 'error' ? <div className="daily-reminder-actions"><p role="alert">{reminders.error}</p><button className="listening-secondary" onClick={reminders.retry}>Try again</button></div>
           : <>

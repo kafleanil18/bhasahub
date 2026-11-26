@@ -4,7 +4,7 @@
 .number-mode-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; background: var(--accent-red); color: #fff; font-weight: 700; font-size: 14px; }
 .number-trainer h1.number-title { margin: 8px 0 4px; font-size: clamp(26px, 4vw, 34px); letter-spacing: -.02em; }
 .number-intro { margin: 0 0 20px; color: var(--mist); }
-.number-voice-warning { padding: 16px 18px; margin-bottom: 18px; border: 1px solid var(--line); border-left: 4px solid var(--accent-red); border-radius: 12px; background: var(--card); }
+.number-voice-warning { padding: 16px 18px; margin-bottom: 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
 .number-voice-warning p { margin: 0 0 10px; line-height: 1.6; }
 
 /* Mode cards */

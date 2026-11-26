@@ -76,7 +76,7 @@ export default function ListeningPractice({ user, onBack, onSignIn }) {
 
   return <main className="sentence-page tone-practice listening-page" aria-labelledby="listening-title">
     <div className="listening-header">
-      <button className="sentence-back" onClick={session ? () => setSession(null) : onBack}>{session ? '← All lessons' : '← Back to home'}</button>
+      <button className="sentence-back" onClick={session ? () => setSession(null) : onBack}>{session ? 'All lessons' : 'Back to home'}</button>
       {session && <span className="listening-chip">{session.lesson.title}</span>}
     </div>
     <h1 id="listening-title" className={session ? 'tone-visually-hidden' : 'listening-title'}>Listening practice</h1>
@@ -99,12 +99,12 @@ export default function ListeningPractice({ user, onBack, onSignIn }) {
           </button>)}</div>
         </>}
         {courseId && <>
-          <h2 className="listening-section-title">{courses?.length > 1 ? 'Choose a lesson' : `${course?.title || 'Your course'} · choose a lesson`}</h2>
+          <h2 className="listening-section-title">{courses?.length > 1 ? 'Choose a lesson' : `${course?.title || 'Your course'}: choose a lesson`}</h2>
           {lessons && !lessons.length && <div className="listening-empty"><p>This course has no published vocabulary lessons yet.</p></div>}
           {lessons?.length > 0 && <div className="listening-lessons">{lessons.map((lesson, index) => <button type="button" key={lesson._id} className={`listening-lesson${notReady[lesson._id] ? ' is-unavailable' : ''}`} disabled={!speech.available || Boolean(opening) || notReady[lesson._id]} aria-busy={opening === lesson._id} onClick={() => openLesson(lesson)} aria-describedby={`listening-lesson-${lesson._id}`}>
             <span className="listening-lesson-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
             <strong>{lesson.title}</strong>
-            <small id={`listening-lesson-${lesson._id}`}>{opening === lesson._id ? 'Loading recordings…' : notReady[lesson._id] ? 'Needs at least two words' : 'About 10 words · Start →'}</small>
+            <small id={`listening-lesson-${lesson._id}`}>{opening === lesson._id ? 'Loading recordings…' : notReady[lesson._id] ? 'Needs at least two words' : 'About 10 words'}</small>
           </button>)}</div>}
         </>}
         {!courseId && courses?.length > 1 && <p className="listening-hint">Pick a course to see its lessons.</p>}

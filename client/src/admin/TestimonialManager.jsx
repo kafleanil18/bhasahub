@@ -362,7 +362,7 @@ function TestimonialManager({ onBack }) {
         }
       `}</style>
 
-      <button className="tmm-back-btn" onClick={onBack}>← Back to home</button>
+      <button className="tmm-back-btn" onClick={onBack}>Back to home</button>
       
       <div className="tmm-header">
         <div className="tmm-title-container">

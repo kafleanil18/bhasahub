@@ -8,10 +8,10 @@
 #root .pricing-page .pricing-intro h1 em { color: var(--pr-red); font-family: 'Playfair Display', Georgia, serif; font-style: italic; font-weight: 600; }
 .pricing-intro p:last-child { margin: 0; color: var(--pr-muted); font-size: 16px; line-height: 1.55; }
 
-.pricing-banner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 18px; border: 1px solid var(--pr-line); border-left: 4px solid var(--pr-muted); border-radius: 8px; background: var(--pr-card); font-size: 14px; line-height: 1.5; outline: none; }
-.pricing-banner.is-success, .pricing-banner.is-active { border-left-color: #1f7a45; }
-.pricing-banner.is-pending { border-left-color: var(--pr-red); background: var(--pr-tint); }
-.pricing-banner.is-error { border-left-color: var(--pr-red); color: var(--pr-red); }
+.pricing-banner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 18px; border: 1px solid var(--pr-line); border-radius: 8px; background: var(--pr-card); font-size: 14px; line-height: 1.5; outline: none; }
+.pricing-banner.is-success, .pricing-banner.is-active { border-color: color-mix(in srgb, #1f7a45 40%, var(--pr-line)); background: color-mix(in srgb, #1f7a45 7%, var(--pr-card)); }
+.pricing-banner.is-pending { border-color: color-mix(in srgb, var(--pr-red) 35%, var(--pr-line)); background: var(--pr-tint); }
+.pricing-banner.is-error { border-color: color-mix(in srgb, var(--pr-red) 45%, var(--pr-line)); color: var(--pr-red); }
 .pricing-link { flex-shrink: 0; border: 0; background: none; padding: 6px 0; color: var(--pr-red); font: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .pricing-link:disabled { opacity: .6; cursor: default; }
 

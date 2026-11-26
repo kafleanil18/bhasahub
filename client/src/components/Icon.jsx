@@ -21,6 +21,9 @@ const paths = {
   download: <><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></>,
   upload: <><path d="M12 15V4M7 9l5-5 5 5M5 20h14"/></>,
   plus: <path d="M12 5v14M5 12h14"/>,
+  chevronLeft: <path d="m15 6-6 6 6 6"/>,
+  chevronRight: <path d="m9 6 6 6-6 6"/>,
+  chevronUp: <path d="m6 15 6-6 6 6"/>,
   // An open ink circle with an arrow, like the ensō in the loading animation: reload.
   refresh: <><path d="M19.5 14.7A8 8 0 1 1 17.7 6.3L20 8.6"/><path d="M20 4v4.6h-4.6"/></>,
   warning: <><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></>,

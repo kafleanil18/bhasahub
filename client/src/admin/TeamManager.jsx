@@ -351,7 +351,7 @@ function TeamManager({ onBack }) {
         }
       `}</style>
 
-      <button className="tmg-back-btn" onClick={onBack}>← Back to home</button>
+      <button className="tmg-back-btn" onClick={onBack}>Back to home</button>
 
       <div className="tmg-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem', marginBottom: '2.5rem' }}>
         <div>

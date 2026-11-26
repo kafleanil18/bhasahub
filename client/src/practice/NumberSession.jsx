@@ -83,10 +83,10 @@ export default function NumberSession({ initialQuestions, speaker, onRestart, on
       <PlayButton playing={playing && !feedback} onClick={() => play(question.speech)} label="Listen" />
       <SlowButton onClick={() => play(question.speech, 0.75)} />
     </div>
-    {error && <div className="tone-alert" role="alert"><p>{error}</p>{!feedback && <button type="button" className="tone-skip" onClick={skip}>Skip this question →</button>}</div>}
+    {error && <div className="tone-alert" role="alert"><p>{error}</p>{!feedback && <button type="button" className="tone-skip" onClick={skip}>Skip this question</button>}</div>}
     <form className="number-form" onSubmit={check}>
       <NumberAnswerFields question={question} answer={answer} onChange={setAnswer} disabled={Boolean(feedback)} />
-      {question.mode === 'time' && <p className="number-hint">24-hour time · 3 PM is 15</p>}
+      {question.mode === 'time' && <p className="number-hint">24-hour time: 3 PM is 15</p>}
       {inputError && <p className="tone-alert" role="alert">{inputError}</p>}
       {!feedback && <button type="submit" className="sentence-primary number-check" disabled={!heard}>Check answer</button>}
     </form>
@@ -97,7 +97,7 @@ export default function NumberSession({ initialQuestions, speaker, onRestart, on
         <p className="number-feedback-chinese"><SentenceText sentence={question} /></p>
         <p className="number-explain">{question.explanation}</p>
       </div>
-      <button ref={nextRef} className="sentence-primary number-check" onClick={next}>{index + 1 === questions.length ? 'See results' : 'Next →'}</button>
+      <button ref={nextRef} className="sentence-primary number-check" onClick={next}>{index + 1 === questions.length ? 'See results' : 'Next'}</button>
     </>}
   </section>;
 }

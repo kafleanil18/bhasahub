@@ -148,7 +148,7 @@ export default function TonePairSession({ pairs, speaker, onRestart }) {
         <div><p className="sentence-eyebrow">Round complete</p><h2 id="tone-pair-round-title" ref={headingRef} tabIndex={-1}>{results.length ? `${correct} of ${results.length} correct` : 'No answers checked'}</h2>
           {skipped > 0 && <p className="sentence-muted">{skipped} skipped</p>}</div>
       </div>
-      {results.length > 0 && <div className="tone-results-table"><table><caption>Your answers this round</caption><thead><tr><th scope="col">Word</th><th scope="col">Your tones</th><th scope="col">Spoken tones</th><th scope="col">Result</th></tr></thead><tbody>{results.map(item => <tr key={item.pairId}><th scope="row"><span lang="zh-CN" className="tone-results-hanzi">{item.hanzi}</span> {item.pinyin}</th><td><span className="tone-cell"><ToneContour tone={item.selectedTones[0]} size={24} /><ToneContour tone={item.selectedTones[1]} size={24} />{spokenTones(item.selectedTones)}</span></td><td><span className="tone-cell"><ToneContour tone={item.correctTones[0]} size={24} /><ToneContour tone={item.correctTones[1]} size={24} />{spokenTones(item.correctTones)}</span>{item.toneChange && <small className="tone-pair-change"> · tone change</small>}</td><td><span className={`tone-result-pill ${item.correct ? 'is-correct' : 'is-wrong'}`}>{item.correct ? '✓ Correct' : '↻ Review'}</span></td></tr>)}</tbody></table></div>}
+      {results.length > 0 && <div className="tone-results-table"><table><caption>Your answers this round</caption><thead><tr><th scope="col">Word</th><th scope="col">Your tones</th><th scope="col">Spoken tones</th><th scope="col">Result</th></tr></thead><tbody>{results.map(item => <tr key={item.pairId}><th scope="row"><span lang="zh-CN" className="tone-results-hanzi">{item.hanzi}</span> {item.pinyin}</th><td><span className="tone-cell"><ToneContour tone={item.selectedTones[0]} size={24} /><ToneContour tone={item.selectedTones[1]} size={24} />{spokenTones(item.selectedTones)}</span></td><td><span className="tone-cell"><ToneContour tone={item.correctTones[0]} size={24} /><ToneContour tone={item.correctTones[1]} size={24} />{spokenTones(item.correctTones)}</span>{item.toneChange && <small className="tone-pair-change"> (tone change)</small>}</td><td><span className={`tone-result-pill ${item.correct ? 'is-correct' : 'is-wrong'}`}>{item.correct ? '✓ Correct' : 'Review'}</span></td></tr>)}</tbody></table></div>}
       <div className="sentence-actions"><button className="sentence-primary" onClick={onRestart}>Start another round</button><Link className="sentence-secondary" to="/progress">View My Progress</Link></div>
     </section>;
   }
@@ -171,7 +171,7 @@ export default function TonePairSession({ pairs, speaker, onRestart }) {
       const chosen = result ? result.correctTones[position] : selected[position];
       const slotState = result ? (result.selectedTones[position] === result.correctTones[position] ? ' is-correct' : ' is-wrong') : !selected[position] && position === activePosition && heard ? ' is-active' : '';
       return <fieldset key={position} className={`tone-choices tone-pair-row${result ? ' has-result' : ''}${slotState}`} disabled={!heard || !!result || busy}>
-        <legend><span className="tone-visually-hidden">{position === 0 ? 'First' : 'Second'} syllable · </span><span className="tone-slot-step" aria-hidden="true">{position + 1}</span><span lang="zh-CN" className="tone-slot-hanzi">{characters[position]}</span> <span className="tone-slot-pinyin">{chosen ? markSyllable(syllable, chosen) : syllable}</span><ToneContour tone={chosen} size={40} className="tone-slot-contour" /></legend>
+        <legend><span className="tone-visually-hidden">{position === 0 ? 'First' : 'Second'} syllable: </span><span className="tone-slot-step" aria-hidden="true">{position + 1}</span><span lang="zh-CN" className="tone-slot-hanzi">{characters[position]}</span> <span className="tone-slot-pinyin">{chosen ? markSyllable(syllable, chosen) : syllable}</span><ToneContour tone={chosen} size={40} className="tone-slot-contour" /></legend>
         {[1, 2, 3, 4].map(tone => {
           const isSelected = selected[position] === tone;
           const isCorrect = result && result.correctTones[position] === tone;
@@ -184,12 +184,12 @@ export default function TonePairSession({ pairs, speaker, onRestart }) {
         })}
       </fieldset>;
     })}</div>
-    {!result && <div className="tone-footer"><button type="button" className="tone-skip" disabled={busy} aria-label="Skip word" onClick={() => next(true)}>Skip →</button></div>}
+    {!result && <div className="tone-footer"><button type="button" className="tone-skip" disabled={busy} aria-label="Skip word" onClick={() => next(true)}>Skip</button></div>}
     {error && <div className="tone-alert" role="alert"><p>{error} Your word is still here; retry saving your answer.</p><button type="button" className="sentence-primary" disabled={busy} onClick={() => submit(selected)}>Retry answer</button></div>}
     {result && <div className={`sentence-feedback tone-feedback ${result.correct ? 'correct' : 'incorrect'}`} role="status">
       <span className="tone-feedback-icon" aria-hidden="true">{result.correct ? '✓' : '✗'}</span>
       <div><h3>{result.correct ? 'Correct!' : 'Keep practicing.'}</h3>
-        <p><span lang="zh-CN">{result.hanzi}</span> {result.pinyin} · Tone {result.correctTones[0]} + Tone {result.correctTones[1]}</p>
+        <p><span lang="zh-CN">{result.hanzi}</span> {result.pinyin}, tones {result.correctTones[0]} and {result.correctTones[1]}</p>
         {result.toneChange && result.writtenPinyin && <p className="tone-shift" aria-hidden="true"><span><small>Written</small><s>{result.writtenPinyin}</s></span><b>→</b><span><small>Spoken</small><strong>{result.pinyin}</strong></span></p>}
         {note && <p className="tone-pair-note">{note}</p>}
 </div>

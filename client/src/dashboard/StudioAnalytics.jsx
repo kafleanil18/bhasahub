@@ -83,13 +83,13 @@ export default function StudioAnalytics({ activity }) {
           <button type="button" className="studio-reset-button" disabled={!!resetting || !row?.activities} onClick={() => resetCount(id, title)} aria-label={`Reset ${title} count`}>{resetting === id ? 'Resetting…' : 'Reset count'}</button>
         </article>;
       })}</div>
-      <div className="studio-hsk-heading"><h2>HSK test completion</h2><Link to="/tests">Browse mock tests →</Link></div>
-      <p>{data.hsk.reduce((sum, row) => sum + row.completed, 0)} completed attempts · {data.hsk.filter(row => row.completed > 0).length} papers completed · {data.hsk.reduce((sum, row) => sum + row.unfinished, 0)} unfinished attempts</p>
+      <div className="studio-hsk-heading"><h2>HSK test completion</h2><Link to="/tests">Browse mock tests</Link></div>
+      <p>{data.hsk.reduce((sum, row) => sum + row.completed, 0)} completed attempts, {data.hsk.filter(row => row.completed > 0).length} papers completed, {data.hsk.reduce((sum, row) => sum + row.unfinished, 0)} unfinished attempts</p>
       {!data.hsk.length ? <p>No HSK attempts yet. Take a mock test to see your results here.</p> : <div className="studio-analytics-grid">{data.hsk.map(row => <article className="analytics-course-progress-card" key={row.paper}>
-        <h3><Link to={testPath(row.paper)}>{row.title || `HSK 1 · ${row.paper.toUpperCase()}`}</Link></h3>
+        <h3><Link to={testPath(row.paper)}>{row.title || `HSK 1 ${row.paper.toUpperCase()}`}</Link></h3>
         <dl><div><dt>Completed attempts</dt><dd>{row.completed}</dd></div><div><dt>Unfinished attempts</dt><dd>{row.unfinished}</dd></div><div><dt>Best score</dt><dd>{row.bestPercent == null ? '—' : `${row.bestPercent}%`}</dd></div><div><dt>Average score</dt><dd>{row.averagePercent == null ? '—' : `${row.averagePercent}%`}</dd></div><div><dt>Last completed</dt><dd>{date(row.lastCompleted)}</dd></div></dl>
       </article>)}</div>}
-      {data.otherTests.length > 0 && <><h3>Other completed mock tests</h3><ul className="studio-test-history">{data.otherTests.map(row => <li key={row.id}><strong>{row.title}</strong><span>{row.score} / {row.total} · {date(row.date)}</span></li>)}</ul></>}
+      {data.otherTests.length > 0 && <><h3>Other completed mock tests</h3><ul className="studio-test-history">{data.otherTests.map(row => <li key={row.id}><strong>{row.title}</strong><span>{row.score} / {row.total}, {date(row.date)}</span></li>)}</ul></>}
     </>}
   </section>;
 }

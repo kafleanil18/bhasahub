@@ -100,7 +100,7 @@ export default function DictationSession({ initialSentences, onRestart, onExit }
       </div>
       {missed.length > 0 && <ul className="dictation-review">{missed.map(result => <li key={result.sentence.id}>
         <SentenceText sentence={result.sentence} />
-        <span className="dictation-review-yours">You wrote <s lang="zh-CN">{result.answer}</s> · {result.comparison.accuracy}%</span>
+        <span className="dictation-review-yours">You wrote <s lang="zh-CN">{result.answer}</s> ({result.comparison.accuracy}% match)</span>
         <small>{result.sentence.english}</small>
       </li>)}</ul>}
       <div className="sentence-actions">
@@ -120,13 +120,13 @@ export default function DictationSession({ initialSentences, onRestart, onExit }
       <PlayButton playing={playing} onClick={() => play(1)} label="Play recording" />
       <SlowButton onClick={() => play(0.75)} />
     </div>
-    {audioError && <div className="tone-alert" role="alert"><p>{audioError}</p>{!feedback && <button type="button" className="tone-skip" onClick={skip}>Skip this recording →</button>}</div>}
+    {audioError && <div className="tone-alert" role="alert"><p>{audioError}</p>{!feedback && <button type="button" className="tone-skip" onClick={skip}>Skip this recording</button>}</div>}
     <form className="dictation-form" onSubmit={check}>
       <label className="tone-visually-hidden" htmlFor="dictation-answer">Your answer in Chinese characters</label>
       <textarea id="dictation-answer" lang="zh-CN" value={answer} disabled={Boolean(feedback)} maxLength={200} rows={2} autoComplete="off" autoCapitalize="off" spellCheck={false} placeholder="用中文写…" aria-describedby="dictation-input-help" onCompositionStart={() => { composingRef.current = true; }} onCompositionEnd={() => { composingRef.current = false; }} onChange={event => setAnswer(event.target.value)} />
-      <p id="dictation-input-help" className="dictation-hint">Use your Chinese keyboard · spaces and punctuation aren’t graded</p>
+      <p id="dictation-input-help" className="dictation-hint">Use your Chinese keyboard. Spaces and punctuation aren’t graded.</p>
       {!feedback && <button className="sentence-primary dictation-check" type="submit" disabled={!heard || !normalizeDictation(answer)}>Check answer</button>}
     </form>
-    {feedback && <><DictationFeedback sentence={sentence} comparison={feedback} /><button ref={nextRef} className="sentence-primary dictation-check" onClick={next}>{index + 1 === sentences.length ? 'See results' : 'Next →'}</button></>}
+    {feedback && <><DictationFeedback sentence={sentence} comparison={feedback} /><button ref={nextRef} className="sentence-primary dictation-check" onClick={next}>{index + 1 === sentences.length ? 'See results' : 'Next'}</button></>}
   </section>;
 }

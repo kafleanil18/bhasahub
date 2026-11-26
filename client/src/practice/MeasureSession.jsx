@@ -109,7 +109,7 @@ export default function MeasureSession({ initialQuestions, voice, onRestart, onE
         <p>{question.explanation}</p>
       </div>
       {error && <p className="tone-alert" role="alert">Audio could not play. You can replay it or keep going.</p>}
-      <button ref={nextRef} className="sentence-primary measure-next" onClick={next}>{index + 1 === questions.length ? 'See results' : 'Next →'}</button>
+      <button ref={nextRef} className="sentence-primary measure-next" onClick={next}>{index + 1 === questions.length ? 'See results' : 'Next'}</button>
     </>}
   </section>;
 }

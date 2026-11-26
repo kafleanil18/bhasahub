@@ -1,5 +1,6 @@
 import { mediaUrl } from '../utils/mediaUrl';
 
+import Icon from '../components/Icon';
 export default function HomeTestimonials({ loaded = true, openLogin, scrollTestimonials, setShowTestimonial, testimonials, testimonialsScrollRef, user }) {
   const shareReview = () => (user ? setShowTestimonial(true) : openLogin());
 
@@ -32,7 +33,7 @@ export default function HomeTestimonials({ loaded = true, openLogin, scrollTesti
                       onClick={() => scrollTestimonials(-1)}
                       aria-label="Scroll testimonials left"
                     >
-                      ‹
+                      <Icon name="chevronLeft" size="22px" />
                     </button>
                   )}
                   <div className="testimonials-grid" ref={testimonialsScrollRef}>
@@ -58,7 +59,7 @@ export default function HomeTestimonials({ loaded = true, openLogin, scrollTesti
                       onClick={() => scrollTestimonials(1)}
                       aria-label="Scroll testimonials right"
                     >
-                      ›
+                      <Icon name="chevronRight" size="22px" />
                     </button>
                   )}
                 </div>

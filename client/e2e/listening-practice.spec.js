@@ -47,8 +47,8 @@ test('every word is read by the female Google Mandarin voice when available, eve
       await page.locator(`.listening-option:not(:has(input[value="${answer}"]))`).first().click({ timeout: 15000 });
       await expect(page.locator('.listening-feedback')).toContainText('Not quite');
       await expect(page.locator('.listening-option.is-correct')).toHaveText(answer);
-      await expect(page.getByRole('button', { name: 'Next →' })).toBeFocused();
-      await page.getByRole('button', { name: 'Next →' }).click();
+      await expect(page.getByRole('button', { name: 'Next', exact: true })).toBeFocused();
+      await page.getByRole('button', { name: 'Next', exact: true }).click();
     } else {
       await page.locator(`.listening-option:has(input[value="${answer}"])`).click({ timeout: 15000 });
       await expect(page.locator('.listening-feedback')).toContainText('Correct!');
@@ -58,7 +58,7 @@ test('every word is read by the female Google Mandarin voice when available, eve
   const spoken = await page.evaluate(() => window.__spoken);
   expect(new Set(spoken.map(item => item.voice))).toEqual(new Set([female.name]));
   expect(new Set(spoken.map(item => item.text))).toEqual(new Set(words.map(word => word.word)));
-  await page.getByRole('button', { name: 'All lessons', exact: true }).click();
+  await page.getByRole('region').getByRole('button', { name: 'All lessons', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Listening practice' })).toBeVisible();
 });
 

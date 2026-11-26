@@ -64,7 +64,7 @@
 
 /* Tone cards */
 .tone-choices { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 20px 0 8px; padding: 0; border: 0; min-width: 0; }
-.tone-choice { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 18px 10px 14px; border: 2px solid var(--line); border-top: 5px solid var(--tone, var(--line)); border-radius: 14px; background: var(--card); cursor: pointer; transition: transform .15s, border-color .15s, background .15s, box-shadow .15s; }
+.tone-choice { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 18px 10px 14px; border: 2px solid var(--line); border-radius: 14px; background: color-mix(in srgb, var(--tone, var(--line)) 7%, var(--card)); cursor: pointer; transition: transform .15s, border-color .15s, background .15s, box-shadow .15s; }
 .tone-choice:hover { transform: translateY(-3px); border-color: var(--tone); box-shadow: 0 12px 24px -18px var(--tone); }
 .tone-choice:focus-within { outline: 3px solid var(--tone); outline-offset: 3px; }
 .tone-choice input, .tone-pair-focus input { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }

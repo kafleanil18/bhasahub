@@ -43,7 +43,7 @@ test('one stage switches between watch, trace and write from memory', async ({ p
   await expect(modes.getByRole('radio', { name: 'Watch' })).toHaveAttribute('aria-checked', 'true');
   await expect(page.locator('.tracing-stage-box')).toHaveCount(1);
   await expect(page.getByText('Watch the stroke order, then trace it yourself.')).toBeVisible();
-  await page.getByRole('button', { name: 'Start tracing →' }).click();
+  await page.getByRole('button', { name: 'Start tracing' }).click();
   await expect(modes.getByRole('radio', { name: 'Trace' })).toHaveAttribute('aria-checked', 'true');
   await expect(page.getByText('Stroke 1 of 1')).toBeVisible();
   await modes.getByRole('radio', { name: 'From memory' }).click();
@@ -67,17 +67,17 @@ test('strokes are checked, and a character counts once it is written correctly',
   await expect.poll(() => saved.length).toBe(1);
   expect(saved[0]).toMatchObject({ studio: 'trace', itemKey: '一' });
 
-  await page.getByRole('button', { name: 'Write from memory →' }).click();
+  await page.getByRole('button', { name: 'Write from memory' }).click();
   await expect(page.getByRole('radio', { name: 'From memory' })).toHaveAttribute('aria-checked', 'true');
   await draw(page, [0.18, 0.5], [0.82, 0.5]);
   await expect(page.getByText('No mistakes.')).toBeVisible();
   await page.waitForTimeout(300);
   expect(saved).toHaveLength(1);
 
-  await page.getByRole('button', { name: 'Next character →' }).click();
+  await page.getByRole('button', { name: 'Next character' }).click();
   await expect(page.getByText('2 of 2')).toBeVisible();
   await expect(page.getByText('Stroke checking isn\'t available for this entry.')).toBeVisible();
-  await page.getByRole('button', { name: '← Previous' }).click();
+  await page.getByRole('button', { name: 'Previous', exact: true }).click();
   await expect(page.getByText('1 of 2')).toBeVisible();
   await expect(page.getByRole('radio', { name: 'Watch' })).toHaveAttribute('aria-checked', 'true');
 });

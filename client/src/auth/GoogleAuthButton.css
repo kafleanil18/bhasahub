@@ -101,3 +101,6 @@
 .google-icon {
   flex-shrink: 0;
 }
+/* Just the word, without lines either side. */
+.auth-divider { justify-content: center; }
+.auth-divider::before, .auth-divider::after { content: none; }

@@ -20,9 +20,9 @@ function AccessChips({ student }) {
   const courses = activeCourses(student);
   const trial = student.trial || {};
   const chips = [];
-  if (student.plan) chips.push(<span key="plan" className="student-chip is-paid">{student.plan.label} plan · {daysUntil(student.plan.expiresAt)}d left</span>);
+  if (student.plan) chips.push(<span key="plan" className="student-chip is-paid">{student.plan.label} plan, {daysUntil(student.plan.expiresAt)}d left</span>);
   if (courses.length) chips.push(<span key="courses" className="student-chip is-paid">{courses.length} {courses.length === 1 ? 'course' : 'courses'}</span>);
-  if (trial.status === 'active') chips.push(<span key="trial" className="student-chip is-trial">Free trial · {trial.expiresAt ? `${daysUntil(trial.expiresAt)}d left` : 'no end date'}</span>);
+  if (trial.status === 'active') chips.push(<span key="trial" className="student-chip is-trial">Free trial, {trial.expiresAt ? `${daysUntil(trial.expiresAt)}d left` : 'no end date'}</span>);
   if (trial.status === 'pending') chips.push(<span key="pending" className="student-chip is-pending">Free request waiting</span>);
   if (trial.status === 'expired' && !chips.length) chips.push(<span key="expired" className="student-chip is-muted">Free trial ended</span>);
   if (!chips.length) chips.push(<span key="none" className="student-chip is-muted">No access</span>);
@@ -98,7 +98,7 @@ export default function StudentManager({ onBack }) {
   }, `${current.name}: ${message}`);
 
   return <section className="container access-manager student-manager" aria-labelledby="students-title">
-    <button className="back-btn" onClick={onBack}>← Back to dashboard</button>
+    <button className="back-btn" onClick={onBack}>Back to dashboard</button>
     <div className="access-page-heading"><div><p className="access-eyebrow">People & access</p><h1 id="students-title">Manage students</h1><p>Add, edit or remove student accounts, and grant or revoke their free trial, plan and course access.</p></div><button className="access-button is-primary" onClick={() => open('add')}><span aria-hidden="true">＋</span> Add student</button></div>
     {notice && <div className="access-feedback is-success" role="status"><span>{notice}</span><button className="access-link" onClick={() => setNotice('')}>Dismiss</button></div>}
     {loadError && <div className="access-feedback is-error" role="alert"><span>{loadError}</span><RefreshButton onClick={() => { setLoading(true); void load(); }}>Retry</RefreshButton></div>}
@@ -109,7 +109,7 @@ export default function StudentManager({ onBack }) {
         <div className="access-filter-bar"><label className="access-search"><span>Search students</span><input type="search" placeholder="Name or email…" value={query} onChange={event => setQuery(event.target.value)}/></label></div>
         <p className="access-result-count" role="status">{visible.length} of {students.length} students</p>
         {!visible.length ? <div className="access-empty"><h3>No students here</h3><p>{students.length ? 'Try another search or filter.' : 'Add your first student to get started.'}</p></div> : <ul className="student-list">{visible.map(student => <li key={student._id} className="student-row">
-          <div className="access-person"><span className="access-avatar" aria-hidden="true">{initials(student.name)}</span><div><h3>{student.name}</h3><small>{student.email}</small><small>Joined {formatDate(student.createdAt)}{student.authProvider === 'google' ? ' · Google sign-in' : ''}</small></div></div>
+          <div className="access-person"><span className="access-avatar" aria-hidden="true">{initials(student.name)}</span><div><h3>{student.name}</h3><small>{student.email}</small><small>Joined {formatDate(student.createdAt)}{student.authProvider === 'google' ? ', Google sign-in' : ''}</small></div></div>
           <AccessChips student={student}/>
           <div className="student-actions"><button className="access-button is-primary" onClick={() => open('access', student._id)}>Manage access</button><button className="access-button" onClick={() => open('edit', student._id)}>Edit</button><button className="access-link is-danger" onClick={() => open('delete', student._id)}>Delete</button></div>
         </li>)}</ul>}

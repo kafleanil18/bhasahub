@@ -28,12 +28,12 @@ test('a mixed round fills the gap, explains each answer and ends with results', 
     await page.getByRole('group', { name: 'Choose a measure word' }).getByRole('button').first().click();
     await expect(page.locator('.measure-feedback')).toContainText(/Correct!|Use .+ here/);
     await expect(page.locator('.measure-gap[aria-label^="Measure word "]')).toBeVisible();
-    const next = page.getByRole('button', { name: question === 10 ? 'See results' : 'Next →' });
+    const next = page.getByRole('button', { name: question === 10 ? 'See results' : 'Next', exact: true });
     await expect(next).toBeFocused();
     await next.click();
   }
   await expect(page.getByRole('heading', { name: /of 10 correct/ })).toBeVisible();
-  await page.getByRole('button', { name: 'All topics', exact: true }).click();
+  await page.getByRole('region').getByRole('button', { name: 'All topics', exact: true }).click();
   await page.getByRole('button', { name: 'Food & drinks' }).click();
   await expect(page.locator('.measure-chip')).toHaveText('Food & drinks');
 });

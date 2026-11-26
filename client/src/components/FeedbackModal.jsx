@@ -265,7 +265,7 @@ function FeedbackModal({ user, onClose, privacyRequest = false }) {
         ) : (
           <>
             <h1 className="fb-title" id="feedback-title">{privacyRequest ? 'Contact us about privacy' : 'Message us'}</h1>
-            <p className="fb-sub">{privacyRequest ? 'Tell us what you need and include a reply email. Do not send your password.' : "Questions, suggestions, or feedback — we'd love to hear from you."}</p>
+            <p className="fb-sub">{privacyRequest ? 'Tell us what you need and include a reply email. Do not send your password.' : "Questions, suggestions or feedback? We'd love to hear from you."}</p>
 
             {error && (
               <div className="fb-error" role="alert">

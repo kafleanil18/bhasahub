@@ -105,7 +105,7 @@ function reminderEmail(campaign, recipient) {
   return {
     to: recipient.email,
     subject: campaign.subject,
-    text: `Hi ${recipient.name},\n\n${campaign.message}\n\nContinue your Chinese practice: ${practiceUrl}\n\nXiao Ao · Chinese Made Simple\n\nStop practice reminder emails: ${unsubscribeUrl}\nThis does not affect your course access or account emails.`,
+    text: `Hi ${recipient.name},\n\n${campaign.message}\n\nContinue your Chinese practice: ${practiceUrl}\n\nXiao Ao, Chinese made simple\n\nStop practice reminder emails: ${unsubscribeUrl}\nThis does not affect your course access or account emails.`,
   };
 }
 

@@ -52,10 +52,10 @@ test('visitors see the three plans with monthly savings and sign in to choose', 
   const cards = page.locator('.pricing-card');
   await expect(cards).toHaveCount(3);
   await expect(page.getByRole('article', { name: '1 month' })).toContainText('Rs 1,000');
-  await expect(page.getByRole('article', { name: '3 months' })).toContainText('Rs 667 a month · Save 33%');
+  await expect(page.getByRole('article', { name: '3 months' })).toContainText('Rs 667 a month, save 33%');
   const six = page.getByRole('article', { name: '6 months' });
   await expect(six).toContainText('Rs 3,000');
-  await expect(six).toContainText('Rs 500 a month · Save 50%');
+  await expect(six).toContainText('Rs 500 a month, save 50%');
   await expect(six).toContainText('Best value');
   await six.getByRole('button', { name: /Choose the 6 months plan/ }).click();
   await expect(page).toHaveURL(/\/sign-in\?next=%2Fpricing/);
@@ -107,8 +107,8 @@ test('an admin starts a plan once payment is received', async ({ page }) => {
   await page.goto('/admin/subscriptions');
   await page.getByRole('button', { name: 'Review plans' }).click();
   const row = page.getByRole('article', { name: 'Plan request from Sita Rai' });
-  await expect(row).toContainText('3 months · Rs 2,000');
-  await row.getByRole('button', { name: 'Payment received · Start plan' }).click();
+  await expect(row).toContainText('3 months, Rs 2,000');
+  await row.getByRole('button', { name: 'Payment received, start plan' }).click();
   await expect(page.locator('.access-feedback.is-success')).toContainText('3 months plan started for Sita Rai');
   expect(calls).toEqual([{ method: 'PUT', path: '/plans/requests/r9/approve' }]);
   await expect(page.locator('.access-plan-members')).toContainText('Sita Rai');
@@ -144,7 +144,7 @@ test('admins see when the plan email failed and can send it again', async ({ pag
   await page.getByRole('button', { name: 'Review plans' }).click();
   const row = page.getByRole('article', { name: 'Plan request from Sita Rai' });
   await expect(row).toContainText('Email not sent.');
-  await expect(row).toContainText('Admin → Email settings');
+  await expect(row).toContainText('under Email settings');
   await row.getByRole('button', { name: 'Send email again' }).click();
   await expect(row).toContainText('✓ Email sent to owner@example.com');
   expect(calls).toEqual([{ method: 'POST', path: '/plans/requests/r7/notify' }]);

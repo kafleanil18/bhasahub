@@ -70,7 +70,7 @@ function AuditLog({ onBack }) {
 
   return (
     <section className="container audit-page">
-      <button className="back-btn audit-back" onClick={onBack}>← Back to home</button>
+      <button className="back-btn audit-back" onClick={onBack}>Back to home</button>
 
       <div className="audit-page-heading">
         <h1 className="section-title">Activity log</h1>

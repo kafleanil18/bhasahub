@@ -111,7 +111,7 @@ function ToneSession({ questions, onRestart }) {
         <div><p className="sentence-eyebrow">Round complete</p><h2 id="tone-round-title" ref={headingRef} tabIndex={-1}>{results.length ? `${correct} of ${results.length} correct` : 'No answers checked'}</h2>
           {skipped > 0 && <p className="sentence-muted">{skipped} skipped</p>}</div>
       </div>
-      {results.length > 0 && <div className="tone-results-table"><table><caption>Your answers this round</caption><thead><tr><th scope="col">Pinyin</th><th scope="col">Your tone</th><th scope="col">Recorded tone</th><th scope="col">Result</th></tr></thead><tbody>{results.map(item => <tr key={item.recordingId}><th scope="row">{markSyllable(item.syllable, item.correctTone)}</th><td><span className="tone-cell"><ToneContour tone={item.selectedTone} size={28} />Tone {item.selectedTone}</span></td><td><span className="tone-cell"><ToneContour tone={item.correctTone} size={28} />Tone {item.correctTone}</span></td><td><span className={`tone-result-pill ${item.correct ? 'is-correct' : 'is-wrong'}`}>{item.correct ? '✓ Correct' : '↻ Review'}</span></td></tr>)}</tbody></table></div>}
+      {results.length > 0 && <div className="tone-results-table"><table><caption>Your answers this round</caption><thead><tr><th scope="col">Pinyin</th><th scope="col">Your tone</th><th scope="col">Recorded tone</th><th scope="col">Result</th></tr></thead><tbody>{results.map(item => <tr key={item.recordingId}><th scope="row">{markSyllable(item.syllable, item.correctTone)}</th><td><span className="tone-cell"><ToneContour tone={item.selectedTone} size={28} />Tone {item.selectedTone}</span></td><td><span className="tone-cell"><ToneContour tone={item.correctTone} size={28} />Tone {item.correctTone}</span></td><td><span className={`tone-result-pill ${item.correct ? 'is-correct' : 'is-wrong'}`}>{item.correct ? '✓ Correct' : 'Review'}</span></td></tr>)}</tbody></table></div>}
       <div className="sentence-actions"><button className="sentence-primary" onClick={onRestart}>Start another round</button><Link className="sentence-secondary" to="/progress">View My Progress</Link></div>
     </section>;
   }
@@ -135,11 +135,11 @@ function ToneSession({ questions, onRestart }) {
       <span className="tone-choice-mark" aria-hidden="true">{markSyllable(question.syllable, tone.value)}</span>
       <span className="tone-choice-text"><strong>Tone {tone.value}</strong></span>
     </label>)}</fieldset>
-    {!result && <div className="tone-footer"><button type="button" className="tone-skip" disabled={busy} aria-label="Skip recording" onClick={() => next(true)}>Skip →</button></div>}
+    {!result && <div className="tone-footer"><button type="button" className="tone-skip" disabled={busy} aria-label="Skip recording" onClick={() => next(true)}>Skip</button></div>}
     {error && <div className="tone-alert" role="alert"><p>{error} Your question is still here; retry saving your answer.</p><button type="button" className="sentence-primary" disabled={busy} onClick={() => submitAnswer(selected)}>Retry answer</button></div>}
     {result && <div className={`sentence-feedback tone-feedback ${result.correct ? 'correct' : 'incorrect'}`} role="status">
       <span className="tone-feedback-icon" aria-hidden="true">{result.correct ? '✓' : '✗'}</span>
-      <div><h3>{result.correct ? 'Correct!' : 'Keep practicing.'}</h3><p>{markSyllable(result.syllable, result.correctTone)} · Tone {result.correctTone}</p></div>
+      <div><h3>{result.correct ? 'Correct!' : 'Keep practicing.'}</h3><p>{markSyllable(result.syllable, result.correctTone)}, Tone {result.correctTone}</p></div>
       <AdvanceBar duration={advanceDelay} />
     </div>}
   </section>;
@@ -170,7 +170,7 @@ function ModeCard({ id, title, text, hint, art, onClick }) {
     <span className="tone-mode-card-body">
       <strong>{title}</strong>
       <span id={`tone-card-${id}`} className={hint ? 'tone-mode-card-hint' : undefined}>{hint || text}</span>
-      {!hint && <span className="tone-mode-card-cta" aria-hidden="true">Start →</span>}
+      {!hint && <span className="tone-mode-card-cta" aria-hidden="true">Start</span>}
     </span>
   </button>;
 }
@@ -214,7 +214,7 @@ export default function TonePractice({ onBack }) {
 
   return <main className="sentence-page tone-practice tone-minimal" aria-labelledby="tone-practice-title">
     <div className="tone-header">
-      <button className="sentence-back" onClick={onBack}>← Back to home</button>
+      <button className="sentence-back" onClick={onBack}>Back to home</button>
       <h1 id="tone-practice-title" className="tone-visually-hidden">Tone listening</h1>
       {round && <div className="tone-mode-toggle" role="group" aria-label="Practice mode">
         <button type="button" aria-pressed={mode === 'single'} disabled={!!singleHint} title={singleHint || undefined} onClick={() => start(pool)}>Single syllables</button>

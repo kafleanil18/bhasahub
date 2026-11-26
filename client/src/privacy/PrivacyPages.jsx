@@ -15,15 +15,15 @@ const storageRows = [
 
 // The policy pages share one layout, with a tab for each page.
 const POLICIES = {
-  privacy: { title: 'Privacy Policy', path: '/privacy', eyebrow: 'Xiao Ao · Your information', updated: ['2026-11-26', '26 November 2026'] },
-  cookies: { title: 'Cookies & browser storage', path: '/cookies', eyebrow: 'Xiao Ao · Your information', updated: ['2026-11-13', '13 November 2026'] },
-  terms: { title: 'Terms of Service', path: '/terms', eyebrow: 'Xiao Ao · Using the service', updated: ['2026-11-26', '26 November 2026'] },
+  privacy: { title: 'Privacy Policy', path: '/privacy', eyebrow: 'Your information', updated: ['2026-11-26', '26 November 2026'] },
+  cookies: { title: 'Cookies & browser storage', path: '/cookies', eyebrow: 'Your information', updated: ['2026-11-13', '13 November 2026'] },
+  terms: { title: 'Terms of Service', path: '/terms', eyebrow: 'Using the service', updated: ['2026-11-26', '26 November 2026'] },
 };
 
 function PolicyLayout({ page, children }) {
   const { title, eyebrow, updated: [date, label] } = POLICIES[page];
   return <main className="container privacy-page" aria-labelledby="privacy-page-title">
-    <Link className="privacy-back" to="/">← Back to home</Link>
+    <Link className="privacy-back" to="/">Back to home</Link>
     <header className="privacy-page-header"><p className="privacy-eyebrow">{eyebrow}</p><h1 id="privacy-page-title">{title}</h1><p>Last updated: <time dateTime={date}>{label}</time></p></header>
     <nav className="privacy-page-nav" aria-label="Policy pages">{Object.entries(POLICIES).map(([key, policy]) => <Link key={key} to={policy.path} aria-current={key === page ? 'page' : undefined}>{policy.title}</Link>)}</nav>
     <article className="privacy-document">{children}</article>
@@ -80,7 +80,7 @@ export function PrivacyPolicy({ user }) {
         <li>practice reminder settings, reminder records, and notification subscriptions.</li>
       </ul>
       <p>Deletion can't be undone, and any active plan or course access ends with it. Messages you sent, reviews you submitted, and photos or recordings you uploaded are kept unless you ask for full erasure. Records of administrator actions that mention your account may be kept to protect the service, and copies in our providers' backups and logs are removed on their own schedules. Data saved in your browser stays on your device until you clear it; see <Link to="/cookies">Cookies & browser storage</Link>.</p>
-      <p className="privacy-erase"><strong>Want everything erased?</strong> Ask for full erasure and we'll also delete your messages, reviews, and uploaded photos and recordings, unless the law requires us to keep something. <a href="#privacy-contact" onClick={goToContact}>Ask the team to erase all my data <span aria-hidden="true">↓</span></a></p>
+      <p className="privacy-erase"><strong>Want everything erased?</strong> Ask for full erasure and we'll also delete your messages, reviews, and uploaded photos and recordings, unless the law requires us to keep something. <a href="#privacy-contact" onClick={goToContact}>Ask the team to erase all my data</a></p>
     </section>
     <section id="privacy-contact" className={pointToContact ? 'is-pointed' : undefined}><h2>Contact the team</h2><p>Use the privacy request form to ask a question or request help with your information. It sends your name, reply email, and message to the team's administrator inbox. Sending a request does not automatically delete an account.</p><button ref={contactButton} type="button" className="btn-primary" onClick={() => setContact(true)} aria-haspopup="dialog">Contact us about privacy</button></section>
     <section><h2>Updates to this notice</h2><p>We update this page when the service or its information practices change. The date above identifies this version.</p></section>

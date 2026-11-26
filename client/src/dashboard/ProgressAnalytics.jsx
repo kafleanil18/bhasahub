@@ -171,7 +171,7 @@ function ProgressAnalytics({ user, onBack }) {
   // The page gate shows the loader until this and the studio section have both loaded.
   if ((loading && !data) || !studioActivity.settled) return null;
   if (error && !data) {
-    return <section className="course-page container analytics-page"><div className="analytics-state analytics-error-state" role="alert"><span className="analytics-state-mark" aria-hidden="true">!</span><h1>We couldn’t load your progress</h1><p>{error}</p><div><button className="btn-primary" onClick={() => setRefreshKey(value => value + 1)}>Try again</button><button className="btn-back-pill" onClick={onBack}>← Back to dashboard</button></div></div></section>;
+    return <section className="course-page container analytics-page"><div className="analytics-state analytics-error-state" role="alert"><span className="analytics-state-mark" aria-hidden="true">!</span><h1>We couldn’t load your progress</h1><p>{error}</p><div><button className="btn-primary" onClick={() => setRefreshKey(value => value + 1)}>Try again</button><button className="btn-back-pill" onClick={onBack}>Back to dashboard</button></div></div></section>;
   }
 
   // Custom SVG Chart calculations
@@ -199,7 +199,7 @@ function ProgressAnalytics({ user, onBack }) {
       <div className="analytics-hero">
         <div className="analytics-hero-header">
           <button className="btn-back-pill" onClick={onBack}>
-            ← Back to Dashboard
+            Back to Dashboard
           </button>
           <div className="analytics-hero-actions">
           <RefreshButton busy={loading} onClick={() => setRefreshKey(value => value + 1)} aria-label="Refresh learning analytics">{loading ? 'Refreshing…' : 'Refresh'}</RefreshButton>
@@ -230,7 +230,7 @@ function ProgressAnalytics({ user, onBack }) {
         <div className="chart-card">
           <div className="chart-header">
               <h3 className="chart-title">Recent learning activity</h3>
-              <span className="analytics-subtitle" style={{ margin: 0 }}>Quiz and mock test scores, plus completed lessons · latest {N} events</span>
+              <span className="analytics-subtitle" style={{ margin: 0 }}>Quiz and mock test scores, plus completed lessons, latest {N} events</span>
           </div>
           <div className="chart-container-relative">
             <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="chart-svg-main">

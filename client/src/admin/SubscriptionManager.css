@@ -99,7 +99,7 @@
 .access-grant-form .access-custom-days { display: flex; align-items: center; gap: 12px; }
 .access-custom-days input { width: 112px; }
 .access-help { color: var(--mist); font-size: clamp(12px, calc(11px + 0.4vw), 14px); line-height: 1.6; font-weight: 400; margin-top: 8px; }
-.access-grant-summary { border: 1px solid var(--line); border-left: 3px solid var(--jade); background: var(--paper); border-radius: 6px; padding: 16px; }
+.access-grant-summary { border: 1px solid var(--line); background: var(--paper); border-radius: 6px; padding: 16px; }
 .access-grant-summary strong { display: block; font-size: clamp(12px, calc(12px + 0.4vw), 14px); overflow-wrap: anywhere; }
 .access-grant-summary p { margin-top: 6px; font-size: clamp(12px, calc(11px + 0.4vw), 14px); color: var(--mist); }
 .access-grant-summary b { display: block; font-weight: 600; color: var(--ink); margin-top: 4px; }
@@ -197,5 +197,5 @@
 @media (max-width: 600px) { .access-plan-members li { flex-wrap: wrap; } .access-plan-expiry { justify-items: start; text-align: left; width: 100%; } }
 .access-plan-email { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; margin: 4px 0 0; padding: 10px 12px; border-radius: 8px; background: var(--rice); font-size: 13px; line-height: 1.45; }
 .access-plan-email.is-sent { color: #1f7a45; }
-.access-plan-email.is-failed { border-left: 3px solid var(--accent-red); color: var(--ink); }
+.access-plan-email.is-failed { background: color-mix(in srgb, var(--accent-red) 7%, transparent); color: var(--ink); }
 .access-free-tag { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: #1f7a4d; color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; vertical-align: 2px; }

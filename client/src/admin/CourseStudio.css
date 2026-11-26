@@ -5,7 +5,7 @@
 .course-studio :is(button, input, select, textarea, summary):focus-visible { outline: 3px solid var(--seal); outline-offset: 3px; }
 .course-studio button:disabled { opacity: .55; cursor: wait; }
 .studio-back { padding: 8px 0; margin-bottom: 16px; border: 0; background: none; color: var(--mist); font-size: clamp(12px, calc(12px + 0.4vw), 14px) !important; min-height: 44px; }
-.studio-hero { display: flex; align-items: center; justify-content: space-between; gap: 24px; background: var(--studio-red); border-left: 4px solid var(--studio-gold); color: #fff; padding: 28px; border-radius: 12px; }
+.studio-hero { display: flex; align-items: center; justify-content: space-between; gap: 24px; background: var(--studio-red); color: #fff; padding: 28px; border-radius: 12px; }
 .course-studio .studio-eyebrow { font-size: clamp(12px, calc(10px + 0.4vw), 14px); font-weight: 750; letter-spacing: .12em; text-transform: uppercase; color: var(--seal); margin: 0 0 8px; }
 .studio-hero .studio-eyebrow { color: #ffe5a3; }
 .course-studio h1 { color: #fff; font-family: var(--font-body); font-size: clamp(28px, 3.2vw, 40px); line-height: 1.2; letter-spacing: -.04em; margin: 0 0 12px; }
@@ -24,7 +24,7 @@
 .studio-summary strong { font-size: 24px; font-weight: 650; font-variant-numeric: tabular-nums; }
 .studio-layout { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: start; gap: 24px; }
 .studio-library, .studio-editor { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 24px; min-width: 0; }
-.studio-editor { border-top: 3px solid var(--seal); padding-top: 22px; }
+.studio-editor { border-top: 1px solid var(--line); padding-top: 22px; }
 .studio-library-heading, .studio-section-title { display: flex; align-items: center; gap: 12px; }
 .studio-library-heading { justify-content: space-between; margin-bottom: 20px; }
 .studio-library-heading > span { font-size: clamp(12px, calc(11px + 0.4vw), 14px); color: var(--mist); }
@@ -88,8 +88,8 @@
 .studio-editor-actions { display: flex; gap: 8px; flex-wrap: wrap; padding-top: 20px; margin-top: 20px; border-top: 1px solid var(--line); }
 .studio-editor-actions > .studio-button-primary { flex: 1; }
 .studio-message { padding: 16px 20px; margin-bottom: 20px; border: 1px solid var(--line); border-radius: 8px; font-size: clamp(12px, calc(13px + 0.4vw), 14px); line-height: 1.6; background: var(--card); }
-.studio-message-error { border-left: 4px solid var(--seal); color: var(--seal); }
-.studio-message-success { border-left: 4px solid #397c53; color: var(--ink); }
+.studio-message-error { background: color-mix(in srgb, var(--seal) 8%, transparent); color: var(--seal); }
+.studio-message-success { background: color-mix(in srgb, #397c53 10%, transparent); color: var(--ink); }
 .studio-empty { text-align: center; padding: 32px 16px; color: var(--mist); }
 .studio-empty > svg { color: var(--seal); width: 32px; height: 32px; }
 .studio-empty p { font-size: clamp(12px, calc(12px + 0.4vw), 14px); line-height: 1.7; margin: 8px 0 20px; }

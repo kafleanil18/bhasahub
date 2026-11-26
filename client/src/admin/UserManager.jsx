@@ -458,7 +458,7 @@ function UserManager({ initialSearch = '', onBack }) {
       <div className="um-header-section">
         <div className="um-title-group">
           <button className="btn-back-pill" onClick={onBack}>
-            ← Back to control panel
+            Back to control panel
           </button>
           <h1 className="section-title" style={{ margin: 0, marginTop: 12 }}>Admin Directory</h1>
           <p className="um-subtitle">Find people quickly, see their access level, and update administrator permissions.</p>

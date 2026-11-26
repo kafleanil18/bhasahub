@@ -817,8 +817,8 @@ function HanziTracePage({ user, onBack, token }) {
                 </p>
               ) : (
                 <p>
-                  {quiz.total > 0 && <strong>Stroke {Math.min(quiz.stroke + 1, quiz.total)} of {quiz.total}</strong>}
-                  {quiz.hint ? ' · Follow the highlighted stroke.' : quiz.wrong ? ' · Not quite. Try that stroke again.' : mode === 'memory' ? ' · Write it without the outline.' : ' · Trace over the outline in stroke order.'}
+                  {quiz.total > 0 && <strong>Stroke {Math.min(quiz.stroke + 1, quiz.total)} of {quiz.total}.</strong>}
+                  {quiz.hint ? ' Follow the highlighted stroke.' : quiz.wrong ? ' Not quite. Try that stroke again.' : mode === 'memory' ? ' Write it without the outline.' : ' Trace over the outline in stroke order.'}
                 </p>
               )}
             </div>
@@ -832,14 +832,14 @@ function HanziTracePage({ user, onBack, token }) {
               ) : mode === 'watch' ? (
                 <>
                   <button type="button" className="trace-btn" onClick={handleReplayDemo}>Replay</button>
-                  <button type="button" className="trace-btn is-primary" onClick={() => changeMode('trace')}>Start tracing →</button>
+                  <button type="button" className="trace-btn is-primary" onClick={() => changeMode('trace')}>Start tracing</button>
                 </>
               ) : quiz.done ? (
                 <>
                   <button type="button" className="trace-btn" onClick={() => setAttempt((n) => n + 1)}>Try again</button>
                   {mode === 'trace'
-                    ? <button type="button" className="trace-btn is-primary" onClick={() => changeMode('memory')}>Write from memory →</button>
-                    : <button type="button" className="trace-btn is-primary" onClick={() => goToOffset(1)}>Next character →</button>}
+                    ? <button type="button" className="trace-btn is-primary" onClick={() => changeMode('memory')}>Write from memory</button>
+                    : <button type="button" className="trace-btn is-primary" onClick={() => goToOffset(1)}>Next character</button>}
                 </>
               ) : (
                 <button type="button" className="trace-btn" onClick={() => setAttempt((n) => n + 1)}>Start again</button>
@@ -848,9 +848,9 @@ function HanziTracePage({ user, onBack, token }) {
           </div>
 
           <nav className="trace-nav" aria-label="Characters">
-            <button type="button" className="trace-btn" onClick={() => goToOffset(-1)}>← Previous</button>
+            <button type="button" className="trace-btn" onClick={() => goToOffset(-1)}>Previous</button>
             <span className="trace-nav-count">{filteredCharacters.findIndex((c) => c._id === activeCharacterId) + 1} of {filteredCharacters.length}</span>
-            <button type="button" className="trace-btn" onClick={() => goToOffset(1)}>Next →</button>
+            <button type="button" className="trace-btn" onClick={() => goToOffset(1)}>Next</button>
           </nav>
         </div>
       )}

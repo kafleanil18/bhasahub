@@ -68,7 +68,7 @@ export default function PracticePaperEditor({ initial, paperId, onSaved, onCance
     <div className="paper-editor-heading"><div><h2 id="paper-editor-title">{paperId ? 'Edit practice paper' : 'New complete practice paper'}</h2><p>20 listening + 20 reading questions. Save at any point. A live paper stays live when its content is still complete; otherwise it is saved as hidden.</p></div></div>
     {error && <p className="paper-error" role="alert">{error}</p>}
     <fieldset disabled={busy} className="paper-fields"><legend>Paper details</legend>
-      <label>Paper title *<input required maxLength={150} value={paper.title} onChange={e => change({ title: e.target.value })} placeholder="HSK 1 · Listening & Reading"/></label>
+      <label>Paper title *<input required maxLength={150} value={paper.title} onChange={e => change({ title: e.target.value })} placeholder="HSK 1 Listening & Reading"/></label>
       <label>Paper label<input maxLength={60} value={paper.code || ''} onChange={e => change({ code: e.target.value })} placeholder="e.g. Practice 02"/></label>
       <div className="paper-timers">{[['listeningSeconds', 'Listening (seconds)'], ['transferSeconds', 'Listening review (seconds)'], ['readingSeconds', 'Reading (seconds)']].map(([key, label]) => <label key={key}>{label}<input type="number" required min="30" max="7200" value={paper[key]} onChange={e => change({ [key]: Number(e.target.value) })}/></label>)}</div>
       <MediaUpload label="Full listening recording" audio hint={MEDIA_HINTS.audio} value={paper.audioUrl} onChange={audioUrl => change({ audioUrl })} onBusy={uploadBusy}/>
@@ -76,7 +76,7 @@ export default function PracticePaperEditor({ initial, paperId, onSaved, onCance
       <p className="paper-help">Upload a recording covering questions 1–20 in order, with each question spoken twice. Set the listening timer long enough to play the complete recording.</p>
     </fieldset>
     <nav className="paper-part-tabs" aria-label="Paper parts">{paper.groups.map((g, index) => <button key={g.id} type="button" aria-pressed={index === part} onClick={() => setPart(index)}>{index < 4 ? 'Listening' : 'Reading'} {index % 4 + 1}<small>Q{index * 5 + 1}–{index * 5 + 5}</small></button>)}</nav>
-    <fieldset disabled={busy || uploads > 0} className="paper-fields" key={group.id}><legend>{group.section === 'listening' ? 'Listening' : 'Reading'} · Part {part % 4 + 1}</legend>
+    <fieldset disabled={busy || uploads > 0} className="paper-fields" key={group.id}><legend>{group.section === 'listening' ? 'Listening' : 'Reading'}, part {part % 4 + 1}</legend>
       <label>Part title<input value={group.title} onChange={e => changeGroup({ title: e.target.value })}/></label>
       <label>Instructions<textarea value={group.instruction} onChange={e => changeGroup({ instruction: e.target.value })}/></label>
       <label>Example (optional)<textarea value={group.example || ''} onChange={e => changeGroup({ example: e.target.value })}/></label>
@@ -90,7 +90,7 @@ export default function PracticePaperEditor({ initial, paperId, onSaved, onCance
         {group.section === 'listening' && <label>Listening script (private teacher notes)<textarea value={q.listeningText || ''} onChange={e => changeQuestion(qi, { listeningText: e.target.value })}/></label>}
         <MediaUpload label={group.id === 'l2' ? `Question ${q.number}: picture sheet with A, B, C` : `Question ${q.number} picture`} hint={group.id === 'l2' ? MEDIA_HINTS.strip : MEDIA_HINTS.single} value={q.image} onChange={image => changeQuestion(qi, { image })} onBusy={uploadBusy}/>
         <div className="paper-answer-options"><h4>Answer choices</h4>{q.options.map((option, oi) => <div className="paper-option-row" key={oi}><strong>{String.fromCharCode(65 + oi)}</strong><label>Text<input value={option.text} onChange={e => changeQuestion(qi, { options: q.options.map((o, i) => i === oi ? { ...o, text: e.target.value } : o) })}/></label><label>Pinyin<input value={option.pinyin || ''} onChange={e => changeQuestion(qi, { options: q.options.map((o, i) => i === oi ? { ...o, pinyin: e.target.value } : o) })}/></label></div>)}</div>
-        <label>Correct answer<select value={q.correctIndex ?? ''} onChange={e => changeQuestion(qi, { correctIndex: e.target.value === '' ? null : Number(e.target.value) })}><option value="">Select the correct answer</option>{q.options.map((o, i) => <option key={i} value={i}>{String.fromCharCode(65 + i)} · {o.text || 'Empty choice'}</option>)}</select></label>
+        <label>Correct answer<select value={q.correctIndex ?? ''} onChange={e => changeQuestion(qi, { correctIndex: e.target.value === '' ? null : Number(e.target.value) })}><option value="">Select the correct answer</option>{q.options.map((o, i) => <option key={i} value={i}>{String.fromCharCode(65 + i)}. {o.text || 'Empty choice'}</option>)}</select></label>
         <label>Answer explanation<textarea value={q.explanation} onChange={e => changeQuestion(qi, { explanation: e.target.value })} placeholder="Explain why this answer is correct. Shown after submission."/></label>
       </fieldset>)}
     </fieldset>

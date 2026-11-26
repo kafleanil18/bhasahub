@@ -20,13 +20,13 @@ test('numbers prefer the Google Mandarin voice over other device voices', async 
   await expect(page.getByRole('combobox')).toHaveCount(0);
   await page.getByRole('button', { name: 'Ages', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Check answer' })).toBeEnabled();
-  await page.getByRole('button', { name: 'Slow · 0.75×' }).click();
+  await page.getByRole('button', { name: 'Slow (0.75×)' }).click();
   await expect.poll(() => page.evaluate(() => window.__spoken.length)).toBeGreaterThanOrEqual(2);
   expect(new Set(await page.evaluate(() => window.__spoken))).toEqual(new Set(['Google 普通话（中国大陆）']));
   await page.locator('#number-answer-value').fill('99');
   await page.getByRole('button', { name: 'Check answer' }).click();
   await expect(page.locator('.number-feedback')).toContainText('Not quite');
-  await expect(page.getByRole('button', { name: 'Next →' })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Next', exact: true })).toBeFocused();
 });
 
 test('without a Google voice, numbers fall back to the device’s female Mandarin voice', async ({ page }) => {
@@ -82,7 +82,7 @@ test('when the server voice is set up, numbers use it even if the device has a M
   await page.getByRole('button', { name: 'Prices', exact: true }).click();
   await expect.poll(() => tts.length).toBeGreaterThanOrEqual(1);
   expect(tts[0]).toMatchObject({ speaker: 'A', speed: 'normal' });
-  await page.getByRole('button', { name: 'Slow · 0.75×' }).click();
+  await page.getByRole('button', { name: 'Slow (0.75×)' }).click();
   await expect.poll(() => tts.at(-1)?.speed).toBe('slow');
   await expect(page.getByRole('button', { name: 'Check answer' })).toBeEnabled();
   expect(await page.evaluate(() => window.__spoken.length)).toBe(0);

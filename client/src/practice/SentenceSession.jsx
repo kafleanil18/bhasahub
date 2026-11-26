@@ -102,7 +102,7 @@ export default function SentenceSession({ initialSentences, onExit, onMastered }
   const placement = feedback === 'incorrect' ? selected.map((id, position) => sentence.tokens[id] === sentence.tokens[position]) : null;
   const remaining = tiles.length - selected.length;
   return <section className="sentence-card sb-session" aria-labelledby="sentence-prompt">
-    <div className="sentence-progress"><span>Sentence {index + 1} of {sentences.length}</span><span>HSK 1 · #{String(sentence.number).padStart(3, '0')}</span></div>
+    <div className="sentence-progress"><span>Sentence {index + 1} of {sentences.length}</span><span>HSK 1 #{String(sentence.number).padStart(3, '0')}</span></div>
     <ol className="sb-steps" aria-hidden="true">{sentences.map((item, i) => <li key={item.id} className={i < index ? 'is-done' : i === index ? 'is-current' : ''} />)}</ol>
     <p className="sentence-eyebrow sb-eyebrow">Build the sentence</p>
     <h2 id="sentence-prompt" tabIndex={-1} ref={titleRef} className="sb-prompt">{sentence.english}</h2>
@@ -111,7 +111,7 @@ export default function SentenceSession({ initialSentences, onExit, onMastered }
       {!feedback && Array.from({ length: remaining }, (_, i) => <span key={`slot-${i}`} className={`sb-slot${i === 0 ? ' is-next' : ''}`} aria-hidden="true">{selected.length + i + 1}</span>)}
       <span className="sentence-punctuation" aria-hidden="true">{sentence.chinese.endsWith('？') ? '？' : '。'}</span>
     </div>
-    {!feedback && <p className="sentence-muted sb-hint">{selected.length === 0 ? `Tap the ${tiles.length} words below in order.` : remaining ? `${remaining} more ${remaining === 1 ? 'word' : 'words'} to go · tap a placed word to take it back.` : 'All words placed. Check your sentence!'}</p>}
+    {!feedback && <p className="sentence-muted sb-hint">{selected.length === 0 ? `Tap the ${tiles.length} words below in order.` : remaining ? `${remaining} more ${remaining === 1 ? 'word' : 'words'} to go. Tap a placed word to take it back.` : 'All words placed. Check your sentence!'}</p>}
     {!feedback && <div className="sentence-bank sb-bank" role="group" aria-label="Available words">
       {tiles.map(tile => <button key={tile.id} className="sentence-tile" lang="zh-CN" aria-label={tile.text} disabled={Boolean(feedback) || selected.includes(tile.id)} onClick={() => setSelected(previous => previous.includes(tile.id) ? previous : [...previous, tile.id])}><PinyinText text={tile.text} readings={sentence.tokenPinyin?.[tile.id]} /></button>)}
     </div>}
@@ -121,7 +121,7 @@ export default function SentenceSession({ initialSentences, onExit, onMastered }
           <circle cx="16" cy="16" r="14" />
           {feedback === 'correct' ? <path d="m9 16 5 5 9-10" /> : <path d="m11 11 10 10m0-10L11 21" />}
         </svg>
-        <span>{feedback === 'correct' ? 'Correct — nicely done!' : 'Incorrect — check the word order'}</span>
+        <span>{feedback === 'correct' ? 'Correct, nicely done!' : 'Not quite. Check the word order.'}</span>
       </h3>
       {feedback === 'incorrect' && <p>Compare your answer with this correct sentence:</p>}
       <p className="sentence-chinese"><SentenceText sentence={sentence} /></p>
@@ -134,7 +134,7 @@ export default function SentenceSession({ initialSentences, onExit, onMastered }
         <button className="sentence-secondary sb-icon-action" disabled={!selected.length} onClick={removeLast} aria-label="Undo last word" title="Undo last word"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M9 14 4 9l5-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /></svg></button>
         <button className="sentence-secondary" disabled={!selected.length} onClick={() => setSelected([])}>Clear</button>
         <button className="sentence-primary sb-main-action" disabled={selected.length !== tiles.length} onClick={check}>Check sentence</button>
-      </> : <button className={`sentence-primary sb-main-action${feedback === 'correct' ? ' is-correct' : ''}`} onClick={advance}>{index === sentences.length - 1 ? 'See results' : 'Next sentence →'}</button>}
+      </> : <button className={`sentence-primary sb-main-action${feedback === 'correct' ? ' is-correct' : ''}`} onClick={advance}>{index === sentences.length - 1 ? 'See results' : 'Next sentence'}</button>}
     </div>
   </section>;
 }

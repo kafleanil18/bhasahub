@@ -31,7 +31,7 @@ function FeedbackInbox({ onBack }) {
 
   return (
     <section className="admin container">
-      <button className="back-btn" onClick={onBack}>← Back to home</button>
+      <button className="back-btn" onClick={onBack}>Back to home</button>
       <h1 className="section-title">Feedback inbox</h1>
 
       {loading && <p className="courses-empty">Loading...</p>}

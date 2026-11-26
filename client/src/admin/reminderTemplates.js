@@ -9,7 +9,7 @@ export const reminderTemplates = [
     icon: 'bell',
     audience: 'all',
     subject: 'Don’t forget your Chinese practice today',
-    message: 'A little Chinese practice every day makes a big difference. Take 10 minutes today to review your vocabulary, listen to a conversation, or practise speaking aloud.\n\nKeep going — one small step at a time. We look forward to seeing your progress!',
+    message: 'A little Chinese practice every day makes a big difference. Take 10 minutes today to review your vocabulary, listen to a conversation, or practise speaking aloud.\n\nKeep going, one small step at a time. We look forward to seeing your progress!',
   },
   {
     id: 'comeback',
@@ -18,7 +18,7 @@ export const reminderTemplates = [
     icon: 'heart',
     audience: '7',
     subject: 'Your Chinese is waiting for you',
-    message: 'It has been a little while since your last practice, and that is completely fine — life gets busy.\n\nThe easiest way back is a short session: replay one conversation, or trace three characters. Five minutes is enough to pick up where you left off.\n\nWe would love to see you back in class.',
+    message: 'It has been a little while since your last practice, and that is completely fine. Life gets busy.\n\nThe easiest way back is a short session: replay one conversation, or trace three characters. Five minutes is enough to pick up where you left off.\n\nWe would love to see you back in class.',
   },
   {
     id: 'mocktest',
@@ -36,6 +36,6 @@ export const reminderTemplates = [
     icon: 'hourglass',
     audience: 'ending',
     subject: 'Make the most of your Chinese course access',
-    message: 'Your course access ends soon, so this is a great week to finish the lessons you started and review your vocabulary.\n\nIf you would like to keep learning after that, you can choose a plan from the Pricing page — every plan unlocks all of our HSK courses.\n\nThank you for learning with us!',
+    message: 'Your course access ends soon, so this is a great week to finish the lessons you started and review your vocabulary.\n\nIf you would like to keep learning after that, you can choose a plan from the Pricing page. Every plan unlocks all of our HSK courses.\n\nThank you for learning with us!',
   },
 ];

@@ -100,7 +100,7 @@
 .conversation-edit-exchange.is-sorry { --edit-accent: #477667; }
 .conversation-edit-exchange.is-ocean { --edit-accent: #536f8b; }
 .conversation-edit-exchange.is-plum { --edit-accent: #88677e; }
-.conversation-edit-exchange[class*="is-"] { border-left: 4px solid var(--edit-accent, #ad5948); background: color-mix(in srgb, var(--edit-accent, #ad5948) 3%, #fffdf8); }
+.conversation-edit-exchange[class*="is-"] { background: color-mix(in srgb, var(--edit-accent, #ad5948) 3%, #fffdf8); }
 .conversation-edit-exchange[class*="is-"] .conversation-edit-turn { border-color: color-mix(in srgb, var(--edit-accent, #ad5948) 32%, #e9e0d4); background: color-mix(in srgb, var(--edit-accent, #ad5948) 17%, #fffdf8); }
 .conversation-exchange-title > span { color: var(--edit-accent, #ad5948); }
 .conversation-exchange-title input:focus-visible, .conversation-accent-label select:focus-visible { border-color: var(--edit-accent, #ad5948); }

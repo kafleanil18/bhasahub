@@ -741,7 +741,6 @@
 
 .tone-tip-box {
   background: var(--rice, #f3ebd8);
-  border-left: 4px solid var(--gold, #c99a3c);
   padding: 16px 20px;
   border-radius: 12px;
   max-width: 340px;
@@ -960,7 +959,7 @@
 .lesson-study-page .vocab-card { min-width: 0; padding: clamp(20px, 2.4vw, 28px); border: 1px solid var(--line); border-radius: 12px; background: var(--card); box-shadow: 0 8px 24px rgba(42,35,32,.04); }
 .lesson-study-page .vocab-card .annotation, .lesson-study-page .vocab-card .meaning { font-size: clamp(15px, calc(14px + .25vw), 17px); line-height: 1.65; }
 .lesson-study-page .vocab-card .word { font-size: clamp(30px, 3.3vw, 42px); line-height: 1.25; }
-.lesson-study-page .lesson-dialogue { max-width: 880px; margin: 28px 0; padding: clamp(20px, 3vw, 32px); border: 1px solid var(--line); border-left: 4px solid var(--seal); border-radius: 12px; background: var(--card); }
+.lesson-study-page .lesson-dialogue { max-width: 880px; margin: 28px 0; padding: clamp(20px, 3vw, 32px); border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
 .lesson-study-page .dialogue-line-caption { font-size: clamp(18px, calc(17px + .35vw), 21px); line-height: 1.6; }
 .lesson-study-page .dialogue-line-meaning { font-size: clamp(15px, calc(14px + .25vw), 17px); }
 .lesson-study-page .flashcard-area { max-width: 880px; margin: 24px auto 0; }

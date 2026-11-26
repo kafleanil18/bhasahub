@@ -2,7 +2,6 @@
 .home-page .home-hero-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 36px; align-items: center; }
 .home-hero-intro { min-width: 0; padding-block: 20px; }
 .home-hero-eyebrow { display: flex; align-items: center; gap: 10px; color: var(--hero-red); font-size: clamp(12px, calc(10px + 0.4vw), 14px); font-weight: 650; letter-spacing: .08em; text-transform: uppercase; overflow-wrap: anywhere; }
-.home-hero-eyebrow > span { width: 6px; height: 6px; border-radius: 50%; background: var(--hero-red); flex-shrink: 0; }
 .home-hero h1 { overflow-wrap: anywhere; font-family: 'Fraunces',serif !important; font-size: clamp(44px,5.3vw,72px); font-weight: 550; line-height: 1.08; letter-spacing: -.055em; margin: 24px 0; text-wrap: balance; }
 .home-hero h1 em { color: var(--hero-red); font-weight: inherit; }
 .home-hero-description { color: color-mix(in srgb, var(--hero-ink) 78%, var(--hero-paper)); font-size: clamp(15px, calc(13px + 0.35vw), 17px); line-height: 1.7; max-width: 460px; }
@@ -37,13 +36,9 @@
 .home-hero-live-classes { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 18px; }
 /* A plain label pointing at the WhatsApp and Viber buttons beside it; it isn't a button itself. */
 .home-hero-live-pill { display: inline-flex; align-items: center; gap: 8px; margin: 0; color: var(--hero-ink); font-size: clamp(14px, calc(12px + 0.35vw), 16px); font-weight: 650; }
-.home-hero-live-label, .home-hero-live-arrow { color: var(--hero-red); }
+.home-hero-live-label { color: var(--hero-red); }
 .home-hero-live-action { color: var(--hero-muted); font-weight: 500; }
-.home-hero-live-sep { opacity: .5; }
-.home-hero-live-arrow { font-size: 1.15em; line-height: 1; transform: translateY(-1px); }
 @media (max-width: 560px) { .home-hero-live-classes { flex-wrap: nowrap; gap: 8px; } .home-hero-live-pill { min-width: 0; gap: 7px; white-space: nowrap; } }
-.home-hero-live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--hero-red); flex-shrink: 0; animation: hero-live-pulse 2s ease-in-out infinite; }
-@keyframes hero-live-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(var(--accent-red-rgb), 0); } 50% { box-shadow: 0 0 0 5px rgba(var(--accent-red-rgb), .18); } }
 .home-page .home-hero.is-logged-out { position: relative; isolation: isolate; }
 .home-page .home-hero.is-logged-out::before { content: ''; position: absolute; inset: 0 auto 0 0; width: min(54%, 640px); background: url('/images/panda-ink-wash.png') left bottom / contain no-repeat; opacity: .38; pointer-events: none; }
 .home-page .home-hero.is-logged-out .home-hero-grid { position: relative; z-index: 1; }
@@ -138,4 +133,4 @@
 @keyframes practice-kicker-track { from { transform: translateX(0); } to { transform: translateX(100%); } }
 @keyframes practice-kicker-text { from { transform: translateX(0); } to { transform: translateX(-100%); } }
 @media (prefers-reduced-motion: reduce) { .home-page :is(.practice-kicker-track, .practice-kicker-track .hero-practice-kicker) { animation: none; } }
-@media (max-width: 380px) { .home-hero-live-sep, .home-hero-live-action, .home-hero-live-arrow { display: none; } }
+@media (max-width: 380px) { .home-hero-live-action { display: none; } }

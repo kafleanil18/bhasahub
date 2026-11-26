@@ -121,8 +121,8 @@ export default function StudioTour({ onClose }) {
       <p id="studio-tour-tip" aria-live="polite">{missing ? 'This part of the page couldn’t be found. Go to the home page and start the tour again.' : <><span className="studio-tour-tip-label">Tip</span>{step.tip}</>}</p>
       <div className="studio-tour-progress" aria-hidden="true">{steps.map((_, dot) => <span key={dot} className={dot === index ? 'is-current' : dot < index ? 'is-done' : ''} />)}</div>
       <div className="studio-tour-actions">
-        <button className="studio-tour-back" onClick={() => go(-1)} disabled={index === 0}>← Back</button>
-        <button className="studio-tour-next" onClick={() => last ? finish() : go(1)}>{last ? 'Finish tour ✓' : index === 0 ? 'Start tour →' : 'Next →'}</button>
+        <button className="studio-tour-back" onClick={() => go(-1)} disabled={index === 0}>Back</button>
+        <button className="studio-tour-next" onClick={() => last ? finish() : go(1)}>{last ? 'Finish tour' : index === 0 ? 'Start tour' : 'Next'}</button>
       </div>
     </div>
   </div>;

@@ -90,7 +90,7 @@ function SlideManager({ onBack }) {
 
   return (
     <section className="admin container">
-      <button className="back-btn" onClick={onBack}>← Back to home</button>
+      <button className="back-btn" onClick={onBack}>Back to home</button>
       <h1 className="section-title">Slide manager</h1>
       <p className="course-desc">Upload a PDF for each slide set. The PDF will be stored on the server and shown in the slide viewer.</p>
       {error && <p className="login-error">{error}</p>}
@@ -98,7 +98,7 @@ function SlideManager({ onBack }) {
       <div className="admin-form" style={{ maxWidth: 720, marginBottom: 32 }}>
         <h2>{editingId ? 'Edit slide' : 'Add slide'}</h2>
         <label>Title
-          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. HSK 1 — Lesson 1 Slides" />
+          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. HSK 1 Lesson 1 slides" />
         </label>
         <label>Description (optional)
           <input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Short description" />

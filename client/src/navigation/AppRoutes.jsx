@@ -138,7 +138,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
       <Route path="/email/reminders/unsubscribe" element={<ReminderUnsubscribe />} />
       <Route path="/" element={<HomeRoute user={user} home={home} />} />
       {/* The pinyin chart stays open to everyone; the other practice tools need approved access. */}
-      <Route path="/practice/pinyin" element={<PinyinPage onBack={onHome} isSuperAdmin={staff} backLabel="← Back to home" />} />
+      <Route path="/practice/pinyin" element={<PinyinPage onBack={onHome} isSuperAdmin={staff} backLabel="Back to home" />} />
     </Route>
     <Route element={<AuthLayout />}>
       <Route path="/sign-in" element={<AuthPage user={user}><Login onLogin={onLogin} onBack={onHome} onSwitch={() => navigate(authPath('/register'))} onForgotPassword={() => navigate(authPath('/forgot-password'))} /></AuthPage>} />
@@ -183,7 +183,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
           <Route path="sentence-audio" element={<SentenceAudioManager onBack={onHome} />} />
           <Route path="tone-pair-audio" element={<TonePairAudioManager onBack={onHome} />} />
           <Route path="characters" element={<HanziTracePage user={user} token={localStorage.getItem('token')} onBack={onHome} />} />
-          <Route path="pinyin" element={<PinyinPage isSuperAdmin onBack={onHome} backLabel="← Back to Admin Dashboard" />} />
+          <Route path="pinyin" element={<PinyinPage isSuperAdmin onBack={onHome} backLabel="Back to admin dashboard" />} />
           <Route path="inbox" element={<FeedbackInbox onBack={onHome} />} />
           <Route path="audit" element={<AuditLog onBack={onHome} />} />
           <Route path="settings/email" element={<EmailSettings onBack={onHome} />} />

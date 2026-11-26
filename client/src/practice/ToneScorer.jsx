@@ -205,7 +205,7 @@ function ToneScorer({ onBack }) {
     <section className="tone-scorer-container container">
       <div className="tone-header">
         <button className="btn-back-pill" onClick={onBack}>
-          ← Back to Practice
+          Back to Practice
         </button>
         <span className="dash-eyebrow">Mandarin Speech AI</span>
         <h1 className="tone-title">Tone & Pronunciation Scorer</h1>
@@ -243,7 +243,7 @@ function ToneScorer({ onBack }) {
                 <Icon name="speaker"/> Listen Native
               </button>
             </div>
-            <span className="tone-meaning-label">{currentWord.meaning} · {currentWord.contour}</span>
+            <span className="tone-meaning-label">{currentWord.meaning}, {currentWord.contour}</span>
           </div>
 
           <div className="tone-tip-box">

@@ -323,7 +323,7 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
       </div>
 
       <div className="quiz-progress">
-        Question {current + 1} of {questions.length} · Score: {score}
+        Question {current + 1} of {questions.length}, score {score}
       </div>
 
       {onToggleMute && (
@@ -372,7 +372,7 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
       {/* 4. Action button / next step */}
       {selected ? (
         <button className="btn-primary quiz-next" onClick={next} style={{ minWidth: 160 }}>
-          {current + 1 >= questions.length ? 'See results' : 'Next question →'}
+          {current + 1 >= questions.length ? 'See results' : 'Next question'}
         </button>
       ) : (
         <p className="keyboard-shortcut-hint">

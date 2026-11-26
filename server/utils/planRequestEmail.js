@@ -40,7 +40,7 @@ function planRequestMessage({ student, request, changedFrom, adminUrl }) {
       <p style="margin:0 0 20px;font-size:14px;color:#2a2320;line-height:1.5;">When the payment arrives, start the plan from Plan requests.</p>
       <a href="${escapeHtml(adminUrl)}" style="display:inline-block;padding:12px 20px;border-radius:8px;background:#a92316;color:#ffffff;font-weight:700;text-decoration:none;">Open plan requests</a>
       <hr style="border:none;border-top:1px solid #e6dcc6;margin:24px 0 12px;" />
-      <p style="margin:0;font-size:12px;color:#999;">Xiao Ao · Chinese Made Simple</p>
+      <p style="margin:0;font-size:12px;color:#999;">Xiao Ao, Chinese made simple</p>
     </div>`;
   return { subject: `${changedFrom ? 'Plan changed' : 'New plan request'}: ${student.name} · ${label} · ${rupees(request.price)}`, text, html };
 }

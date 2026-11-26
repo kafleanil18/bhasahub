@@ -54,11 +54,11 @@ export default function HomeCourses({ loaded = true, filteredCourses, hskLevels,
                           </div>
                         )}
                         <div className="course-card-body">
-                          <span className="course-card-eyebrow">{c.level} · Guided learning</span>
+                          <span className="course-card-eyebrow">{c.level} guided course</span>
                           <h3 className="course-card-title">{c.title}</h3>
                           <p className="course-card-desc">{c.description}</p>
                           <span className="tag">{c.level}</span>
-                          <span className="course-card-link">View course <span aria-hidden="true">↗</span></span>
+                          <span className="course-card-link">View course</span>
                         </div>
                       </div>
                     );

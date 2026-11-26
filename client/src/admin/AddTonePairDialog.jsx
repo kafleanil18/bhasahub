@@ -45,7 +45,7 @@ export default function AddTonePairDialog({ busy, error, onSave, onClose }) {
         <label>English meaning<input value={english} maxLength={80} placeholder="hello" onChange={event => setEnglish(event.target.value)} required /></label>
         <label>Audio file (optional)<input type="file" accept=".mp3,.m4a,.wav,.ogg,.webm,audio/*" onChange={event => setFile(event.target.files?.[0] || null)} />
           <span className="access-help">MP3, M4A, WAV, OGG or WebM, up to 15 MB. Leave empty to record it after saving.</span></label>
-        {spoken && <div className="tone-pair-form-preview" aria-live="polite"><span lang="zh-CN">{hanzi.trim() || '··'}</span><strong>{spoken}</strong>{written && written !== spoken && <small>written {written}</small>}</div>}
+        {spoken && <div className="tone-pair-form-preview" aria-live="polite"><span lang="zh-CN">{hanzi.trim() || '…'}</span><strong>{spoken}</strong>{written && written !== spoken && <small>written {written}</small>}</div>}
       </fieldset>
       {error && <p className="access-feedback is-error" role="alert">{error}</p>}
       <div className="access-dialog-actions">

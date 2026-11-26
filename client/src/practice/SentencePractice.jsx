@@ -23,7 +23,7 @@ function TopicList({ topics, onStart }) {
   const visible = search || showAll ? matches : matches.slice(0, COLLAPSED_TOPICS);
   return <>
     <div className="sb-topics-head">
-      <div><h2>Pick a topic</h2><p>{topics.length} everyday topics · practice at your own pace</p></div>
+      <div><h2>Pick a topic</h2><p>{topics.length} everyday topics to practise at your own pace</p></div>
       <label className="sb-search"><span className="sentence-visually-hidden">Find a topic</span>
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" strokeWidth="2" /><path d="m20 20-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
         <input type="search" placeholder="Find a topic…" value={query} onChange={event => setQuery(event.target.value)} />
@@ -37,7 +37,7 @@ function TopicList({ topics, onStart }) {
         <span className="sb-topic-body"><strong>{topic.title}</strong>
           <span className="sb-topic-bar" aria-hidden="true"><i style={{ width: `${pct}%` }} /></span>
           <small>{topic.done} / {topic.total} answered correctly</small></span>
-        <span className="sb-topic-go" aria-hidden="true">{topic.done === topic.total ? '✓' : '→'}</span>
+        <span className="sb-topic-go" aria-hidden="true">{topic.done === topic.total ? '✓' : ''}</span>
       </button>;
     })}</div>
     {!search && matches.length > COLLAPSED_TOPICS && <button className="sentence-secondary sb-show-all" onClick={() => setShowAll(value => !value)}>{showAll ? 'Show fewer topics' : `Show all ${matches.length} topics`}</button>}
@@ -67,10 +67,10 @@ export default function SentencePractice({ user, onBack }) {
   const pct = catalog?.sentences.length ? Math.round(completed / catalog.sentences.length * 100) : 0;
 
   return <section className="sentence-page sentence-builder" aria-labelledby="sentence-title">
-    <button className="sentence-back" onClick={session ? () => setSession(null) : onBack}>{session ? '← Choose another topic' : '← Back to home'}</button>
+    <button className="sentence-back" onClick={session ? () => setSession(null) : onBack}>{session ? 'Choose another topic' : 'Back to home'}</button>
     {session ? <h1 id="sentence-title" className="sb-compact-title">Sentence builder</h1>
       : <div className="sb-hero">
-        <div className="sb-hero-copy"><p className="sb-hero-eyebrow">HSK 1 · Word order practice</p><h1 id="sentence-title">Small words.<br />Real sentences.</h1><p>Put Chinese words in order, learn the pattern, and listen to your teacher's recording.</p></div>
+        <div className="sb-hero-copy"><p className="sb-hero-eyebrow">HSK 1 word order practice</p><h1 id="sentence-title">Small words.<br />Real sentences.</h1><p>Put Chinese words in order, learn the pattern, and listen to your teacher's recording.</p></div>
         <div className="sb-hero-demo" aria-hidden="true">
           <div className="sb-demo-row"><span lang="zh-CN">我</span><span lang="zh-CN">是</span><span lang="zh-CN">学生</span><b>。</b></div>
           <p>I am a student.</p>
@@ -84,7 +84,7 @@ export default function SentencePractice({ user, onBack }) {
         <div className="sb-overall" aria-hidden="true"><i style={{ width: `${pct}%` }} /></div>
       </div>
       <div className="sb-start">
-        <div className="sentence-mixed sb-start-card"><span className="sb-start-icon" aria-hidden="true"><Icon name="shuffle"/></span><div><h2>A little of everything</h2><p>Warm up with 10 sentences from across the collection.</p></div><button className="sentence-primary" onClick={() => setSession(shuffleSentences(catalog.sentences).slice(0, 10))}>Start mixed practice →</button></div>
+        <div className="sentence-mixed sb-start-card"><span className="sb-start-icon" aria-hidden="true"><Icon name="shuffle"/></span><div><h2>A little of everything</h2><p>Warm up with 10 sentences from across the collection.</p></div><button className="sentence-primary" onClick={() => setSession(shuffleSentences(catalog.sentences).slice(0, 10))}>Start mixed practice</button></div>
         {resume && <div className="sentence-mixed sb-start-card sb-resume"><span className="sb-start-icon" aria-hidden="true"><Icon name="play"/></span><div><h2>Continue: {resume.title}</h2><p>{resume.done} of {resume.total} answered correctly so far.</p></div><button className="sentence-secondary" onClick={() => startTopic(resume.sentences)}>Continue topic</button></div>}
       </div>
       <TopicList topics={topics} onStart={startTopic} />

@@ -53,4 +53,4 @@
 .paper-deleted button { min-height: 44px; padding: 10px 16px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); font: inherit; cursor: pointer; }
 .paper-deleted button:focus-visible { outline: 3px solid var(--seal); outline-offset: 3px; }
 .paper-media-hint { margin: 0; color: var(--mist); font-size: clamp(12px, calc(12px + 0.3vw), 13px); line-height: 1.5; }
-.paper-media-warning { margin: 0; padding: 8px 12px; border-left: 3px solid var(--seal); background: var(--rice); color: var(--ink); font-size: clamp(12px, calc(12px + 0.3vw), 13px); line-height: 1.5; }
+.paper-media-warning { margin: 0; padding: 8px 12px; border-radius: 6px; background: var(--rice); color: var(--ink); font-size: clamp(12px, calc(12px + 0.3vw), 13px); line-height: 1.5; }
