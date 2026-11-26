@@ -5,6 +5,7 @@ import ControlEnrollmentPie from './ControlEnrollmentPie';
 import ControlPie from './ControlPie';
 import { formatRs } from '../pricing/plans';
 import './AdminDashboard.css';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const API = window.API_BASE_URL + '/api';
 const shortcuts = [
@@ -20,6 +21,7 @@ export default function AdminDashboard({ onNavigate, user }) {
   const [attempt, setAttempt] = useState(0);
   const [loading, setLoading] = useState(true);
   const [serverStatus, setServerStatus] = useState('checking');
+  useInitialLoad(loading, 'Loading your dashboard…');
   const [updated, setUpdated] = useState(null);
 
   useEffect(() => {

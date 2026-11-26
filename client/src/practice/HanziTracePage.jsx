@@ -2,6 +2,7 @@ import { recordStudioActivity } from './recordStudioActivity';
 import { useState, useEffect, useRef } from 'react';
 import HanziWriter from 'hanzi-writer';
 import Icon from '../components/Icon';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -96,6 +97,7 @@ function HanziTracePage({ user, onBack, token }) {
 
   const [characters, setCharacters] = useState([]);
   const [loading, setLoading] = useState(true);
+  useInitialLoad(loading, 'Loading the character catalogue…');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [activeCharacterId, setActiveCharacterId] = useState(null);

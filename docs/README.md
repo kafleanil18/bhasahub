@@ -104,7 +104,10 @@ Students choose the female or male voice with the switch on each page, and the c
 
 ### Loading screen
 - An ink-brush ensō circle with "Loading" and 加载中.
-- The first-paint copy and all its styles are in `client/index.html`, so it shows before any JavaScript loads. `client/src/components/InkLoader.jsx` reuses those styles while a page's code loads, and on the progress page.
+- The first-paint copy and all its styles are in `client/index.html`, so it shows before any JavaScript loads. `client/src/components/InkLoader.jsx` reuses those styles.
+- A page shows at most one loader. Pages that wait for server data call `useInitialLoad(loading, message)` from `client/src/navigation/pageLoad.js`. The `PageLoadGate` in each layout keeps the page hidden under the loader until all of its first loads finish, so the requests run together and the page appears complete. It stops waiting after 12 seconds.
+- Loads that start after the page is shown, such as tabs, dialogs and retries, keep their own small loading text.
+- Pages that don't wait for the server show no loader beyond a brief one while their code downloads. These include home, pricing, About HSK and the pinyin chart. The home page shows placeholder cards while its courses and reviews arrive.
 
 ### Reminders
 - **Practice reminder emails**, sent by a superadmin: [practice-reminders.md](practice-reminders.md).

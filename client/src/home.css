@@ -128,3 +128,9 @@
 .home-page .footer-tour-link .footer-tour-star { color: #dfc27d; margin-right: 4px; }
 .home-page .footer-tour-link:hover { color: #dfc27d; }
 .home-page .footer-tour-link:focus-visible { outline: 2px solid #dfc27d; outline-offset: 3px; border-radius: 4px; }
+
+/* Quiet placeholders while the course list and reviews arrive: no spinner, no false "nothing here". */
+.home-page .course-card-placeholder { min-height: 320px; border-style: dashed; background: linear-gradient(100deg, transparent 30%, color-mix(in srgb, var(--line) 45%, transparent) 50%, transparent 70%) 0 0 / 250% 100%, var(--paper); animation: home-placeholder 1.6s ease-in-out infinite; }
+.home-page .testimonials-placeholder { min-height: 180px; }
+@keyframes home-placeholder { from { background-position: 100% 0, 0 0; } to { background-position: -100% 0, 0 0; } }
+@media (prefers-reduced-motion: reduce) { .home-page .course-card-placeholder { animation: none; } }

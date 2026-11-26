@@ -9,9 +9,11 @@ import { formatRs, planLabel } from '../pricing/plans';
 import StudentAccessList from './subscriptions/StudentAccessList';
 import { active, daysLeft } from './subscriptions/accessDates';
 import './SubscriptionManager.css';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 export default function SubscriptionManager({ onBack }) {
   const { students, courses, subs, requests, planRequests, members, errors, loading, refreshing, updatedAt, reload } = useSubscriptionData();
+  useInitialLoad(loading, 'Loading student access and requests…');
   // ?view=plans or ?view=requests opens that list, e.g. from the notifications menu.
   const [searchParams] = useSearchParams();
   const linkedView = ['plans', 'requests'].includes(searchParams.get('view')) ? searchParams.get('view') : null;

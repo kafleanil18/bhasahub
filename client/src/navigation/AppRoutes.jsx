@@ -2,15 +2,18 @@ import { lazy, useEffect, useState } from 'react';
 import { Link, Navigate, Route, Routes, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { AdminLayout, AuthLayout, PublicLayout, RequireSession, StudentLayout } from './Layouts';
 import PracticeGate from '../access/PracticeGate';
+import { useInitialLoad } from './pageLoad';
 import { adminPaths, homePath, manageCoursePath, safeReturnPath, testPath } from './paths';
 const Login = lazy(() => import('../auth/Login'));
 const Register = lazy(() => import('../auth/Register'));
 const ForgotPassword = lazy(() => import('../auth/ForgotPassword'));
 const ResetPassword = lazy(() => import('../auth/ResetPassword'));
 const AdminPanel = lazy(() => import('../admin/AdminPanel'));
-const CoursePage = lazy(() => import('../courses/CoursePage'));
+const loadCoursePage = () => import('../courses/CoursePage');
+const CoursePage = lazy(loadCoursePage);
 const ContinueLearning = lazy(() => import('../courses/ContinueLearning'));
-const LessonManager = lazy(() => import('../admin/LessonManager'));
+const loadLessonManager = () => import('../admin/LessonManager');
+const LessonManager = lazy(loadLessonManager);
 const Dashboard = lazy(() => import('../dashboard/Dashboard'));
 const ProgressAnalytics = lazy(() => import('../dashboard/ProgressAnalytics'));
 const PinyinPage = lazy(() => import('../practice/PinyinPage'));
@@ -71,6 +74,9 @@ function CourseRoute({ user, manage = false, onHome }) {
   const [state, setState] = useState({ loading: true });
   const [retry, setRetry] = useState(0);
   const staff = ['admin', 'superadmin'].includes(user?.role);
+  useInitialLoad(!!state.loading, 'Loading your course…');
+  // Download the course page's code while the course loads, so one loader covers both.
+  useEffect(() => { void (manage ? loadLessonManager() : loadCoursePage()); }, [manage]);
   useEffect(() => {
     const controller = new AbortController();
     setState({ loading: true });
@@ -88,12 +94,15 @@ function CourseRoute({ user, manage = false, onHome }) {
     });
     return () => controller.abort();
   }, [courseId, staff, retry]);
-  if (state.loading) return <div className="container" role="status">Loading course…</div>;
   if (state.error) return <section className="container" role="alert"><p>{state.error}</p><button onClick={() => setRetry(value => value + 1)}>Try again</button></section>;
-  if (!state.course) return <section className="container"><h1>Course not found</h1><p>This course may no longer be available.</p><Link to={manage ? '/admin/courses' : '/'}>Browse courses</Link></section>;
+  if (!state.loading && !state.course) return <section className="container"><h1>Course not found</h1><p>This course may no longer be available.</p><Link to={manage ? '/admin/courses' : '/'}>Browse courses</Link></section>;
+  // While the course record loads, the page already starts (hidden behind the loader) with just the
+  // id from the URL, so its lessons, access and progress load at the same time. Same key, so it
+  // carries on rather than reloading once the full record arrives.
+  const course = state.course || { _id: courseId };
   return manage
-    ? <LessonManager key={courseId} course={state.course} focusLessonId={params.get('lesson')} onBack={() => navigate('/admin/courses')} />
-    : <CoursePage key={courseId} course={state.course} user={user} onBack={onHome} />;
+    ? <LessonManager key={courseId} course={course} focusLessonId={params.get('lesson')} onBack={() => navigate('/admin/courses')} />
+    : <CoursePage key={courseId} course={course} user={user} onBack={onHome} />;
 }
 
 function TestRoute({ user, onHome }) {

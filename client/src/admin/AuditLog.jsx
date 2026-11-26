@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import StudentSignIns from './StudentSignIns';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -45,6 +46,7 @@ function AuditLog({ onBack }) {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  useInitialLoad(loading, 'Loading the audit log…');
   const [resourceFilter, setResourceFilter] = useState('all');
 
   useEffect(() => {

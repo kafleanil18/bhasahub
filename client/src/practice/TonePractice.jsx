@@ -12,6 +12,7 @@ import { AdvanceBar, PlayButton, ProgressDots, ScoreRing, SlowButton, SoundToggl
 import useToneKeys from './useToneKeys';
 import './SentencePractice.css';
 import './TonePractice.css';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const tones = [1, 2, 3, 4].map(value => ({ value }));
 async function request(path, options = {}) {
@@ -190,6 +191,7 @@ export default function TonePractice({ onBack }) {
     return () => controller.abort();
   }, [attempt]);
   const pairs = useTonePairs();
+  useInitialLoad(!!state.loading || pairs.loading, 'Loading your tone practice…');
   const questions = useMemo(() => state.questions || [], [state.questions]);
   const pool = useMemo(() => picked ? questions.filter(question => picked.has(question.syllable)) : questions, [questions, picked]);
   const changes = pairs.playable.filter(pair => pair.toneRule).length;

@@ -6,11 +6,13 @@ import DictationSession from './DictationSession';
 import './SentencePractice.css';
 import './TonePractice.css';
 import './ListeningDictation.css';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const shortest = sentences => sentences.reduce((best, sentence) => !best || sentence.chinese.length < best.chinese.length ? sentence : best, null);
 
 export default function ListeningDictation({ onBack, onRecordAudio }) {
   const { catalog, error, reload } = useSentenceCatalog();
+  useInitialLoad(!catalog && !error, 'Loading recordings…');
   const [session, setSession] = useState(null);
   const [sessionKey, setSessionKey] = useState(0);
   const ready = catalog ? recordedSentences(catalog.sentences) : [];

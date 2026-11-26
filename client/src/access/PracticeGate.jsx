@@ -4,14 +4,15 @@ import { FREE_ACCESS_DAYS, usePracticeAccess } from './practiceAccess';
 import FreeAccessNote from './FreeAccessNote';
 import './PracticeGate.css';
 import Icon from '../components/Icon';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 // Wraps the practice studio pages: students can look inside, but until an access
 // request is approved the page is locked and they are asked to request access.
 export default function PracticeGate({ user, onHome }) {
   const { status, request } = usePracticeAccess(user);
+  useInitialLoad(status === 'loading', 'Checking your practice access…');
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
-  if (status === 'approved') return <Outlet />;
 
   const send = async () => {
     setSending(true); setError('');
@@ -24,10 +25,12 @@ export default function PracticeGate({ user, onHome }) {
     pending: ['Waiting for approval', 'Your access request has been sent. You can start practicing as soon as an administrator approves it.'],
   }[status];
 
-  return <div className="practice-gate">
-    {/* inert keeps the page visible but stops every click, key press and focus inside it. */}
-    <div className="practice-gate-content" inert aria-hidden="true"><Outlet /></div>
-    {copy && <div className="practice-gate-panel" role="region" aria-labelledby="practice-gate-title">
+  // The page always renders in the same place, so unlocking it never reloads it: while locked,
+  // `inert` keeps it visible but stops every click, key press and focus inside it.
+  const locked = status !== 'approved';
+  return <div className={`practice-gate${locked ? '' : ' is-open'}`}>
+    <div className="practice-gate-content" inert={locked || undefined} aria-hidden={locked || undefined}><Outlet /></div>
+    {locked && copy && <div className="practice-gate-panel" role="region" aria-labelledby="practice-gate-title">
       <span className="practice-gate-icon" aria-hidden="true"><Icon name={status === 'pending' ? 'hourglass' : status === 'expired' ? 'hourglassDone' : 'lock'} size={26}/></span>
       <h2 id="practice-gate-title">{copy[0]}</h2>
       <p>{copy[1]}</p>

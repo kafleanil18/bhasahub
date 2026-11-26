@@ -3,6 +3,7 @@ import { mediaUrl } from '../utils/mediaUrl';
 import ControlIcon from './ControlIcon';
 import CourseEditor from './CourseEditor';
 import './CourseStudio.css';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const API = window.API_BASE_URL + '/api/courses';
 const emptyDraft = () => ({ title: '', language: 'chinese', level: '', description: '', glyph: '', image: '', published: false });
@@ -16,6 +17,7 @@ async function readResponse(response) {
 export default function AdminPanel({ onBack, onManageLessons }) {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  useInitialLoad(loading, 'Loading courses…');
   const [loadError, setLoadError] = useState('');
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');

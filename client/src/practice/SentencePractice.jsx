@@ -5,6 +5,7 @@ import SentenceSession from './SentenceSession';
 import './SentencePractice.css';
 import './SentenceBuilder.css';
 import Icon from '../components/Icon';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const COLLAPSED_TOPICS = 8;
 
@@ -44,6 +45,7 @@ function TopicList({ topics, onStart }) {
 
 export default function SentencePractice({ user, onBack }) {
   const { catalog, error, reload } = useSentenceCatalog();
+  useInitialLoad(!catalog && !error, 'Loading sentences…');
   const progressKey = `sentence-practice-v1:${user?.id || 'guest'}`;
   const [mastered, setMastered] = useState(() => readProgress(progressKey));
   const [session, setSession] = useState(null);

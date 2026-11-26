@@ -1,6 +1,6 @@
 import { mediaUrl } from '../utils/mediaUrl';
 
-export default function HomeCourses({ filteredCourses, hskLevels, levelFilter, onOpenCourse, setLevelFilter }) {
+export default function HomeCourses({ loaded = true, filteredCourses, hskLevels, levelFilter, onOpenCourse, setLevelFilter }) {
   return (
     <section className="courses-section" id="courses" aria-labelledby="courses-heading">
             <div className="container">
@@ -23,7 +23,9 @@ export default function HomeCourses({ filteredCourses, hskLevels, levelFilter, o
               </div>
               )}
 
-              {filteredCourses.length === 0 ? (
+              {!loaded ? (
+                <div className="course-cards course-cards--placeholder" aria-hidden="true">{[0, 1, 2].map(i => <div key={i} className="course-card course-card-placeholder" />)}</div>
+              ) : filteredCourses.length === 0 ? (
                 <p className="courses-empty">No courses in this level yet.</p>
               ) : (
                 <div className={`course-cards${filteredCourses.length === 1 ? ' course-cards--single' : ''}`}>

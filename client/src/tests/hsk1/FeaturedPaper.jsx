@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import './HskPortal.css';
 import Icon from '../../components/Icon';
+import { useInitialLoad } from '../../navigation/pageLoad';
 
 const headers = () => ({ Authorization: `Bearer ${localStorage.getItem('token') || ''}`, 'Content-Type': 'application/json' });
 
@@ -10,6 +11,7 @@ export default function FeaturedPaper({ onOpen, onRetake, manage = false, showHi
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [reload, setReload] = useState(0);
+  useInitialLoad(published === null && !error);
   useEffect(() => {
     const controller = new AbortController();
     setError('');

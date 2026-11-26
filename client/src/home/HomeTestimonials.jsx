@@ -1,6 +1,6 @@
 import { mediaUrl } from '../utils/mediaUrl';
 
-export default function HomeTestimonials({ openLogin, scrollTestimonials, setShowTestimonial, testimonials, testimonialsScrollRef, user }) {
+export default function HomeTestimonials({ loaded = true, openLogin, scrollTestimonials, setShowTestimonial, testimonials, testimonialsScrollRef, user }) {
   const shareReview = () => (user ? setShowTestimonial(true) : openLogin());
 
   return (
@@ -10,7 +10,9 @@ export default function HomeTestimonials({ openLogin, scrollTestimonials, setSho
                 <p className="home-section-kicker">Student reviews</p>
                 <h2 className="section-title">What learners are saying</h2>
               </div>
-              {testimonials.length === 0 ? (
+              {!loaded ? (
+                <div className="testimonials-placeholder" aria-hidden="true" />
+              ) : testimonials.length === 0 ? (
                 <div className="testimonials-empty">
                   <span className="testimonials-empty-mark" aria-hidden="true">“</span>
                   <div className="testimonials-empty-copy">

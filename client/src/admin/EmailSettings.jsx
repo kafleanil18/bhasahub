@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import EmailApiSettings from './EmailApiSettings';
 import './EmailSettings.css';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const API = `${window.API_BASE_URL}/api/settings/email`;
 const headers = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json' });
@@ -22,6 +23,7 @@ export default function EmailSettings({ onBack }) {
   const [draft, setDraft] = useState(null);
   const [appPassword, setAppPassword] = useState('');
   const [loading, setLoading] = useState(true);
+  useInitialLoad(loading, 'Loading email settings…');
   const [retry, setRetry] = useState(0);
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');

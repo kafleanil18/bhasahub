@@ -6,6 +6,7 @@ import VoiceSwitch from './VoiceSwitch';
 import './SentencePractice.css';
 import './TonePractice.css';
 import './ListeningPractice.css';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 async function readApi(path, signal) {
   const response = await fetch(`${window.API_BASE_URL}/api${path}`, {
@@ -70,6 +71,7 @@ export default function ListeningPractice({ user, onBack, onSignIn }) {
   const restart = () => { setSession(previous => ({ ...previous, questions: createListeningQuiz(previous.words) })); setSessionKey(value => value + 1); };
   const course = courses?.find(item => item._id === courseId);
   const loading = user && !error && (!courses || (courseId && !lessons));
+  useInitialLoad(!!loading || speech.loading, 'Loading listening practice…', { maxWait: 8000 });
 
   return <main className="sentence-page tone-practice listening-page" aria-labelledby="listening-title">
     <div className="listening-header">

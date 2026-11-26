@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { coursePath } from '../navigation/paths';
 import { supportsConversation } from '../utils/courseFeatures';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 export default function ContinueLearning() {
   const navigate = useNavigate();
@@ -9,6 +10,7 @@ export default function ContinueLearning() {
   const courseId = params.get('course');
   const [attempt, setAttempt] = useState(0);
   const [state, setState] = useState({ loading: true });
+  useInitialLoad(!!state.loading, 'Finding your next lesson…');
 
   useEffect(() => {
     const controller = new AbortController();

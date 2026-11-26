@@ -6,6 +6,7 @@ import FreeAccessNote from '../access/FreeAccessNote';
 import { FREE_ACCESS_DAYS, freeAccessLive } from '../access/practiceAccess';
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const API = window.API_BASE_URL + '/api';
 const LEVELS = ['HSK 1', 'HSK 2', 'HSK 3', 'HSK 4'];
@@ -67,6 +68,7 @@ function TestList({ onOpenTest, onBack, user }) {
   };
 
   const studentKey = user?._id || user?.id || user?.email || '';
+  useInitialLoad(papersLoading || loading || completionLoading, 'Loading mock tests…');
   useEffect(() => {
     if (papersLoading || loading) return;
     let active = true;

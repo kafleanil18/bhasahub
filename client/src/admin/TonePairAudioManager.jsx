@@ -7,6 +7,7 @@ import { MAX_RECORDING_BYTES, recordingExtension } from './sentenceRecording';
 import '../practice/SentencePractice.css';
 import './SubscriptionManager.css';
 import './SentenceAudioManager.css';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const API = () => `${window.API_BASE_URL}/api/tone-practice/pairs`;
 const ruleLabels = { third: 'Two 3rd tones', bu: '不 tone change', yi: '一 tone change' };
@@ -14,6 +15,7 @@ const ruleLabels = { third: 'Two 3rd tones', bu: '不 tone change', yi: '一 ton
 export default function TonePairAudioManager({ onBack }) {
   const [pairs, setPairs] = useState(null);
   const [loadError, setLoadError] = useState('');
+  useInitialLoad(pairs === null && !loadError, 'Loading tone pair words…');
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('all');
   const [busyId, setBusyId] = useState('');

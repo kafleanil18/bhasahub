@@ -1,12 +1,27 @@
-import { useId } from 'react';
+import { useEffect, useId, useState } from 'react';
+
+// Every loader joins the same animation cycle, counted from page load, and skips its fade-in if
+// another loader was just on screen. So when one loader hands over to the next (code download,
+// then data), it looks like a single uninterrupted animation.
+const CYCLE = 2600, TURN = 7800;
+let lastSeen = typeof document !== 'undefined' && document.querySelector('#root > .ink-loader') ? performance.now() : -Infinity;
+const startStyle = () => {
+  const now = performance.now();
+  return {
+    continuing: now - lastSeen < 400,
+    style: { '--ink-phase': `-${Math.round(now % CYCLE)}ms`, '--ink-turn-phase': `-${Math.round(now % TURN)}ms` },
+  };
+};
 
 // Ink-brush loading mark: an ensō circle is painted while "Loading / 加载中" is written beside it.
 // Styles live in index.html so the first-paint copy there and this component look identical.
 // `message` adds a plain line under the calligraphy, e.g. what is being loaded.
 export default function InkLoader({ fullscreen = false, label = 'Loading', message = '' }) {
   const filter = `ink-rough-${useId().replace(/:/g, '')}`;
+  const [start] = useState(startStyle);
+  useEffect(() => () => { lastSeen = performance.now(); }, []);
   return (
-    <div className={`ink-loader${fullscreen ? ' is-fullscreen' : ''}`} role="status" aria-label={message || label}>
+    <div className={`ink-loader${fullscreen ? ' is-fullscreen' : ''}${start.continuing ? ' is-continuing' : ''}`} style={start.style} role="status" aria-label={message || label}>
       <svg className="ink-loader-mark" viewBox="0 0 120 120" aria-hidden="true">
         <defs>
           <filter id={filter} x="-20%" y="-20%" width="140%" height="140%">

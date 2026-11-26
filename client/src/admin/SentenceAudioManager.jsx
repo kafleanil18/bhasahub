@@ -8,12 +8,14 @@ import { MAX_RECORDING_BYTES, recordingExtension } from './sentenceRecording';
 import '../practice/SentencePractice.css';
 import './SubscriptionManager.css';
 import './SentenceAudioManager.css';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const PAGE_SIZE = 15;
 const numberLabel = sentence => `#${String(sentence.number).padStart(3, '0')}`;
 
 export default function SentenceAudioManager({ onBack }) {
   const { catalog, error: loadError, reload, updateAudio } = useSentenceCatalog();
+  useInitialLoad(!catalog && !loadError, 'Loading sentence recordings…');
   const [search, setSearch] = useState('');
   const [topic, setTopic] = useState('all');
   const [status, setStatus] = useState('all');

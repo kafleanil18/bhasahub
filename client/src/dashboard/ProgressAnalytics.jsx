@@ -3,7 +3,7 @@ import { downloadCSV } from '../utils/csv';
 import StudioAnalytics from './StudioAnalytics';
 import useStudioActivity from './useStudioActivity';
 import DailyReminderCard from './DailyReminderCard';
-import InkLoader from '../components/InkLoader';
+import { useInitialLoad } from '../navigation/pageLoad';
 import Icon from '../components/Icon';
 
 const API = window.API_BASE_URL + '/api';
@@ -98,6 +98,7 @@ function ProgressAnalytics({ user, onBack }) {
   const [refreshKey, setRefreshKey] = useState(0);
   // Loads in parallel with the analytics below; the first load keeps the loading screen up too.
   const studioActivity = useStudioActivity(refreshKey);
+  useInitialLoad((loading && !data) || !studioActivity.settled, 'Gathering your learning activity…');
   const token = localStorage.getItem('token');
 
   useEffect(() => {
@@ -166,13 +167,8 @@ function ProgressAnalytics({ user, onBack }) {
     }
   };
 
-  if ((loading && !data) || !studioActivity.settled) {
-    return (
-      <section className="course-page container analytics-page">
-        <InkLoader message="Gathering your learning activity…" />
-      </section>
-    );
-  }
+  // The page gate shows the loader until this and the studio section have both loaded.
+  if ((loading && !data) || !studioActivity.settled) return null;
   if (error && !data) {
     return <section className="course-page container analytics-page"><div className="analytics-state analytics-error-state" role="alert"><span className="analytics-state-mark" aria-hidden="true">!</span><h1>We couldn’t load your progress</h1><p>{error}</p><div><button className="btn-primary" onClick={() => setRefreshKey(value => value + 1)}>Try again</button><button className="btn-back-pill" onClick={onBack}>← Back to dashboard</button></div></div></section>;
   }

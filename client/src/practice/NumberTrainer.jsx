@@ -6,6 +6,7 @@ import NumberSession from './NumberSession';
 import './SentencePractice.css';
 import './TonePractice.css';
 import './NumberTrainer.css';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 // A sample of what each mode sounds like, shown on its card.
 const examples = {
@@ -19,6 +20,7 @@ export default function NumberTrainer({ onBack }) {
   // Google's female Mandarin voice (or the device's best), or the male voice, as the student chooses.
   const speaker = useMandarinSpeaker();
   const { supported, loading, refresh, available } = speaker;
+  useInitialLoad(loading, 'Loading Chinese voices…', { maxWait: 6000 });
   const mode = session && NUMBER_MODES.find(item => item.id === session.mode);
   const start = id => { setSession({ mode: id, questions: numberRound(id) }); setSessionKey(value => value + 1); };
 

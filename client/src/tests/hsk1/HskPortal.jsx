@@ -5,6 +5,7 @@ import HskNavigation from './HskNavigation';
 import HskResult from './HskResult';
 import './HskPortal.css';
 import Icon from '../../components/Icon';
+import { useInitialLoad } from '../../navigation/pageLoad';
 
 function Confirmation({ action, onClose, onConfirm }) {
   const ref = useRef(null);
@@ -14,6 +15,7 @@ function Confirmation({ action, onClose, onConfirm }) {
 export default function HskPortal({ user, onBack, paperId = 'h11226' }) {
   const exam = useHskExam(user, paperId);
   const { paper, session, result, loading, busy, error, remaining } = exam;
+  useInitialLoad(loading, 'Preparing your HSK 1 test…');
   const [confirmation, setConfirmation] = useState(null);
   const [audioError, setAudioError] = useState(false);
   const audio = useRef(null);

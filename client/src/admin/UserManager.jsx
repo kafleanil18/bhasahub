@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Icon from '../components/Icon';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -8,6 +9,7 @@ function UserManager({ initialSearch = '', onBack }) {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  useInitialLoad(loading, 'Loading accounts…');
   const [search, setSearch] = useState(initialSearch);
   const [roleFilter, setRoleFilter] = useState('all');
 

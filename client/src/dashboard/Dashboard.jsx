@@ -3,7 +3,7 @@ import { mediaUrl } from '../utils/mediaUrl';
 import LessonCategoryIcon from '../courses/LessonCategoryIcon';
 import useLearningSpace from './useLearningSpace';
 import AccessCountdown from './AccessCountdown';
-import InkLoader from '../components/InkLoader';
+import { useInitialLoad } from '../navigation/pageLoad';
 import './Dashboard.css';
 
 const statusLabels = { new: 'Not started', started: 'In progress', completed: 'Completed', unknown: 'Progress unavailable' };
@@ -14,7 +14,7 @@ export default function Dashboard({ user, onOpenCourse, onBrowse }) {
   // Students also wait for their access countdown, so the page appears complete in one go.
   const [countdownSettled, setCountdownSettled] = useState(user?.role !== 'student');
   const markCountdownSettled = useCallback(() => setCountdownSettled(true), []);
-  const ready = settled && countdownSettled;
+  useInitialLoad(!(settled && countdownSettled), 'Preparing your courses…');
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState('all');
   const stateOf = course => {
@@ -35,8 +35,7 @@ export default function Dashboard({ user, onOpenCourse, onBrowse }) {
   // Opens the home page at its HSK courses section; App scrolls to the #courses target once it renders.
   const browse = () => onBrowse();
 
-  // The page renders hidden while it loads, so every request runs at once and nothing loads twice.
-  return <>{!ready && <InkLoader message="Preparing your courses…" />}<main className="container learning-space" aria-labelledby="learning-space-title" style={ready ? undefined : { display: 'none' }}>
+  return <main className="container learning-space" aria-labelledby="learning-space-title">
     <button className="back-btn" onClick={browse}>← Explore courses</button>
     <section className="learning-welcome" aria-labelledby="learning-space-title"><div className="learning-welcome-copy"><p className="learning-eyebrow">My Learning Space</p><h1 id="learning-space-title">A little progress.<br/><em>Every day.</em></h1><p className="learning-greeting">{user?.name ? `Welcome back, ${user.name}.` : 'Welcome to your learning space.'}</p><p className="learning-description">{loading ? 'Getting your courses and progress ready.' : error ? 'Your learning is still here. Try refreshing, or explore the course library.' : !courses.length ? 'Your first course is waiting. Find a path that feels right and take your first step in Chinese.' : counts.started ? 'Pick up a course you’ve started, or make room for something new. Every lesson moves you forward.' : counts.completed === courses.length ? 'Look at how far you’ve come. Review what you’ve learned, or find your next course.' : 'Choose a course and begin at your own pace. Your progress will be saved as you complete lessons.'}</p><div className="learning-welcome-actions"><button className="learning-button is-primary" disabled={loading} onClick={() => nextCourse ? onOpenCourse(nextCourse, nextState === 'started' || nextState === 'new') : browse()}>{loading ? 'Preparing courses…' : nextCourse ? actionLabels[nextState] : 'Explore courses'}<span aria-hidden="true">↗</span></button><a className="learning-text-link" href="#my-learning-courses">View my courses <span aria-hidden="true">↓</span></a></div>{!loading && nextCourse && <p className="learning-next-course"><span>Up next</span> {nextCourse.title}</p>}</div><aside className="learning-progress-card" aria-label="Overall lesson progress"><div className="learning-landscape"><img src="/images/great-wall-ink-wash.jpg" width="1536" height="1024" alt="Traditional Chinese ink-and-wash painting of the Great Wall winding through misty mountains" decoding="async" fetchPriority="high"/><span>Small steps. Lasting progress.</span></div><div className="learning-progress-summary"><p className="learning-eyebrow">Your journey so far</p>{loading ? <p role="status">Loading your progress…</p> : error || !known ? <><strong>Progress unavailable</strong><p>{error ? 'Refresh your learning space to try again.' : 'Some course progress couldn’t load. Your saved work hasn’t changed.'}</p></> : <><div className="learning-overall-value"><strong>{percent}%</strong><span>{totalCompleted} of {totalLessons} lessons completed</span></div><progress value={totalCompleted} max={totalLessons || 1} aria-label="Overall course completion"/><p>{totalCompleted ? 'Every completed lesson is another step forward.' : 'Complete your first lesson to see your progress grow.'}</p></>}</div></aside></section>
     {error && <div className="learning-feedback is-error" role="alert"><div><strong>We couldn’t load your courses</strong><p>{error}</p></div><button className="learning-button" onClick={reload}>Try again</button></div>}
@@ -48,5 +47,5 @@ export default function Dashboard({ user, onOpenCourse, onBrowse }) {
         {!visibleCourses.length ? <div className="learning-empty"><h3>No courses match this view</h3><p>Try another course name or change the progress filter.</p><button className="learning-button" onClick={() => { setFilter('all'); setQuery(''); }}>Clear filters</button></div> : <div className="learning-course-grid">{visibleCourses.map(course => {const state = stateOf(course); const value = progress[course._id]; const coursePercent = value?.total ? Math.round(value.completed / value.total * 100) : 0; return <button key={course._id} className={`learning-course-card is-${state}`} onClick={() => onOpenCourse(course, state === 'started' || state === 'new')} aria-label={`${actionLabels[state]}: ${course.title}`}><span className="learning-course-top">{course.image ? <img className="learning-course-cover" src={mediaUrl(course.image)} alt="" loading="lazy"/> : <span className="learning-course-icon"><LessonCategoryIcon category="vocabulary"/></span>}<span className={`learning-course-status is-${state}`}>{state === 'completed' && <span aria-hidden="true">✓ </span>}{statusLabels[state]}</span></span><span className="learning-course-level">{course.level || 'Chinese course'}</span><h3>{course.title}</h3>{course.description && <p className="learning-course-description">{course.description}</p>}<div className="learning-course-progress">{value ? <><div><span>{value.completed} of {value.total} lessons</span><strong>{coursePercent}%</strong></div><progress value={value.completed} max={value.total || 1} aria-label={`${course.title} completion`}/></> : <p>Progress couldn’t load. Open this course to try again.</p>}</div><span className="learning-course-action"><span>{actionLabels[state]}</span><span aria-hidden="true">{state === 'completed' ? '↻' : '→'}</span></span></button>})}</div>}
       </>}
     </section>
-  </main></>;
+  </main>;
 }

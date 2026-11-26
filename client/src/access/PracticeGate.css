@@ -1,5 +1,9 @@
 .practice-gate { position: relative; }
 .practice-gate-content { filter: grayscale(0.4) blur(1.5px); opacity: 0.55; pointer-events: none; user-select: none; }
+/* Unlocked (or still checking): the wrappers disappear from layout and the page looks normal. */
+.practice-gate.is-open, .practice-gate.is-open > .practice-gate-content { display: contents; }
+/* pointer-events and user-select are inherited, so the unlocked page must turn them back on. */
+.practice-gate.is-open > .practice-gate-content { pointer-events: auto; user-select: auto; filter: none; opacity: 1; }
 
 .practice-gate-panel {
   position: fixed;

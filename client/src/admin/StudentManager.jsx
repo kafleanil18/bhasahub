@@ -6,6 +6,7 @@ import StudentAccessDialog from './students/StudentAccessDialog';
 import { accessKind, activeCourses, daysUntil, studentRequest } from './students/studentApi';
 import './SubscriptionManager.css';
 import './StudentManager.css';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const filters = [
   { key: 'all', label: 'All students', hint: 'Every student account' },
@@ -33,6 +34,7 @@ export default function StudentManager({ onBack }) {
   const [plans, setPlans] = useState([]);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  useInitialLoad(loading, 'Loading students…');
   const [loadError, setLoadError] = useState('');
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState('all');

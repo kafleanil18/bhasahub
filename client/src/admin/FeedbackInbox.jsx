@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const API = window.API_BASE_URL + '/api/feedback';
 
 function FeedbackInbox({ onBack }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  useInitialLoad(loading, 'Loading feedback…');
   const token = localStorage.getItem('token');
 
   const load = useCallback(() => {

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 import Icon from '../components/Icon';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -10,6 +11,7 @@ function TestimonialManager({ onBack }) {
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  useInitialLoad(loading, 'Loading testimonials…');
 
   const load = useCallback(() => {
     fetch(`${API}/testimonials/all`, { headers: authHeaders })

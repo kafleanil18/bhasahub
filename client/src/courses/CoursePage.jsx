@@ -6,6 +6,7 @@ import CourseOverview from './CourseOverview';
 import LessonDetail from './LessonDetail';
 import { useLessons } from '../hooks/useLessons';
 import { useCourseAccess } from '../hooks/useCourseAccess';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -20,8 +21,10 @@ function CoursePage({ course, onBack, user }) {
 
   const [completedIds, setCompletedIds] = useState([]);
   const [progressError, setProgressError] = useState(null);
+  const [progressLoaded, setProgressLoaded] = useState(!token);
   const [completeError, setCompleteError] = useState(null);
   const [showAccessMsg, setShowAccessMsg] = useState(false);
+  useInitialLoad(loading || !accessChecked || !progressLoaded, lessonId ? 'Opening your lesson…' : 'Preparing your lessons…');
 
   const isAdmin = user && (user.role === 'admin' || user.role === 'superadmin');
 
@@ -33,7 +36,8 @@ function CoursePage({ course, onBack, user }) {
     })
       .then(res => res.json())
       .then(data => setCompletedIds(data.completedLessonIds || []))
-      .catch(() => setProgressError('Could not load your progress.'));
+      .catch(() => setProgressError('Could not load your progress.'))
+      .finally(() => setProgressLoaded(true));
   }, [course._id, token]);
 
   useEffect(() => {
@@ -77,7 +81,7 @@ function CoursePage({ course, onBack, user }) {
     }
   };
 
-  if (lessonId && (loading || !accessChecked)) return <div className="container" role="status">Loading lesson…</div>;
+  if (lessonId && (loading || !accessChecked)) return null;
   if (lessonId && (lessonsError || accessError)) return <section className="container" role="alert"><p>{lessonsError || accessError}</p><Link to={coursePath(course._id)}>Back to course</Link></section>;
   if (lessonId && !activeLesson && canOpenLessons) return <section className="container"><h1>Lesson not found</h1><Link to={coursePath(course._id)}>Back to course</Link></section>;
 

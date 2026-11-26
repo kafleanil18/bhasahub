@@ -37,10 +37,12 @@
       .ink-loader.is-fullscreen { position: fixed; inset: 0; z-index: 2000; min-height: 0; background: #faf6ec; }
       .dark .ink-loader { --ink-color: #efe7d8; }
       .dark .ink-loader.is-fullscreen { background: #1a1714; }
-      .ink-loader-mark { width: 92px; height: 92px; overflow: visible; animation: ink-turn 7.8s linear infinite; }
-      .ink-loader-mark path, .ink-loader-mark circle { stroke-dasharray: 1 1; stroke-dashoffset: 1; animation: ink-brush 2.6s cubic-bezier(.55,.06,.3,1) infinite; }
-      .ink-loader-mark .ink-drop { stroke: none; fill: currentColor; stroke-dasharray: none; animation: ink-drop 2.6s ease-out infinite; transform-box: fill-box; transform-origin: center; }
-      .ink-loader-words { display: grid; justify-items: center; line-height: 1; animation: ink-write 2.6s cubic-bezier(.55,.06,.3,1) infinite; }
+      .ink-loader-mark { width: 92px; height: 92px; overflow: visible; animation: ink-turn 7.8s linear var(--ink-turn-phase, 0s) infinite; }
+      .ink-loader-mark path, .ink-loader-mark circle { stroke-dasharray: 1 1; stroke-dashoffset: 1; animation: ink-brush 2.6s cubic-bezier(.55,.06,.3,1) var(--ink-phase, 0s) infinite; }
+      .ink-loader-mark .ink-drop { stroke: none; fill: currentColor; stroke-dasharray: none; animation: ink-drop 2.6s ease-out var(--ink-phase, 0s) infinite; transform-box: fill-box; transform-origin: center; }
+      .ink-loader-words { display: grid; justify-items: center; line-height: 1; animation: ink-write 2.6s cubic-bezier(.55,.06,.3,1) var(--ink-phase, 0s) infinite; }
+      /* Taking over from a loader that was just on screen: no second fade-in. */
+      .ink-loader.is-continuing { animation: none; opacity: 1; }
       .ink-loader-en { font: 400 34px/1.1 'Great Vibes', 'Brush Script MT', cursive; letter-spacing: .01em; }
       .ink-loader-zh { margin-top: 2px; font: 400 21px/1.2 'Ma Shan Zheng', 'Noto Serif SC', serif; letter-spacing: .28em; padding-left: .28em; opacity: .82; }
       .ink-loader-message { margin: 10px 0 0; color: var(--ink-color); opacity: .62; font: 500 14px/1.4 'Inter', system-ui, sans-serif; letter-spacing: .01em; text-align: center; }

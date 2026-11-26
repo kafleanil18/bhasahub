@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 import Icon from '../components/Icon';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -41,6 +42,7 @@ function AudioPlayer({ src, style, onPlay, onPlayStateChange }) {
 function TestTaker({ testId, onBack }) {
   const [test, setTest] = useState(null);
   const [loading, setLoading] = useState(true);
+  useInitialLoad(loading, 'Loading test…');
   const [loadError, setLoadError] = useState('');
   const [answers, setAnswers] = useState({});
   const [submitting, setSubmitting] = useState(false);

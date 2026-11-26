@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './StudentSignIns.css';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const today = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kathmandu', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 const time = value => new Date(value).toLocaleTimeString('en-US', { timeZone: 'Asia/Kathmandu', hour: 'numeric', minute: '2-digit', second: '2-digit' });
@@ -10,6 +11,7 @@ export default function StudentSignIns() {
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  useInitialLoad(loading);
   const [refresh, setRefresh] = useState(0);
   const [sort, setSort] = useState({ key: 'lastSignIn', direction: 'desc' });
   useEffect(() => {

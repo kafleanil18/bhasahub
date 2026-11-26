@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const API = `${window.API_BASE_URL}/api/settings/email-api`;
 async function request(path = '', body) {
@@ -18,6 +19,7 @@ export default function EmailApiSettings() {
   const [draft, setDraft] = useState(null);
   const [apiKey, setApiKey] = useState('');
   const [busy, setBusy] = useState('load');
+  useInitialLoad(busy === 'load');
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [retry, setRetry] = useState(0);

@@ -46,7 +46,13 @@ body { font-family: var(--font-body); font-size: var(--text-body); line-height: 
 ) { font-size: var(--text-body); line-height: 1.6; }
 
 /* Route gutters and page spacing. The exam PDF workspace keeps its wider layout. */
+/* Pages sit inside the page-load gate and, for practice tools, the practice gate. Both selectors keep
+   the original weight (one id, one class), so page-specific widths such as .cp-page still win. */
 #root .site-content > :where(
+  .container:not(.test-pdf-layout), .sentence-page, .listening-page,
+  .pinyin-table-page, .hsk-portal, .tmm-dashboard, .tmg-dashboard
+),
+#root .site-content :where(.page-load-gate, .practice-gate-content) > :where(
   .container:not(.test-pdf-layout), .sentence-page, .listening-page,
   .pinyin-table-page, .hsk-portal, .tmm-dashboard, .tmg-dashboard
 ) {

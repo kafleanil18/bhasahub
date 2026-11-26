@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 import Icon from '../components/Icon';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -14,6 +15,7 @@ function TeacherManager({ onBack }) {
   const [savedFeedback, setSavedFeedback] = useState({});
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  useInitialLoad(loading, 'Loading teachers…');
 
   const load = () => {
     fetch(`${API}/teachers`)

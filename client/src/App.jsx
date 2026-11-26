@@ -45,6 +45,9 @@ function AppContent() {
   const [showStudioTour, setShowStudioTour] = useState(false);
   const closeStudioTour = useCallback(() => setShowStudioTour(false), []);
   const [testimonials, setTestimonials] = useState([]);
+  // The home page shows placeholders, not "no courses / no reviews", until these first arrive.
+  const [coursesLoaded, setCoursesLoaded] = useState(false);
+  const [testimonialsLoaded, setTestimonialsLoaded] = useState(false);
   // Items that need a staff member's attention, grouped by type.
   const [attention, setAttention] = useState(NO_ATTENTION);
   const unreadFeedbackCount = attention.feedback.length;
@@ -94,7 +97,8 @@ function AppContent() {
     fetch(window.API_BASE_URL + '/api/courses')
       .then(res => res.json())
       .then(data => setCourses(Array.isArray(data) ? data : []))
-      .catch(() => setCourses([]));
+      .catch(() => setCourses([]))
+      .finally(() => setCoursesLoaded(true));
   };
 
   const loadAccess = () => {
@@ -116,7 +120,8 @@ function AppContent() {
     fetch(window.API_BASE_URL + '/api/testimonials')
       .then(res => res.json())
       .then(data => setTestimonials(Array.isArray(data) ? data : []))
-      .catch(() => setTestimonials([]));
+      .catch(() => setTestimonials([]))
+      .finally(() => setTestimonialsLoaded(true));
   };
 
   const loadMyAccess = () => {
@@ -228,8 +233,8 @@ function AppContent() {
   const filteredCourses = levelFilter === 'all' ? courses : courses.filter(course => getHskLevel(course) === levelFilter);
   const home = <main className="home-page">
     <HomeHero onContinueLearning={() => navigate('/continue')} onPinyinPractice={() => navigate('/practice/pinyin')} user={user} hasStartedCourse={Object.values(access).some(course => course.completed > 0)} onOpenPractice={openPractice} />
-    <HomeCourses filteredCourses={filteredCourses} hskLevels={hskLevels} levelFilter={levelFilter} onOpenCourse={openCourse} setLevelFilter={setLevelFilter} />
-    <HomeTestimonials openLogin={openLogin} scrollTestimonials={scrollTestimonials} setShowTestimonial={setShowTestimonial} testimonials={testimonials} testimonialsScrollRef={testimonialsScrollRef} user={user} />
+    <HomeCourses loaded={coursesLoaded} filteredCourses={filteredCourses} hskLevels={hskLevels} levelFilter={levelFilter} onOpenCourse={openCourse} setLevelFilter={setLevelFilter} />
+    <HomeTestimonials loaded={testimonialsLoaded} openLogin={openLogin} scrollTestimonials={scrollTestimonials} setShowTestimonial={setShowTestimonial} testimonials={testimonials} testimonialsScrollRef={testimonialsScrollRef} user={user} />
     <HomeFooter goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} onStartTour={user?.role === 'student' ? startStudioTour : undefined} />
   </main>;
   const sidebar = isSuperAdmin ? <>

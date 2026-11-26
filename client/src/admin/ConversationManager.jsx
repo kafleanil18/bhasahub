@@ -4,6 +4,7 @@ import SentenceRecorder from './SentenceRecorder';
 import { recordingExtension, MAX_RECORDING_BYTES } from './sentenceRecording';
 import { mediaUrl } from '../utils/mediaUrl';
 import './ConversationManager.css';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const API = `${window.API_BASE_URL}/api/settings`;
 const tokenHeaders = () => ({ Authorization: `Bearer ${localStorage.getItem('token') || ''}`, 'Content-Type': 'application/json' });
@@ -16,6 +17,7 @@ export default function ConversationManager({ onBack }) {
   const [baseline, setBaseline] = useState(() => clone(bookLessons[0]));
   const [isNewLesson, setIsNewLesson] = useState(false);
   const [loading, setLoading] = useState(true);
+  useInitialLoad(loading, 'Loading conversation lessons…');
   const [saving, setSaving] = useState(false);
   const [recordingTurn, setRecordingTurn] = useState(null);
   const [uploadingTurn, setUploadingTurn] = useState('');

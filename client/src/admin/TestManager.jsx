@@ -3,11 +3,13 @@ import FeaturedPaper from '../tests/hsk1/FeaturedPaper';
 import usePracticePapers from '../tests/hsk1/usePracticePapers';
 import PracticePaperEditor from './PracticePaperEditor';
 import './TestManager.css';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 const auth = () => ({ Authorization: `Bearer ${localStorage.getItem('token') || ''}` });
 
 export default function TestManager({ onBack, onPreviewTest, user }) {
   const { papers, error, loading, reload } = usePracticePapers();
+  useInitialLoad(loading, 'Loading practice papers…');
   const [editor, setEditor] = useState(null);
   const [editError, setEditError] = useState('');
   const [opening, setOpening] = useState(false);

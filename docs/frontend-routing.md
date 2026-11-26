@@ -21,6 +21,8 @@ React state. Route components remain lazy loaded.
 
 Route components are lazy loaded. While a page's code loads, `App.jsx` shows the ink loader (`InkLoader`) in the page area and keeps the header in place. The very first load shows the same loader from `client/index.html`.
 
+Pages that wait for server data report it with `useInitialLoad()` from `navigation/pageLoad.js`. The public, student and admin layouts wrap their pages in `PageLoadGate`, which shows a single ink loader and keeps the page hidden until all of its first loads finish, or 12 seconds pass. `PracticeGate` reports its access check the same way, so a practice page and its access check share one loader. A load that starts after the page is shown keeps its own loading state.
+
 `Layouts.jsx` separates public, authentication, student, and admin route trees.
 `RequireSession` redirects anonymous visitors to sign-in with an internal `next`
 parameter. The destination survives auth-page switches and refreshes. Role guards

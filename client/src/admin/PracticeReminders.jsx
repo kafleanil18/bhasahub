@@ -9,6 +9,7 @@ import { reminderTemplates } from './reminderTemplates';
 import Icon from '../components/Icon';
 import './EmailSettings.css';
 import './PracticeReminders.css';
+import { useInitialLoad } from '../navigation/pageLoad';
 
 // Quick recipient groups shown in the send card. `custom` means students picked in the table below.
 const groups = [
@@ -21,6 +22,7 @@ const groups = [
 export default function PracticeReminders({ onBack }) {
   const { audience, campaigns, loading, error: loadError, audienceError, refresh } = usePracticeReminders();
   const studentData = useReminderStudents();
+  useInitialLoad(loading || studentData.loading, 'Loading students…');
   const [templateId, setTemplateId] = useState(reminderTemplates[0].id);
   const [group, setGroup] = useState(null);
   const [selectedIds, setSelectedIds] = useState([]);
