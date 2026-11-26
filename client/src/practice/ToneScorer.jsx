@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Icon from '../components/Icon';
+import { playMandarin } from './naturalVoice';
 
 const TONE_PRACTICE_SET = [
   {
@@ -58,15 +59,9 @@ function ToneScorer({ onBack }) {
 
   const currentWord = TONE_PRACTICE_SET[selectedWordIndex];
 
-  // Play Native Audio using Web Speech API
+  // Play the model pronunciation (Azure voice when set up, else the browser voice)
   const playNativeAudio = useCallback(() => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const ut = new SpeechSynthesisUtterance(currentWord.pinyin);
-      ut.lang = 'zh-CN';
-      ut.rate = 0.85;
-      window.speechSynthesis.speak(ut);
-    }
+    void playMandarin(currentWord.character, { rate: 0.85 });
   }, [currentWord]);
 
   // Clean up audio URL on unmount or word change

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import Icon from '../components/Icon';
+import { playMandarin } from '../practice/naturalVoice';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -43,14 +44,12 @@ function SrsReview({ lessonId, language, token, onExit }) {
     if (url) {
       const fullUrl = (url.startsWith('http://') || url.startsWith('https://')) ? url : `${window.API_BASE_URL || ''}${url.startsWith('/') ? '' : '/'}${url}`;
       new Audio(fullUrl).play().catch(() => {});
+    } else if (language === 'chinese') {
+      void playMandarin(card.word);
     } else if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(card.word);
-      if (language === 'chinese') {
-        utterance.lang = 'zh-CN';
-      } else {
-        utterance.lang = 'en-US';
-      }
+      utterance.lang = 'en-US';
       window.speechSynthesis.speak(utterance);
     }
   }, [card, language]);

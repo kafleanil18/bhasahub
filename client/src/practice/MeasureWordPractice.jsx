@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { MEASURE_GROUPS, MEASURE_TOPICS, MEASURE_QUESTIONS, measureRound } from './measureQuiz';
-import useChineseVoice, { voiceKey } from './useChineseVoice';
+import useMandarinSpeaker from './useMandarinSpeaker';
+import VoiceSwitch from './VoiceSwitch';
 import SentenceText, { PinyinText } from './SentenceText';
 import MeasureSession from './MeasureSession';
 import './SentencePractice.css';
@@ -20,7 +21,7 @@ function PhraseArt({ id }) {
 export default function MeasureWordPractice({ onBack }) {
   const [session, setSession] = useState(null);
   const [sessionKey, setSessionKey] = useState(0);
-  const { voice, voices, selected, setSelected } = useChineseVoice();
+  const speaker = useMandarinSpeaker();
   const topic = session && (session.topic === 'mixed' ? { title: 'Mixed' } : MEASURE_TOPICS.find(item => item.id === session.topic));
   const start = id => { setSession({ topic: id, questions: measureRound(id) }); setSessionKey(value => value + 1); };
 
@@ -30,7 +31,7 @@ export default function MeasureWordPractice({ onBack }) {
       {topic && <span className="measure-chip">{topic.title}</span>}
     </div>
     <h1 id="measure-title" className={session ? 'tone-visually-hidden' : 'measure-title'}>Measure word practice</h1>
-    {session ? <MeasureSession key={sessionKey} initialQuestions={session.questions} voice={voice} onRestart={() => start(session.topic)} onExit={() => setSession(null)} /> : <>
+    {session ? <MeasureSession key={sessionKey} initialQuestions={session.questions} speaker={speaker.available ? speaker : null} onRestart={() => start(session.topic)} onExit={() => setSession(null)} /> : <>
       <p className="measure-intro">Pick the word that joins a number to the thing you count.</p>
       <button type="button" className="measure-card measure-card-mixed" onClick={() => start('mixed')} aria-label="Mixed practice" aria-describedby="measure-card-mixed">
         <span className="measure-card-art"><PhraseArt id="mixed" /></span>
@@ -47,9 +48,7 @@ export default function MeasureWordPractice({ onBack }) {
           return <article key={group.word}><h3><PinyinText text={group.word} readings={[group.pinyin]} /></h3><div><strong>{group.meaning}</strong><p><SentenceText sentence={example} /></p><p className="measure-reference-english">{example.english}</p></div></article>;
         })}</div>
       </details>
-      {voices.length > 1 && <details className="measure-voice"><summary>Voice: {voice?.name}</summary>
-        <label>Chinese voice for answer playback<select value={selected} onChange={event => setSelected(event.target.value)}>{voices.map(option => <option key={voiceKey(option)} value={voiceKey(option)}>{option.name} ({option.lang})</option>)}</select></label>
-      </details>}
+      <VoiceSwitch speaker={speaker}/>
     </>}
   </main>;
 }

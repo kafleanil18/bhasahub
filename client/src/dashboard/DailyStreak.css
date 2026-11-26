@@ -1,0 +1,58 @@
+.streak-card { --flame: #d9480f; --done: #1f7a45; display: grid; grid-template-columns: minmax(0, 1.2fr) auto minmax(0, 1.3fr); align-items: center; gap: 28px; margin: -12px 0 32px; padding: 22px 26px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
+:root.dark .streak-card { --flame: #ff8a4c; --done: #4cc082; }
+.streak-card.is-loading { display: block; color: var(--mist); }
+.streak-card.is-at-risk { border-color: color-mix(in srgb, var(--flame) 45%, var(--line)); }
+.streak-card.is-done { border-color: color-mix(in srgb, var(--done) 45%, var(--line)); }
+.streak-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.streak-main { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.streak-flame { display: grid; flex-shrink: 0; place-items: center; width: 58px; height: 58px; border-radius: 16px; background: color-mix(in srgb, var(--mist) 12%, var(--card)); color: var(--mist); }
+.streak-flame.is-lit { background: color-mix(in srgb, var(--flame) 14%, var(--card)); color: var(--flame); }
+.streak-flame.is-lit svg { fill: color-mix(in srgb, var(--flame) 30%, transparent); }
+#root .streak-card h2 { margin: 0; font-size: 22px !important; font-weight: 750; line-height: 1.2; }
+.streak-count { font-variant-numeric: tabular-nums; }
+.streak-message { margin: 4px 0 0; font-size: 15px; line-height: 1.45; }
+.streak-card.is-at-risk .streak-message { color: var(--flame); font-weight: 600; }
+.streak-best { margin: 4px 0 0; color: var(--mist); font-size: 13px; }
+
+.streak-ring { position: relative; width: 92px; height: 92px; }
+.streak-ring > svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.streak-ring > svg circle { fill: none; stroke-width: 8; }
+.streak-ring-track { stroke: color-mix(in srgb, var(--line) 80%, transparent); }
+.streak-ring-fill { stroke: var(--flame); stroke-linecap: round; transition: stroke-dashoffset .6s cubic-bezier(.2,.8,.2,1); }
+.streak-card.is-done .streak-ring-fill { stroke: var(--done); }
+.streak-ring > span { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
+.streak-ring b { font-size: 24px; font-variant-numeric: tabular-nums; }
+.streak-ring small { margin-top: 3px; color: var(--mist); font-size: 11px; font-weight: 600; }
+.streak-card.is-done .streak-ring > span { color: var(--done); }
+
+.streak-side { display: grid; gap: 14px; min-width: 0; }
+.streak-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin: 0; padding: 0; list-style: none; }
+.streak-week li { position: relative; display: grid; justify-items: center; gap: 5px; color: var(--mist); font-size: 12px; font-weight: 700; }
+.streak-dot { display: grid; place-items: center; width: 26px; height: 26px; border: 2px solid var(--line); border-radius: 50%; color: #fff; }
+.streak-week li.is-practised .streak-dot { border-color: var(--flame); background: color-mix(in srgb, var(--flame) 22%, var(--card)); }
+.streak-week li.is-goal .streak-dot { border-color: var(--flame); background: var(--flame); }
+.streak-week li.is-today { color: var(--ink); }
+.streak-week li.is-today .streak-dot { box-shadow: 0 0 0 3px color-mix(in srgb, var(--flame) 25%, transparent); }
+:root.dark .streak-week li.is-goal .streak-dot { color: #1a1714; }
+
+.streak-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.streak-goal { display: inline-flex; align-items: center; gap: 8px; color: var(--mist); font-size: 13px; font-weight: 600; }
+.streak-goal select { min-height: 36px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); font: inherit; font-weight: 700; }
+.streak-go { display: inline-flex; align-items: center; min-height: 36px; padding: 6px 14px; border-radius: 8px; background: var(--accent-red, #a92316); color: #fff; font-size: 14px; font-weight: 700; text-decoration: none; }
+.streak-go:hover, .streak-go:focus-visible { filter: brightness(1.08); }
+.streak-link { border: 0; background: none; padding: 0; color: var(--accent-red-text, #a92316); font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
+.streak-error { margin: 0; color: #c0392b; font-size: 13px; }
+
+@media (max-width: 900px) {
+  .streak-card { grid-template-columns: minmax(0, 1fr) auto; }
+  .streak-side { grid-column: 1 / -1; }
+}
+@media (max-width: 480px) {
+  .streak-card { gap: 18px; margin-top: -22px; padding: 18px 16px; }
+  .streak-flame { width: 48px; height: 48px; }
+  #root .streak-card h2 { font-size: 19px !important; }
+  .streak-ring { width: 78px; height: 78px; }
+  .streak-ring b { font-size: 20px; }
+}
+@media (prefers-reduced-motion: reduce) { .streak-ring-fill { transition: none; } }

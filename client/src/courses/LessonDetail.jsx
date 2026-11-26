@@ -5,6 +5,7 @@ import Quiz from './Quiz';
 import SrsReview from './SrsReview';
 import { mediaUrl } from '../utils/mediaUrl';
 import Icon from '../components/Icon';
+import { playMandarin } from '../practice/naturalVoice';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
@@ -37,14 +38,12 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, co
     if (url) {
       const fullUrl = (url.startsWith('http://') || url.startsWith('https://')) ? url : `${SERVER || ''}${url.startsWith('/') ? '' : '/'}${url}`;
       new Audio(fullUrl).play().catch(() => {});
+    } else if (course?.language === 'chinese') {
+      void playMandarin(currentWord.word);
     } else if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(currentWord.word);
-      if (course?.language === 'chinese') {
-        utterance.lang = 'zh-CN';
-      } else {
-        utterance.lang = 'en-US';
-      }
+      utterance.lang = 'en-US';
       window.speechSynthesis.speak(utterance);
     }
   }, [words, flashIndex, course?.language]);

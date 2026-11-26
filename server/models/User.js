@@ -18,6 +18,8 @@ const userSchema = new mongoose.Schema(
     // Missing on legacy accounts; only new local registrations are explicitly unverified.
     emailVerified: { type: Boolean },
     practiceReminderOptOut: { type: Boolean, default: false },
+    // Minutes of learning a day the student aims for (daily goal ring on the dashboard).
+    dailyGoalMinutes: { type: Number, enum: [5, 10, 15, 20, 30], default: 10 },
     emailVerificationHash: { type: String },
     emailVerificationExpires: { type: Date },
     emailVerificationSentAt: { type: Date },

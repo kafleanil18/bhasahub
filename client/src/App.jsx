@@ -13,6 +13,8 @@ import './home.css';
 import './flag-theme.css';
 import { forgetPushDevice } from './pwa/usePushReminders';
 import InkLoader from './components/InkLoader';
+import usePracticeTimer from './dashboard/practiceTimer';
+import { clearIdleSession, markActive, clearIdleSignOutNotice, hasIdleSignOutNotice, rememberIdleSignOut, useIdleSignOut } from './auth/idleSession';
 
 const NO_ATTENTION = { feedback: [], testimonials: [], access: [], plans: [] };
 const ChangePassword = lazy(() => import('./auth/ChangePassword'));
@@ -21,6 +23,8 @@ const TestAccessPrompt = lazy(() => import('./components/TestAccessPrompt'));
 const StudioTour = lazy(() => import('./home/StudioTour'));
 
 function readStoredUser() {
+  // A sign-in left unused for two hours ends before anything renders.
+  clearIdleSession();
   try {
     if (!localStorage.getItem('token')) return null;
     return JSON.parse(localStorage.getItem('user') || 'null');
@@ -32,6 +36,7 @@ function AppContent() {
   const location = useLocation();
   const [serverOk, setServerOk] = useState(null);
   const [user, setUser] = useState(readStoredUser);
+  const [idleNotice, setIdleNotice] = useState(hasIdleSignOutNotice);
   const [courses, setCourses] = useState([]);
   const [access, setAccess] = useState({});
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -218,9 +223,11 @@ function AppContent() {
     navigate(homePath(user));
     loadCourses(); loadAccess(); loadTestimonials(); loadMyAccess(); loadAdminNotificationCounts();
   };
-  const handleLogout = () => {
+  const handleLogout = ({ idle = false } = {}) => {
     void forgetPushDevice(localStorage.getItem('token'));
-    localStorage.removeItem('token'); localStorage.removeItem('user');
+    localStorage.removeItem('token'); localStorage.removeItem('user'); localStorage.removeItem('lastActivityAt');
+    if (idle) rememberIdleSignOut();
+    setIdleNotice(idle);
     // Commit the session change and destination together so route guards never
     // see a signed-out user on the previous protected page.
     startTransition(() => {
@@ -228,10 +235,14 @@ function AppContent() {
       setShowTestAccessPrompt(false);
       setShowStudioTour(false);
       setShowChangePassword(false);
-      navigate('/', { replace: true });
+      // After an idle sign-out, signing in again returns to the same page.
+      navigate(idle ? signInPath(safeReturnPath(location.pathname + location.search)) : '/', { replace: true });
     });
   };
+  useIdleSignOut(!!user, () => handleLogout({ idle: true }));
+  usePracticeTimer(user?.role === 'student', location.pathname);
   const handleLogin = loggedInUser => {
+    markActive(); setIdleNotice(false); clearIdleSignOutNotice();
     const next = new URLSearchParams(location.search).get('next');
     startTransition(() => {
       setUser(loggedInUser);
@@ -278,6 +289,10 @@ function AppContent() {
     {showTestimonial && <TestimonialModal user={user} onClose={() => { setShowTestimonial(false); loadTestimonials(); }} />}
     <SiteHeader adminSidebarOpen={adminSidebarOpen} attention={attention} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} hideForAuth={['/sign-in', '/register', '/reset-password'].includes(location.pathname)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={value => { if (!adminArea) navigate('/admin'); setAdminSidebarOpen(value); }} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} onNavigate={navigate} setShowChangePassword={setShowChangePassword} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
     <StudioSaveStatus />
+    {idleNotice && !user && <div className="idle-notice" role="status">
+      <span>You were signed out after 2 hours without activity. Please sign in again.</span>
+      <button type="button" aria-label="Dismiss" onClick={() => { setIdleNotice(false); clearIdleSignOutNotice(); }}>×</button>
+    </div>}
     <Suspense fallback={<InkLoader />}><AppRoutes user={user} home={home} sidebar={sidebar} onHome={goHome} onLogin={handleLogin} openLogin={openLogin} /></Suspense>
     {location.pathname !== '/' && <div className="home-page app-footer"><HomeFooter goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} onStartTour={user?.role === 'student' ? startStudioTour : undefined} /></div>}
   </div>;

@@ -52,6 +52,9 @@ const paths = {
   seedling: <><path d="M12 21v-9"/><path d="M12 12C12 8 9 5 4 5c0 4 3 7 8 7zM12 10c0-3 2.5-6 8-6 0 4-3 6.5-8 6.5"/></>,
   sparkle: <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>,
   pencil: <><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></>,
+  // A flame: the daily practice streak.
+  flame: <path d="M12 22c4 0 7-2.8 7-7 0-3.5-2.2-5.6-3.6-7.4-.4 1.9-1.3 3.1-2.6 3.6C13 7.6 11.6 4.6 9 2c.3 3.4-1.4 5.3-2.8 7.1C5 10.6 5 12.4 5 15c0 4.2 3 7 7 7z"/>,
+  check: <path d="m5 12.5 4.5 4.5L19 7.5"/>,
 };
 
 export default function Icon({ name, size = '1.1em', label, className = '', strokeWidth = 1.8 }) {

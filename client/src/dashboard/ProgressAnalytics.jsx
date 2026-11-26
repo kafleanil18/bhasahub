@@ -5,6 +5,7 @@ import useStudioActivity from './useStudioActivity';
 import DailyReminderCard from './DailyReminderCard';
 import { useInitialLoad } from '../navigation/pageLoad';
 import Icon from '../components/Icon';
+import { playMandarin } from '../practice/naturalVoice';
 
 import RefreshButton from '../components/RefreshButton';
 const API = window.API_BASE_URL + '/api';
@@ -160,6 +161,8 @@ function ProgressAnalytics({ user, onBack }) {
         ? wordObj.audioUrl
         : `${window.API_BASE_URL || ''}${wordObj.audioUrl.startsWith('/') ? '' : '/'}${wordObj.audioUrl}`;
       new Audio(fullUrl).play().catch(() => {});
+    } else if (isChineseWord(wordObj.word)) {
+      void playMandarin(wordObj.word);
     } else if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const ut = new SpeechSynthesisUtterance(wordObj.word);

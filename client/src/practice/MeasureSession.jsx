@@ -1,5 +1,5 @@
 import { recordStudioActivity } from './recordStudioActivity';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MEASURE_GROUPS, isCorrectMeasure } from './measureQuiz';
 import { shuffleSentences } from './sentenceQuiz';
 import SentenceText, { PinyinText } from './SentenceText';
@@ -8,26 +8,8 @@ import { PlayButton, ProgressDots, ScoreRing, SlowButton } from './ToneVisuals';
 
 const groupFor = word => MEASURE_GROUPS.find(group => group.word === word);
 
-// useNumberSpeech plays through a speaker with speak() and stop(). This page lets the student pick
-// one of the device's voices, so wrap that voice in a speaker.
-function deviceSpeaker(voice) {
-  if (!voice) return null;
-  return {
-    speak(text, { rate = 1, onStart, onEnd, onError } = {}) {
-      if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) return false;
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.voice = voice; utterance.lang = voice.lang || 'zh-CN'; utterance.rate = rate;
-      utterance.onstart = () => onStart?.();
-      utterance.onend = () => onEnd?.();
-      utterance.onerror = event => { if (!['interrupted', 'canceled'].includes(event.error)) onError?.(event.error); };
-      window.speechSynthesis.speak(utterance);
-      return true;
-    },
-    stop() { window.speechSynthesis?.cancel(); },
-  };
-}
-
-export default function MeasureSession({ initialQuestions, voice, onRestart, onExit }) {
+// speaker is the page's Mandarin speaker (female or male voice), or null when nothing can speak.
+export default function MeasureSession({ initialQuestions, speaker, onRestart, onExit }) {
   const [questions, setQuestions] = useState(initialQuestions);
   const [index, setIndex] = useState(0);
   const [selection, setSelection] = useState(null);
@@ -36,7 +18,6 @@ export default function MeasureSession({ initialQuestions, voice, onRestart, onE
   const [finished, setFinished] = useState(false);
   const lockedRef = useRef(false), titleRef = useRef(null), nextRef = useRef(null);
   const question = questions[index];
-  const speaker = useMemo(() => deviceSpeaker(voice), [voice]);
   const { play, reset, error, playing } = useNumberSpeech(speaker);
   const missed = results.filter(result => !result.correct);
   const answered = selection !== null;
@@ -52,7 +33,7 @@ export default function MeasureSession({ initialQuestions, voice, onRestart, onE
     setSelection(word);
     setStatuses(previous => { const copy = [...previous]; copy[index] = right ? 'correct' : 'wrong'; return copy; });
     setResults(previous => [...previous, { question, selected: word, correct: right }]);
-    if (voice) play(question.chinese);
+    if (speaker) play(question.chinese);
   }
   function next() {
     reset();
@@ -105,7 +86,7 @@ export default function MeasureSession({ initialQuestions, voice, onRestart, onE
     {answered && <>
       <div className={`measure-feedback ${correct ? 'correct' : 'incorrect'}`} role="status">
         <div className="measure-feedback-head"><span className="tone-feedback-icon" aria-hidden="true">{correct ? '✓' : '✕'}</span><h3>{correct ? 'Correct!' : `Use ${question.measure} here`}</h3>
-          {voice && <span className="measure-listen"><PlayButton playing={playing} onClick={() => play(question.chinese)} label="Listen to the phrase" /><SlowButton onClick={() => play(question.chinese, 0.75)} /></span>}</div>
+          {speaker && <span className="measure-listen"><PlayButton playing={playing} onClick={() => play(question.chinese)} label="Listen to the phrase" /><SlowButton onClick={() => play(question.chinese, 0.75)} /></span>}</div>
         <p>{question.explanation}</p>
       </div>
       {error && <p className="tone-alert" role="alert">Audio could not play. You can replay it or keep going.</p>}
