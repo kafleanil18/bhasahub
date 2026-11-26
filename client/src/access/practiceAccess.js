@@ -6,18 +6,28 @@ export const isStaff = user => ['admin', 'superadmin'].includes(user?.role);
 export const FREE_ACCESS_DAYS = 7;
 // Free (tests-scope) access lasts a week from approval; older approvals have no end date.
 export const freeAccessLive = row => row.status === 'approved' && (!row.expiresAt || new Date(row.expiresAt).getTime() > Date.now());
-const approvalLive = row => row.status === 'approved' && (row.scope !== 'tests' || freeAccessLive(row));
+// A row from /api/subscriptions/my that hasn't ended: a course subscription, or a course an active plan covers.
+const subscriptionLive = row => new Date(row?.expiresAt).getTime() > Date.now();
 
-// The student's practice status from their access requests.
-// loading | approved | pending | expired (free week used up) | denied | none | signed-out
-export function practiceStatus(requests) {
-  if (requests.some(approvalLive)) return 'approved';
+/*
+ * The student's practice status. The practice studio and every mock test are open during a free
+ * week, an active plan or an active course subscription; the server's hasTestAccess follows the
+ * same rule. loading | approved | pending | expired (free week used up) | denied | none | signed-out
+ */
+export function practiceStatus(requests, subscriptions = []) {
+  if (subscriptions.some(subscriptionLive) || requests.some(row => row.scope === 'tests' && freeAccessLive(row))) return 'approved';
   if (requests.some(row => row.status === 'pending')) return 'pending';
   if (requests.some(row => row.scope === 'tests' && row.status === 'approved')) return 'expired';
   return requests.some(row => row.scope === 'tests' && row.status === 'denied') ? 'denied' : 'none';
 }
 
-// A student may practise while any of their access requests (course, or a live free week) is approved.
+const getJson = path => fetch(`${window.API_BASE_URL}/api${path}`, { headers: authHeaders() })
+  .then(res => { if (!res.ok) throw new Error(); return res.json(); });
+
+// Loads the student's access requests and subscriptions and works out their practice status.
+export const loadPracticeStatus = () => Promise.all([getJson('/access-requests/my'), getJson('/subscriptions/my')])
+  .then(([requests, subscriptions]) => practiceStatus(Array.isArray(requests) ? requests : [], Array.isArray(subscriptions) ? subscriptions : []));
+
 export function usePracticeAccess(user) {
   const signedIn = !!user && !!localStorage.getItem('token');
   const [status, setStatus] = useState(() => isStaff(user) ? 'approved' : signedIn ? 'loading' : 'signed-out');
@@ -27,12 +37,8 @@ export function usePracticeAccess(user) {
     if (!signedIn) return setStatus('signed-out');
     let active = true;
     setStatus('loading');
-    const check = () => fetch(`${window.API_BASE_URL}/api/access-requests/my`, { headers: authHeaders() })
-      .then(res => { if (!res.ok) throw new Error(); return res.json(); })
-      .then(data => {
-        if (!active) return;
-        setStatus(practiceStatus(Array.isArray(data) ? data : []));
-      })
+    const check = () => loadPracticeStatus()
+      .then(next => { if (active) setStatus(next); })
       // If the check fails, keep the page usable rather than locking a student out by mistake.
       .catch(() => { if (active) setStatus('approved'); });
     void check();

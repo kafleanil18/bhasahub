@@ -6,6 +6,7 @@ import { NUMBER_QUESTIONS } from '../practice/numberQuiz';
 import { bookLessons } from '../practice/conversationLessons';
 import './StudioAnalytics.css';
 
+import RefreshButton from '../components/RefreshButton';
 const studios = {
   pinyin: 'Pinyin & tones', tones: 'Tone listening', trace: 'Trace characters', listening: 'Listening practice', sentences: 'Sentence builder',
   measures: 'Measure words', numbers: 'Everyday numbers', dictation: 'Listening dictation', conversation: 'Conversation',
@@ -69,7 +70,7 @@ export default function StudioAnalytics({ activity }) {
   const data = state.data;
   return <section className="studio-analytics" aria-labelledby="studio-analytics-title">
     <div className="analytics-course-progress-heading"><div><span className="dash-eyebrow">YOUR PRACTICE STUDIO</span><h2 id="studio-analytics-title">Nine skills. Every practice counts.</h2></div></div>
-    {state.loading ? <p role="status">Loading studio activity and test completions…</p> : state.error ? <div role="alert"><p>Studio analytics couldn’t load. Your saved work hasn’t changed.</p><button className="btn-primary" onClick={retry}>Retry studio analytics</button></div> : <>
+    {state.loading ? <p role="status">Loading studio activity and test completions…</p> : state.error ? <div role="alert"><p>Studio analytics couldn’t load. Your saved work hasn’t changed.</p><RefreshButton onClick={retry}>Retry studio analytics</RefreshButton></div> : <>
       {notice && <p role="status">{notice}</p>}
       {resetError && <p role="alert">{resetError}</p>}
       <div className="studio-analytics-grid">{Object.entries(studios).map(([id, title]) => {

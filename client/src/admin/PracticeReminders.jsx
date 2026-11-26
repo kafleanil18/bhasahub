@@ -11,6 +11,7 @@ import './EmailSettings.css';
 import './PracticeReminders.css';
 import { useInitialLoad } from '../navigation/pageLoad';
 
+import RefreshButton from '../components/RefreshButton';
 // Quick recipient groups shown in the send card. `custom` means students picked in the table below.
 const groups = [
   { key: 'all', label: 'All eligible students' },
@@ -88,7 +89,7 @@ export default function PracticeReminders({ onBack }) {
   return <section className="container email-settings practice-reminders" aria-labelledby="practice-reminders-title">
     <button className="email-back" disabled={Boolean(busy)} onClick={onBack}>← Back to control center</button>
     <div className="email-heading"><div><h1 id="practice-reminders-title">Practice reminders</h1><p>Pick a template, choose who gets it, and send.</p></div><Link to="/admin/settings/email">Email settings →</Link></div>
-    {loadError && <div className="email-message email-error" role="alert">{loadError} <button className="email-button" onClick={refresh}>Refresh</button></div>}
+    {loadError && <div className="email-message email-error" role="alert">{loadError} <RefreshButton onClick={refresh}>Refresh</RefreshButton></div>}
     {audience && !audience.emailConfigured && <div className="email-message email-error" role="alert">Email isn’t set up yet, so reminders can’t be sent. <Link to="/admin/settings/email">Open Email settings</Link></div>}
     {error && !preview && <div className="email-message email-error" role="alert">{error}</div>}
     {notice && <div className="email-message" role="status">{notice}</div>}
@@ -125,7 +126,7 @@ export default function PracticeReminders({ onBack }) {
       </div>
     </form>
 
-    <section className="reminder-history" aria-labelledby="reminder-history-title"><div className="reminder-history-heading"><h2 id="reminder-history-title">Recent reminders</h2><button className="email-button" onClick={refresh}>Refresh progress</button></div>
+    <section className="reminder-history" aria-labelledby="reminder-history-title"><div className="reminder-history-heading"><h2 id="reminder-history-title">Recent reminders</h2><RefreshButton onClick={refresh}>Refresh progress</RefreshButton></div>
       {loading && <p role="status">Loading…</p>}
       {!loading && !campaigns.length && <p className="reminder-muted">No reminders sent yet.</p>}
       <ul>{(showAllHistory ? campaigns : campaigns.slice(0, 5)).map(campaign => <li className="reminder-campaign" key={campaign.id}><div><h3>{campaign.subject}</h3><span>{new Date(campaign.createdAt).toLocaleString()}</span></div><strong>{campaign.complete ? 'Finished' : 'Sending…'}</strong><p role="status">{campaign.counts.sent} sent · {campaign.counts.failed} failed · {campaign.counts.skipped} skipped · {campaign.counts.pending + campaign.counts.sending} remaining{campaign.counts.uncertain ? ` · ${campaign.counts.uncertain} unconfirmed` : ''}</p>{campaign.counts.failed > 0 && <p className="email-footnote">Some emails could not be sent. Check Email settings and your provider before sending another reminder.</p>}{campaign.counts.uncertain > 0 && <p className="email-footnote">Some sends were interrupted and could not be confirmed. They will not be sent again automatically.</p>}</li>)}</ul>

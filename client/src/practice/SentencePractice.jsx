@@ -7,6 +7,7 @@ import './SentenceBuilder.css';
 import Icon from '../components/Icon';
 import { useInitialLoad } from '../navigation/pageLoad';
 
+import RefreshButton from '../components/RefreshButton';
 const COLLAPSED_TOPICS = 8;
 
 function readProgress(key) {
@@ -75,7 +76,7 @@ export default function SentencePractice({ user, onBack }) {
           <p>I am a student.</p>
         </div>
       </div>}
-    {error ? <div className="sentence-card" role="alert"><p>{error}</p><button className="sentence-primary" onClick={reload}>Try again</button></div> : !catalog ? <p role="status">Loading sentences…</p> : session ? <SentenceSession initialSentences={session} onExit={() => setSession(null)} onMastered={markMastered} /> : <>
+    {error ? <div className="sentence-card" role="alert"><p>{error}</p><RefreshButton onClick={reload}>Try again</RefreshButton></div> : !catalog ? <p role="status">Loading sentences…</p> : session ? <SentenceSession initialSentences={session} onExit={() => setSession(null)} onMastered={markMastered} /> : <>
       <div className="sentence-overview sb-overview">
         <div><strong>{catalog.sentences.length}</strong><span>sentences to build</span></div>
         <div><strong>{catalog.topics.length}</strong><span>everyday topics</span></div>

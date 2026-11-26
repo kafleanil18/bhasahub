@@ -9,6 +9,7 @@ import './SubscriptionManager.css';
 import './SentenceAudioManager.css';
 import { useInitialLoad } from '../navigation/pageLoad';
 
+import RefreshButton from '../components/RefreshButton';
 const API = () => `${window.API_BASE_URL}/api/tone-practice/pairs`;
 const ruleLabels = { third: 'Two 3rd tones', bu: '不 tone change', yi: '一 tone change' };
 
@@ -129,7 +130,7 @@ export default function TonePairAudioManager({ onBack }) {
     <input ref={fileInputRef} type="file" accept=".mp3,.m4a,.wav,.ogg,.webm,audio/*" hidden onChange={uploadFile} />
     {error && !removingPair && !deletingPair && <div className="access-feedback is-error" role="alert"><span>{error}</span><button className="access-link" onClick={() => setError('')}>Dismiss</button></div>}
     {message && <div className="access-feedback is-success" role="status"><span>{message}</span><button className="access-link" onClick={() => setMessage('')} aria-label="Dismiss success message">Dismiss</button></div>}
-    {loadError ? <div className="access-feedback is-error" role="alert"><p>{loadError}</p><button className="access-button" onClick={() => load()}>Retry loading</button></div> : !pairs ? <div className="access-loading" role="status">Loading tone pair words…</div> : <>
+    {loadError ? <div className="access-feedback is-error" role="alert"><p>{loadError}</p><RefreshButton onClick={() => load()}>Retry loading</RefreshButton></div> : !pairs ? <div className="access-loading" role="status">Loading tone pair words…</div> : <>
       <div className="audio-library-progress"><div><strong>{recorded} of {all.length} words recorded</strong><span>{recorded < all.length ? `${all.length - recorded} still use the device voice.` : 'Every word has your recording.'}</span></div><div><span>{all.length ? Math.round(recorded / all.length * 100) : 0}% complete</span><progress value={recorded} max={all.length || 1} aria-label="Tone pair recording completion"/></div></div>
       <section className="access-workspace" ref={workspaceRef} aria-labelledby="tone-pair-library-title">
         <div className="access-list-heading"><div><h2 id="tone-pair-library-title">Manage word recordings</h2><p>Speak the tones shown: they are the spoken tones, after any tone change.</p></div></div>

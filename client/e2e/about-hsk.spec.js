@@ -5,6 +5,13 @@ test.beforeEach(async ({ page }) => {
   await page.route('**/api/**', route => route.fulfill({ json: [] }));
 });
 
+test('the footer links to About HSK', async ({ page }) => {
+  await page.goto('/pricing');
+  await page.getByRole('navigation', { name: 'Footer navigation' }).getByRole('link', { name: 'About HSK' }).click();
+  await expect(page).toHaveURL(/\/about-hsk$/);
+  await expect(page.getByRole('heading', { level: 1, name: 'What is the HSK?' })).toBeVisible();
+});
+
 test('visitors open About HSK from the main navigation and compare exam levels', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');

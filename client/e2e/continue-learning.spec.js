@@ -27,6 +27,17 @@ async function prepare(page, { completed = ['first'], expired = false, fail = fa
   await page.route('https://**/*', route => route.abort());
 }
 
+test('a student who hasn’t started a course is taken to the HSK courses section', async ({ page }) => {
+  await prepare(page, { completed: [] });
+  await page.goto('/');
+  const start = page.getByRole('button', { name: 'Start learning', exact: true });
+  await expect(start).toBeVisible();
+  await expect(page.locator('#courses')).not.toBeInViewport();
+  await start.click();
+  await expect(page.locator('#courses')).toBeInViewport();
+  await expect(page).toHaveURL(/\/$/);
+});
+
 test('resume opens the next unfinished lesson and skips disabled conversation lessons', async ({ page }) => {
   await prepare(page);
   await page.goto('/');

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { filterStudents, inactivityFilters, matchesActivity, practiceLabel, studentDate } from './reminderStudentFilters';
 import './ReminderStudentPicker.css';
 
+import RefreshButton from '../components/RefreshButton';
 const pageSize = 25;
 
 export default function ReminderStudentPicker({ students, selectedIds, onSelect, onRemind, loading, error, asOf, onRefresh, locked }) {
@@ -22,7 +23,7 @@ export default function ReminderStudentPicker({ students, selectedIds, onSelect,
   const chooseFilter = value => { setFilter(value); setPage(1); };
 
   return <section className="reminder-student-picker" aria-labelledby="reminder-students-title" aria-busy={loading}>
-    <div className="reminder-students-heading"><div><h2 id="reminder-students-title">Student activity</h2><p>Pick individual students here. Your selection is used by the reminder above.</p></div><button className="email-button" disabled={locked || loading} onClick={onRefresh}>{loading ? 'Refreshing students…' : 'Refresh students'}</button></div>
+    <div className="reminder-students-heading"><div><h2 id="reminder-students-title">Student activity</h2><p>Pick individual students here. Your selection is used by the reminder above.</p></div><RefreshButton busy={loading} disabled={locked || loading} onClick={onRefresh}>{loading ? 'Refreshing students…' : 'Refresh students'}</RefreshButton></div>
     <p className="reminder-activity-note">Last recorded practice includes saved lesson completions, quizzes, submitted mock tests, vocabulary reviews, and speaking recordings.{asOf && <> Updated {studentDate(asOf)} · Nepal time.</>}</p>
     {error && <div className="email-message email-error" role="alert">{error}</div>}
     <fieldset disabled={disabled} className="reminder-picker-controls"><legend className="reminder-sr-only">Filter and select students</legend>

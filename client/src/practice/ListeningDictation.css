@@ -31,7 +31,7 @@
 .dictation-topic-sample { overflow: hidden; color: var(--accent-red); font-size: 18px; font-weight: 600; white-space: nowrap; text-overflow: ellipsis; }
 .dictation-topic strong { font-size: 15px; line-height: 1.3; }
 .dictation-topic small { color: var(--mist); font-size: 13px; }
-.dictation-page .dictation-refresh { display: block; margin: 16px auto 0; font-size: 14px; }
+.dictation-page .dictation-refresh { display: flex; margin: 16px auto 0; }
 
 /* Player */
 .dictation-session { max-width: 640px; }

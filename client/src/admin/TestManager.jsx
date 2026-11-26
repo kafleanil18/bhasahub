@@ -5,6 +5,7 @@ import PracticePaperEditor from './PracticePaperEditor';
 import './TestManager.css';
 import { useInitialLoad } from '../navigation/pageLoad';
 
+import RefreshButton from '../components/RefreshButton';
 const auth = () => ({ Authorization: `Bearer ${localStorage.getItem('token') || ''}` });
 
 export default function TestManager({ onBack, onPreviewTest, user }) {
@@ -58,7 +59,7 @@ export default function TestManager({ onBack, onPreviewTest, user }) {
       {editor ? <PracticePaperEditor initial={editor.content} paperId={editor.id} onCancel={() => setEditor(null)} onSaved={saved} /> : <>
         {canEdit && <button className="paper-create-button" disabled={busy} onClick={() => { setNotice(''); setEditor({}); }}>Create complete practice paper</button>}
         {notice && <p role="status">{notice}</p>}
-        {(error || editError) && <div className="paper-error" role="alert"><p>{error || editError}</p>{error && <button onClick={reload}>Retry loading papers</button>}</div>}
+        {(error || editError) && <div className="paper-error" role="alert"><p>{error || editError}</p>{error && <RefreshButton onClick={reload}>Retry loading papers</RefreshButton>}</div>}
         {loading && <p role="status">Loading practice papers…</p>}
         {opening && <p role="status">Opening paper editor…</p>}
         {active.map(paper => <FeaturedPaper key={`${paper.id}-${paper.published}-${paper.edited}`} paperId={paper.id} title={paper.title} code={paper.code} edited={paper.edited} manage onOpen={() => onPreviewTest(paper.id)} onEdit={canEdit && !busy ? () => edit(paper.id) : undefined}>

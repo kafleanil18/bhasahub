@@ -37,6 +37,28 @@ test('mock test list and questions require authentication and remain available t
   }
 });
 
+test('a plan or an active course subscription opens the practice studio and every mock test', async () => {
+  const { hasTestAccess } = require('../utils/testAccess');
+  const PlatformPass = require('../models/PlatformPass');
+  const Subscription = require('../models/Subscription');
+  const originals = { exists: AccessRequest.exists, pass: PlatformPass.findOne, sub: Subscription.exists };
+  const student = { id: '507f1f77bcf86cd799439011', role: 'student' };
+  let plan = null, subscription = false, subscriptionQuery;
+  AccessRequest.exists = async () => false;
+  PlatformPass.findOne = () => ({ select: () => ({ lean: async () => plan }) });
+  Subscription.exists = async query => { subscriptionQuery = query; return subscription; };
+  try {
+    assert.equal(await hasTestAccess(student), false);
+    assert.ok(subscriptionQuery.expiresAt.$gt instanceof Date, 'only subscriptions that have not ended count');
+    plan = { expiresAt: new Date(Date.now() + 86400000) };
+    assert.equal(await hasTestAccess(student), true);
+    plan = null; subscription = true;
+    assert.equal(await hasTestAccess(student), true);
+  } finally {
+    AccessRequest.exists = originals.exists; PlatformPass.findOne = originals.pass; Subscription.exists = originals.sub;
+  }
+});
+
 test('free access lasts seven days from approval and cannot be requested again once used', async () => {
   const AuditLog = require('../models/AuditLog');
   const { hasTestAccess, FREE_ACCESS_DAYS } = require('../utils/testAccess');

@@ -121,6 +121,9 @@ async function setup({ testsUnlocked = true } = {}) {
   mock(process.env, 'JWT_SECRET', 'hsk-test-secret');
   mock(User, 'findById', id => ({ select: async () => ({ _id: id, role: ['admin', 'superadmin'].includes(id) ? id : 'student' }) }));
   mock(require('../models/AccessRequest'), 'exists', async () => testsUnlocked);
+  // No plan and no course subscription, so only a free week can unlock the papers.
+  mock(require('../models/PlatformPass'), 'findOne', () => ({ select: () => ({ lean: async () => null }) }));
+  mock(require('../models/Subscription'), 'exists', async () => false);
   const publications = new Map();
   mock(PracticePaper, 'findById', async id => publications.get(id));
   mock(PracticePaper, 'find', async () => [...publications.values()]);

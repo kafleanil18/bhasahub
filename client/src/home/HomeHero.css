@@ -35,11 +35,13 @@
 .home-hero.is-logged-out .home-hero-primary:hover { filter: brightness(.94); }
 .home-hero.is-logged-out :is(a[href='#courses'], a[href='#practice-studio']):hover { border-color: var(--hero-red); color: var(--hero-red); }
 .home-hero-live-classes { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 18px; }
-.home-hero-live-pill { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; margin: 0; padding: 10px 18px; box-sizing: border-box; border: 1.5px solid var(--hero-red); border-radius: 8px; background: #fff; color: var(--hero-red); font-size: clamp(13px, calc(11px + 0.4vw), 15px); font-weight: 700; box-shadow: 0 1px 0 rgba(var(--accent-red-rgb), .12); }
+/* A plain label pointing at the WhatsApp and Viber buttons beside it; it isn't a button itself. */
+.home-hero-live-pill { display: inline-flex; align-items: center; gap: 8px; margin: 0; color: var(--hero-ink); font-size: clamp(14px, calc(12px + 0.35vw), 16px); font-weight: 650; }
+.home-hero-live-label, .home-hero-live-arrow { color: var(--hero-red); }
+.home-hero-live-action { color: var(--hero-muted); font-weight: 500; }
 .home-hero-live-sep { opacity: .5; }
-.home-hero-live-arrow { font-size: 1.15em; line-height: 1; }
-.dark .home-hero-live-pill { background: transparent; border-color: var(--accent-red-text, var(--accent-red)); color: var(--accent-red-text, var(--accent-red)); }
-@media (max-width: 560px) { .home-hero-live-classes { flex-wrap: nowrap; gap: 8px; } .home-hero-live-pill { flex: 1; min-width: 0; justify-content: center; gap: 7px; padding: 10px 12px; min-height: 48px; white-space: nowrap; } }
+.home-hero-live-arrow { font-size: 1.15em; line-height: 1; transform: translateY(-1px); }
+@media (max-width: 560px) { .home-hero-live-classes { flex-wrap: nowrap; gap: 8px; } .home-hero-live-pill { min-width: 0; gap: 7px; white-space: nowrap; } }
 .home-hero-live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--hero-red); flex-shrink: 0; animation: hero-live-pulse 2s ease-in-out infinite; }
 @keyframes hero-live-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(var(--accent-red-rgb), 0); } 50% { box-shadow: 0 0 0 5px rgba(var(--accent-red-rgb), .18); } }
 .home-page .home-hero.is-logged-out { position: relative; isolation: isolate; }

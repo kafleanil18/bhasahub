@@ -8,6 +8,7 @@ import './TonePractice.css';
 import './ListeningDictation.css';
 import { useInitialLoad } from '../navigation/pageLoad';
 
+import RefreshButton from '../components/RefreshButton';
 const shortest = sentences => sentences.reduce((best, sentence) => !best || sentence.chinese.length < best.chinese.length ? sentence : best, null);
 
 export default function ListeningDictation({ onBack, onRecordAudio }) {
@@ -26,10 +27,10 @@ export default function ListeningDictation({ onBack, onRecordAudio }) {
       {session && <span className="dictation-chip">{session.title}</span>}
     </div>
     <h1 id="dictation-title" className={session ? 'tone-visually-hidden' : 'dictation-title'}>Listening dictation</h1>
-    {error ? <div className="dictation-empty" role="alert"><p>{error}</p><button className="sentence-primary" onClick={reload}>Try again</button></div>
+    {error ? <div className="dictation-empty" role="alert"><p>{error}</p><RefreshButton onClick={reload}>Try again</RefreshButton></div>
       : !catalog ? <p className="dictation-empty" role="status">Loading recordings…</p>
       : session ? <DictationSession key={sessionKey} initialSentences={session.sentences} onRestart={() => start(session.title, session.pool)} onExit={() => setSession(null)} />
-      : !ready.length ? <div className="dictation-empty"><h2>Teacher recordings are coming soon</h2><p>Dictation opens once your teacher records audio for sentences in the library.</p><div className="sentence-actions"><button className="sentence-secondary" onClick={reload}>Check for recordings</button>{onRecordAudio && <button className="sentence-primary" onClick={onRecordAudio}>Record sentence audio</button>}</div></div>
+      : !ready.length ? <div className="dictation-empty"><h2>Teacher recordings are coming soon</h2><p>Dictation opens once your teacher records audio for sentences in the library.</p><div className="sentence-actions"><RefreshButton onClick={reload}>Check for recordings</RefreshButton>{onRecordAudio && <button className="sentence-primary" onClick={onRecordAudio}>Record sentence audio</button>}</div></div>
       : <>
         <p className="dictation-intro">Listen to your teacher, then type the sentence in Chinese.</p>
         <button type="button" className="dictation-card-mixed" onClick={() => start('Mixed', ready)} aria-label="Mixed dictation" aria-describedby="dictation-mixed-text">
@@ -42,7 +43,7 @@ export default function ListeningDictation({ onBack, onRecordAudio }) {
           <strong>{topic.title}</strong>
           <small id={`dictation-topic-${topic.id}`}>{topic.sentences.length} recording{topic.sentences.length === 1 ? '' : 's'}</small>
         </button>)}</div>
-        <button className="tone-link dictation-refresh" onClick={reload}>Refresh available recordings</button>
+        <RefreshButton className="dictation-refresh" onClick={reload}>Refresh available recordings</RefreshButton>
       </>}
   </main>;
 }

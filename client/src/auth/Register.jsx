@@ -304,7 +304,7 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
                 id="agree-checkbox"
               />
               <label htmlFor="agree-checkbox" className="checkbox-label">
-                I agree to the <a href="#terms" onClick={(e) => e.stopPropagation()}>Terms of Service</a> &{' '}
+                I agree to the <a href="/terms" target="_blank" rel="noopener noreferrer" aria-label="Terms of Service (opens in a new tab)" onClick={(e) => e.stopPropagation()}>Terms of Service</a> &{' '}
                 <a href="/privacy" target="_blank" rel="noopener noreferrer" aria-label="Privacy Policy (opens in a new tab)" onClick={(e) => e.stopPropagation()}>Privacy Policy</a>.
               </label>
             </div>

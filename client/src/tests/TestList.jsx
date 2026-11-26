@@ -3,11 +3,12 @@ import { useState, useEffect, useMemo } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 import FeaturedPaper from './hsk1/FeaturedPaper';
 import FreeAccessNote from '../access/FreeAccessNote';
-import { FREE_ACCESS_DAYS, freeAccessLive } from '../access/practiceAccess';
+import { FREE_ACCESS_DAYS, loadPracticeStatus } from '../access/practiceAccess';
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon';
 import { useInitialLoad } from '../navigation/pageLoad';
 
+import RefreshButton from '../components/RefreshButton';
 const API = window.API_BASE_URL + '/api';
 const LEVELS = ['HSK 1', 'HSK 2', 'HSK 3', 'HSK 4'];
 
@@ -35,14 +36,9 @@ function TestList({ onOpenTest, onBack, user }) {
   useEffect(() => {
     if (isStaff) return;
     let active = true;
-    const check = () => fetch(`${API}/access-requests/my`, { headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` } })
-      .then(res => { if (!res.ok) throw new Error(); return res.json(); })
-      .then(data => {
-        if (!active) return;
-        const rows = Array.isArray(data) ? data.filter(row => row.scope === 'tests') : [];
-        const status = rows.some(freeAccessLive) ? 'approved' : rows.some(row => row.status === 'pending') ? 'pending' : rows.some(row => row.status === 'approved') ? 'expired' : rows.some(row => row.status === 'denied') ? 'denied' : 'none';
-        setAccessStatus(status);
-      })
+    // Same rule as the practice studio: a free week, an active plan or an active course subscription.
+    const check = () => loadPracticeStatus()
+      .then(status => { if (active) setAccessStatus(status); })
       .catch(() => { if (active) setAccessStatus(previous => previous === 'loading' ? 'none' : previous); });
     void check();
     // Re-check while the page is open so an approval unlocks the tests without a reload.
@@ -130,7 +126,7 @@ function TestList({ onOpenTest, onBack, user }) {
         </div>
       )}
 
-      {paperError && <div role="alert"><p>{paperError}</p><button onClick={reloadPapers}>Retry loading practice papers</button></div>}
+      {paperError && <div role="alert"><p>{paperError}</p><RefreshButton onClick={reloadPapers}>Retry loading practice papers</RefreshButton></div>}
       {papersLoading && <p role="status">Loading practice papers…</p>}
       {(practicePapers.length > 0 || (!loading && tests.length > 0)) && (
         <div className="mock-test-filters">

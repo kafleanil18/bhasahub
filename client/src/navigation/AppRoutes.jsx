@@ -4,6 +4,7 @@ import { AdminLayout, AuthLayout, PublicLayout, RequireSession, StudentLayout } 
 import PracticeGate from '../access/PracticeGate';
 import { useInitialLoad } from './pageLoad';
 import { adminPaths, homePath, manageCoursePath, safeReturnPath, testPath } from './paths';
+import RefreshButton from '../components/RefreshButton';
 const Login = lazy(() => import('../auth/Login'));
 const Register = lazy(() => import('../auth/Register'));
 const ForgotPassword = lazy(() => import('../auth/ForgotPassword'));
@@ -47,6 +48,7 @@ const PricingPage = lazy(() => import('../pricing/PricingPage'));
 const AboutHsk = lazy(() => import('../hsk/AboutHsk'));
 const PrivacyPolicy = lazy(() => import('../privacy/PrivacyPages').then(module => ({ default: module.PrivacyPolicy })));
 const BrowserStoragePolicy = lazy(() => import('../privacy/PrivacyPages').then(module => ({ default: module.BrowserStoragePolicy })));
+const TermsOfService = lazy(() => import('../privacy/PrivacyPages').then(module => ({ default: module.TermsOfService })));
 
 
 function HomeRoute({ user, home }) {
@@ -94,7 +96,7 @@ function CourseRoute({ user, manage = false, onHome }) {
     });
     return () => controller.abort();
   }, [courseId, staff, retry]);
-  if (state.error) return <section className="container" role="alert"><p>{state.error}</p><button onClick={() => setRetry(value => value + 1)}>Try again</button></section>;
+  if (state.error) return <section className="container" role="alert"><p>{state.error}</p><RefreshButton onClick={() => setRetry(value => value + 1)}>Try again</RefreshButton></section>;
   if (!state.loading && !state.course) return <section className="container"><h1>Course not found</h1><p>This course may no longer be available.</p><Link to={manage ? '/admin/courses' : '/'}>Browse courses</Link></section>;
   // While the course record loads, the page already starts (hidden behind the loader) with just the
   // id from the URL, so its lessons, access and progress load at the same time. Same key, so it
@@ -130,6 +132,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
     <Route element={<PublicLayout />}>
       <Route path="/privacy" element={<PrivacyPolicy user={user} />} />
       <Route path="/cookies" element={<BrowserStoragePolicy />} />
+      <Route path="/terms" element={<TermsOfService />} />
       <Route path="/pricing" element={<PricingPage user={user} />} />
       <Route path="/about-hsk" element={<AboutHsk />} />
       <Route path="/email/reminders/unsubscribe" element={<ReminderUnsubscribe />} />

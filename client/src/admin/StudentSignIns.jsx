@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './StudentSignIns.css';
 import { useInitialLoad } from '../navigation/pageLoad';
 
+import RefreshButton from '../components/RefreshButton';
 const today = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kathmandu', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 const time = value => new Date(value).toLocaleTimeString('en-US', { timeZone: 'Asia/Kathmandu', hour: 'numeric', minute: '2-digit', second: '2-digit' });
 
@@ -41,11 +42,11 @@ export default function StudentSignIns() {
   const sortBy = (key) => setSort((current) => ({ key, direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc' }));
   const sortHeading = (key, label) => <button type="button" className="sign-ins-sort" onClick={() => sortBy(key)}>{label}<span aria-hidden="true">{sort.key === key ? sort.direction === 'asc' ? '↑' : '↓' : '↕'}</span></button>;
   return <section className="student-sign-ins admin-list" aria-labelledby="student-sign-ins-title">
-    <div className="sign-ins-heading"><div><h2 id="student-sign-ins-title">Student sign-ins</h2><p>Successful email and Google sign-ins · Nepal time (UTC+05:45)</p></div><button className="btn-secondary" disabled={loading} onClick={() => setRefresh(value => value + 1)}>Refresh</button></div>
+    <div className="sign-ins-heading"><div><h2 id="student-sign-ins-title">Student sign-ins</h2><p>Successful email and Google sign-ins · Nepal time (UTC+05:45)</p></div><RefreshButton disabled={loading} onClick={() => setRefresh(value => value + 1)}>Refresh</RefreshButton></div>
     <label className="sign-ins-date">View date<input type="date" value={date} max={today()} onChange={event => { if (event.target.value) { setDate(event.target.value); setPage(1); } }} /></label>
     <p className="sign-ins-note">Counts sign-in events, including repeat sign-ins. Students who stay signed in are not counted as a new sign-in each day. History begins when tracking is enabled.</p>
     {loading && <p role="status">Loading student sign-ins…</p>}
-    {error && <div role="alert"><p className="login-error">{error}</p><button className="btn-secondary" onClick={() => setRefresh(value => value + 1)}>Try again</button></div>}
+    {error && <div role="alert"><p className="login-error">{error}</p><RefreshButton onClick={() => setRefresh(value => value + 1)}>Try again</RefreshButton></div>}
     {data && <>
       <div className="sign-ins-totals" aria-live="polite"><div><strong>{data.uniqueStudents}</strong><span>Unique students</span></div><div><strong>{data.totalSignIns}</strong><span>Total sign-ins</span></div></div>
       {!data.uniqueStudents ? <p className="admin-empty">No student sign-ins recorded for this date.</p> : <>

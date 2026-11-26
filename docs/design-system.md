@@ -36,3 +36,19 @@ styles and embedded style blocks, including CSS loaded after navigation.
 Check public, auth, student, course, practice, and admin pages at 320, 768, 1024,
 and 1440px in both themes when changing the shared scale. Run the client build,
 lint, and existing Playwright suite for changes to this stylesheet.
+
+## Page layout and the footer
+
+The app shell (`.app-shell` in `App.jsx`) is a full-height column. The page area grows to fill the
+space between the header and the footer, so the footer sits at the bottom of the screen on short
+pages. While a page loads its first data, the ink loader fills that space and sits in the middle of
+it, and the footer stays hidden until the page is ready. The rules are in `design-system.css`.
+`client/e2e/layout.spec.js` checks both cases.
+
+## Refresh and retry buttons
+
+Every control that reloads a page or its data uses `RefreshButton` (`client/src/components/RefreshButton.jsx`).
+It's a quiet outlined button with the `refresh` icon from `Icon.jsx`: an open ink circle with an
+arrow, echoing the ensō in the loading animation. Pass `busy` while reloading and the icon turns.
+Buttons that restart an exercise, such as "Retry missed" or "Try again" on a quiz, keep their own
+styles, because they don't reload anything.

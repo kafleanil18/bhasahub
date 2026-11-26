@@ -7,6 +7,7 @@ import { formatRs } from '../pricing/plans';
 import './AdminDashboard.css';
 import { useInitialLoad } from '../navigation/pageLoad';
 
+import RefreshButton from '../components/RefreshButton';
 const API = window.API_BASE_URL + '/api';
 const shortcuts = [
   ['courses', 'courses', 'Courses'],
@@ -99,7 +100,7 @@ export default function AdminDashboard({ onNavigate, user }) {
         <button className="control-refresh" disabled={loading} onClick={() => setAttempt(value => value + 1)}><ControlIcon name="refresh"/>{loading ? 'Refreshing…' : 'Refresh data'}</button>
       </div>
     </div>
-    {error && <div className="control-error" role="alert"><strong>{stats ? 'Showing the last available snapshot.' : 'Dashboard data is unavailable.'}</strong><p>{error}</p><button disabled={loading} onClick={() => setAttempt(value => value + 1)}>Try again</button></div>}
+    {error && <div className="control-error" role="alert"><strong>{stats ? 'Showing the last available snapshot.' : 'Dashboard data is unavailable.'}</strong><p>{error}</p><RefreshButton disabled={loading} onClick={() => setAttempt(value => value + 1)}>Try again</RefreshButton></div>}
     <section className="control-review-hub" id="control-review-queue" aria-labelledby="control-queue-title" aria-busy={loading}>
       <div className="control-review-heading">
         <h2 id="control-queue-title">Needs attention</h2>

@@ -21,6 +21,8 @@ const paths = {
   download: <><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></>,
   upload: <><path d="M12 15V4M7 9l5-5 5 5M5 20h14"/></>,
   plus: <path d="M12 5v14M5 12h14"/>,
+  // An open ink circle with an arrow, like the ensō in the loading animation: reload.
+  refresh: <><path d="M19.5 14.7A8 8 0 1 1 17.7 6.3L20 8.6"/><path d="M20 4v4.6h-4.6"/></>,
   warning: <><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></>,
   checkCircle: <><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></>,
   heart: <path d="M12 20s-7.5-4.5-9.3-9.3A4.8 4.8 0 0 1 12 6.6a4.8 4.8 0 0 1 9.3 4.1C19.5 15.5 12 20 12 20z"/>,
@@ -32,7 +34,6 @@ const paths = {
   cards: <><rect x="3" y="6" width="13" height="15" rx="2"/><path d="M8 3h11a2 2 0 0 1 2 2v13"/></>,
   // An ink brush: writing practice.
   brush: <><path d="M20 3c-3 1-8 6-10.5 9.5l2 2C15 12 20 7 21 4z"/><path d="M9.5 12.5c-2 0-4 1.5-4 4 0 1.5-1 3-2.5 3.5 3 1 7.5.5 8.5-3.5z"/></>,
-  refresh: <><path d="M20 11a8 8 0 0 0-14.5-4.5L3 9M4 13a8 8 0 0 0 14.5 4.5L21 15"/><path d="M3 4v5h5M21 20v-5h-5"/></>,
   shuffle: <><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></>,
   thumbsUp: <><path d="M7 10v11H3V10z"/><path d="M7 10l4-7a2.5 2.5 0 0 1 3 3l-1 4h6a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 17.6 21H7"/></>,
   headphones: <><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/></>,

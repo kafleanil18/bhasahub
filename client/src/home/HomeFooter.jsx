@@ -18,6 +18,7 @@ export default function HomeFooter({ goHome, isSuperAdmin, serverOk, onStartTour
           <nav className="footer-quick-links" aria-label="Footer navigation">
             <Link to="/#courses">Explore courses <span aria-hidden="true">↗</span></Link>
             <Link to="/#practice-studio">Practice studio <span aria-hidden="true">↗</span></Link>
+            <Link to="/about-hsk">About HSK <span aria-hidden="true">↗</span></Link>
             <Link to="/pricing">Pricing plans <span aria-hidden="true">↗</span></Link>
             {onStartTour && <button type="button" className="footer-tour-link" onClick={onStartTour}><Icon name="compass" className="footer-tour-star"/> Take the studio tour</button>}
             {liveClassInquiryHref() && <a href={liveClassInquiryHref()} target="_blank" rel="noopener noreferrer">Live class inquiry <span aria-hidden="true">↗</span></a>}

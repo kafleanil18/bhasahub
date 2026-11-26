@@ -7,15 +7,21 @@ This page covers who can use the practice studio, the mock tests and the courses
 | What | Visitor | Signed-in student | Student with approved free week | Student with a paid plan | Admin / superadmin |
 |---|---|---|---|---|---|
 | Pinyin chart (`/practice/pinyin`) | Yes | Yes | Yes | Yes | Yes |
-| Other practice tools | Sign-in prompt | Can look, but the page is locked | Yes, for 7 days | **Locked** unless they also have an approved access request (see Known gap) | Yes |
+| Other practice tools | Sign-in prompt | Can look, but the page is locked | Yes, for 7 days | Yes, while the plan lasts | Yes |
 | Mock test H11226 | No | Yes (always free) | Yes | Yes | Yes |
-| Other mock tests | No | Locked | Yes, for 7 days | **Locked** unless they also have an approved access request | Yes |
+| Other mock tests | No | Locked | Yes, for 7 days | Yes, while the plan lasts | Yes |
 | Courses | No | Courses they subscribe to | Courses they subscribe to | Every published course | Yes |
+
+An active course subscription also opens the practice studio and every mock test, the same as a plan, but it opens only its own course.
+
+**One rule for practice and mock tests.** The practice studio and every mock test are open during a free week, an active plan or an active course subscription. Admins always have them.
+- **Server:** `hasTestAccess` in `server/utils/testAccess.js` decides who can open a paper.
+- **App:** `practiceStatus` in `client/src/access/practiceAccess.js` follows the same rule, using `/api/access-requests/my` and `/api/subscriptions/my`. During a plan, `/api/subscriptions/my` lists every published course.
 
 ## Access requests and the free week
 
 - **Requesting access.** After signing in, students see a prompt asking them to request access (`client/src/components/TestAccessPrompt.jsx`, shown once per sign-in). They can also request it from the lock panel on any practice page. A request is an `AccessRequest` with `scope: 'tests'`, sent with `POST /api/access-requests`.
-- **The lock panel.** Practice pages are wrapped in `PracticeGate` (`client/src/access/PracticeGate.jsx`). Until access is approved, the page shows behind a lock panel. The page is made `inert`, so nothing inside it can be clicked. The panel's wording depends on the student's status:
+- **The lock panel.** Practice pages are wrapped in `PracticeGate` (`client/src/access/PracticeGate.jsx`). Without a free week, a plan or an active course subscription, the page shows behind a lock panel. The page is made `inert`, so nothing inside it can be clicked. The panel's wording depends on the student's status:
 
   | Status | Panel says |
   |---|---|
@@ -35,7 +41,7 @@ This page covers who can use the practice studio, the mock tests and the courses
 `server/utils/testAccess.js` decides who can open a paper:
 
 - H11226 (`FREE_PAPER_ID`) is open to every signed-in student.
-- Other papers need an admin role, or an approved free week that hasn't expired. Otherwise the API answers `403` with `code: 'TESTS_LOCKED'`, and the test list offers to request access.
+- Other papers need an admin role, a free week that hasn't ended, an active plan or an active course subscription. Otherwise the API answers `403` with `code: 'TESTS_LOCKED'`, and the test list offers to request access.
 
 ## Paid plans
 
@@ -48,7 +54,7 @@ This page covers who can use the practice studio, the mock tests and the courses
   | 6 months | 180 | Rs 3,000 |
 
 - **Requesting.** Students choose a plan on `/pricing`, which creates a `PlanRequest`. The superadmins get an email, and the request appears in the notifications bell and under **Subscriptions → Plan requests**.
-- **Starting the plan.** Once the payment arrives, a superadmin chooses **Start plan**. This creates or extends a `PlatformPass`, which unlocks every published course until `expiresAt` (`server/utils/platformAccess.js`).
+- **Starting the plan.** Once the payment arrives, a superadmin chooses **Start plan**. This creates or extends a `PlatformPass`, which unlocks every published course, the practice studio and every mock test until `expiresAt` (`server/utils/platformAccess.js`).
 - **Other actions.** A request can be declined, and its email can be re-sent if delivery failed. A student can cancel their own pending request.
 - **One plan at a time.** A student with an active plan can't request another until it ends.
 
@@ -60,18 +66,18 @@ This page covers who can use the practice studio, the mock tests and the courses
 - grant or end a free week (`PUT` / `DELETE /api/students/:id/trial`);
 - grant or end a plan (`PUT` / `DELETE /api/students/:id/plan`).
 
-Deleting a student also removes their subscriptions, access requests, plans and plan requests.
+Deleting a student also removes everything tied to the account (`OWNED` in `server/routes/students.js`): subscriptions, access requests, plans, plan requests, saved courses, progress, quiz and HSK attempts, studio activity, review schedules, reminders, push subscriptions, conversation recording records and sign-in records. It doesn't remove their feedback messages, reviews, uploaded media files or the audit log. For a full erasure request (see "Deleting your account and data" on `/privacy`), delete their feedback and reviews by hand as well, and their uploads in Cloudinary.
 
-## Known gap
+## Admins
 
-A paid plan unlocks courses, but not the practice studio or the locked mock tests:
-
-- the practice gate only checks access requests;
-- `hasTestAccess` only checks admin roles and free-week approvals.
-
-A student who pays for a plan therefore also needs an approved access request. To fix this, have `hasTestAccess` and `practiceStatus` also accept an active `PlatformPass`.
+- **Making an admin.** A superadmin changes a user's role under **Manage admins** (`/admin/users`, API `PUT /api/users/:id/role`). Only students and admins can be changed; a superadmin's role can't.
+- **What admins get.** Admins and superadmins can open every course, including unpublished drafts, every practice tool and every mock test. They never need an access request or a plan, and they can't request a plan.
+- **When a role change applies.**
+  - The server reads the role from the database on every request, so the change applies there straight away.
+  - The app keeps the account details it was given at sign-in, so it asks for them again (`GET /api/auth/me`) when the site opens and whenever the tab regains focus. The person doesn't need to sign in again.
 
 ## Validation
 
 - `server/test/practiceAccess.test.js` and `server/test/students.test.js`
+- `client/e2e/paid-practice-access.spec.js`: a plan or a course subscription unlocks the practice studio and every mock test.
 - The end-to-end fixtures in `client/e2e/` approve practice access, so the practice tool tests run unlocked.

@@ -126,6 +126,10 @@ test('below the plans, every platform feature is described and live classes can 
   for (const tool of ['Pinyin chart', 'Tone listening', 'Trace characters', 'Listening practice', 'Sentence builder', 'Measure words', 'Everyday numbers', 'Listening dictation', 'Conversation practice']) {
     await expect(studio).toContainText(tool);
   }
+  const freeTest = features.getByRole('article', { name: 'HSK mock tests' }).getByRole('listitem').filter({ hasText: 'One mock test' });
+  await expect(freeTest.locator('.pricing-feature-tag')).toHaveText('Free');
+  await expect(freeTest).toContainText('H11226');
+  await expect(features).toContainText('A free account includes one full HSK 1 mock test');
   await expect(features).toContainText('Spaced-repetition review');
   await expect(features).toContainText('Daily practice reminder');
   const live = features.getByRole('article', { name: 'Live classes' });

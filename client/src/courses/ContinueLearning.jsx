@@ -4,6 +4,7 @@ import { coursePath } from '../navigation/paths';
 import { supportsConversation } from '../utils/courseFeatures';
 import { useInitialLoad } from '../navigation/pageLoad';
 
+import RefreshButton from '../components/RefreshButton';
 export default function ContinueLearning() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -56,7 +57,7 @@ export default function ContinueLearning() {
 
   return <main className="container" aria-labelledby="continue-learning-title">
     <h1 id="continue-learning-title">{state.loading ? 'Finding your next lesson…' : state.error ? 'Your next lesson couldn’t load' : state.hasLessons ? 'You’re all caught up!' : state.available ? 'Your lessons are coming soon' : 'Find your next course'}</h1>
-    {state.loading ? <p role="status">Checking your course access and saved progress.</p> : state.error ? <><p role="alert">Please try again to resume from your saved progress.</p><button className="btn-primary" onClick={() => setAttempt(value => value + 1)}>Try again</button></> : <p>{state.hasLessons ? 'You’ve completed every available lesson in your active courses. Review a course or explore something new.' : state.available ? 'There are no available lessons in your active courses yet.' : 'Choose a course and request access to start learning.'}</p>}
+    {state.loading ? <p role="status">Checking your course access and saved progress.</p> : state.error ? <><p role="alert">Please try again to resume from your saved progress.</p><RefreshButton onClick={() => setAttempt(value => value + 1)}>Try again</RefreshButton></> : <p>{state.hasLessons ? 'You’ve completed every available lesson in your active courses. Review a course or explore something new.' : state.available ? 'There are no available lessons in your active courses yet.' : 'Choose a course and request access to start learning.'}</p>}
     {!state.loading && <p><Link to="/my-courses">View my courses</Link> · <Link to="/#courses">Explore courses</Link></p>}
   </main>;
 }

@@ -69,18 +69,17 @@ export default function PricingPage({ user }) {
       <header className="pricing-intro">
         <p className="pricing-eyebrow">Subscription plans</p>
         <h1 id="pricing-title">One plan. <em>Every course.</em></h1>
-        <p>Unlock every HSK course on the platform. The longer you learn, the less you pay each month.</p>
+        <p>Unlock every HSK course, the whole practice studio and every mock test. The longer you learn, the less you pay each month.</p>
       </header>
 
       {notice && <div className="pricing-banner is-success" role="status" tabIndex={-1} ref={noticeRef}>{notice}</div>}
       {error && <div className="pricing-banner is-error" role="alert">{error}</div>}
-      {student && !loading && status.pass && <div className="pricing-banner is-active" role="status"><div><strong>Your {status.pass.plan ? `${planLabel(status.pass.plan)} ` : ''}plan is active until {formatDate(status.pass.expiresAt)}.</strong> Every course is unlocked. You can choose a new plan when this one ends.</div></div>}
+      {student && !loading && status.pass && <div className="pricing-banner is-active" role="status"><div><strong>Your {status.pass.plan ? `${planLabel(status.pass.plan)} ` : ''}plan is active until {formatDate(status.pass.expiresAt)}.</strong> Every course, practice tool and mock test is unlocked. You can choose a new plan when this one ends.</div></div>}
       {student && !loading && pending && <div className="pricing-banner is-pending" role="status">
-        <div><strong>Your {planLabel(pending.plan)} plan request is waiting for payment.</strong> We’ll email you how to pay {formatRs(pending.price)}. Your courses unlock as soon as the payment is confirmed.</div>
+        <div><strong>Your {planLabel(pending.plan)} plan request is waiting for payment.</strong> We’ll email you how to pay {formatRs(pending.price)}. Your courses, the practice studio and every mock test unlock as soon as the payment is confirmed.</div>
         <button type="button" className="pricing-link" onClick={cancel} disabled={!!busy}>{busy === 'cancel' ? 'Cancelling…' : 'Cancel request'}</button>
       </div>}
       {student && !loading && status.request?.status === 'denied' && !status.pass && <div className="pricing-banner" role="status">Your last plan request wasn’t approved. You can choose a plan again, or message us if you have a question.</div>}
-      {staff && <div className="pricing-banner" role="status">Admin accounts already have full access. This is the page students see.</div>}
 
       <section className="pricing-grid" aria-label="Plans">
         {PLANS.map(plan => {
@@ -110,7 +109,7 @@ export default function PricingPage({ user }) {
         <header className="pricing-features-intro">
           <p className="pricing-eyebrow">What you get</p>
           <h2 id="pricing-features-title">Everything on the platform</h2>
-          <p>Courses, exam practice, nine practice tools and progress tracking, all in one place. A plan unlocks every HSK course. The practice studio and mock tests are open to everyone with a free account.</p>
+          <p>Courses, exam practice, nine practice tools and progress tracking, all in one place. A plan unlocks every HSK course, the whole practice studio and every mock test. A free account includes one full HSK 1 mock test, and you can ask for a free week of the practice studio and the other mock tests.</p>
         </header>
         <div className="pricing-feature-groups">
           {FEATURE_GROUPS.map(group => <article key={group.id} className={`pricing-feature-group is-${group.id}`} aria-labelledby={`features-${group.id}`}>
@@ -129,7 +128,7 @@ export default function PricingPage({ user }) {
         <ol>
           <li><span aria-hidden="true">1</span><div><strong>Choose a plan</strong><p>Pick 1, 3 or 6 months. You can switch until it’s confirmed.</p></div></li>
           <li><span aria-hidden="true">2</span><div><strong>Pay</strong><p>We’ll email you payment details.</p></div></li>
-          <li><span aria-hidden="true">3</span><div><strong>Start learning</strong><p>Every course unlocks as soon as your payment is confirmed.</p></div></li>
+          <li><span aria-hidden="true">3</span><div><strong>Start learning</strong><p>Every course, practice tool and mock test unlocks as soon as your payment is confirmed.</p></div></li>
         </ol>
       </section>
     </div>

@@ -8,6 +8,7 @@ import './TonePractice.css';
 import './ListeningPractice.css';
 import { useInitialLoad } from '../navigation/pageLoad';
 
+import RefreshButton from '../components/RefreshButton';
 async function readApi(path, signal) {
   const response = await fetch(`${window.API_BASE_URL}/api${path}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` }, signal,
@@ -86,9 +87,9 @@ export default function ListeningPractice({ user, onBack, onSignIn }) {
         <VoiceSwitch speaker={speech}/>
         {!speech.available && <div className="listening-voice-warning" role="status">{speech.loading ? <p>Loading the Mandarin voice…</p> : <>
           <p>{speech.supported ? 'No Mandarin voice was found on this device. Add a Chinese (Mandarin) voice in your device’s speech settings, or open this page in Google Chrome, then refresh.' : 'Speech playback is unavailable in this browser. Open this page in Google Chrome.'}</p>
-          {speech.supported && <button className="sentence-secondary" onClick={speech.refresh}>Refresh voices</button>}
+          {speech.supported && <RefreshButton onClick={speech.refresh}>Refresh voices</RefreshButton>}
         </>}</div>}
-        {error && <div className="tone-alert listening-alert" role="alert"><p>{error}</p><button className="sentence-secondary" onClick={() => setRetry(value => value + 1)}>Try again</button></div>}
+        {error && <div className="tone-alert listening-alert" role="alert"><p>{error}</p><RefreshButton onClick={() => setRetry(value => value + 1)}>Try again</RefreshButton></div>}
         {courses && !courses.length && <div className="listening-empty"><p>No Chinese courses are available for your account yet. Ask your teacher for course access.</p></div>}
         {courses && courses.length > 1 && <>
           <h2 className="listening-section-title">Choose a course</h2>

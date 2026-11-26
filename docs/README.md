@@ -27,17 +27,17 @@ The client finds the API through `window.API_BASE_URL`, which is set in `client/
 
 | Role | Can do |
 |---|---|
-| Visitor | Home page, pricing, About HSK, the pinyin chart, privacy pages |
-| Student | Courses they have access to, practice studio (after access is approved), mock tests, progress |
-| Admin | Test Studio (preview and publish papers) and Subscriptions |
+| Visitor | Home page, pricing, About HSK, the pinyin chart, the privacy pages and Terms of Service |
+| Student | Courses they have access to, progress, the free H11226 mock test. The practice studio and every other mock test need a free week, a plan or an active course subscription. |
+| Admin | Every course (including unpublished ones), practice tool and mock test, plus Test Studio (preview and publish papers) and Subscriptions |
 | Superadmin | Everything: courses, students, users, recordings, mock-test editing, email settings, reminders, audit log |
 
 ## Features and where they live
 
 ### Access, free week and plans
-- Students request access when they sign in. Until a superadmin approves it, the practice studio pages show a lock panel.
-- Approved free access lasts 7 days and can be used once.
-- Paid plans (1, 3 or 6 months, in Nepali rupees) are requested on `/pricing`. A superadmin starts the plan once the payment arrives.
+- The practice studio and every mock test are open during a free week, an active plan or an active course subscription. Otherwise the practice pages show a lock panel. H11226 is always free.
+- Students request the free week when they sign in. It lasts 7 days, can be used once, and starts when a superadmin approves it.
+- Paid plans (1, 3 or 6 months, in Nepali rupees) are requested on `/pricing`. A superadmin starts the plan once the payment arrives, and it unlocks every course, the practice studio and every mock test.
 - Details: [practice-access.md](practice-access.md).
 
 ### Admin notifications
@@ -99,7 +99,7 @@ Students choose the female or male voice with the switch on each page, and the c
 
 ### Contact and footer
 - Live-class enquiries go to WhatsApp and Viber links. The number comes from `client/src/components/contactPhone.js`, and `VITE_CONTACT_PHONE` overrides it.
-- Every page except sign-in, register and reset password shows the same footer: courses, practice studio, pricing plans, live class inquiry, social links and privacy links.
+- Every page except sign-in, register and reset password shows the same footer: courses, practice studio, About HSK, pricing plans, live class inquiry, social links, and links to the Privacy Policy, cookies page and Terms of Service.
 - On phones, the menu adds Home for everyone, plus Pinyin practice and Live class inquiry for visitors who aren't signed in.
 
 ### Loading screen
@@ -134,7 +134,6 @@ Setting up a new computer: [new-device-migration.md](new-device-migration.md). C
 
 ## Known gaps
 
-- **A paid plan doesn't open the practice studio or the locked mock tests by itself.** A plan unlocks every course (`server/utils/platformAccess.js`). The practice gate (`client/src/access/practiceAccess.js`) and mock tests (`server/utils/testAccess.js`) only check approved access requests. A student with a plan still needs an approved access request.
 - **Numbers, tones and listening have no uploaded recordings to fall back on.** Without the Azure voice, they depend on the browser having a Mandarin voice.
 - **Render's free plan sleeps.** The first request after a quiet period takes about a minute.
 

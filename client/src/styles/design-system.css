@@ -62,6 +62,18 @@ body { font-family: var(--font-body); font-size: var(--text-body); line-height: 
   padding: var(--page-start) var(--page-gutter) var(--page-end) !important;
 }
 
+/* The page area fills the space between the header and the footer, so the footer stays at the
+   bottom of the screen on short pages and while a page is loading. */
+.app-shell { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+.app-shell > :where(.site-content, .auth-layout, .ink-loader) { flex: 1 0 auto; }
+.app-shell > .container { width: 100%; }
+.app-shell > .app-footer { margin-top: auto; }
+/* While a page loads, its loader fills the screen under the header and sits in the middle of it.
+   The footer appears with the page, rather than rising up the screen beneath the loader. */
+.site-content:has(> .ink-loader) { display: flex; flex-direction: column; }
+.site-content > .ink-loader { flex: 1 0 auto; }
+.app-shell:has(> .ink-loader, > .site-content > .ink-loader) > .app-footer { display: none; }
+
 /* Header-to-content spacing is shared across every page family. */
 #root :where(
   .access-page-heading, .email-heading, .test-studio-heading, .um-header-section,

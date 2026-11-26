@@ -11,7 +11,7 @@ async function prepare(page, user = null) {
 test('public footer policies open without sign-in and survive refresh', async ({ page }) => {
   await prepare(page);
   await page.goto('/');
-  await page.getByRole('navigation', { name: 'Privacy information' }).getByRole('link', { name: 'Privacy Policy', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Policies' }).getByRole('link', { name: 'Privacy Policy', exact: true }).click();
   await expect(page).toHaveURL(/\/privacy$/);
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Privacy Policy', exact: true })).toBeVisible();
@@ -20,6 +20,38 @@ test('public footer policies open without sign-in and survive refresh', async ({
   await expect(page.getByRole('table')).toContainText('HSK exam drafts');
   await page.goBack();
   await expect(page).toHaveURL(/\/privacy$/);
+});
+
+test('the Terms of Service open from the footer and from the account creation form', async ({ page, context }) => {
+  await prepare(page);
+  await page.goto('/');
+  await page.getByRole('navigation', { name: 'Policies' }).getByRole('link', { name: 'Terms of Service', exact: true }).click();
+  await expect(page).toHaveURL(/\/terms$/);
+  await expect(page.getByRole('heading', { level: 1, name: 'Terms of Service' })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Policy pages' }).getByRole('link', { name: 'Terms of Service' })).toHaveAttribute('aria-current', 'page');
+  await page.goto('/register');
+  const [terms] = await Promise.all([
+    context.waitForEvent('page'),
+    page.getByRole('link', { name: 'Terms of Service (opens in a new tab)' }).click(),
+  ]);
+  await terms.waitForLoadState();
+  await expect(terms).toHaveURL(/\/terms$/);
+  await expect(terms.getByRole('heading', { level: 1, name: 'Terms of Service' })).toBeVisible();
+});
+
+test('the privacy policy explains account deletion and points full erasure to the contact button', async ({ page }) => {
+  await prepare(page);
+  await page.goto('/privacy');
+  const deletion = page.locator('#privacy-deletion');
+  await expect(deletion.getByRole('heading', { name: 'Deleting your account and data' })).toBeVisible();
+  await expect(deletion).toContainText('HSK test attempts and scores');
+  const contact = page.getByRole('button', { name: 'Contact us about privacy' });
+  await deletion.scrollIntoViewIfNeeded();
+  await expect(contact).not.toBeInViewport();
+  await deletion.getByRole('link', { name: 'Ask the team to erase all my data' }).click();
+  await expect(contact).toBeInViewport();
+  await expect(contact).toBeFocused();
+  await expect(page.locator('#privacy-contact')).toHaveClass(/is-pointed/);
 });
 
 test('signed-in super admins can read the public policy', async ({ page }) => {

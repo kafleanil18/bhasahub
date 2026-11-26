@@ -8,6 +8,7 @@ import './TonePractice.css';
 import './NumberTrainer.css';
 import { useInitialLoad } from '../navigation/pageLoad';
 
+import RefreshButton from '../components/RefreshButton';
 // A sample of what each mode sounds like, shown on its card.
 const examples = {
   prices: ['¥25.50', '二十五块五角'], time: ['15:30', '下午三点半'], dates: ['3月15号', '三月十五号'],
@@ -35,7 +36,7 @@ export default function NumberTrainer({ onBack }) {
       <VoiceSwitch speaker={speaker}/>
       {!available && <div className="number-voice-warning" role="status">{loading ? <p>Loading Chinese voices…</p> : <>
         <p>{supported ? 'No Mandarin voice was found on this device. Add a Chinese (Mandarin) voice in your device’s speech settings, or open this page in Google Chrome, then refresh.' : 'Speech playback is unavailable in this browser. Open this page in Google Chrome.'}</p>
-        {supported && <button className="sentence-secondary" onClick={refresh}>Refresh voices</button>}
+        {supported && <RefreshButton onClick={refresh}>Refresh voices</RefreshButton>}
       </>}</div>}
       <div className="number-mode-cards">{NUMBER_MODES.map(item => <button type="button" key={item.id} className="number-mode-card" disabled={!available} onClick={() => start(item.id)} aria-label={item.title} aria-describedby={`number-mode-${item.id}`}>
         <span className="number-mode-art" aria-hidden="true"><b>{examples[item.id][0]}</b><small lang="zh-CN">{examples[item.id][1]}</small></span>

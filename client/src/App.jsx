@@ -79,6 +79,32 @@ function AppContent() {
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
   }, []);
+  // The browser keeps the account details it was given at sign-in. Ask again when the site opens
+  // and when the tab regains focus, so a superadmin's change applies without signing in again,
+  // for example a promotion to admin, which unlocks every course, practice tool and mock test.
+  const userId = user?.id;
+  useEffect(() => {
+    if (!userId) return undefined;
+    let active = true;
+    const refresh = () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      fetch(`${window.API_BASE_URL}/api/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => (res.ok ? res.json() : null))
+        .then(fresh => {
+          const stored = readStoredUser();
+          if (!active || !fresh || !stored || String(stored.id) !== String(fresh.id)) return;
+          if (stored.role === fresh.role && stored.name === fresh.name && stored.email === fresh.email) return;
+          const next = { ...stored, role: fresh.role, name: fresh.name, email: fresh.email };
+          localStorage.setItem('user', JSON.stringify(next));
+          setUser(next);
+        })
+        .catch(() => {});
+    };
+    refresh();
+    window.addEventListener('focus', refresh);
+    return () => { active = false; window.removeEventListener('focus', refresh); };
+  }, [userId]);
   useEffect(() => {
     setMobileMenuOpen(false);
     setShowUserMenu(false);
@@ -242,7 +268,7 @@ function AppContent() {
     <AdminSidebar activeView={activeAdminView} onNavigate={view => navigate(adminPaths[view] || '/admin')} adminSidebarOpen={desktopAdminNavigation || adminSidebarOpen} isSuperAdmin={isSuperAdmin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={setAdminSidebarOpen} unreadFeedbackCount={unreadFeedbackCount} />
   </> : null;
 
-  return <div className={isSuperAdmin && adminArea ? 'super-admin-layout' : undefined}>
+  return <div className={isSuperAdmin && adminArea ? 'app-shell super-admin-layout' : 'app-shell'}>
     <div className="ambient-background" aria-hidden="true">
       <div className="ambient-orb orb-1" /><div className="ambient-orb orb-2" /><div className="ambient-orb orb-3" /><div className="ambient-orb orb-4" /><div className="ambient-mesh-grid" />
     </div>
@@ -253,7 +279,7 @@ function AppContent() {
     <SiteHeader adminSidebarOpen={adminSidebarOpen} attention={attention} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} hideForAuth={['/sign-in', '/register', '/reset-password'].includes(location.pathname)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={value => { if (!adminArea) navigate('/admin'); setAdminSidebarOpen(value); }} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} onNavigate={navigate} setShowChangePassword={setShowChangePassword} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
     <StudioSaveStatus />
     <Suspense fallback={<InkLoader />}><AppRoutes user={user} home={home} sidebar={sidebar} onHome={goHome} onLogin={handleLogin} openLogin={openLogin} /></Suspense>
-    {location.pathname !== '/' && <div className="home-page"><HomeFooter goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} onStartTour={user?.role === 'student' ? startStudioTour : undefined} /></div>}
+    {location.pathname !== '/' && <div className="home-page app-footer"><HomeFooter goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} onStartTour={user?.role === 'student' ? startStudioTour : undefined} /></div>}
   </div>;
 }
 

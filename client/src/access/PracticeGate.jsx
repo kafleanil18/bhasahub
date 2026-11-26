@@ -6,8 +6,8 @@ import './PracticeGate.css';
 import Icon from '../components/Icon';
 import { useInitialLoad } from '../navigation/pageLoad';
 
-// Wraps the practice studio pages: students can look inside, but until an access
-// request is approved the page is locked and they are asked to request access.
+// Wraps the practice studio pages: students can look inside, but without a free week, an active
+// plan or an active course subscription the page is locked and they are asked to request access.
 export default function PracticeGate({ user, onHome }) {
   const { status, request } = usePracticeAccess(user);
   useInitialLoad(status === 'loading', 'Checking your practice access…');

@@ -19,3 +19,11 @@
 .privacy-document caption { color: var(--mist); caption-side: top; }
 .privacy-document th:first-child { min-width: 110px; }
 .privacy-links a { min-height: 44px; display: inline-flex; align-items: center; }
+/* In-page links land below the sticky header. */
+.privacy-document section[id] { scroll-margin-top: 96px; }
+.privacy-erase { margin-top: 20px; padding: 14px 18px; border-left: 3px solid var(--seal); border-radius: 0 8px 8px 0; background: var(--rice); }
+.privacy-erase a { font-weight: 650; }
+/* After "Ask the team to erase all my data", the request button pulses twice so it's easy to spot. */
+#privacy-contact.is-pointed .btn-primary { animation: privacy-point 1.1s ease-out 2; }
+@keyframes privacy-point { from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--seal) 55%, transparent); } to { box-shadow: 0 0 0 14px transparent; } }
+@media (prefers-reduced-motion: reduce) { #privacy-contact.is-pointed .btn-primary { animation: none; outline: 3px solid var(--seal); outline-offset: 3px; } }

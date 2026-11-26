@@ -6,6 +6,7 @@ import DailyReminderCard from './DailyReminderCard';
 import { useInitialLoad } from '../navigation/pageLoad';
 import Icon from '../components/Icon';
 
+import RefreshButton from '../components/RefreshButton';
 const API = window.API_BASE_URL + '/api';
 
 // Helper to determine if a word has Chinese characters
@@ -201,7 +202,7 @@ function ProgressAnalytics({ user, onBack }) {
             ← Back to Dashboard
           </button>
           <div className="analytics-hero-actions">
-          <button className="btn-back-pill analytics-refresh" onClick={() => setRefreshKey(value => value + 1)} disabled={loading} aria-label="Refresh learning analytics">{loading ? 'Refreshing…' : '↻ Refresh'}</button>
+          <RefreshButton busy={loading} onClick={() => setRefreshKey(value => value + 1)} aria-label="Refresh learning analytics">{loading ? 'Refreshing…' : 'Refresh'}</RefreshButton>
           {data.scoreTrend.length > 0 && (
             <button className="btn-export-csv" onClick={exportCsv}>
               <Icon name="download"/> Export CSV Report

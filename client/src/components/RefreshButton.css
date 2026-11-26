@@ -1,0 +1,13 @@
+.refresh-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 8px 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; font-weight: 600; line-height: 1.2; cursor: pointer; transition: border-color .18s ease, color .18s ease; }
+.refresh-button .ui-icon { width: 18px; height: 18px; color: var(--seal); transition: transform .45s cubic-bezier(.2, .8, .2, 1); }
+.refresh-button:hover:not(:disabled) { border-color: var(--seal); color: var(--seal); }
+.refresh-button:hover:not(:disabled) .ui-icon { transform: rotate(120deg); }
+.refresh-button:focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
+.refresh-button:disabled { cursor: default; opacity: .65; }
+.refresh-button.is-busy { opacity: 1; }
+.refresh-button.is-busy .ui-icon { animation: refresh-turn .9s linear infinite; }
+@keyframes refresh-turn { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .refresh-button .ui-icon { transition: none; }
+  .refresh-button.is-busy .ui-icon { animation: none; }
+}

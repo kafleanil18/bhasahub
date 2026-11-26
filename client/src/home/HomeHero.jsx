@@ -6,10 +6,13 @@ import './HomeHero.css';
 export default function HomeHero({ onContinueLearning, onPinyinPractice, user, hasStartedCourse = false, onOpenPractice }) {
   const teaching = user?.role === 'admin';
   const firstStudentLogin = user?.role === 'student' && user.isFirstLogin === true;
+  const scrollToCourses = () => requestAnimationFrame(() => document.getElementById('courses')?.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }));
+  // Students who have started a course pick up where they left off. Everyone else signed in,
+  // including new students with no course yet, chooses a course in the HSK courses section below.
   const startLearning = () => {
     if (!user) onPinyinPractice();
-    else if (!teaching) onContinueLearning();
-    else requestAnimationFrame(() => document.getElementById('courses')?.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }));
+    else if (!teaching && hasStartedCourse) onContinueLearning();
+    else scrollToCourses();
   };
   return <>
     <section className={`home-hero${!user ? ' is-logged-out' : ''}`} aria-labelledby="home-hero-title">

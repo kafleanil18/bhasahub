@@ -4,6 +4,7 @@ import EmailApiSettings from './EmailApiSettings';
 import './EmailSettings.css';
 import { useInitialLoad } from '../navigation/pageLoad';
 
+import RefreshButton from '../components/RefreshButton';
 const API = `${window.API_BASE_URL}/api/settings/email`;
 const headers = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json' });
 async function readResponse(response) {
@@ -72,7 +73,7 @@ export default function EmailSettings({ onBack }) {
     <div className="email-heading"><h2>Google SMTP (optional)</h2>{saved && <span className="email-status">{saved.enabled ? 'Google SMTP enabled' : 'Google SMTP disabled'}</span>}</div>
     {error && <div className="email-message email-error" role="alert">{error}{authError && <p><button className="email-button" onClick={() => { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.assign('/sign-in?next=%2Fadmin%2Fsettings%2Femail'); }}>Sign in again</button></p>}</div>}
     {notice && <div className="email-message" role="status">{notice}</div>}
-    {loading ? <p role="status" className="email-loading">Loading email settings…</p> : !draft ? <button className="email-button" onClick={() => setRetry(value => value + 1)}>Try again</button> : <div className="email-layout">
+    {loading ? <p role="status" className="email-loading">Loading email settings…</p> : !draft ? <RefreshButton onClick={() => setRetry(value => value + 1)}>Try again</RefreshButton> : <div className="email-layout">
       <form className="email-form" onSubmit={event => { event.preventDefault(); run('save'); }}>
         <fieldset disabled={Boolean(busy)}>
           <legend>Google SMTP</legend>

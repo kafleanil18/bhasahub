@@ -8,6 +8,7 @@ import './SubscriptionManager.css';
 import './StudentManager.css';
 import { useInitialLoad } from '../navigation/pageLoad';
 
+import RefreshButton from '../components/RefreshButton';
 const filters = [
   { key: 'all', label: 'All students', hint: 'Every student account' },
   { key: 'trial', label: 'On free trial', hint: 'Free access running now' },
@@ -100,11 +101,11 @@ export default function StudentManager({ onBack }) {
     <button className="back-btn" onClick={onBack}>← Back to dashboard</button>
     <div className="access-page-heading"><div><p className="access-eyebrow">People & access</p><h1 id="students-title">Manage students</h1><p>Add, edit or remove student accounts, and grant or revoke their free trial, plan and course access.</p></div><button className="access-button is-primary" onClick={() => open('add')}><span aria-hidden="true">＋</span> Add student</button></div>
     {notice && <div className="access-feedback is-success" role="status"><span>{notice}</span><button className="access-link" onClick={() => setNotice('')}>Dismiss</button></div>}
-    {loadError && <div className="access-feedback is-error" role="alert"><span>{loadError}</span><button className="access-button" onClick={() => { setLoading(true); void load(); }}>Retry</button></div>}
+    {loadError && <div className="access-feedback is-error" role="alert"><span>{loadError}</span><RefreshButton onClick={() => { setLoading(true); void load(); }}>Retry</RefreshButton></div>}
     {loading ? <div className="access-loading" role="status">Loading students…</div> : <>
       <div className="access-overview student-overview" aria-label="Student overview">{filters.map(item => <button type="button" key={item.key} onClick={() => setFilter(item.key)} aria-pressed={filter === item.key}><span>{item.label}</span><strong>{counts[item.key]}</strong><small>{item.hint}</small></button>)}</div>
       <section className="access-list-panel" aria-labelledby="student-list-title">
-        <div className="access-list-heading"><div><h2 id="student-list-title">{filters.find(item => item.key === filter).label}</h2><p>Open “Manage access” to grant, extend or revoke anything for a student.</p></div><button className="access-button" onClick={() => void load()}>Refresh list</button></div>
+        <div className="access-list-heading"><div><h2 id="student-list-title">{filters.find(item => item.key === filter).label}</h2><p>Open “Manage access” to grant, extend or revoke anything for a student.</p></div><RefreshButton onClick={() => void load()}>Refresh list</RefreshButton></div>
         <div className="access-filter-bar"><label className="access-search"><span>Search students</span><input type="search" placeholder="Name or email…" value={query} onChange={event => setQuery(event.target.value)}/></label></div>
         <p className="access-result-count" role="status">{visible.length} of {students.length} students</p>
         {!visible.length ? <div className="access-empty"><h3>No students here</h3><p>{students.length ? 'Try another search or filter.' : 'Add your first student to get started.'}</p></div> : <ul className="student-list">{visible.map(student => <li key={student._id} className="student-row">

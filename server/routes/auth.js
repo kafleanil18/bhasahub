@@ -219,6 +219,18 @@ router.post('/google', authLimiter, async (req, res) => {
   }
 });
 
+// GET /api/auth/me — the logged-in user's current account details. The app saves these at sign-in,
+// so it asks again on load to pick up changes a superadmin made since, such as a promotion to admin.
+router.get('/me', requireAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('name email role');
+    if (!user) return res.status(401).json({ error: 'Account no longer exists' });
+    res.json({ id: user._id, name: user.name, email: user.email, role: user.role });
+  } catch {
+    res.status(500).json({ error: 'Could not load your account' });
+  }
+});
+
 // POST /api/auth/change-password — logged-in user changes their own password
 router.post('/change-password', requireAuth, async (req, res) => {
   try {
