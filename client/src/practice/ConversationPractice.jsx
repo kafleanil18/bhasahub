@@ -6,6 +6,7 @@ import { pickConversationVoice } from './conversationVoice';
 import { checkNaturalVoice, naturalVoiceUrl } from './naturalVoice';
 import './ConversationPractice.css';
 import Icon from '../components/Icon';
+import { mediaUrl } from '../utils/mediaUrl';
 
 const lessons = [
   {
@@ -150,10 +151,24 @@ function ConversationPracticePage({ onBack }) {
   useEffect(() => { headingRef.current?.focus({ preventScroll: true }); }, [step, lesson.id]);
 
   const stop = () => { runRef.current++; window.speechSynthesis?.cancel(); audioRef.current?.pause(); audioRef.current = null; setPlayingKey(''); };
-  const say = (key, text, speaker = 'A') => {
+  // A line's own recording plays first. Without one (or if it can't load), the server voice reads
+  // the line, and the browser voice is the last resort.
+  const say = (key, text, speaker = 'A', recording = '') => {
     stop();
     const run = runRef.current;
     recordStudioActivity('conversation', null, text.trim().replace(/\s+/g, ' '));
+    if (recording) {
+      const audio = new Audio(mediaUrl(recording));
+      audioRef.current = audio;
+      audio.onended = () => { if (run === runRef.current) setPlayingKey(''); };
+      audio.onerror = () => { if (run === runRef.current) speakGenerated(key, text, speaker, run); };
+      setPlayingKey(key);
+      audio.play().catch(error => { if (error?.name === 'NotAllowedError' && run === runRef.current) setPlayingKey(''); });
+      return;
+    }
+    speakGenerated(key, text, speaker, run);
+  };
+  const speakGenerated = (key, text, speaker, run) => {
     if (natural) {
       // Natural Azure voice; if the clip can't load, the browser voice reads it instead.
       const audio = new Audio(naturalVoiceUrl(text, { speaker }));
@@ -184,7 +199,7 @@ function ConversationPracticePage({ onBack }) {
     setStep(target);
     // Each screen starts at the top of the card, even after tapping a control low on a short screen.
     if (window.scrollY > 0) window.scrollTo({ top: 0, behavior: 'instant' });
-    if (target >= 0 && target < lines.length) say(`line-${target}`, lines[target].chinese, lines[target].speaker); else stop();
+    if (target >= 0 && target < lines.length) say(`line-${target}`, lines[target].chinese, lines[target].speaker, lines[target].audioUrl); else stop();
   };
   const selectLesson = id => {
     stop(); setStep(-1); setSelectedLessonId(id); window.scrollTo({ top: 0, behavior: 'instant' });
@@ -248,7 +263,7 @@ function ConversationPracticePage({ onBack }) {
             {showPinyin && <p className="cp-pinyin" lang="zh-Latn">{line.pinyin}</p>}
             <p className="cp-chinese" lang="zh-CN">{line.chinese}</p>
             {showEnglish && <p className="cp-english">{line.english}</p>}
-            <button type="button" className={`cp-listen${playingKey === `line-${step}` ? ' is-playing' : ''}`} onClick={() => say(`line-${step}`, line.chinese, line.speaker)} aria-label={`Listen to ${line.pinyin}`}>
+            <button type="button" className={`cp-listen${playingKey === `line-${step}` ? ' is-playing' : ''}`} onClick={() => say(`line-${step}`, line.chinese, line.speaker, line.audioUrl)} aria-label={`Listen to ${line.pinyin}`}>
               <SpeakerIcon playing={playingKey === `line-${step}`} size={26} /><span>{playingKey === `line-${step}` ? 'Playing…' : 'Listen'}</span>
             </button>
           </div>

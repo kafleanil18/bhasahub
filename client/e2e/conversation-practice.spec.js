@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 // Fake speech engine: records what was spoken and with which voice.
-async function prepare(page, voices, { natural = false } = {}) {
+async function prepare(page, voices, { natural = false, lessons = [] } = {}) {
   await page.addInitScript(list => {
     localStorage.setItem('token', 't'); localStorage.setItem('user', JSON.stringify({ id: 's', name: 'S', role: 'student' }));
     window.__spoken = []; window.__audioPlays = 0;
@@ -14,8 +14,9 @@ async function prepare(page, voices, { natural = false } = {}) {
       speak(u) { window.__spoken.push({ text: u.text, voice: u.voice?.name }); setTimeout(() => u.onstart?.(), 10); setTimeout(() => u.onend?.(), 120); },
     } });
   }, voices);
-  await page.route('**/api/settings', r => r.fulfill({ json: { conversationLessons: [] } }));
   await page.route('**/api/**', r => r.fulfill({ json: {} }));
+  // Added after the catch-all, so it wins: Playwright tries the newest route first.
+  await page.route('**/api/settings', r => r.fulfill({ json: { conversationLessons: lessons } }));
   await page.route('**/api/tts/status', r => r.fulfill({ json: { enabled: natural } }));
   await page.route('**/api/access-requests/my', r => r.fulfill({ json: [{ scope: 'tests', status: 'approved' }] }));
   await page.route('https://**/*', r => r.abort());
@@ -58,6 +59,37 @@ test('with the Azure voice set up, lines play natural audio with a voice per spe
   await page.getByRole('button', { name: 'Next', exact: true }).click();
   const srcs = await page.evaluate(() => window.__audioSrcs.map(src => Object.fromEntries(new URL(src).searchParams)));
   expect(srcs).toEqual([{ text: '你好！', speaker: 'A', speed: 'normal' }, { text: '你好！', speaker: 'B', speed: 'normal' }]);
+  expect(await spoken(page)).toEqual([]);
+});
+
+// The first lesson as an admin saved it, with a recording on its opening line only.
+const RECORDING = 'https://res.cloudinary.com/demo/video/upload/hello-a.mp3';
+const recordedLesson = {
+  id: 'lesson-1', number: '01', title: '你好', subtitle: 'Hello', topic: 'Meeting someone', intro: 'Say hello.',
+  exchanges: [{ number: '01', title: 'Say hello', tone: 'hello', turns: [
+    { speaker: 'A', chinese: '你好！', pinyin: 'Nǐ hǎo!', english: 'Hello!', audioUrl: RECORDING },
+    { speaker: 'B', chinese: '你好！', pinyin: 'Nǐ hǎo!', english: 'Hello!' },
+  ] }],
+  words: [],
+};
+const playedSources = page => page.evaluate(() => window.__audioSrcs.map(src => src.includes('/api/tts') ? Object.fromEntries(new URL(src).searchParams) : src));
+
+test('a line with its own recording plays it first, and other lines use the server voice', async ({ page }) => {
+  await prepare(page, [['Google 普通话（中国大陆）', 'zh-CN']], { natural: true, lessons: [recordedLesson] });
+  // Both kinds of audio keep loading, so neither falls back.
+  await page.route(RECORDING, () => {});
+  await page.route('**/api/tts?*', () => {});
+  await page.getByRole('button', { name: 'Start conversation' }).click();
+  await page.getByRole('button', { name: 'Next', exact: true }).click();
+  expect(await playedSources(page)).toEqual([RECORDING, { text: '你好！', speaker: 'B', speed: 'normal' }]);
+  expect(await spoken(page)).toEqual([]);
+});
+
+test('if a line recording can’t load, the server voice reads the line instead', async ({ page }) => {
+  await prepare(page, [['Google 普通话（中国大陆）', 'zh-CN']], { natural: true, lessons: [recordedLesson] });
+  await page.route('**/api/tts?*', () => {});
+  await page.getByRole('button', { name: 'Start conversation' }).click();
+  await expect.poll(() => playedSources(page)).toEqual([RECORDING, { text: '你好！', speaker: 'A', speed: 'normal' }]);
   expect(await spoken(page)).toEqual([]);
 });
 
