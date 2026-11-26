@@ -85,8 +85,7 @@ test('a student with an active plan sees when it ends', async ({ page }) => {
   await expect(active).toContainText('Active plan');
   await expect(active).toContainText('Active until');
   await expect(active.getByRole('button')).toHaveCount(0);
-  const border = await active.evaluate(element => getComputedStyle(element).borderTopColor);
-  expect(border).toBe('rgb(31, 122, 69)');
+  await expect(active).toHaveCSS('border-top-color', 'rgb(31, 122, 69)');
   for (const name of ['1 month', '3 months']) {
     const card = page.getByRole('article', { name });
     await expect(card).toHaveClass(/is-locked/);

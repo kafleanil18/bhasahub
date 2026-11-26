@@ -20,6 +20,7 @@ async function prepare(page, list = sentences) {
   await page.route('**/dictation-test.wav', route => route.fulfill({ body: wav(), contentType: 'audio/wav' }));
   await page.route('**/api/**', route => {
     const path = new URL(route.request().url()).pathname;
+    if (path === '/api/access-requests/my') return route.fulfill({ json: [{ scope: 'tests', status: 'approved' }] });
     return route.fulfill({ json: path === '/api/sentences' ? { topics, sentences: list } : {} });
   });
 }

@@ -11,6 +11,7 @@ async function prepare(page) {
   });
   await page.route('**/api/**', async route => {
     const path = new URL(route.request().url()).pathname.replace('/api', '');
+    if (path === '/access-requests/my') return route.fulfill({ json: [{ scope: 'tests', status: 'approved' }] });
     if (path === '/studio-activity') return route.fulfill({ status: 500, json: { error: 'Unavailable' } });
     await route.fulfill({ json: path === '/sentences' ? { ...catalog, sentences } : [] });
   });

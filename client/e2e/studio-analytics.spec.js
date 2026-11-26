@@ -8,6 +8,7 @@ async function prepare(page, { fail = false, populated = true } = {}) {
   await page.route('**/api/**', async route => {
     const path = new URL(route.request().url()).pathname.replace('/api', '');
     let data = [];
+    if (path === '/access-requests/my') data = [{ scope: 'tests', status: 'approved' }];
     if (path === '/analytics/me') data = { streak: 0, totalAttempts: 0, completedLessons: 0, overallAccuracy: 0, scoreTrend: [], accuracyByCourse: [], accuracyByLesson: [], accuracyByTest: [], weakestWords: [] };
     if (path === '/studio-activity/me') {
       if (fail) return route.fulfill({ status: 500, json: { error: 'Unavailable' } });

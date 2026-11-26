@@ -11,6 +11,7 @@ async function prepare(page) {
   });
   await page.route('**/api/**', async route => {
     const path = new URL(route.request().url()).pathname.replace('/api', '');
+    if (path === '/access-requests/my') return route.fulfill({ json: [{ scope: 'tests', status: 'approved' }] });
     if (path === '/hanzi-trace') return route.fulfill({ json: [
       { _id: 'yi', character: '一', pinyin: 'yī', meaning: 'one', category: 'HSK 1' },
       { _id: 'er', character: '二', pinyin: 'èr', meaning: 'two', category: 'HSK 1' },
@@ -24,7 +25,10 @@ async function prepare(page) {
 
 async function draw(page, from, to) {
   await page.waitForTimeout(400); // the quiz starts listening just after the stroke data loads
-  const box = await page.locator('.tracing-stage-box').boundingBox();
+  const stage = page.locator('.tracing-stage-box');
+  // Clicking a button below the box scrolls the page, which can leave the box under the sticky header.
+  await stage.scrollIntoViewIfNeeded();
+  const box = await stage.boundingBox();
   await page.mouse.move(box.x + box.width * from[0], box.y + box.height * from[1]);
   await page.mouse.down();
   await page.mouse.move(box.x + box.width * to[0], box.y + box.height * to[1], { steps: 12 });

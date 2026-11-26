@@ -10,7 +10,10 @@ async function prepare(page) {
     window.SpeechSynthesisUtterance = class { constructor(text) { this.text = text; } };
   });
   await page.route('https://**/*', route => route.abort());
-  await page.route('**/api/**', route => route.fulfill({ json: [] }));
+  await page.route('**/api/**', route => {
+    const path = new URL(route.request().url()).pathname;
+    return route.fulfill({ json: path === '/api/access-requests/my' ? [{ scope: 'tests', status: 'approved' }] : [] });
+  });
 }
 
 test('a mixed round fills the gap, explains each answer and ends with results', async ({ page }) => {

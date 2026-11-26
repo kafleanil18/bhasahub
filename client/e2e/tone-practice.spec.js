@@ -19,6 +19,7 @@ async function prepare(page, { empty = false, broken = false, failSave = false, 
   await page.route('**/tone-test.wav', r => broken ? r.abort() : r.fulfill({ body: audio(), contentType: 'audio/wav' }));
   await page.route('**/api/**', async r => {
     const path = new URL(r.request().url()).pathname.replace('/api', ''); let data = [];
+    if (path === '/access-requests/my') data = [{ scope: 'tests', status: 'approved' }];
     if (path === '/pinyin-table') data = { initials: ['m'], finals: ['a'], syllables: [{ initial: 'm', final: 'a', syllable: 'ma' }] };
     if (path === '/tone-practice/questions') data = { questions: empty ? [] : questions };
     if (path === '/tone-practice/pairs') data = { pairs: [] };
