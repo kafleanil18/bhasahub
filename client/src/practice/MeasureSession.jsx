@@ -1,5 +1,5 @@
 import { recordStudioActivity } from './recordStudioActivity';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { MEASURE_GROUPS, isCorrectMeasure } from './measureQuiz';
 import { shuffleSentences } from './sentenceQuiz';
 import SentenceText, { PinyinText } from './SentenceText';
@@ -7,6 +7,25 @@ import useNumberSpeech from './useNumberSpeech';
 import { PlayButton, ProgressDots, ScoreRing, SlowButton } from './ToneVisuals';
 
 const groupFor = word => MEASURE_GROUPS.find(group => group.word === word);
+
+// useNumberSpeech plays through a speaker with speak() and stop(). This page lets the student pick
+// one of the device's voices, so wrap that voice in a speaker.
+function deviceSpeaker(voice) {
+  if (!voice) return null;
+  return {
+    speak(text, { rate = 1, onStart, onEnd, onError } = {}) {
+      if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) return false;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.voice = voice; utterance.lang = voice.lang || 'zh-CN'; utterance.rate = rate;
+      utterance.onstart = () => onStart?.();
+      utterance.onend = () => onEnd?.();
+      utterance.onerror = event => { if (!['interrupted', 'canceled'].includes(event.error)) onError?.(event.error); };
+      window.speechSynthesis.speak(utterance);
+      return true;
+    },
+    stop() { window.speechSynthesis?.cancel(); },
+  };
+}
 
 export default function MeasureSession({ initialQuestions, voice, onRestart, onExit }) {
   const [questions, setQuestions] = useState(initialQuestions);
@@ -17,7 +36,8 @@ export default function MeasureSession({ initialQuestions, voice, onRestart, onE
   const [finished, setFinished] = useState(false);
   const lockedRef = useRef(false), titleRef = useRef(null), nextRef = useRef(null);
   const question = questions[index];
-  const { play, reset, error, playing } = useNumberSpeech(voice);
+  const speaker = useMemo(() => deviceSpeaker(voice), [voice]);
+  const { play, reset, error, playing } = useNumberSpeech(speaker);
   const missed = results.filter(result => !result.correct);
   const answered = selection !== null;
   const correct = answered && isCorrectMeasure(question, selection);
