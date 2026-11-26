@@ -62,3 +62,39 @@ test('choosing the male voice reads numbers with the server male voice', async (
   await expect(page.getByRole('button', { name: 'Check answer' })).toBeEnabled();
   expect(await page.evaluate(() => window.__spoken.length)).toBe(0);
 });
+
+// Answers the server voice requests with a short silent WAV and records what was asked for.
+async function serverVoice(page) {
+  const tts = [];
+  await page.route('**/api/tts/status', route => route.fulfill({ json: { enabled: true } }));
+  await page.route('**/api/tts?*', route => {
+    tts.push(Object.fromEntries(new URL(route.request().url()).searchParams));
+    const b = Buffer.alloc(1644); b.write('RIFF'); b.writeUInt32LE(b.length - 8, 4); b.write('WAVEfmt ', 8); b.writeUInt32LE(16, 16); b.writeUInt16LE(1, 20); b.writeUInt16LE(1, 22); b.writeUInt32LE(8000, 24); b.writeUInt32LE(16000, 28); b.writeUInt16LE(2, 32); b.writeUInt16LE(16, 34); b.write('data', 36); b.writeUInt32LE(1600, 40);
+    return route.fulfill({ status: 200, contentType: 'audio/wav', body: b });
+  });
+  return tts;
+}
+
+test('when the server voice is set up, numbers use it even if the device has a Mandarin voice', async ({ page }) => {
+  await prepare(page, [{ name: 'Google 普通话（中国大陆）', lang: 'zh-CN', voiceURI: 'google-zh' }]);
+  const tts = await serverVoice(page);
+  await page.goto('/practice/numbers');
+  await page.getByRole('button', { name: 'Prices', exact: true }).click();
+  await expect.poll(() => tts.length).toBeGreaterThanOrEqual(1);
+  expect(tts[0]).toMatchObject({ speaker: 'A', speed: 'normal' });
+  await page.getByRole('button', { name: 'Slow · 0.75×' }).click();
+  await expect.poll(() => tts.at(-1)?.speed).toBe('slow');
+  await expect(page.getByRole('button', { name: 'Check answer' })).toBeEnabled();
+  expect(await page.evaluate(() => window.__spoken.length)).toBe(0);
+});
+
+test('a device with no Mandarin voice (e.g. Brave or Firefox on Linux) still hears numbers from the server', async ({ page }) => {
+  await prepare(page, [{ name: 'Samantha', lang: 'en-US', voiceURI: 'samantha' }]);
+  const tts = await serverVoice(page);
+  await page.goto('/practice/numbers');
+  await page.getByRole('button', { name: 'Ages', exact: true }).click();
+  await expect.poll(() => tts.length).toBeGreaterThanOrEqual(1);
+  expect(tts[0].speaker).toBe('A');
+  await expect(page.getByText('No Mandarin voice was found')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Check answer' })).toBeEnabled();
+});

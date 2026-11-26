@@ -32,20 +32,24 @@ export const maleDeviceVoice = voices => mandarinVoices(voices).find(voice => MA
 
 /*
  * Speaks Mandarin in the chosen voice.
- *  - female: Google's female Mandarin voice in the browser (or the device's best Mandarin voice).
- *  - male: the server's Azure male neural voice when it is set up, else a male device voice,
- *          else the female voice (maleSource is then null so the page can say so).
+ * The app's own server voice (Azure neural: female Xiaoxiao, male Yunxi) comes first, so every
+ * browser and device hears the same audio, whether or not it has a Mandarin voice installed.
+ * The device's speech voices are only a backup, used when the server voice is not set up or a
+ * clip fails to load:
+ *  - female: Google's female Mandarin voice in the browser, or the device's best Mandarin voice.
+ *  - male: a male device voice, else the female one (maleSource is then null so the page can say so).
  * speak(text, { rate, onStart, onEnd, onError }) starts playback and returns false if nothing can speak.
  */
 export default function useMandarinSpeaker() {
   const female = useChineseVoice({ preferGoogleFemale: true });
   const [gender, setGender] = useVoiceGender();
-  const [serverMale, setServerMale] = useState(false);
+  // null while the server is being asked, then true or false.
+  const [serverVoice, setServerVoice] = useState(null);
   const [deviceMale, setDeviceMale] = useState(null);
   const audioRef = useRef(null);
   const tokenRef = useRef(0);
 
-  useEffect(() => { let live = true; checkNaturalVoice().then(enabled => { if (live) setServerMale(enabled); }); return () => { live = false; }; }, []);
+  useEffect(() => { let live = true; checkNaturalVoice().then(enabled => { if (live) setServerVoice(enabled); }); return () => { live = false; }; }, []);
   useEffect(() => {
     if (!female.supported) return undefined;
     const find = () => setDeviceMale(maleDeviceVoice(window.speechSynthesis.getVoices()));
@@ -54,8 +58,9 @@ export default function useMandarinSpeaker() {
     return () => window.speechSynthesis.removeEventListener?.('voiceschanged', find);
   }, [female.supported, female.voices]);
 
-  const maleSource = serverMale ? 'server' : deviceMale ? 'device' : null;
-  const usingMale = gender === 'male' && !!maleSource;
+  const useServer = serverVoice === true;
+  const maleSource = useServer ? 'server' : deviceMale ? 'device' : null;
+  const deviceVoice = gender === 'male' && deviceMale ? deviceMale : female.voice;
 
   const stop = useCallback(() => {
     tokenRef.current++;
@@ -78,29 +83,31 @@ export default function useMandarinSpeaker() {
   const speak = useCallback((text, options = {}) => {
     stop();
     const token = tokenRef.current;
-    if (gender === 'male' && serverMale) {
-      const audio = new Audio(naturalVoiceUrl(text, { speaker: 'B', speed: (options.rate ?? 1) < 0.7 ? 'slow' : 'normal' }));
+    if (useServer) {
+      // Practice pages slow down below 0.8×; the server has a matching slow reading.
+      const audio = new Audio(naturalVoiceUrl(text, { speaker: gender === 'male' ? 'B' : 'A', speed: (options.rate ?? 1) < 0.8 ? 'slow' : 'normal' }));
       audioRef.current = audio;
       audio.onplaying = () => { if (token === tokenRef.current) options.onStart?.(); };
       audio.onended = () => { if (token === tokenRef.current) options.onEnd?.(); };
-      // If the server voice fails, say it with the device instead of going silent.
-      const fallback = () => { if (token !== tokenRef.current) return; audioRef.current = null; if (!speakWithDevice(text, deviceMale || female.voice, options, token)) options.onError?.('audio'); };
+      // If the server clip fails, say it with the device instead of going silent.
+      const fallback = () => { if (token !== tokenRef.current) return; audioRef.current = null; if (!speakWithDevice(text, deviceVoice, options, token)) options.onError?.('audio'); };
       audio.onerror = fallback;
       audio.play().catch(error => { if (error?.name === 'NotAllowedError') options.onError?.('not-allowed'); else fallback(); });
       return true;
     }
-    return speakWithDevice(text, usingMale ? deviceMale : female.voice, options, token);
-  }, [gender, serverMale, deviceMale, usingMale, female.voice, speakWithDevice, stop]);
+    return speakWithDevice(text, deviceVoice, options, token);
+  }, [gender, useServer, deviceVoice, speakWithDevice, stop]);
 
   return {
     gender, setGender, speak, stop,
     // True when something can speak Mandarin right now.
-    available: (gender === 'male' && serverMale) || !!(usingMale ? deviceMale : female.voice),
-    loading: female.loading,
-    supported: female.supported || serverMale,
+    available: useServer || !!deviceVoice,
+    // Still finding out what can speak: the server has not answered and no device voice is ready yet.
+    loading: !useServer && !deviceVoice && (serverVoice === null || female.loading),
+    supported: female.supported || useServer,
     refresh: female.refresh,
     femaleVoice: female.voice,
     maleSource,
-    maleUnavailable: gender === 'male' && !maleSource,
+    maleUnavailable: gender === 'male' && !maleSource && serverVoice !== null,
   };
 }
