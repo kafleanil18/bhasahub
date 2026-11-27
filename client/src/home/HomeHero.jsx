@@ -1,4 +1,5 @@
 import PracticeStudio from './PracticeStudio';
+import CharacterRain from './CharacterRain';
 import './HomeHero.css';
 
 export default function HomeHero({ onContinueLearning, onPinyinPractice, user, hasStartedCourse = false, onOpenPractice }) {
@@ -14,6 +15,7 @@ export default function HomeHero({ onContinueLearning, onPinyinPractice, user, h
   };
   return <>
     <section className={`home-hero${!user ? ' is-logged-out' : ''}`} aria-labelledby="home-hero-title">
+      <CharacterRain />
       <div className="container home-hero-grid">
         <div className="home-hero-intro">
           {teaching && <p className="home-hero-eyebrow">Welcome back, {user.name}.</p>}

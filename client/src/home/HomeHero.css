@@ -117,3 +117,18 @@
 .home-page .home-practice-directory .hero-practice-link:not(.hero-practice-tests):is(:hover, :focus-visible) .hero-practice-glyph { background: var(--accent-red); color: #fff; }
 .home-page .home-practice-directory .hero-practice-link.is-locked:not(.hero-practice-tests) .hero-practice-arrow { color: var(--mist); }
 @media (prefers-reduced-motion: reduce) { .home-page .home-practice-directory .hero-practice-link::after { transition: none; } }
+
+/* Falling characters behind the hero: slow, faint, and never in the way of the text or buttons. */
+.home-page .home-hero { position: relative; isolation: isolate; }
+/* The characters fall over the painting but stay behind the headline and buttons. */
+.home-page .home-hero-intro { position: relative; z-index: 2; }
+.character-rain { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; -webkit-mask-image: linear-gradient(180deg, transparent, #000 12%, #000 80%, transparent); mask-image: linear-gradient(180deg, transparent, #000 12%, #000 80%, transparent); }
+.character-rain span { position: absolute; top: 0; color: var(--hero-ink); font-family: 'Noto Serif SC', serif; font-weight: 500; line-height: 1; opacity: 0; will-change: transform, opacity; animation: character-fall linear infinite; }
+.character-rain span.is-red { color: var(--hero-red); }
+@keyframes character-fall {
+  0% { transform: translateY(-60px); opacity: 0; }
+  10% { opacity: var(--rain-opacity); }
+  85% { opacity: var(--rain-opacity); }
+  100% { transform: translateY(760px); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .character-rain { display: none; } }
