@@ -11,7 +11,7 @@ const practiceCharacters = { pinyin: '拼', tones: '声', trace: '字', listenin
 export default function PracticeStudio({ user, onOpenPractice }) {
   return (
 <section className="hero-practice-tools" aria-label="Practice studio">
-  <div className="hero-practice-heading"><div className="practice-kicker-glide"><div className="practice-kicker-track"><p className="hero-practice-kicker">Your practice studio</p></div></div><span className="hero-practice-count">{practiceTools.length} ways to learn</span></div>
+  <div className="hero-practice-heading"><h2 className="hero-practice-title">Your practice studio</h2><span className="hero-practice-count">{practiceTools.length} ways to learn</span></div>
   <div className="hero-practice-list">
     {practiceTools.map(([id, title, description]) => {
       const locked = !user && id !== 'pinyin';

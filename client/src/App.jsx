@@ -1,7 +1,9 @@
 import AdminSidebar from './components/AdminSidebar';
 import SiteHeader from './components/SiteHeader';
+import LiveClassNotice from './components/LiveClassNotice';
 import HomeFooter from './home/HomeFooter';
 import HomeTestimonials from './home/HomeTestimonials';
+import HomeFaq from './home/HomeFaq';
 import HomeCourses from './home/HomeCourses';
 import HomeHero from './home/HomeHero';
 import StudioSaveStatus from './practice/StudioSaveStatus';
@@ -118,11 +120,20 @@ function AppContent() {
     setShowTestimonial(false);
     if (!location.hash) window.scrollTo({ top: 0, behavior: 'instant' });
   }, [location.pathname, location.search, location.hash]);
+  // Links like /?level=HSK%202#courses (from the learning roadmap) open the course list on that level.
+  const requestedLevel = new URLSearchParams(location.search).get('level');
+  useEffect(() => {
+    if (!requestedLevel) return;
+    const level = (requestedLevel.match(/\d/) || [])[0];
+    if (level && courses.some(course => (course.level || '').includes(level))) setLevelFilter(`HSK ${level}`);
+  }, [requestedLevel, courses]);
+  // location.key changes on every navigation, so following a section link again (from the header,
+  // say, after scrolling away) scrolls back to that section even though the URL is the same.
   useEffect(() => {
     if (!location.hash) return;
     const frame = requestAnimationFrame(() => document.getElementById(location.hash.slice(1))?.scrollIntoView({ block: 'start' }));
     return () => cancelAnimationFrame(frame);
-  }, [location.pathname, location.hash, courses]);
+  }, [location.pathname, location.hash, location.key, courses]);
 
   const loadCourses = () => {
     fetch(window.API_BASE_URL + '/api/courses')
@@ -147,6 +158,18 @@ function AppContent() {
       .catch(() => {});
   };
 
+  // About Xiao Ao is hidden until a super admin shows it; its footer and menu links follow that choice.
+  const [aboutUsVisible, setAboutUsVisible] = useState(false);
+  useEffect(() => {
+    let active = true;
+    const load = () => fetch(window.API_BASE_URL + '/api/about-pages')
+      .then(res => res.ok ? res.json() : [])
+      .then(pages => { if (active) setAboutUsVisible(Array.isArray(pages) && pages.some(page => page.slug === 'xiao-ao' && page.visible)); })
+      .catch(() => {});
+    load();
+    window.addEventListener('about-pages-changed', load);
+    return () => { active = false; window.removeEventListener('about-pages-changed', load); };
+  }, []);
   const loadTestimonials = () => {
     fetch(window.API_BASE_URL + '/api/testimonials')
       .then(res => res.json())
@@ -272,7 +295,8 @@ function AppContent() {
     <HomeHero onContinueLearning={() => navigate('/continue')} onPinyinPractice={() => navigate('/practice/pinyin')} user={user} hasStartedCourse={Object.values(access).some(course => course.completed > 0)} onOpenPractice={openPractice} />
     <HomeCourses loaded={coursesLoaded} filteredCourses={filteredCourses} hskLevels={hskLevels} levelFilter={levelFilter} onOpenCourse={openCourse} setLevelFilter={setLevelFilter} />
     <HomeTestimonials loaded={testimonialsLoaded} openLogin={openLogin} scrollTestimonials={scrollTestimonials} setShowTestimonial={setShowTestimonial} testimonials={testimonials} testimonialsScrollRef={testimonialsScrollRef} user={user} />
-    <HomeFooter goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} onStartTour={user?.role === 'student' ? startStudioTour : undefined} />
+    <HomeFaq />
+    <HomeFooter showAboutUs={aboutUsVisible} goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} onStartTour={user?.role === 'student' ? startStudioTour : undefined} />
   </main>;
   const sidebar = isSuperAdmin ? <>
     <div className={`admin-sidebar-backdrop ${adminSidebarOpen ? 'is-visible' : ''}`} onClick={() => setAdminSidebarOpen(false)} aria-hidden="true" />
@@ -287,14 +311,15 @@ function AppContent() {
     {showTestAccessPrompt && user && <Suspense fallback={null}><TestAccessPrompt user={user} onClose={closeTestAccessPrompt} onStartTour={startStudioTour} /></Suspense>}
     {showStudioTour && <Suspense fallback={null}><StudioTour onClose={closeStudioTour} /></Suspense>}
     {showTestimonial && <TestimonialModal user={user} onClose={() => { setShowTestimonial(false); loadTestimonials(); }} />}
-    <SiteHeader adminSidebarOpen={adminSidebarOpen} attention={attention} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} hideForAuth={['/sign-in', '/register', '/reset-password'].includes(location.pathname)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={value => { if (!adminArea) navigate('/admin'); setAdminSidebarOpen(value); }} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} onNavigate={navigate} setShowChangePassword={setShowChangePassword} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
+    <SiteHeader showAboutUs={aboutUsVisible} adminSidebarOpen={adminSidebarOpen} attention={attention} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} hideForAuth={['/sign-in', '/register', '/reset-password'].includes(location.pathname)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={value => { if (!adminArea) navigate('/admin'); setAdminSidebarOpen(value); }} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} onNavigate={navigate} setShowChangePassword={setShowChangePassword} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
     <StudioSaveStatus />
     {idleNotice && !user && <div className="idle-notice" role="status">
       <span>You were signed out after 2 hours without activity. Please sign in again.</span>
       <button type="button" aria-label="Dismiss" onClick={() => { setIdleNotice(false); clearIdleSignOutNotice(); }}>×</button>
     </div>}
     <Suspense fallback={<InkLoader />}><AppRoutes user={user} home={home} sidebar={sidebar} onHome={goHome} onLogin={handleLogin} openLogin={openLogin} /></Suspense>
-    {location.pathname !== '/' && <div className="home-page app-footer"><HomeFooter goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} onStartTour={user?.role === 'student' ? startStudioTour : undefined} /></div>}
+    {location.pathname !== '/' && <div className="home-page app-footer"><HomeFooter showAboutUs={aboutUsVisible} goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} onStartTour={user?.role === 'student' ? startStudioTour : undefined} /></div>}
+    <LiveClassNotice user={user} blocked={showChangePassword || showTestAccessPrompt || showStudioTour || showTestimonial} />
   </div>;
 }
 

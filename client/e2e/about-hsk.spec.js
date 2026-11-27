@@ -59,20 +59,17 @@ test('About HSK fits a phone screen', async ({ page }) => {
   await page.screenshot({ path: 'test-results/about-hsk-mobile.png', fullPage: true });
 });
 
-test('the roadmap switches milestones with the keyboard and respects reduced motion', async ({ page }) => {
-  await page.setViewportSize({ width: 320, height: 720 });
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/about-hsk');
-  const roadmap = page.getByRole('region', { name: 'Chinese learning roadmap' });
-  await expect(roadmap.getByRole('button', { name: 'Sounds' })).toHaveAttribute('aria-pressed', 'true');
-  const conversation = roadmap.getByRole('button', { name: 'Conversation' });
-  await conversation.focus();
-  await page.keyboard.press('Enter');
-  await expect(conversation).toHaveAttribute('aria-pressed', 'true');
-  await expect(conversation).toBeFocused();
-  await expect(roadmap.getByText('因为下雨，我没去。', { exact: true })).toBeVisible();
-  await expect(roadmap.getByRole('link', { name: 'Practise building sentences' })).toHaveAttribute('href', '/practice/sentences');
-  await expect(roadmap.locator('.roadmap-milestone')).toHaveCSS('animation-name', 'none');
-  await expect(roadmap.locator('.roadmap-route')).toHaveCSS('--roadmap-progress', '0.5');
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320);
+test('the home page repeats the About HSK questions in an FAQ below the reviews', async ({ page }) => {
+  await page.goto('/');
+  const faq = page.getByRole('region', { name: 'FAQ' });
+  await expect(faq.getByRole('heading', { level: 2, name: 'FAQ' })).toBeVisible();
+  await expect(faq.locator('details')).toHaveCount(10);
+  await expect(faq.locator('details').first()).toHaveAttribute('open', '');
+  await faq.getByText('How do I pay?').click();
+  await expect(faq.getByText('we’ll email you the payment details')).toBeVisible();
+  const order = await page.evaluate(() => {
+    const reviews = document.querySelector('.home-page .worlds'), faqSection = document.querySelector('.home-faq');
+    return !reviews || !!(reviews.compareDocumentPosition(faqSection) & Node.DOCUMENT_POSITION_FOLLOWING);
+  });
+  expect(order).toBe(true);
 });

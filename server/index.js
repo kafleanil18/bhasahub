@@ -52,6 +52,7 @@ app.use('/api/hsk1', require('./routes/hsk1'));
 app.use('/api/testimonials', testimonialRoutes);
 app.use('/api/team', teamRoutes);
 app.use('/api/teachers', require('./routes/teachers'));
+app.use('/api/about-pages', require('./routes/aboutPages'));
 app.use('/api/access-requests', accessRequestRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/plans', require('./routes/plans'));

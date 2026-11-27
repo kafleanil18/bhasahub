@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { liveClassInquiryHref } from '../components/contactPhone';
 import { PLANS, formatRs } from '../pricing/plans';
 import { FREE_ACCESS_DAYS } from '../access/practiceAccess';
+import './HskFaq.css';
 
 // Questions about learning with Xiao Ao. Answers describe how the platform actually works
 // (free access request, plans, practice tools), so keep them in step with those features.

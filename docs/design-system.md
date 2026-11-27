@@ -45,6 +45,27 @@ pages. While a page loads its first data, the ink loader fills that space and si
 it, and the footer stays hidden until the page is ready. The rules are in `design-system.css`.
 `client/e2e/layout.spec.js` checks both cases.
 
+## Header
+
+From 1361px wide the header shows the navigation links in a row, each with its icon, as in the mobile
+menu. Narrower screens use the menu button instead. To fit up to six links beside the account
+controls, the desktop header may grow to 1360px, a little wider than the 1200px page. The spacing is
+tight, and the account button shows just the avatar, as on phones; the name and role head its menu.
+Hovering a link tints its background, without an underline. The rules are in `design-system.css`
+(the width) and the `min-width: 1361px` block of `styles/navigation.css`.
+`client/e2e/site-navigation.spec.js` checks that the student and admin headers stay on one row at
+1361px. Check that again after adding a header link.
+
+## Live classes card
+
+`LiveClassNotice` (`client/src/components/LiveClassNotice.jsx`) is a card in the bottom right corner
+saying live classes are available, with the WhatsApp and Viber buttons. It's for guests and students
+only. It appears 8 seconds into a browsing page (`/`, `/about-hsk`, `/pricing`, `/my-courses`,
+`/progress`), never during lessons, practice or tests, and not while a dialog or the studio tour is
+open. "Later" or Escape hides it for 7 days, and messaging us hides it for 30. The choice is kept in
+`localStorage` under `liveClassNotice`. The app update notice uses the same corner and goes first.
+`client/e2e/live-class-notice.spec.js` covers it.
+
 ## Refresh and retry buttons
 
 Every control that reloads a page or its data uses `RefreshButton` (`client/src/components/RefreshButton.jsx`).

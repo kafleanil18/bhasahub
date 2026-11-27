@@ -140,6 +140,17 @@ export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen,
               </button>
               </div>
               {isSuperAdmin && <div className="admin-sidebar-group">
+                <p className="admin-sidebar-group-title">Website</p>
+                <button className={activeView === 'about-pages' ? 'is-current' : undefined} aria-current={activeView === 'about-pages' ? 'page' : undefined} onClick={() => onNavigate('about-pages')}>
+                  <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>
+                  About pages
+                </button>
+                <button className={activeView === 'teachers' ? 'is-current' : undefined} aria-current={activeView === 'teachers' ? 'page' : undefined} onClick={() => onNavigate('teachers')}>
+                  <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>
+                  Teachers
+                </button>
+              </div>}
+              {isSuperAdmin && <div className="admin-sidebar-group">
                 <p className="admin-sidebar-group-title">Email & settings</p>
                 <button className={activeView === 'reminders' ? 'is-current' : undefined} aria-current={activeView === 'reminders' ? 'page' : undefined} onClick={() => onNavigate('reminders')}>
                   <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>

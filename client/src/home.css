@@ -139,3 +139,10 @@
 .idle-notice span { flex: 1; }
 .idle-notice button { flex-shrink: 0; width: 36px; height: 36px; border: 0; border-radius: 8px; background: transparent; color: var(--mist, #595959); font-size: 22px; line-height: 1; cursor: pointer; }
 .idle-notice button:hover, .idle-notice button:focus-visible { background: var(--rice, #f3eee4); color: var(--ink, #161616); }
+
+/* FAQ, below the reviews. Laid out like the courses and reviews sections: full page width, title on the left. */
+.home-page .home-faq { padding: 64px 0 72px; background: var(--card); border-top: 1px solid var(--line); }
+.home-page .home-faq .section-header-center { max-width: none; margin: 0 0 28px; }
+.home-page .home-faq .section-title { margin: 0; }
+.home-page .home-faq .hsk-faq-item summary { font-size: 16px; }
+.home-page .home-faq .hsk-faq-answer p { font-size: 15px; line-height: 1.7; }

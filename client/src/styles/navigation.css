@@ -763,6 +763,14 @@
     justify-content: center;
   }
 
+  /* An admin's Manage tests and Subscriptions line up with the menu links above them. */
+  .nav-link.mobile-admin-btn {
+    justify-content: flex-start;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14.5px;
+  }
+
   .mobile-drawer-theme-row {
     display: flex;
     align-items: center;
@@ -1587,15 +1595,18 @@ h1, h2, h3, h4, h5, h6,
   html { font-size: 17px; }
   body { font-size: 1rem; }
   .site-header .container { max-width: 1480px; padding-inline: 36px; }
-  .site-header .header-row { gap: 24px; }
+  .site-header .header-row { gap: 16px; }
   .site-header .main-nav { justify-content: flex-end; }
-  .site-header .nav-links { gap: 10px; }
-  .site-header .nav-link { gap: 8px; padding: 10px 14px; font-size: 15px; }
-  .site-header .nav-link .nav-svg-icon { width: 17px; height: 17px; }
+  /* Up to six links, each with its icon as in the mobile menu, share the header with the account
+     controls. To fit, the header is wider than the page here (see design-system.css), the spacing is
+     tight, and the account button is just the avatar, as on phones; the name and role head its menu. */
+  .site-header .nav-links { gap: 2px; }
+  .site-header .nav-link { gap: 6px; padding: 10px; font-size: 15px; }
+  .site-header .user-menu-name, .site-header .user-role-badge { display: none; }
   .site-header .nav-support-link { margin-left: 10px; padding-left: 22px; border-left: 1px solid rgba(255,255,255,.24); border-radius: 0 999px 999px 0; }
-  .site-header .nav-actions { gap: 12px; }
+  .site-header .nav-actions { gap: 10px; }
   .site-header .header-right { padding-left: 16px; border-left: 1px solid rgba(255,255,255,.2); }
-  .site-header .user-menu-trigger { font-size: 15px; padding: 5px 14px 5px 6px; }
+  .site-header .user-menu-trigger { font-size: 15px; padding: 5px 12px 5px 6px; }
   .site-header .theme-toggle-compact { width: 42px; height: 42px; }
   .home-page .hero-subtitle, .home-page .section-sublead, .home-page .course-card-desc { font-size: 17px; }
   .home-page .hero-access-note, .home-page .stat-text-wrap span, .home-page .course-card-link { font-size: 14px; }

@@ -4,7 +4,7 @@ import { liveClassInquiryHref } from '../components/contactPhone';
 import PrivacyLinks from '../privacy/PrivacyLinks';
 import Icon from '../components/Icon';
 
-export default function HomeFooter({ goHome, isSuperAdmin, serverOk, onStartTour }) {
+export default function HomeFooter({ goHome, isSuperAdmin, serverOk, onStartTour, showAboutUs = false }) {
   return (
     <footer className="site-footer home-footer">
       <div className="container footer-inner">
@@ -18,6 +18,7 @@ export default function HomeFooter({ goHome, isSuperAdmin, serverOk, onStartTour
           <nav className="footer-quick-links" aria-label="Footer navigation">
             <Link to="/#courses">Explore courses</Link>
             <Link to="/#practice-studio">Practice studio</Link>
+            {showAboutUs && <Link to="/about">About Xiao Ao</Link>}
             <Link to="/about-hsk">About HSK</Link>
             <Link to="/pricing">Pricing plans</Link>
             {onStartTour && <button type="button" className="footer-tour-link" onClick={onStartTour}><Icon name="compass" className="footer-tour-star"/> Take the studio tour</button>}

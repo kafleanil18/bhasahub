@@ -119,7 +119,7 @@ test('policy pages fit phones and desktops in light and dark mode', async ({ pag
 test('live classes link straight to WhatsApp and Viber instead of a form', async ({ page }) => {
   await prepare(page);
   await page.goto('/');
-  const contact = page.getByRole('group', { name: 'Contact us about live classes' });
+  const contact = page.getByRole('group', { name: 'Ask about live classes' });
   await expect(contact.getByRole('link', { name: 'Chat with us on WhatsApp' })).toHaveAttribute('href', /^https:\/\/wa\.me\/9779800000000\?text=/);
   await expect(contact.getByRole('link', { name: 'Chat with us on Viber' })).toHaveAttribute('href', /^viber:\/\/chat\?number=%2B9779800000000/);
   await expect(page.getByRole('button', { name: /Enquire now/ })).toHaveCount(0);

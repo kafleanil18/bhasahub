@@ -1,7 +1,7 @@
 import AdminNotifications from './AdminNotifications';
 import BrandLogo from './BrandLogo';
 import { liveClassInquiryHref } from './contactPhone';
-export default function SiteHeader({ adminSidebarOpen, attention, darkMode, goHome, handleLogout, hideForAuth = false, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, onNavigate, setShowChangePassword, setShowUserMenu, showUserMenu, unreadFeedbackCount, user }) {
+export default function SiteHeader({ showAboutUs = false, adminSidebarOpen, attention, darkMode, goHome, handleLogout, hideForAuth = false, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, onNavigate, setShowChangePassword, setShowUserMenu, showUserMenu, unreadFeedbackCount, user }) {
   if (hideForAuth) return null;
   return (
     <header className={`site-header${isSuperAdmin || !user ? ' paper-header' : ''}`}>
@@ -21,14 +21,42 @@ export default function SiteHeader({ adminSidebarOpen, attention, darkMode, goHo
                 </svg>
                 <span>Home</span>
               </button>
-              {isAdmin && !isSuperAdmin && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/admin/tests'); }}>Manage tests</button>}
-              <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/about-hsk'); }}>
+              {/* The home page holds both sections; a super admin's home is the admin dashboard instead. */}
+              {!isSuperAdmin && <>
+                <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); onNavigate('/#courses'); }}>
+                  <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"></path>
+                  </svg>
+                  <span>HSK courses</span>
+                </button>
+                <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); onNavigate('/#practice-studio'); }}>
+                  <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="m9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08"></path>
+                    <path d="M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z"></path>
+                  </svg>
+                  <span>Practice studio</span>
+                </button>
+              </>}
+              {/* Admins don't need About HSK; their staff tools sit on the right instead. */}
+              {!(isAdmin && !isSuperAdmin) && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/about-hsk'); }}>
                 <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M22 10 12 5 2 10l10 5 10-5z"></path>
                   <path d="M6 12v5c3 2.5 9 2.5 12 0v-5"></path>
                 </svg>
                 <span>About HSK</span>
-              </button>
+              </button>}
+              {/* The desktop header is full, so About Xiao Ao lives in the mobile menu and the footer,
+                  once a super admin has made the page visible. */}
+              {showAboutUs && <button className="nav-link nav-mobile-only" onClick={() => { setMobileMenuOpen(false); onNavigate('/about'); }}>
+                <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <span>About Xiao Ao</span>
+              </button>}
               {!isAdmin && !isSuperAdmin && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/pricing'); }}>
                 <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"></path>
@@ -105,6 +133,16 @@ export default function SiteHeader({ adminSidebarOpen, attention, darkMode, goHo
                 </button>
               )}
               {isAdmin && !isSuperAdmin && (
+                <button className="nav-link mobile-admin-btn" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); onNavigate('/admin/tests'); }}>
+                  <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <rect x="8" y="2" width="8" height="4" rx="1"></rect>
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <path d="m9 14 2 2 4-4"></path>
+                  </svg>
+                  Manage tests
+                </button>
+              )}
+              {isAdmin && !isSuperAdmin && (
                 <button className="nav-link mobile-admin-btn" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); onNavigate('/admin/subscriptions'); }}>
                   <svg className="nav-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
@@ -175,6 +213,17 @@ export default function SiteHeader({ adminSidebarOpen, attention, darkMode, goHo
               </button>
             )}
 
+            {/* Admin tools, together on the right: they're staff privileges, not learning pages. */}
+            {isAdmin && !isSuperAdmin && (
+              <button className="nav-link nav-desktop-only" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); onNavigate('/admin/tests'); }}>
+                <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <rect x="8" y="2" width="8" height="4" rx="1"></rect>
+                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                  <path d="m9 14 2 2 4-4"></path>
+                </svg>
+                <span>Manage tests</span>
+              </button>
+            )}
             {isAdmin && !isSuperAdmin && (
               <button className="nav-link nav-desktop-only" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); onNavigate('/admin/subscriptions'); }} style={{ position: 'relative' }}>
                 <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

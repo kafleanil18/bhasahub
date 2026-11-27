@@ -39,6 +39,8 @@ body { font-family: var(--font-body); font-size: var(--text-body); line-height: 
 #root :where(h4, h5, h6) { font-size: var(--text-body) !important; line-height: 1.5; }
 #root :where(.brand-title, .logo, .login-brand, .footer-brand-mark) { font-family: var(--font-body) !important; }
 #root .site-header .container { max-width: var(--page-width); padding-inline: var(--page-gutter); }
+/* On desktop the header holds up to six links with icons, so it may run a little wider than the page. */
+@media (min-width: 1361px) { #root .site-header .container { max-width: 1360px; } }
 #root .site-header :where(.nav-link, .user-menu-trigger) { font-size: var(--text-body); }
 #root :where(
   .home-hero-description, .hero-subtitle, .section-sublead, .course-card-desc,

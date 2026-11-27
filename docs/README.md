@@ -140,5 +140,6 @@ Setting up a new computer: [new-device-migration.md](new-device-migration.md). C
 ## Other docs
 
 - [design-system.md](design-system.md): typography, colours and components.
+- [about-pages.md](about-pages.md): editing the About pages and showing or hiding About Xiao Ao.
 - [frontend-routing.md](frontend-routing.md): every URL and who can open it.
 - [hero-artwork.md](hero-artwork.md): home page artwork.

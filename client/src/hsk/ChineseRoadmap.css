@@ -1,4 +1,7 @@
 .chinese-roadmap {
+  --hsk-accent: var(--accent-red-text);
+  --hsk-muted: var(--mist);
+  --hsk-rule: var(--line);
   --roadmap-wash: color-mix(in srgb, var(--hsk-accent) 5%, var(--card));
   border-block: 1px solid var(--hsk-rule);
 }
@@ -94,6 +97,11 @@
 .roadmap-plan ul { margin: .75rem 0; padding-inline-start: 1.25rem; }
 .roadmap-plan li + li { margin-top: .375rem; }
 .roadmap-plan a { color: var(--hsk-accent); font-weight: 650; }
+.roadmap-links { display: grid; gap: .625rem; margin: 1rem 0 0; }
+.roadmap-links div { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: .25rem 1rem; align-items: baseline; }
+.roadmap-links dt { color: var(--hsk-muted); font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.roadmap-links dd { display: flex; flex-wrap: wrap; gap: .25rem 1rem; margin: 0; }
+@media (max-width: 480px) { .roadmap-links div { grid-template-columns: 1fr; } }
 
 .roadmap-example {
   display: grid;

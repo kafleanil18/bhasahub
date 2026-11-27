@@ -1,0 +1,31 @@
+/* Bottom right, the same corner as the app update notice, which goes first (see the end of this file). */
+.live-class-notice {
+  position: fixed;
+  z-index: 1090;
+  right: 1rem;
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: min(24rem, calc(100vw - 2rem));
+  box-sizing: border-box;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: 0 4px 16px #2a232018;
+  animation: live-class-notice-in .24s cubic-bezier(.2, .8, .2, 1);
+}
+.live-class-notice-mark { flex: 0 0 auto; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 6px; background: var(--seal); color: #fff; font: 700 20px/1 'Noto Serif SC', serif; }
+.live-class-notice-title { margin: 0 0 4px; font-size: 16px; font-weight: 650; line-height: 1.4; }
+.live-class-notice-text { margin: 0 0 14px; color: var(--mist); font-size: 14px; line-height: 1.55; }
+.live-class-notice-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.live-class-notice-later { min-height: 44px; margin-left: auto; padding: 0 16px; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; transition: border-color .2s ease, color .2s ease; }
+.live-class-notice-later:hover { border-color: color-mix(in srgb, var(--seal) 45%, var(--line)); color: var(--seal); }
+.live-class-notice-later:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+@keyframes live-class-notice-in { from { opacity: 0; transform: translateY(8px); } }
+@media (prefers-reduced-motion: reduce) { .live-class-notice { animation: none; } }
+/* While the update notice is showing, this card waits, so the two never overlap. */
+body:has(.pwa-notice) .live-class-notice { display: none; }
+@media (max-width: 480px) { .live-class-notice { left: .75rem; right: .75rem; width: auto; padding: 16px; } }

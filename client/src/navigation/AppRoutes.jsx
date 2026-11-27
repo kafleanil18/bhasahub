@@ -46,6 +46,9 @@ const TeacherManager = lazy(() => import('../admin/TeacherManager'));
 const ReminderUnsubscribe = lazy(() => import('../ReminderUnsubscribe'));
 const PricingPage = lazy(() => import('../pricing/PricingPage'));
 const AboutHsk = lazy(() => import('../hsk/AboutHsk'));
+const AboutXiaoAo = lazy(() => import('../about/AboutXiaoAo'));
+const AboutPagesManager = lazy(() => import('../admin/AboutPagesManager'));
+import NotFound from './NotFound';
 const PrivacyPolicy = lazy(() => import('../privacy/PrivacyPages').then(module => ({ default: module.PrivacyPolicy })));
 const BrowserStoragePolicy = lazy(() => import('../privacy/PrivacyPages').then(module => ({ default: module.BrowserStoragePolicy })));
 const TermsOfService = lazy(() => import('../privacy/PrivacyPages').then(module => ({ default: module.TermsOfService })));
@@ -118,10 +121,6 @@ function TestRoute({ user, onHome }) {
   return paper ? <HskPortal key={testId} paperId={testId} user={user} onBack={onBack} /> : <TestTaker key={testId} testId={testId} onBack={onBack} />;
 }
 
-function NotFound() {
-  return <section className="container"><h1>Page not found</h1><p>The address may have changed.</p><Link to="/">Back to home</Link></section>;
-}
-
 export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLogin }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -135,6 +134,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
       <Route path="/terms" element={<TermsOfService />} />
       <Route path="/pricing" element={<PricingPage user={user} />} />
       <Route path="/about-hsk" element={<AboutHsk />} />
+      <Route path="/about" element={<AboutXiaoAo user={user} />} />
       <Route path="/email/reminders/unsubscribe" element={<ReminderUnsubscribe />} />
       <Route path="/" element={<HomeRoute user={user} home={home} />} />
       {/* The pinyin chart stays open to everyone; the other practice tools need approved access. */}
@@ -180,6 +180,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
           <Route path="conversations" element={<ConversationManager onBack={onHome} />} />
           <Route path="testimonials" element={<TestimonialManager onBack={onHome} />} />
           <Route path="teachers" element={<TeacherManager onBack={onHome} />} />
+          <Route path="about-pages" element={<AboutPagesManager />} />
           <Route path="sentence-audio" element={<SentenceAudioManager onBack={onHome} />} />
           <Route path="tone-pair-audio" element={<TonePairAudioManager onBack={onHome} />} />
           <Route path="characters" element={<HanziTracePage user={user} token={localStorage.getItem('token')} onBack={onHome} />} />

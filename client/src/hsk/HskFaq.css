@@ -1,0 +1,21 @@
+/* Shared by About HSK and the FAQ on the home page. */
+.hsk-faq { border-top: 1px solid var(--hsk-rule, var(--line)); }
+.hsk-faq-item { border-bottom: 1px solid var(--hsk-rule, var(--line)); }
+.hsk-faq-item summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: .875rem .25rem;
+  font-weight: 650;
+  cursor: pointer;
+  list-style: none;
+}
+.hsk-faq-item summary::-webkit-details-marker { display: none; }
+.hsk-faq-item summary:hover, .hsk-faq-item[open] summary { color: var(--hsk-accent, var(--accent-red-text)); }
+.hsk-faq-toggle { min-width: 1rem; color: var(--hsk-accent, var(--accent-red-text)); text-align: center; }
+.hsk-faq-toggle::before { content: '+'; }
+.hsk-faq-item[open] .hsk-faq-toggle::before { content: '−'; }
+.hsk-faq-answer { padding: 0 1.5rem 1rem .25rem; }
+.hsk-faq-answer p { margin: 0; max-width: 66ch; color: var(--hsk-muted, var(--mist)); }
+.hsk-faq-answer a { color: var(--hsk-accent, var(--accent-red-text)); }

@@ -1,6 +1,5 @@
 .home-page .hero-practice-tools { --practice-red: var(--accent-red); --practice-gold: #f5ce69; position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 24px; min-width: 0; box-shadow: 0 20px 48px -32px color-mix(in srgb, var(--ink) 35%, transparent); }
 .home-page .hero-practice-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
-.home-page .hero-practice-kicker { color: var(--seal); font-size: clamp(12px, calc(10px + 0.4vw), 14px); font-weight: 800; text-transform: uppercase; letter-spacing: .14em; margin: 0; }
 .home-page .hero-practice-count { border: 1px solid var(--line); border-radius: 20px; padding: 5px 10px; color: var(--mist); font-size: clamp(12px, calc(10px + 0.4vw), 14px); white-space: nowrap; }
 .home-page .hero-practice-tools :is(h1, h2) { font-family: var(--font-body); font-size: 30px; line-height: 1.15; letter-spacing: -.035em; color: var(--ink); margin: 0; max-width: 320px; }
 .home-page .hero-practice-intro { color: var(--mist); font-size: clamp(12px, calc(12px + 0.4vw), 14px); line-height: 1.6; margin: 10px 0 20px; max-width: 360px; }

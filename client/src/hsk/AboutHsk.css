@@ -213,26 +213,7 @@
 .hsk-update p { max-width: 66ch; margin: 0; }
 .hsk-update p + p { margin-top: .5rem; }
 
-.hsk-faq { border-top: 1px solid var(--hsk-rule); }
-.hsk-faq-item { border-bottom: 1px solid var(--hsk-rule); }
-.hsk-faq-item summary {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 1rem;
-  padding: .875rem .25rem;
-  font-weight: 650;
-  cursor: pointer;
-  list-style: none;
-}
-.hsk-faq-item summary::-webkit-details-marker { display: none; }
-.hsk-faq-item summary:hover, .hsk-faq-item[open] summary { color: var(--hsk-accent); }
-.hsk-faq-toggle { min-width: 1rem; color: var(--hsk-accent); text-align: center; }
-.hsk-faq-toggle::before { content: '+'; }
-.hsk-faq-item[open] .hsk-faq-toggle::before { content: '−'; }
-.hsk-faq-answer { padding: 0 1.5rem 1rem .25rem; }
-.hsk-faq-answer p { margin: 0; max-width: 66ch; color: var(--hsk-muted); }
-.hsk-faq-answer a, .hsk-booking-note a { color: var(--hsk-accent); }
+.hsk-booking-note a { color: var(--hsk-accent); }
 
 .hsk-cta p { margin: 0 0 1rem; color: var(--hsk-muted); }
 .hsk-cta-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; }

@@ -1,0 +1,54 @@
+/* About Xiao Ao. Shares its type and spacing with About HSK. */
+.about-page { max-width: 1120px; padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem) 4rem; color: var(--ink); font-size: 1rem; line-height: 1.65; }
+#root .about-page :is(h1, h2) { font-family: 'Fraunces', Georgia, serif !important; font-weight: 550; letter-spacing: -.035em; line-height: 1.13; }
+#root .about-page h1 { margin: 0 0 1rem; font-size: clamp(2.375rem, 5.4vw, 4.125rem) !important; }
+#root .about-page h2 { margin: 0 0 .75rem; font-size: clamp(1.625rem, 3vw, 2.125rem) !important; }
+#root .about-page h3 { margin: 0 0 .375rem; font-family: var(--font-body); font-size: 1.0625rem !important; font-weight: 650; line-height: 1.4; }
+
+.about-hero { padding-bottom: 2.5rem; border-bottom: 1px solid var(--line); }
+.about-eyebrow { margin: 0 0 .75rem; color: var(--accent-red-text); font-size: .8125rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.about-lead { max-width: 62ch; margin: 0; color: var(--mist); font-size: clamp(1.0625rem, 1.6vw, 1.25rem); line-height: 1.7; }
+.about-motto { margin: 1.25rem 0 0; color: var(--ink); font-family: 'Fraunces', Georgia, serif; font-size: 1.25rem; font-style: italic; }
+
+.about-section { padding-block: 3rem; border-bottom: 1px solid var(--line); }
+.about-section-intro { max-width: 62ch; margin: 0 0 1.5rem; color: var(--mist); }
+
+.about-principles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 1.5rem 0 0; padding: 0; list-style: none; }
+.about-principles li { padding: 1.5rem; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
+.about-principles p { margin: 0; color: var(--mist); font-size: .9375rem; }
+.about-principle-mark { display: grid; place-items: center; width: 44px; height: 44px; margin-bottom: 1rem; border-radius: 6px; background: var(--seal); color: #fff; font: 700 22px/1 'Noto Serif SC', serif; }
+
+.about-offer { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem 2.5rem; margin: 1.5rem 0 0; }
+.about-offer div { padding-top: 1rem; border-top: 1px solid var(--line); }
+.about-offer dt { margin-bottom: .25rem; font-weight: 650; }
+.about-offer dt a { color: var(--accent-red-text); text-decoration: none; }
+.about-offer dt a:hover { text-decoration: underline; }
+.about-offer dd { margin: 0; color: var(--mist); font-size: .9375rem; }
+
+.about-team { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.about-member { display: flex; align-items: flex-start; gap: 1.25rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
+.about-member-photo { flex: 0 0 auto; width: 96px; height: 96px; border-radius: 8px; object-fit: cover; background: var(--rice); }
+.about-member-photo.is-initial { display: grid; place-items: center; background: color-mix(in srgb, var(--seal) 12%, var(--card)); color: var(--seal); font-family: 'Fraunces', Georgia, serif; font-size: 2.5rem; font-weight: 550; }
+.about-member-title { margin: 0 0 .625rem; color: var(--accent-red-text); font-size: .8125rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.about-member-bio { margin: 0; color: var(--mist); font-size: .9375rem; }
+.about-team-note { margin: 0; color: var(--mist); }
+
+.about-cta { padding-top: 3rem; }
+.about-cta p { max-width: 62ch; margin: 0 0 1.25rem; color: var(--mist); }
+.about-cta-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.25rem; }
+.about-cta-actions > a { color: var(--accent-red-text); font-weight: 650; }
+.about-cta-actions .about-button { display: inline-flex; align-items: center; min-height: 44px; padding: 0 1.25rem; border-radius: 6px; background: var(--accent-red); color: #fff; text-decoration: none; }
+.about-cta-actions .about-button:hover { background: color-mix(in srgb, var(--accent-red) 85%, black); color: #fff; }
+
+@media (max-width: 860px) {
+  .about-principles, .about-offer, .about-team { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .about-member { flex-direction: column; gap: 1rem; padding: 1.25rem; }
+  .about-member-photo { width: 72px; height: 72px; }
+  .about-member-photo.is-initial { font-size: 2rem; }
+}
+
+/* Shown only to a super admin while the page is hidden from visitors. */
+.about-hidden-notice { margin: 0 0 1.5rem; padding: .875rem 1rem; border: 1px solid color-mix(in srgb, var(--gold, #c99a3c) 55%, var(--line)); border-radius: 8px; background: color-mix(in srgb, var(--gold, #c99a3c) 12%, var(--card)); color: var(--ink); font-size: .9375rem; }
+.about-hidden-notice a { color: var(--accent-red-text); font-weight: 650; }
