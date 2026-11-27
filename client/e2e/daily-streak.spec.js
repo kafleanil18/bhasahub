@@ -74,9 +74,18 @@ test('active time on a practice page is saved for today, idle time is not', asyn
   const sent = calls.find(call => call.path === 'time').body;
   expect(sent.date).toBe(today());
   expect(sent.seconds).toBeGreaterThanOrEqual(60);
-  // No clicks, keys or scrolling for well over two minutes: nothing more is counted.
+  // A click keeps the student counted as active for two minutes, so that minute after the first save
+  // is counted too. Once those two minutes pass with no clicks, keys or scrolling, nothing more is.
+  await page.clock.runFor('01:30');
+  const saved = () => calls.filter(call => call.path === 'time');
+  // Saves are sent from the page, so wait for the second one to arrive before checking for more.
+  await expect.poll(() => saved().length).toBe(2);
   await page.clock.runFor('05:00');
-  expect(calls.filter(call => call.path === 'time').length).toBe(1);
+  await page.waitForTimeout(500);
+  expect(saved().length).toBe(2);
+  const seconds = saved().reduce((total, call) => total + call.body.seconds, 0);
+  expect(seconds).toBeGreaterThanOrEqual(120);
+  expect(seconds).toBeLessThanOrEqual(135);
 });
 
 test('time on non-learning pages is not counted', async ({ page }) => {
