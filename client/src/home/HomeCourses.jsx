@@ -8,7 +8,7 @@ export default function HomeCourses({ loaded = true, filteredCourses, hskLevels,
                 <p className="home-section-kicker">HSK courses</p>
                 <h2 className="section-title" id="courses-heading">Start with a guided course</h2>
               </div>
-              {hskLevels.length > 2 && (
+              {hskLevels.length > 3 && (
               <div className="level-pills">
                 {hskLevels.map((lvl) => (
                   <button

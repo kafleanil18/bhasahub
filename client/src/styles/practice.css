@@ -1012,9 +1012,7 @@
   .section-header-center { margin-bottom: 26px; }
   .section-header-center .section-title { font-size: 26px; }
   .section-header-center .section-sublead { font-size: 14.5px; }
-  .testimonials-slider { gap: 8px; }
-  .testimonials-arrow { width: 34px; height: 34px; font-size: 18px; }
-  .testimonial-card { flex: 0 0 260px; padding: 18px 16px; }
+  .testimonial-card { padding: 18px 16px; }
 
   /* Team */
   .team-section { padding: 48px 0; }

@@ -1,8 +1,8 @@
 import { mediaUrl } from '../utils/mediaUrl';
 
-import Icon from '../components/Icon';
-export default function HomeTestimonials({ loaded = true, openLogin, scrollTestimonials, setShowTestimonial, testimonials, testimonialsScrollRef, user }) {
-  const shareReview = () => (user ? setShowTestimonial(true) : openLogin());
+// At most three reviews, side by side. With none yet, only signed-in learners see the section, to write the first one.
+export default function HomeTestimonials({ loaded = true, setShowTestimonial, testimonials, user }) {
+  if (loaded && !testimonials.length && !user) return null;
 
   return (
     <section className="worlds">
@@ -20,24 +20,13 @@ export default function HomeTestimonials({ loaded = true, openLogin, scrollTesti
                     <h3>No reviews yet</h3>
                     <p>Learning with Xiao Ao? A few words about your experience helps new learners decide where to start.</p>
                   </div>
-                  <button type="button" className="btn-primary" onClick={shareReview}>
-                    {user ? 'Write the first review' : 'Sign in to write a review'}
+                  <button type="button" className="btn-primary" onClick={() => setShowTestimonial(true)}>
+                    Write the first review
                   </button>
                 </div>
               ) : (
-                <div className="testimonials-slider">
-                  {testimonials.length > 1 && (
-                    <button
-                      type="button"
-                      className="testimonials-arrow testimonials-arrow-left"
-                      onClick={() => scrollTestimonials(-1)}
-                      aria-label="Scroll testimonials left"
-                    >
-                      <Icon name="chevronLeft" size="22px" />
-                    </button>
-                  )}
-                  <div className="testimonials-grid" ref={testimonialsScrollRef}>
-                    {testimonials.map((t) => (
+                  <div className="testimonials-grid">
+                    {testimonials.slice(0, 3).map((t) => (
                       <div className="testimonial-card" key={t._id}>
                         <span className="testimonial-stars">{'★'.repeat(t.rating)}</span>
                         <p className="testimonial-text">"{t.text}"</p>
@@ -52,17 +41,6 @@ export default function HomeTestimonials({ loaded = true, openLogin, scrollTesti
                       </div>
                     ))}
                   </div>
-                  {testimonials.length > 1 && (
-                    <button
-                      type="button"
-                      className="testimonials-arrow testimonials-arrow-right"
-                      onClick={() => scrollTestimonials(1)}
-                      aria-label="Scroll testimonials right"
-                    >
-                      <Icon name="chevronRight" size="22px" />
-                    </button>
-                  )}
-                </div>
               )}
               {user && testimonials.length > 0 && (
                 <div className="testimonials-cta">

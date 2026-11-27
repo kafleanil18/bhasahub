@@ -3,14 +3,13 @@ import SiteHeader from './components/SiteHeader';
 import LiveClassNotice from './components/LiveClassNotice';
 import HomeFooter from './home/HomeFooter';
 import HomeTestimonials from './home/HomeTestimonials';
-import HomeFaq from './home/HomeFaq';
 import HomeCourses from './home/HomeCourses';
 import HomeHero from './home/HomeHero';
 import StudioSaveStatus from './practice/StudioSaveStatus';
 import AppRoutes from './navigation/AppRoutes';
 import { adminPaths, coursePath, homePath, practicePaths, safeReturnPath, signInPath } from './navigation/paths';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useState, useEffect, useRef, useCallback, lazy, startTransition, Suspense } from 'react';
+import { useState, useEffect, useCallback, lazy, startTransition, Suspense } from 'react';
 import './home.css';
 import './flag-theme.css';
 import { forgetPushDevice } from './pwa/usePushReminders';
@@ -64,7 +63,6 @@ function AppContent() {
   const [adminSidebarOpen, setAdminSidebarOpen] = useState(false);
   const [desktopAdminNavigation, setDesktopAdminNavigation] = useState(() => window.matchMedia('(min-width: 1100px)').matches);
   const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
-  const testimonialsScrollRef = useRef(null);
   const isSuperAdmin = user?.role === 'superadmin';
   const isAdmin = ['admin', 'superadmin'].includes(user?.role);
   const adminArea = location.pathname.startsWith('/admin');
@@ -280,10 +278,6 @@ function AppContent() {
   const startStudioTour = () => { if (location.pathname !== '/') navigate('/'); setShowStudioTour(true); };
   const openPractice = id => { if (practicePaths[id]) navigate(practicePaths[id]); };
   const openCourse = course => navigate(coursePath(course._id));
-  const scrollTestimonials = direction => {
-    const el = testimonialsScrollRef.current;
-    if (el) el.scrollBy({ left: direction * ((el.querySelector('.testimonial-card')?.offsetWidth || 280) + 24), behavior: 'smooth' });
-  };
   const getHskLevel = course => {
     const level = (course.level || '').toLowerCase();
     for (const number of [1, 2, 3, 4]) if (level.includes(String(number))) return `HSK ${number}`;
@@ -294,8 +288,7 @@ function AppContent() {
   const home = <main className="home-page">
     <HomeHero onContinueLearning={() => navigate('/continue')} onPinyinPractice={() => navigate('/practice/pinyin')} user={user} hasStartedCourse={Object.values(access).some(course => course.completed > 0)} onOpenPractice={openPractice} />
     <HomeCourses loaded={coursesLoaded} filteredCourses={filteredCourses} hskLevels={hskLevels} levelFilter={levelFilter} onOpenCourse={openCourse} setLevelFilter={setLevelFilter} />
-    <HomeTestimonials loaded={testimonialsLoaded} openLogin={openLogin} scrollTestimonials={scrollTestimonials} setShowTestimonial={setShowTestimonial} testimonials={testimonials} testimonialsScrollRef={testimonialsScrollRef} user={user} />
-    <HomeFaq />
+    <HomeTestimonials loaded={testimonialsLoaded} setShowTestimonial={setShowTestimonial} testimonials={testimonials} user={user} />
     <HomeFooter showAboutUs={aboutUsVisible} goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} onStartTour={user?.role === 'student' ? startStudioTour : undefined} />
   </main>;
   const sidebar = isSuperAdmin ? <>

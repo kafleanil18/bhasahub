@@ -1372,7 +1372,8 @@ fadeUp .8s ease;
 :root.dark .site-header.paper-header { background: color-mix(in srgb, var(--card) 96%, transparent); border-bottom-color: var(--line); box-shadow: 0 6px 22px rgba(0,0,0,.28); }
 :root.dark .site-header.paper-header .user-role-badge.super { background: color-mix(in srgb, var(--seal) 18%, var(--card)); color: #f0a197; }
 
-@media (max-width: 1099px) {
+/* Matches the width where the header switches to the menu button (navigation.css). */
+@media (max-width: 1360px) {
   .site-header.paper-header .main-nav { background: var(--card); border-color: var(--line); box-shadow: 0 20px 48px rgba(42,35,32,.18); }
   .site-header.paper-header .nav-links .nav-link { color: var(--ink); }
   .site-header.paper-header .nav-links .nav-link:hover { background: var(--rice); color: var(--seal); }

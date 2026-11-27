@@ -20,6 +20,7 @@ export default function HomeFooter({ goHome, isSuperAdmin, serverOk, onStartTour
             <Link to="/#practice-studio">Practice studio</Link>
             {showAboutUs && <Link to="/about">About Xiao Ao</Link>}
             <Link to="/about-hsk">About HSK</Link>
+            <Link to="/faq">FAQ</Link>
             <Link to="/pricing">Pricing plans</Link>
             {onStartTour && <button type="button" className="footer-tour-link" onClick={onStartTour}><Icon name="compass" className="footer-tour-star"/> Take the studio tour</button>}
             {liveClassInquiryHref() && <a href={liveClassInquiryHref()} target="_blank" rel="noopener noreferrer">Live class inquiry</a>}

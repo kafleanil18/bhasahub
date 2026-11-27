@@ -61,7 +61,7 @@ test('the mobile menu has both links and closes after one is chosen', async ({ p
 
 // The header is capped at 1360px, so this holds at every desktop width.
 for (const [role, labels] of [
-  ['student', ['HSK courses', 'Practice studio', 'About HSK', 'Pricing', 'My Courses', 'My Progress']],
+  ['student', ['HSK courses', 'Practice studio', 'About HSK', 'FAQ', 'Pricing', 'My Courses', 'My Progress']],
   ['admin', ['HSK courses', 'Practice studio', 'My Courses', 'My Progress']],
 ]) test(`a${role === 'admin' ? 'n' : ''} ${role}’s desktop header fits every link on one row`, async ({ page }) => {
   await prepare(page, role);

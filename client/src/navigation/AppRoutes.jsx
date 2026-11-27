@@ -46,6 +46,7 @@ const TeacherManager = lazy(() => import('../admin/TeacherManager'));
 const ReminderUnsubscribe = lazy(() => import('../ReminderUnsubscribe'));
 const PricingPage = lazy(() => import('../pricing/PricingPage'));
 const AboutHsk = lazy(() => import('../hsk/AboutHsk'));
+const FaqPage = lazy(() => import('../home/FaqPage'));
 const AboutXiaoAo = lazy(() => import('../about/AboutXiaoAo'));
 const AboutPagesManager = lazy(() => import('../admin/AboutPagesManager'));
 import NotFound from './NotFound';
@@ -134,6 +135,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
       <Route path="/terms" element={<TermsOfService />} />
       <Route path="/pricing" element={<PricingPage user={user} />} />
       <Route path="/about-hsk" element={<AboutHsk />} />
+      <Route path="/faq" element={<FaqPage />} />
       <Route path="/about" element={<AboutXiaoAo user={user} />} />
       <Route path="/email/reminders/unsubscribe" element={<ReminderUnsubscribe />} />
       <Route path="/" element={<HomeRoute user={user} home={home} />} />

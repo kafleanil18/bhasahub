@@ -59,17 +59,19 @@ test('About HSK fits a phone screen', async ({ page }) => {
   await page.screenshot({ path: 'test-results/about-hsk-mobile.png', fullPage: true });
 });
 
-test('the home page repeats the About HSK questions in an FAQ below the reviews', async ({ page }) => {
+test('the FAQ has its own page, reached from the header and footer, and is not on the home page', async ({ page }) => {
   await page.goto('/');
-  const faq = page.getByRole('region', { name: 'FAQ' });
-  await expect(faq.getByRole('heading', { level: 2, name: 'FAQ' })).toBeVisible();
+  await expect(page.locator('.home-faq')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
+  await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button', { name: 'FAQ' }).click();
+  await expect(page).toHaveURL(/\/faq$/);
+  const faq = page.getByRole('main', { name: 'FAQ' });
+  await expect(faq.getByRole('heading', { level: 1, name: 'FAQ' })).toBeVisible();
   await expect(faq.locator('details')).toHaveCount(10);
   await expect(faq.locator('details').first()).toHaveAttribute('open', '');
   await faq.getByText('How do I pay?').click();
   await expect(faq.getByText('we’ll email you the payment details')).toBeVisible();
-  const order = await page.evaluate(() => {
-    const reviews = document.querySelector('.home-page .worlds'), faqSection = document.querySelector('.home-faq');
-    return !reviews || !!(reviews.compareDocumentPosition(faqSection) & Node.DOCUMENT_POSITION_FOLLOWING);
-  });
-  expect(order).toBe(true);
+  await page.goto('/about-hsk');
+  await page.getByRole('navigation', { name: 'Footer navigation' }).getByRole('link', { name: 'FAQ' }).click();
+  await expect(page).toHaveURL(/\/faq$/);
 });

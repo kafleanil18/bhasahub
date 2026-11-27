@@ -46,6 +46,14 @@ export default function SiteHeader({ showAboutUs = false, adminSidebarOpen, atte
                 </svg>
                 <span>About HSK</span>
               </button>}
+              {!isAdmin && !isSuperAdmin && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/faq'); }}>
+                <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                  <path d="M12 17h.01"></path>
+                </svg>
+                <span>FAQ</span>
+              </button>}
               {/* The desktop header is full, so About Xiao Ao lives in the mobile menu and the footer,
                   once a super admin has made the page visible. */}
               {showAboutUs && <button className="nav-link nav-mobile-only" onClick={() => { setMobileMenuOpen(false); onNavigate('/about'); }}>
