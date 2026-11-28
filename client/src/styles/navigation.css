@@ -1595,17 +1595,20 @@ h1, h2, h3, h4, h5, h6,
   html { font-size: 17px; }
   body { font-size: 1rem; }
   .site-header .container { max-width: 1480px; padding-inline: 36px; }
-  .site-header .header-row { gap: 16px; }
+  .site-header .header-row { gap: 12px; }
   .site-header .main-nav { justify-content: flex-end; }
-  /* Up to six links, each with its icon as in the mobile menu, share the header with the account
-     controls. To fit, the header is wider than the page here (see design-system.css), the spacing is
-     tight, and the account button is just the avatar, as on phones; the name and role head its menu. */
-  .site-header .nav-links { gap: 2px; }
-  .site-header .nav-link { gap: 6px; padding: 10px; font-size: 15px; }
+  /* The links, each with its icon as in the mobile menu, share the header with the account controls.
+     To fit, the header is wider than the page here (see design-system.css), About HSK and the FAQ
+     share one menu, Pricing is left out for students with a plan, the spacing is tight, and the
+     account button is just the avatar, as on phones; the name and role head its menu. A student
+     with a plan fits at 1361px; on a free week or a course subscription (days badge plus Pricing)
+     the row is still about 45 to 60px too wide there. */
+  .site-header .nav-links { gap: 0; }
+  .site-header .nav-link { gap: 6px; padding: 10px 8px; font-size: 15px; }
   .site-header .user-menu-name, .site-header .user-role-badge { display: none; }
   .site-header .nav-support-link { margin-left: 10px; padding-left: 22px; border-left: 1px solid rgba(255,255,255,.24); border-radius: 0 999px 999px 0; }
-  .site-header .nav-actions { gap: 10px; }
-  .site-header .header-right { padding-left: 16px; border-left: 1px solid rgba(255,255,255,.2); }
+  .site-header .nav-actions { gap: 8px; }
+  .site-header .header-right { padding-left: 12px; border-left: 1px solid rgba(255,255,255,.2); }
   .site-header .user-menu-trigger { font-size: 15px; padding: 5px 12px 5px 6px; }
   .site-header .theme-toggle-compact { width: 42px; height: 42px; }
   .home-page .hero-subtitle, .home-page .section-sublead, .home-page .course-card-desc { font-size: 17px; }
@@ -1660,3 +1663,32 @@ h1, h2, h3, h4, h5, h6,
 .site-header.paper-header .user-menu-dropdown button,
 .site-header.paper-header .user-menu-dropdown button:hover,
 .site-header.paper-header .user-menu-dropdown button.logout-item:hover { color: #000 !important; }
+
+/* About HSK menu (desktop): About HSK and the FAQ under one header item. Dark under the signed-in
+   header, light under the paper header that guests see. */
+.nav-group { position: relative; }
+.nav-group-caret { flex-shrink: 0; opacity: .7; transition: transform .2s ease; }
+.nav-group-trigger[aria-expanded="true"] .nav-group-caret { transform: rotate(180deg); }
+.nav-group-menu {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 130;
+  min-width: 300px; margin: 0; padding: 6px; list-style: none;
+  border: 1px solid rgba(255, 255, 255, .12); border-radius: 10px;
+  background: rgba(28, 24, 21, .98); box-shadow: 0 16px 40px rgba(0, 0, 0, .45);
+  animation: nav-group-in .16s ease-out;
+}
+.nav-group-item {
+  display: grid; gap: 2px; width: 100%; padding: 10px 12px;
+  border: 0; border-radius: 8px; background: transparent; color: #f4efe6;
+  font: inherit; text-align: left; cursor: pointer;
+}
+.nav-group-item strong { font-size: 15px; font-weight: 650; }
+.nav-group-item span { color: #bfb6a6; font-size: 13px; line-height: 1.45; }
+.nav-group-item:hover, .nav-group-item:focus-visible { background: rgba(255, 255, 255, .09); }
+.nav-group-item:focus-visible { outline: 2px solid #e5b958; outline-offset: -2px; }
+.site-header.paper-header .nav-group-menu { border-color: var(--line); background: var(--card); box-shadow: 0 12px 30px rgba(42, 35, 32, .14); }
+.site-header.paper-header .nav-group-item { color: var(--ink); }
+.site-header.paper-header .nav-group-item span { color: var(--mist); }
+.site-header.paper-header .nav-group-item:hover, .site-header.paper-header .nav-group-item:focus-visible { background: var(--rice); }
+.site-header.paper-header .nav-group-item:focus-visible { outline-color: var(--accent-red-text); }
+@keyframes nav-group-in { from { opacity: 0; transform: translateY(-4px); } }
+@media (prefers-reduced-motion: reduce) { .nav-group-menu { animation: none; } .nav-group-caret { transition: none; } }

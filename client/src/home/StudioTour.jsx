@@ -1,11 +1,12 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { practiceTools } from './practiceTools';
+import { useShowsFreeMockTest } from '../tests/useShowsFreeMockTest';
 import './StudioTour.css';
 
 export const TOUR_SEEN_KEY = 'studioTourSeen';
 
 const tips = {
-  tests: 'Sit a full HSK paper the way the real exam runs. Start with the free H11226 test to find your level, then review every answer you missed.',
+  tests: 'Sit the full H11226 HSK 1 paper for free, timed the way the real exam runs, then review every answer you missed. With a free week or a plan, every mock test is on your HSK course pages.',
   pinyin: 'Tap any syllable to hear it. Say it out loud straight after, then replay to compare. Getting the four tones right early saves a lot of relearning later.',
   trace: 'Watch the strokes animate, trace over them, then try writing the character from memory. Stroke order matters, so follow the numbers.',
   listening: 'Hear a word, then choose what it means. Headphones help. Replay as often as you like before you answer.',
@@ -16,28 +17,35 @@ const tips = {
   conversation: 'Work through guided conversations line by line. Speak each line aloud and repeat it until it feels natural.',
 };
 
-const steps = [
-  { selector: '#practice-studio .hero-practice-heading', title: 'Welcome to your practice studio', tip: `There are ${practiceTools.length} ways to practise here. Let’s take a quick look at each one. You can leave the tour at any time.` },
-  ...practiceTools.map(([id, title]) => ({ selector: `#practice-studio .hero-practice-${id}`, title: id === 'tests' ? 'HSK mock tests' : title, tip: tips[id] })),
-];
+// The free mock test stop appears only when the studio shows it (see useShowsFreeMockTest);
+// students with every mock test find them on their HSK course pages instead.
+function tourSteps(withFreeTest) {
+  const tools = practiceTools.filter(([id]) => id !== 'tests' || withFreeTest);
+  return [
+    { selector: '#practice-studio .hero-practice-heading', title: 'Welcome to your practice studio', tip: `There are ${tools.length} ways to practise here. Let’s take a quick look at each one. You can leave the tour at any time.` },
+    ...tools.map(([id, title]) => ({ selector: `#practice-studio .hero-practice-${id}`, title: id === 'tests' ? 'HSK 1 free mock test' : title, tip: tips[id] })),
+  ];
+}
 
 const PAD = 8;
 
 // Dims the page and spotlights each practice studio tool in turn, with a tip beside it.
-export default function StudioTour({ onClose }) {
+export default function StudioTour({ onClose, user }) {
+  const withFreeTest = useShowsFreeMockTest(user);
+  const steps = useMemo(() => tourSteps(withFreeTest), [withFreeTest]);
   const [index, setIndex] = useState(0);
   const [rect, setRect] = useState(null);
   const [missing, setMissing] = useState(false);
   const cardRef = useRef(null);
   const [cardSize, setCardSize] = useState({ width: 360, height: 220 });
-  const step = steps[index];
+  const step = steps[Math.min(index, steps.length - 1)];
   const last = index === steps.length - 1;
 
   const finish = useCallback(() => {
     try { localStorage.setItem(TOUR_SEEN_KEY, '1'); } catch { /* storage may be unavailable */ }
     onClose();
   }, [onClose]);
-  const go = useCallback(delta => setIndex(value => Math.min(steps.length - 1, Math.max(0, value + delta))), []);
+  const go = useCallback(delta => setIndex(value => Math.min(steps.length - 1, Math.max(0, value + delta))), [steps.length]);
 
   // Find the step's element (the home page may still be loading), scroll it into view and follow it.
   useEffect(() => {

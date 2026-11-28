@@ -75,7 +75,9 @@ test('it never interrupts practice, and staff never see it', async ({ page }) =>
   await page.clock.runFor(10000);
   await expect(notice(page)).toHaveCount(0);
   // Moving on to a browsing page starts the wait there.
-  await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button', { name: 'About HSK' }).click();
+  // On desktop, About HSK and the FAQ share one header menu.
+  await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button', { name: 'About HSK', exact: true }).click();
+  await page.locator('#nav-hsk-menu').getByRole('button', { name: /About HSK/ }).click();
   await expect(page.getByRole('heading', { level: 1, name: 'What is the HSK?' })).toBeVisible();
   await page.clock.runFor(8500);
   await expect(notice(page)).toBeVisible();

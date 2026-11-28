@@ -48,13 +48,22 @@ it, and the footer stays hidden until the page is ready. The rules are in `desig
 ## Header
 
 From 1361px wide the header shows the navigation links in a row, each with its icon, as in the mobile
-menu. Narrower screens use the menu button instead. To fit up to six links beside the account
-controls, the desktop header may grow to 1360px, a little wider than the 1200px page. The spacing is
-tight, and the account button shows just the avatar, as on phones; the name and role head its menu.
+menu. Narrower screens use the menu button instead. To make room beside the account controls:
+
+- the desktop header may grow to 1360px, a little wider than the 1200px page;
+- **About HSK** and **FAQ** share one "About HSK" menu on desktop (`HskMenu` in `SiteHeader.jsx`);
+  the mobile menu lists them separately;
+- students with an active plan don't get **Pricing** in the header (it stays in the footer);
+- the spacing is tight, and the account button shows just the avatar, as on phones; the name and role
+  head its menu.
+
 Hovering a link tints its background, without an underline. The rules are in `design-system.css`
 (the width) and the `min-width: 1361px` block of `styles/navigation.css`.
-`client/e2e/site-navigation.spec.js` checks that the student and admin headers stay on one row at
-1361px. Check that again after adding a header link.
+
+Known limit: at 1361px, a student on a free week or with only a course subscription (days badge plus
+Pricing) is about 45 to 60px too wide, so the account button reaches past the edge. Students with a
+plan, students without access, guests and admins fit. `client/e2e/site-navigation.spec.js` checks
+the student (with a plan) and admin headers at 1361px; check it again after adding a header link.
 
 ## Live classes card
 

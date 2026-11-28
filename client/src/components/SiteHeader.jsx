@@ -1,7 +1,44 @@
+import { useEffect, useRef, useState } from 'react';
 import AdminNotifications from './AdminNotifications';
 import BrandLogo from './BrandLogo';
 import { liveClassInquiryHref } from './contactPhone';
-export default function SiteHeader({ showAboutUs = false, adminSidebarOpen, attention, darkMode, goHome, handleLogout, hideForAuth = false, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, onNavigate, setShowChangePassword, setShowUserMenu, showUserMenu, unreadFeedbackCount, user }) {
+
+// Desktop only: About HSK and the FAQ share one header item, which opens a short list of the two
+// pages. It closes on Escape (focus goes back to the button), on a click outside, or when focus leaves.
+function HskMenu({ onNavigate }) {
+  const [open, setOpen] = useState(false);
+  const wrapper = useRef(null);
+  const trigger = useRef(null);
+  useEffect(() => {
+    if (!open) return undefined;
+    const outside = event => { if (!wrapper.current?.contains(event.target)) setOpen(false); };
+    document.addEventListener('pointerdown', outside);
+    return () => document.removeEventListener('pointerdown', outside);
+  }, [open]);
+  const go = path => { setOpen(false); onNavigate(path); };
+  return <div className="nav-group nav-desktop-only" ref={wrapper}
+    onKeyDown={event => { if (event.key === 'Escape' && open) { event.stopPropagation(); setOpen(false); trigger.current?.focus(); } }}
+    onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false); }}>
+    <button ref={trigger} type="button" className="nav-link nav-group-trigger" aria-expanded={open} aria-controls="nav-hsk-menu" onClick={() => setOpen(value => !value)}>
+      <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M22 10 12 5 2 10l10 5 10-5z"></path>
+        <path d="M6 12v5c3 2.5 9 2.5 12 0v-5"></path>
+      </svg>
+      <span>About HSK</span>
+      <svg className="nav-group-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+    {open && <ul className="nav-group-menu" id="nav-hsk-menu">
+      <li><button type="button" className="nav-group-item" onClick={() => go('/about-hsk')}>
+        <strong>About HSK</strong><span>Levels, the exam and how to book</span>
+      </button></li>
+      <li><button type="button" className="nav-group-item" onClick={() => go('/faq')}>
+        <strong>FAQ</strong><span>Questions about learning with Xiao Ao</span>
+      </button></li>
+    </ul>}
+  </div>;
+}
+
+export default function SiteHeader({ showAboutUs = false, hidePricing = false, adminSidebarOpen, attention, darkMode, goHome, handleLogout, hideForAuth = false, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, onNavigate, setShowChangePassword, setShowUserMenu, showUserMenu, unreadFeedbackCount, user }) {
   if (hideForAuth) return null;
   return (
     <header className={`site-header${isSuperAdmin || !user ? ' paper-header' : ''}`}>
@@ -38,22 +75,34 @@ export default function SiteHeader({ showAboutUs = false, adminSidebarOpen, atte
                   <span>Practice studio</span>
                 </button>
               </>}
-              {/* Admins don't need About HSK; their staff tools sit on the right instead. */}
-              {!(isAdmin && !isSuperAdmin) && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/about-hsk'); }}>
+              {/* Admins don't need About HSK; their staff tools sit on the right instead. Super admins get
+                  the page alone. Guests and students get About HSK and the FAQ: grouped in one menu on
+                  desktop, where the header is full, and listed separately in the mobile menu. */}
+              {isSuperAdmin && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/about-hsk'); }}>
                 <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M22 10 12 5 2 10l10 5 10-5z"></path>
                   <path d="M6 12v5c3 2.5 9 2.5 12 0v-5"></path>
                 </svg>
                 <span>About HSK</span>
               </button>}
-              {!isAdmin && !isSuperAdmin && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/faq'); }}>
-                <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                  <path d="M12 17h.01"></path>
-                </svg>
-                <span>FAQ</span>
-              </button>}
+              {!isAdmin && <>
+                <HskMenu onNavigate={path => { setMobileMenuOpen(false); setShowUserMenu(false); onNavigate(path); }} />
+                <button className="nav-link nav-mobile-only" onClick={() => { setMobileMenuOpen(false); onNavigate('/about-hsk'); }}>
+                  <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M22 10 12 5 2 10l10 5 10-5z"></path>
+                    <path d="M6 12v5c3 2.5 9 2.5 12 0v-5"></path>
+                  </svg>
+                  <span>About HSK</span>
+                </button>
+                <button className="nav-link nav-mobile-only" onClick={() => { setMobileMenuOpen(false); onNavigate('/faq'); }}>
+                  <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <path d="M12 17h.01"></path>
+                  </svg>
+                  <span>FAQ</span>
+                </button>
+              </>}
               {/* The desktop header is full, so About Xiao Ao lives in the mobile menu and the footer,
                   once a super admin has made the page visible. */}
               {showAboutUs && <button className="nav-link nav-mobile-only" onClick={() => { setMobileMenuOpen(false); onNavigate('/about'); }}>
@@ -65,7 +114,8 @@ export default function SiteHeader({ showAboutUs = false, adminSidebarOpen, atte
                 </svg>
                 <span>About Xiao Ao</span>
               </button>}
-              {!isAdmin && !isSuperAdmin && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/pricing'); }}>
+              {/* Students with an active plan don't need Pricing in the header; it stays in the footer. */}
+              {!isAdmin && !hidePricing && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/pricing'); }}>
                 <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"></path>
                   <circle cx="7.5" cy="7.5" r="1.5"></circle>

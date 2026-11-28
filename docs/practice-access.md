@@ -43,6 +43,20 @@ An active course subscription also opens the practice studio and every mock test
 - H11226 (`FREE_PAPER_ID`) is open to every signed-in student.
 - Other papers need an admin role, a free week that hasn't ended, an active plan or an active course subscription. Otherwise the API answers `403` with `code: 'TESTS_LOCKED'`, and the test list offers to request access.
 
+Where students find them:
+
+- **Home page.** The practice studio's red bar is the **HSK 1 free mock test**, shown only to guests
+  and students who can't open every mock test. It goes straight to H11226; a guest signs in first and
+  lands on the paper, without the free-access prompt. Students with a free week, a plan or a course
+  subscription, and staff, don't see the bar (`useShowsFreeMockTest`).
+- **HSK course pages.** Each course page lists its level's mock tests near the top
+  (`client/src/courses/CourseMockTests.jsx`). With access every paper opens; otherwise only the free
+  one does, and the rest link to `/tests` to unlock them. A level with no mock tests shows nothing.
+- **Levels.** Practice papers have no level field: the code gives it (`H1…` is HSK 1, `H2…` HSK 2),
+  and a code that doesn't say counts as HSK 1 (`client/src/tests/mockTests.js`). Mock tests made in
+  Test Studio use their `level`.
+- `/tests` still lists every mock test, with the request-access and plans banner.
+
 ## Paid plans
 
 - **The plans.** Defined in `server/utils/plans.js`, which is the source of truth for prices:
@@ -80,4 +94,5 @@ Deleting a student also removes everything tied to the account (`OWNED` in `serv
 
 - `server/test/practiceAccess.test.js` and `server/test/students.test.js`
 - `client/e2e/paid-practice-access.spec.js`: a plan or a course subscription unlocks the practice studio and every mock test.
+- `client/e2e/mock-tests.spec.js`: the HSK 1 free mock test bar and the mock tests on each course page.
 - The end-to-end fixtures in `client/e2e/` approve practice access, so the practice tool tests run unlocked.

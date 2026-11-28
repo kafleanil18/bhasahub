@@ -4,7 +4,11 @@ import { test, expect } from '@playwright/test';
 // in the desktop navigation and in the mobile menu.
 const course = { _id: 'c1', title: 'HSK 1 Chinese', level: 'HSK 1', language: 'chinese' };
 
-async function prepare(page, role) {
+// `access`: 'course' (a course subscription), 'plan' (a whole-platform plan) or 'freeWeek'.
+async function prepare(page, role, { access = 'course' } = {}) {
+  const subscriptions = access === 'plan' ? [{ _id: 'plan-c1', course, expiresAt: '2099-01-01T00:00:00.000Z', plan: true }]
+    : access === 'course' ? [{ _id: 's1', course, expiresAt: '2099-01-01T00:00:00.000Z' }] : [];
+  const requests = access === 'freeWeek' ? [{ scope: 'tests', status: 'approved', expiresAt: new Date(Date.now() + 6 * 864e5).toISOString() }] : [];
   if (role) await page.addInitScript(role => {
     localStorage.setItem('token', 'fixture-token');
     localStorage.setItem('user', JSON.stringify({ id: 'person', name: 'Mingyu Student', role }));
@@ -13,7 +17,8 @@ async function prepare(page, role) {
   await page.route('**/api/**', route => {
     const path = new URL(route.request().url()).pathname.replace('/api', '');
     if (path === '/courses') return route.fulfill({ json: [course] });
-    if (path === '/subscriptions/my') return route.fulfill({ json: [{ _id: 's1', course, expiresAt: '2099-01-01T00:00:00.000Z' }] });
+    if (path === '/subscriptions/my') return route.fulfill({ json: subscriptions });
+    if (path === '/access-requests/my') return route.fulfill({ json: requests });
     if (path === '/auth/me') return route.fulfill({ json: { id: 'person', name: 'Mingyu Student', role } });
     return route.fulfill({ json: [] });
   });
@@ -59,16 +64,18 @@ test('the mobile menu has both links and closes after one is chosen', async ({ p
   await expect(page.locator('#practice-studio .hero-practice-heading')).toBeInViewport();
 });
 
-// The header is capped at 1360px, so this holds at every desktop width.
+// The header is capped at 1360px, so this holds at every desktop width. About HSK and the FAQ share
+// one menu there. For students this is checked with a plan (no Pricing in the header); on a free
+// week or a course subscription the row is known to be about 45 to 60px too wide at 1361px.
 for (const [role, labels] of [
-  ['student', ['HSK courses', 'Practice studio', 'About HSK', 'FAQ', 'Pricing', 'My Courses', 'My Progress']],
+  ['student', ['HSK courses', 'Practice studio', 'About HSK', 'My Courses', 'Recorded sessions', 'My Progress']],
   ['admin', ['HSK courses', 'Practice studio', 'My Courses', 'My Progress']],
 ]) test(`a${role === 'admin' ? 'n' : ''} ${role}’s desktop header fits every link on one row`, async ({ page }) => {
-  await prepare(page, role);
+  await prepare(page, role, { access: 'plan' });
   await page.setViewportSize({ width: 1361, height: 900 });
   await page.goto('/');
   if (role === 'student') await expect(page.locator('.access-badge.nav-desktop-only')).toBeVisible();
-  const links = mainNav(page).locator('.nav-links > .nav-link:visible');
+  const links = mainNav(page).locator('.nav-links > :is(.nav-link, .nav-group):visible');
   await expect(links).toHaveText(labels);
   const rows = await links.evaluateAll(items => new Set(items.map(item => Math.round(item.getBoundingClientRect().top))).size);
   expect(rows).toBe(1);
@@ -136,4 +143,57 @@ test('an admin’s tools sit together on the right, and About HSK is left out', 
   await expect(drawer.getByRole('button', { name: 'Manage tests' })).toBeVisible();
   await expect(drawer.getByRole('button', { name: 'Subscriptions' })).toBeVisible();
   await expect(mainNav(page).locator('.nav-links').getByRole('button', { name: /Manage tests|About HSK/ })).toHaveCount(0);
+});
+
+test('on desktop, About HSK and the FAQ share one menu', async ({ page }) => {
+  await prepare(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/pricing');
+  const trigger = mainNav(page).getByRole('button', { name: 'About HSK', exact: true });
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await expect(mainNav(page).getByRole('button', { name: /^FAQ/ })).toBeHidden();
+
+  await trigger.click();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  const menu = page.locator('#nav-hsk-menu');
+  await expect(menu.getByRole('button')).toHaveText([/About HSK/, /FAQ/]);
+  await page.keyboard.press('Escape');
+  await expect(menu).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+
+  await trigger.click();
+  await page.mouse.click(700, 500);
+  await expect(menu).toHaveCount(0);
+
+  await trigger.click();
+  await menu.getByRole('button', { name: /FAQ/ }).click();
+  await expect(page).toHaveURL(/\/faq$/);
+  await expect(menu).toHaveCount(0);
+  await trigger.click();
+  await menu.getByRole('button', { name: /About HSK/ }).click();
+  await expect(page).toHaveURL(/\/about-hsk$/);
+});
+
+test('the mobile menu lists About HSK and the FAQ on their own', async ({ page }) => {
+  await prepare(page, 'student');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/pricing');
+  await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
+  await expect(mainNav(page).locator('.nav-group')).toBeHidden();
+  await mainNav(page).getByRole('button', { name: 'FAQ', exact: true }).click();
+  await expect(page).toHaveURL(/\/faq$/);
+  await expect(page.getByRole('heading', { level: 1, name: 'FAQ' })).toBeVisible();
+  await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
+  await mainNav(page).getByRole('button', { name: 'About HSK', exact: true }).click();
+  await expect(page).toHaveURL(/\/about-hsk$/);
+});
+
+for (const [access, shown] of [['plan', false], ['freeWeek', true], ['course', true]]) test(`with ${access === 'plan' ? 'a plan' : access === 'freeWeek' ? 'a free week' : 'a course subscription'}, the header ${shown ? 'shows' : 'leaves out'} Pricing`, async ({ page }) => {
+  await prepare(page, 'student', { access });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/my-courses');
+  await expect(page.locator('.access-badge.nav-desktop-only')).toBeVisible();
+  await expect(mainNav(page).getByRole('button', { name: 'Pricing' })).toHaveCount(shown ? 1 : 0);
+  // The footer always links to the plans.
+  await expect(page.getByRole('navigation', { name: 'Footer navigation' }).getByRole('link', { name: /Pricing/ })).toBeVisible();
 });

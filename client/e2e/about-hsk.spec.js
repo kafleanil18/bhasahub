@@ -15,7 +15,9 @@ test('the footer links to About HSK', async ({ page }) => {
 test('visitors open About HSK from the main navigation and compare exam levels', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
-  await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button', { name: 'About HSK' }).click();
+  // On desktop, About HSK and the FAQ share one header menu.
+  await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button', { name: 'About HSK', exact: true }).click();
+  await page.locator('#nav-hsk-menu').getByRole('button', { name: /About HSK/ }).click();
   await expect(page).toHaveURL(/\/about-hsk$/);
   await expect(page.getByRole('heading', { level: 1, name: 'What is the HSK?' })).toBeVisible();
   const levels = page.getByRole('radiogroup', { name: 'Pick a level' });

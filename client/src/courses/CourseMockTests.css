@@ -1,0 +1,31 @@
+/* The course's HSK mock tests: a red band near the top of the course page, like the free mock test
+   bar on the home page, with each paper on a cream card. */
+.course-mock-tests { margin-top: 24px; padding: 24px 28px 28px; border-radius: 10px; background: var(--accent-red); color: #fff; }
+.course-mock-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px 24px; flex-wrap: wrap; }
+.course-mock-eyebrow { margin: 0 0 4px; color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+#root .course-mock-tests h2 { margin: 0; color: #fff; font-size: clamp(24px, 2.6vw, 32px) !important; line-height: 1.2; }
+.course-mock-head p:last-child { max-width: 62ch; margin: 8px 0 0; color: #fff; font-size: 15px; line-height: 1.6; }
+.course-mock-count { flex-shrink: 0; padding: 6px 12px; border: 1px solid rgba(255, 255, 255, .45); border-radius: 999px; font-size: 13px; font-weight: 650; }
+.course-mock-note { margin: 16px 0 0; color: #fff; font-size: 14px; }
+.course-mock-note a { color: #fff; font-weight: 700; }
+.course-mock-status { margin: 16px 0 0; color: #fff; }
+.course-mock-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin: 20px 0 0; padding: 0; list-style: none; }
+.course-mock-card { display: flex; flex-direction: column; padding: 18px; border-radius: 8px; background: #faf6ec; color: #2a2320; }
+.course-mock-card.is-locked { background: #f1ebdf; }
+.course-mock-tags { display: flex; flex-wrap: wrap; gap: 6px; min-height: 22px; margin-bottom: 8px; }
+.course-mock-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; }
+.course-mock-tag svg { width: 12px; height: 12px; }
+.course-mock-tag.is-free { background: #e2f1e6; color: #1d5a40; }
+.course-mock-tag.is-locked { background: #e9e1d2; color: #5c5246; }
+.course-mock-tag.is-done { background: #e2f1e6; color: #1d5a40; }
+.course-mock-code { margin: 0; color: #742418; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+#root .course-mock-card h3 { margin: 4px 0 6px; color: #2a2320; font-family: var(--font-body); font-size: 17px !important; font-weight: 650; line-height: 1.35; }
+.course-mock-meta { margin: 0 0 16px; color: #5c5246; font-size: 13px; line-height: 1.5; }
+.course-mock-start, .course-mock-unlock { display: inline-flex; align-items: center; justify-content: center; align-self: flex-start; min-height: 44px; margin-top: auto; padding: 0 18px; border-radius: 6px; font-size: 14px; font-weight: 700; text-decoration: none; }
+.course-mock-start { background: var(--accent-red); color: #fff; }
+.course-mock-start:hover { background: color-mix(in srgb, var(--accent-red) 85%, black); color: #fff; }
+.course-mock-unlock { border: 1px solid #c9bda9; color: #742418; }
+.course-mock-unlock:hover { border-color: #742418; }
+.course-mock-tests a:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.course-mock-card a:focus-visible { outline-color: #742418; }
+@media (max-width: 560px) { .course-mock-tests { padding: 20px 16px; } }

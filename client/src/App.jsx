@@ -1,6 +1,7 @@
 import AdminSidebar from './components/AdminSidebar';
 import SiteHeader from './components/SiteHeader';
 import LiveClassNotice from './components/LiveClassNotice';
+import { FREE_PAPER_PATH } from './tests/mockTests';
 import HomeFooter from './home/HomeFooter';
 import HomeTestimonials from './home/HomeTestimonials';
 import HomeCourses from './home/HomeCourses';
@@ -62,6 +63,8 @@ function AppContent() {
   const pendingTestimonialsCount = attention.testimonials.length;
   const pendingAccessRequestsCount = attention.access.length + attention.plans.length;
   const [myAccessDays, setMyAccessDays] = useState(null);
+  // A student with an active plan already has everything Pricing offers, so the header leaves it out.
+  const [hasActivePlan, setHasActivePlan] = useState(false);
   const [adminSidebarOpen, setAdminSidebarOpen] = useState(false);
   const [desktopAdminNavigation, setDesktopAdminNavigation] = useState(() => window.matchMedia('(min-width: 1100px)').matches);
   const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
@@ -178,7 +181,7 @@ function AppContent() {
 
   const loadMyAccess = () => {
     const t = localStorage.getItem('token');
-    if (!t) { setMyAccessDays(null); return; }
+    if (!t) { setMyAccessDays(null); setHasActivePlan(false); return; }
     const load = path => apiFetch(window.API_BASE_URL + path)
       .then(res => res.json()).then(data => Array.isArray(data) ? data : []).catch(() => []);
     // Paid access plus a free week from an approved access request.
@@ -190,8 +193,10 @@ function AppContent() {
           .map(end => Math.ceil((new Date(end) - now) / (1000 * 60 * 60 * 24)))
           .filter(d => d > 0);
         setMyAccessDays(daysList.length ? Math.min(...daysList) : null);
+        // Plan entries are marked `plan: true` (see GET /api/subscriptions/my).
+        setHasActivePlan(subs.some(sub => sub.plan && new Date(sub.expiresAt) > now));
       })
-      .catch(() => setMyAccessDays(null));
+      .catch(() => { setMyAccessDays(null); setHasActivePlan(false); });
   };
 
   const loadAdminNotificationCounts = useCallback(() => {
@@ -256,7 +261,7 @@ function AppContent() {
     // Commit the session change and destination together so route guards never
     // see a signed-out user on the previous protected page.
     startTransition(() => {
-      setUser(null); setMyAccessDays(null); setAccess({});
+      setUser(null); setMyAccessDays(null); setHasActivePlan(false); setAccess({});
       setShowTestAccessPrompt(false);
       setShowStudioTour(false);
       setShowChangePassword(false);
@@ -275,10 +280,12 @@ function AppContent() {
   const handleLogin = loggedInUser => {
     markActive(); setIdleNotice(false); setExpiredNotice(false); clearIdleSignOutNotice();
     const next = new URLSearchParams(location.search).get('next');
+    const destination = safeReturnPath(next, homePath(loggedInUser));
     startTransition(() => {
       setUser(loggedInUser);
-      setShowTestAccessPrompt(!['admin', 'superadmin'].includes(loggedInUser?.role));
-      navigate(safeReturnPath(next, homePath(loggedInUser)), { replace: true });
+      // Someone signing in to take the free mock test goes straight to it, without the access prompt.
+      setShowTestAccessPrompt(!['admin', 'superadmin'].includes(loggedInUser?.role) && destination !== FREE_PAPER_PATH);
+      navigate(destination, { replace: true });
     });
   };
   const openLogin = destination => {
@@ -312,9 +319,9 @@ function AppContent() {
     </div>
     {showChangePassword && <ChangePassword onClose={() => setShowChangePassword(false)} />}
     {showTestAccessPrompt && user && <Suspense fallback={null}><TestAccessPrompt user={user} onClose={closeTestAccessPrompt} onStartTour={startStudioTour} /></Suspense>}
-    {showStudioTour && <Suspense fallback={null}><StudioTour onClose={closeStudioTour} /></Suspense>}
+    {showStudioTour && <Suspense fallback={null}><StudioTour onClose={closeStudioTour} user={user} /></Suspense>}
     {showTestimonial && <TestimonialModal user={user} onClose={() => { setShowTestimonial(false); loadTestimonials(); }} />}
-    <SiteHeader showAboutUs={aboutUsVisible} adminSidebarOpen={adminSidebarOpen} attention={attention} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} hideForAuth={['/sign-in', '/register', '/reset-password'].includes(location.pathname)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={value => { if (!adminArea) navigate('/admin'); setAdminSidebarOpen(value); }} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} onNavigate={navigate} setShowChangePassword={setShowChangePassword} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
+    <SiteHeader showAboutUs={aboutUsVisible} hidePricing={user?.role === 'student' && hasActivePlan} adminSidebarOpen={adminSidebarOpen} attention={attention} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} hideForAuth={['/sign-in', '/register', '/reset-password'].includes(location.pathname)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={value => { if (!adminArea) navigate('/admin'); setAdminSidebarOpen(value); }} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} onNavigate={navigate} setShowChangePassword={setShowChangePassword} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
     <StudioSaveStatus />
     {expiredNotice && !user && <div className="idle-notice" role="status">
       <span>Your sign-in has ended, for example because the password was changed. Please sign in again.</span>
