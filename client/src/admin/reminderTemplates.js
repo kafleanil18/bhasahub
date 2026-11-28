@@ -27,7 +27,7 @@ export const reminderTemplates = [
     icon: 'target',
     audience: 'all',
     subject: 'Try an HSK mock test this week',
-    message: 'Ready to see how far you have come? Take one HSK mock test this week. It is timed like the real exam and shows exactly which questions to review.\n\nNot sure where to start? The H11226 paper is free for everyone.\n\nEvery test you take makes exam day feel more familiar.',
+    message: 'Ready to see how far you have come? Take one HSK mock test this week. It is timed like the real exam and shows exactly which questions to review.\n\nNot sure where to start? One HSK 1 paper is free for everyone with an account.\n\nEvery test you take makes exam day feel more familiar.',
   },
   {
     id: 'expiring',

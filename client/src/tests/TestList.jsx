@@ -48,6 +48,8 @@ function TestList({ onOpenTest, onBack, user }) {
     return () => { active = false; window.clearInterval(interval); window.removeEventListener('focus', check); };
   }, [isStaff]);
 
+  // The free paper is whichever one a super admin chose (marked free in the paper list).
+  const freeCode = practicePapers.find(paper => paper.free)?.code || 'H11226';
   const unlocked = isStaff || accessStatus === 'approved';
   const requestAccess = async () => {
     setRequesting(true); setRequestError('');
@@ -118,7 +120,7 @@ function TestList({ onOpenTest, onBack, user }) {
         <div className={`test-access-banner${accessStatus === 'pending' ? ' is-pending' : ''}`} role="status">
           <div>
             <strong>{accessStatus === 'expired' ? 'Your free week has ended' : accessStatus === 'pending' ? 'Your access request is under review' : accessStatus === 'denied' ? 'Your previous request was declined' : 'One mock test is free. Unlock the rest for free too.'}</strong>
-            <p>{accessStatus === 'expired' ? `Your ${FREE_ACCESS_DAYS}-day free access is over. The H11226 test stays free. Choose a plan to open every other mock test again.` : accessStatus === 'pending' ? 'An admin will review your request. Check back soon. The H11226 test is free to take meanwhile.' : 'You can take the H11226 test for free. To open all other mock tests, send a request and an admin will approve it.'}</p>
+            <p>{accessStatus === 'expired' ? `Your ${FREE_ACCESS_DAYS}-day free access is over. The ${freeCode} test stays free. Choose a plan to open every other mock test again.` : accessStatus === 'pending' ? `An admin will review your request. Check back soon. The ${freeCode} test is free to take meanwhile.` : `You can take the ${freeCode} test for free. To open all other mock tests, send a request and an admin will approve it.`}</p>
             {(accessStatus === 'none' || accessStatus === 'denied') && <FreeAccessNote compact/>}
           </div>
           {accessStatus === 'expired' && <Link className="test-access-request-btn" to="/pricing">See plans</Link>}

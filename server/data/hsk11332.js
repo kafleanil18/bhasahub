@@ -1,5 +1,5 @@
 // Questions transcribed from the user-supplied H11332.pdf; answers from H11332答案.pdf;
-// listening text from H11332听力材料.pdf; recording H11332.wma supplied by the user (converted to MP3).
+// listening text from H11332听力材料.pdf; recording H11332.wma supplied by the user, converted to 64 kbps mono MP3 with ffmpeg.
 // Pictures are cut out of the booklet for now (see docs/h11332-test-portal.md).
 const asset = name => `/hsk1/h11332/${name}.jpg`;
 const letters = count => Array.from({ length: count }, (_, i) => ({ text: String.fromCharCode(65 + i) }));
@@ -88,8 +88,7 @@ const groups = [
     ] },
 ];
 
-// Recording still to be converted to MP3 (no ffmpeg on this machine), so the paper also needs its audio before it goes live.
-module.exports = { id: 'h11332', code: 'H11332', title: 'HSK 1 · H11332', audioUrl: '/hsk1/h11332/listening.mp3', listeningSeconds: 900, transferSeconds: 180, readingSeconds: 1020,
+module.exports = { id: 'h11332', addedAt: '2026-11-28T23:42:00+05:45', code: 'H11332', title: 'HSK 1 · H11332', audioUrl: '/hsk1/h11332/listening.mp3', listeningSeconds: 897, transferSeconds: 180, readingSeconds: 1020,
   // Hidden from students until the cut-out pictures are replaced with new illustrations; staff can
   // preview and publish it under Manage tests.
   publishedByDefault: false, groups };

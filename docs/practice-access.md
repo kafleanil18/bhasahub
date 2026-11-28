@@ -40,7 +40,7 @@ An active course subscription also opens the practice studio and every mock test
 
 `server/utils/testAccess.js` decides who can open a paper:
 
-- H11226 (`FREE_PAPER_ID`) is open to every signed-in student.
+- **The free paper** is open to every signed-in student. It's H11226 by default (`FREE_PAPER_ID`); a superadmin chooses another live paper with **Make this the free paper** in Manage tests (`PUT /api/hsk1/:paperId/free`, saved as `SiteSettings.freePaperId`, read by `server/utils/freePaper.js`). `GET /api/hsk1/free` (public) says which one it is, for the home page's free mock test bar. The free paper can't be hidden or deleted until another paper is made free.
 - Other papers need an admin role, a free week that hasn't ended, an active plan or an active course subscription. Otherwise the API answers `403` with `code: 'TESTS_LOCKED'`, and the test list offers to request access.
 
 Where students find them:

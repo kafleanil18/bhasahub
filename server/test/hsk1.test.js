@@ -132,6 +132,11 @@ async function setup({ testsUnlocked = true } = {}) {
     const saved = { ...publications.get(id), _id: id, ...update.$set }; publications.set(id, saved); return saved;
   });
   mock(AuditLog, 'create', async () => ({}));
+  // Site settings hold the free paper; none saved means H11226.
+  const settings = {};
+  const SiteSettings = require('../models/SiteSettings');
+  mock(SiteSettings, 'findOne', () => ({ select: () => ({ lean: async () => ({ ...settings }) }) }));
+  mock(SiteSettings, 'findOneAndUpdate', async (filter, update) => Object.assign(settings, update.$set));
   let stored;
   const matches = filter => stored && Object.entries(filter).every(([key, value]) => String(stored[key]) === String(value));
   mock(HskAttempt, 'create', async fields => (stored = { ...fields, _id: '507f1f77bcf86cd799439013', status: 'started', startedAt: new Date() }));
@@ -144,7 +149,7 @@ async function setup({ testsUnlocked = true } = {}) {
   const server = await new Promise((resolve, reject) => { const item = app.listen(0, '127.0.0.1', error => error ? reject(error) : resolve(item)); item.on('error', reject); });
   servers.push(server);
   const headers = id => ({ Authorization: `Bearer ${jwt.sign({ id }, process.env.JWT_SECRET)}`, 'Content-Type': 'application/json' });
-  return { app, base: `http://127.0.0.1:${server.address().port}/api/hsk1/h11226`, headers: headers('507f1f77bcf86cd799439011'), other: headers('507f1f77bcf86cd799439012'), admin: headers('admin'), superadmin: headers('superadmin') };
+  return { app, settings, base: `http://127.0.0.1:${server.address().port}/api/hsk1/h11226`, headers: headers('507f1f77bcf86cd799439011'), other: headers('507f1f77bcf86cd799439012'), admin: headers('admin'), superadmin: headers('superadmin') };
 }
 
 test('H11112 preserves the printed key and original audio', () => {
@@ -176,8 +181,8 @@ test('H11112 preserves the printed key and original audio', () => {
 // still needs checking). Pictures are cut out of the booklets for now.
 const newPapers = [
   { id: 'h11009', key: [1,1,0,1,0, 0,1,0,2,1, 0,1,4,3,5, 2,2,0,1,2, 0,1,0,1,0, 1,5,2,0,3, 2,4,1,3,0, 5,2,1,0,4], audio: '7009027df216ad5b27c66c43ed4e4c476088f99f53edecaf8979a741c26e1008', seconds: 935 },
-  { id: 'h11332', key: [0,0,1,1,0, 2,0,1,2,1, 0,5,3,4,1, 0,0,1,2,2, 0,0,1,1,1, 3,1,5,0,2, 2,1,4,3,0, 2,0,5,1,4], audio: null, seconds: 900 },
-  { id: 'h11440', key: [1,1,1,0,0, 1,0,2,1,2, 3,4,5,1,0, 0,0,2,2,1, 0,0,1,1,0, 3,2,5,1,0, 4,1,0,2,3, 2,5,0,4,1], audio: null, seconds: 900 },
+  { id: 'h11332', key: [0,0,1,1,0, 2,0,1,2,1, 0,5,3,4,1, 0,0,1,2,2, 0,0,1,1,1, 3,1,5,0,2, 2,1,4,3,0, 2,0,5,1,4], audio: '95c5512bb84683dc44ad5e25a19c4108e7dc6b2319c7066625e33556f4bcccd8', seconds: 897 },
+  { id: 'h11440', key: [1,1,1,0,0, 1,0,2,1,2, 3,4,5,1,0, 0,0,2,2,1, 0,0,1,1,0, 3,2,5,1,0, 4,1,0,2,3, 2,5,0,4,1], audio: '91f698a1b56f2916b88aeb21b8aa8e261703335bd1376584e9da8dcfbbfc604a', seconds: 900 },
   { id: 'h11552', key: [0,0,1,1,1, 0,0,2,0,2, 0,3,4,1,5, 1,1,1,2,2, 0,0,1,0,1, 0,2,5,3,1, 1,4,0,3,2, 4,5,0,2,1], audio: 'b997ec40db06236fe3ae418d669f189668a568fedb93558453c42e8cc1437a75', seconds: 864 },
 ];
 for (const { id, key, audio, seconds } of newPapers) test(`${id.toUpperCase()} keeps its answer key, pictures and audio, and starts hidden`, () => {
@@ -206,6 +211,27 @@ for (const { id, key, audio, seconds } of newPapers) test(`${id.toUpperCase()} k
   assert.deepEqual([paper.transferSeconds, paper.readingSeconds, paper.publishedByDefault], [180, 1020, false]);
   const tools = require('../utils/hsk11226').createPaperTools(paper);
   assert.deepEqual(tools.grade(key), { listening: 20, reading: 20, score: 40 });
+});
+
+test('a super admin chooses which paper is free; it opens without access and can’t be hidden or deleted', async () => {
+  const { base, headers, admin, superadmin } = await setup({ testsUnlocked: false });
+  const root = base.replace('/h11226', '');
+  assert.deepEqual(await (await fetch(`${root}/free`)).json(), { id: 'h11226', code: 'H11226' }, 'H11226 by default, and public');
+  const listing = await (await fetch(root, { headers: admin })).json();
+  assert.deepEqual(listing.filter(row => row.free).map(row => row.id), ['h11226']);
+  assert.ok(listing.every(row => row.addedAt), 'every paper has an added date for sorting');
+  assert.equal((await fetch(`${root}/h11221`, { headers })).status, 403);
+
+  assert.equal((await fetch(`${root}/h11221/free`, { method: 'PUT', headers: admin })).status, 403, 'super admins only');
+  assert.equal((await fetch(`${root}/h11009/free`, { method: 'PUT', headers: superadmin })).status, 409, 'a hidden paper can’t be the free one');
+  assert.equal((await fetch(`${root}/h11221/free`, { method: 'PUT', headers: superadmin })).status, 200);
+  assert.deepEqual(await (await fetch(`${root}/free`)).json(), { id: 'h11221', code: 'H11221' });
+  assert.equal((await fetch(`${root}/h11221`, { headers })).status, 200, 'the new free paper opens without access');
+  assert.equal((await fetch(base, { headers })).status, 403, 'H11226 is locked again');
+  assert.deepEqual((await (await fetch(root, { headers })).json()).filter(row => row.free).map(row => row.id), ['h11221']);
+
+  assert.equal((await fetch(`${root}/h11221/publication`, { method: 'PUT', headers: admin, body: JSON.stringify({ published: false }) })).status, 409);
+  assert.equal((await fetch(`${root}/h11221`, { method: 'DELETE', headers: superadmin })).status, 409);
 });
 
 test('without approved access only the free paper opens; staff bypass the lock', async () => {
@@ -402,7 +428,9 @@ test('superadmin soft-deletes and restores papers; deleted papers are closed to 
 });
 
 test('admins control publication; hidden papers block students but allow staff preview', async () => {
-  const { base, headers, admin, superadmin } = await setup();
+  const { base, headers, admin, superadmin, settings } = await setup();
+  // H11226 is hidden below, so another paper is the free one (the free paper can't be hidden).
+  settings.freePaperId = 'h11221';
   const url = `${base}/publication`;
   const setVisibility = (auth, published) => fetch(url, { method: 'PUT', headers: auth, body: JSON.stringify({ published }) });
   assert.equal((await fetch(url)).status, 401);

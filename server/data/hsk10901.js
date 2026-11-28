@@ -87,4 +87,4 @@ const groups = [
       { number: 40, text: '女：对不起，我不会做饭。\n男：（　），我会。', pinyin: 'Nǚ: Duìbuqǐ, wǒ bú huì zuò fàn.\nNán: ( ), wǒ huì.', options: letters(6), correctIndex: 2, explanation: '“Sorry, I can’t cook.” — “It doesn’t matter; I can.” 没关系 means “it doesn’t matter”. Choose C.' },
     ] },
 ];
-module.exports = { id: 'h10901', code: 'H10901', title: 'HSK 1 · H10901', audioUrl: '/hsk1/h10901/listening.mp3', listeningSeconds: 874, transferSeconds: 180, readingSeconds: 1020, groups };
+module.exports = { id: 'h10901', addedAt: '2026-11-05T19:30:34+05:45', code: 'H10901', title: 'HSK 1 · H10901', audioUrl: '/hsk1/h10901/listening.mp3', listeningSeconds: 874, transferSeconds: 180, readingSeconds: 1020, groups };

@@ -173,3 +173,13 @@
 .dark .test-access-banner { border-color: #665332; background: #2d2717; color: #f1dfb1; }
 .dark .test-access-banner p { color: #dccba3; }
 .dark .test-access-banner.is-pending { border-color: #34506b; background: #172433; color: #d4e4f4; }
+
+/* Staff view: a hidden paper is a dull, desaturated grey card; live papers stay red. */
+.hsk-featured-test.is-hidden { background: #8a8580; color: #f4f2ef; }
+.hsk-featured-test.is-hidden h2 { color: #fff; }
+.hsk-featured-test.is-hidden :is(p, small, .hsk-featured-meta, .hsk-featured-meta span) { color: #ecebe8; }
+.hsk-featured-test.is-hidden button { border-color: #e9e6e2; background: #e9e6e2; color: #3f3b37; }
+.dark .hsk-featured-test.is-hidden { background: #4a4744; color: #dedbd7; }
+.dark .hsk-featured-test.is-hidden h2 { color: #f1efec; }
+.dark .hsk-featured-test.is-hidden :is(p, small, .hsk-featured-meta, .hsk-featured-meta span) { color: #cfcbc6; }
+.dark .hsk-featured-test.is-hidden button { border-color: #cfcbc6; background: #cfcbc6; color: #2a2724; }

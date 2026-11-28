@@ -1,7 +1,7 @@
 import AdminSidebar from './components/AdminSidebar';
 import SiteHeader from './components/SiteHeader';
 import LiveClassNotice from './components/LiveClassNotice';
-import { FREE_PAPER_PATH } from './tests/mockTests';
+import { useFreePaper } from './tests/useFreePaper';
 import HomeFooter from './home/HomeFooter';
 import HomeTestimonials from './home/HomeTestimonials';
 import HomeCourses from './home/HomeCourses';
@@ -67,6 +67,8 @@ function AppContent() {
   const [hasActivePlan, setHasActivePlan] = useState(false);
   // What a student can open: My Courses needs course access (an active plan or course subscription);
   // My Progress needs practice access (that, or a free week). Unknown until the check finishes.
+  // The free mock test: signing in to take it goes straight there, without the access prompt.
+  const freePaper = useFreePaper();
   const NO_ACCESS = { loaded: false, courses: false, practice: false, recorded: false };
   const [studentAccess, setStudentAccess] = useState(NO_ACCESS);
   const [adminSidebarOpen, setAdminSidebarOpen] = useState(false);
@@ -296,7 +298,7 @@ function AppContent() {
     startTransition(() => {
       setUser(loggedInUser);
       // Someone signing in to take the free mock test goes straight to it, without the access prompt.
-      setShowTestAccessPrompt(!['admin', 'superadmin'].includes(loggedInUser?.role) && destination !== FREE_PAPER_PATH);
+      setShowTestAccessPrompt(!['admin', 'superadmin'].includes(loggedInUser?.role) && destination !== freePaper.path);
       navigate(destination, { replace: true });
     });
   };

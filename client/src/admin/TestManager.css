@@ -54,3 +54,10 @@
 .paper-deleted button:focus-visible { outline: 3px solid var(--seal); outline-offset: 3px; }
 .paper-media-hint { margin: 0; color: var(--mist); font-size: clamp(12px, calc(12px + 0.3vw), 13px); line-height: 1.5; }
 .paper-media-warning { margin: 0; padding: 8px 12px; border-radius: 6px; background: var(--rice); color: var(--ink); font-size: clamp(12px, calc(12px + 0.3vw), 13px); line-height: 1.5; }
+
+/* Sort control and the free paper summary above the paper list. */
+.paper-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; margin: 8px 0 20px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+.paper-sort { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 650; }
+.paper-sort select { min-height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: 7px; background: var(--paper); color: var(--ink); font: inherit; font-weight: 500; }
+.paper-free-summary { margin: 0; color: var(--mist); font-size: 14px; }
+.paper-free-summary .mock-test-free-tag { margin: 0 6px 0 0; }

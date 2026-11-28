@@ -1,5 +1,5 @@
 // Questions transcribed from the user-supplied H11440.pdf; answers from H11440卷答案.doc;
-// listening text from H11440卷听力材料.doc; recording H11440.wav supplied by the user (converted to MP3).
+// listening text from H11440卷听力材料.doc; recording H11440.wav supplied by the user, converted to 64 kbps mono MP3 with ffmpeg.
 // Pictures are cut out of the booklet for now (see docs/h11440-test-portal.md).
 const asset = name => `/hsk1/h11440/${name}.jpg`;
 const letters = count => Array.from({ length: count }, (_, i) => ({ text: String.fromCharCode(65 + i) }));
@@ -88,8 +88,7 @@ const groups = [
     ] },
 ];
 
-// Recording still to be converted to MP3 (no ffmpeg on this machine), so the paper also needs its audio before it goes live.
-module.exports = { id: 'h11440', code: 'H11440', title: 'HSK 1 · H11440', audioUrl: '/hsk1/h11440/listening.mp3', listeningSeconds: 900, transferSeconds: 180, readingSeconds: 1020,
+module.exports = { id: 'h11440', addedAt: '2026-11-28T23:43:00+05:45', code: 'H11440', title: 'HSK 1 · H11440', audioUrl: '/hsk1/h11440/listening.mp3', listeningSeconds: 900, transferSeconds: 180, readingSeconds: 1020,
   // Hidden from students until the cut-out pictures are replaced with new illustrations; staff can
   // preview and publish it under Manage tests.
   publishedByDefault: false, groups };

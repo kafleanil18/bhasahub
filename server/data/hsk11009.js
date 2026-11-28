@@ -88,7 +88,7 @@ const groups = [
     ] },
 ];
 
-module.exports = { id: 'h11009', code: 'H11009', title: 'HSK 1 · H11009', audioUrl: '/hsk1/h11009/listening.mp3', listeningSeconds: 935, transferSeconds: 180, readingSeconds: 1020,
+module.exports = { id: 'h11009', addedAt: '2026-11-28T23:41:00+05:45', code: 'H11009', title: 'HSK 1 · H11009', audioUrl: '/hsk1/h11009/listening.mp3', listeningSeconds: 935, transferSeconds: 180, readingSeconds: 1020,
   // Hidden from students until the cut-out pictures are replaced with new illustrations; staff can
   // preview and publish it under Manage tests.
   publishedByDefault: false, groups };

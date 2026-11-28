@@ -43,12 +43,12 @@ export default function TestAccessPrompt({ user, onClose, onStartTour }) {
         <p id="test-access-prompt-text">{sent
           ? 'An administrator has been notified and will review your request. You can keep using the website meanwhile.'
           : expired
-            ? `Thanks for trying the practice studio. Your ${FREE_ACCESS_DAYS}-day free access is over. Choose a plan to keep practising. The H11226 test stays free.`
+            ? `Thanks for trying the practice studio. Your ${FREE_ACCESS_DAYS}-day free access is over. Choose a plan to keep practising. One HSK 1 mock test stays free.`
           : waiting
-            ? 'Your access request has been sent and is waiting for an administrator to approve it. You can keep using the website meanwhile, and the H11226 test is free.'
+            ? 'Your access request has been sent and is waiting for an administrator to approve it. You can keep using the website meanwhile, and one HSK 1 mock test is free.'
             : status === 'denied'
               ? 'Your earlier request was declined. You can send a new request to the administrator, or continue without it for now.'
-              : 'The practice studio and HSK mock tests need approval from an administrator. Send a free request now, or skip it and continue. The H11226 test is free either way.'}</p>
+              : 'The practice studio and HSK mock tests need approval from an administrator. Send a free request now, or skip it and continue. One HSK 1 mock test is free either way.'}</p>
         {!waiting && !expired && <FreeAccessNote/>}
         {error && <p className="test-access-prompt-error" role="alert">{error}</p>}
         <div className="test-access-prompt-actions">

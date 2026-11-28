@@ -7,7 +7,7 @@ import RefreshButton from '../../components/RefreshButton';
 import { apiFetch } from '../../lib/apiClient';
 const headers = () => ({ 'Content-Type': 'application/json' });
 
-export default function FeaturedPaper({ onOpen, onRetake, manage = false, showHidden = false, paperId = 'h11226', title = 'HSK 1 Listening & Reading', code, onEdit, completed, edited = false, locked = false, free = false, children }) {
+export default function FeaturedPaper({ onOpen, onRetake, onPublishedChange, manage = false, showHidden = false, paperId = 'h11226', title = 'HSK 1 Listening & Reading', code, onEdit, completed, edited = false, locked = false, free = false, children }) {
   const API = `${window.API_BASE_URL}/api/hsk1/${paperId}/publication`;
   const [published, setPublished] = useState(null);
   const [error, setError] = useState('');
@@ -34,14 +34,17 @@ export default function FeaturedPaper({ onOpen, onRetake, manage = false, showHi
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not update paper visibility.');
       setPublished(data.published);
+      onPublishedChange?.(data.published);
     } catch (err) { setError(err.message); }
     finally { setBusy(false); }
   };
 
   if (published === false && !showHidden && !manage) return null;
   if (published === null) return <div className="hsk-featured-status" role="status">{error ? <><p>{error}</p><RefreshButton onClick={() => setReload(value => value + 1)}>Retry loading practice paper</RefreshButton></> : 'Loading practice paper…'}</div>;
-  return <div className={`hsk-featured-test${completed === true ? ' is-completed' : ''}${locked ? ' is-locked' : ''}`}>
-    <div>{locked && <span className="mock-test-lock-tag"><Icon name="lock"/> Approval needed</span>}{free && <span className="mock-test-free-tag">Free</span>}{typeof completed === 'boolean' && <span className={`mock-test-completion${completed ? ' is-done' : ''}`}>{completed ? '✓ Completed' : 'Not started'}</span>}<small>HSK 1 paper {code || paperId.toUpperCase()}</small><h2>{title.replace(/ · /g, ' ')}</h2><p className="hsk-featured-meta">40 questions: 20 listening and 20 reading, timed</p>
+  // Staff see hidden papers as a dull grey card, so live papers (red) stand out.
+  const hidden = published === false && (manage || showHidden);
+  return <div className={`hsk-featured-test${completed === true ? ' is-completed' : ''}${locked ? ' is-locked' : ''}${hidden ? ' is-hidden' : ''}`}>
+    <div>{locked && <span className="mock-test-lock-tag"><Icon name="lock"/> Approval needed</span>}{free && <span className="mock-test-free-tag">{manage ? 'Free for all signed-in users' : 'Free'}</span>}{typeof completed === 'boolean' && <span className={`mock-test-completion${completed ? ' is-done' : ''}`}>{completed ? '✓ Completed' : 'Not started'}</span>}<small>HSK 1 paper {code || paperId.toUpperCase()}</small><h2>{title.replace(/ · /g, ' ')}</h2><p className="hsk-featured-meta">40 questions: 20 listening and 20 reading, timed</p>
       {(manage || showHidden) && <p role="status"><strong>{published ? 'Live and visible to students' : 'Hidden, staff preview only'}</strong>{manage && edited && <>. Edited copy of the built-in paper.</>}</p>}
       {error && <p role="alert">{error}</p>}
     </div>

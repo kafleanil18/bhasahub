@@ -6,7 +6,7 @@ import './StudioTour.css';
 export const TOUR_SEEN_KEY = 'studioTourSeen';
 
 const tips = {
-  tests: 'Sit the full H11226 HSK 1 paper for free, timed the way the real exam runs, then review every answer you missed. With a free week or a plan, every mock test is on your HSK course pages.',
+  tests: 'Sit a full HSK 1 paper for free, timed the way the real exam runs, then review every answer you missed. With a free week or a plan, every mock test is on your HSK course pages.',
   pinyin: 'Tap any syllable to hear it. Say it out loud straight after, then replay to compare. Getting the four tones right early saves a lot of relearning later.',
   trace: 'Watch the strokes animate, trace over them, then try writing the character from memory. Stroke order matters, so follow the numbers.',
   listening: 'Hear a word, then choose what it means. Headphones help. Replay as often as you like before you answer.',

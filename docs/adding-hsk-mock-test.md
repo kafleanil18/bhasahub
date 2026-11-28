@@ -1,6 +1,6 @@
 # Adding a new HSK 1 mock test
 
-Use this checklist for every new paper so it matches the existing bundled tests (H11226, H10901, H11556, H11221, H11112). Use H11112 as the template: copy its files and change the content.
+Use this checklist for every new paper so it matches the existing bundled tests (H11226, H10901, H11556, H11221, H11112, H11009, H11332, H11440, H11552). Use H11112 as the template: copy its files and change the content.
 
 Replace `HXXXXX` and `hxxxxx` below with the paper code, for example `H11112` and `h11112`.
 
@@ -51,6 +51,7 @@ Each group also has an `example`, copied from the booklet's worked example. Exam
 
 Timing:
 
+- `addedAt` is the date the paper is added (ISO 8601). Manage tests sorts papers by it (latest or oldest uploaded) as well as by paper number.
 - `listeningSeconds` is the decoded audio length rounded up. There's no `ffprobe` here, so measure it in Chromium with `decodeAudioData`. The H11112 doc shows how.
 - `transferSeconds` is 180 and `readingSeconds` is 1020 for every paper.
 

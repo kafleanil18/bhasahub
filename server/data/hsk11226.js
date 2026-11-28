@@ -74,4 +74,4 @@ for (const group of groups) {
   if (examples[group.id]) Object.assign(group, examples[group.id]);
   if (['l1', 'l2', 'l3', 'r1', 'r2'].includes(group.id)) group.exampleImage = `/hsk1/h11226/examples/${group.id}.png`;
 }
-module.exports = { id: 'h11226', title: 'HSK 1 · H11226', audioUrl: '/hsk1/h11226/listening.m4a', listeningSeconds: 910, transferSeconds: 180, readingSeconds: 1020, groups };
+module.exports = { id: 'h11226', addedAt: '2026-11-05T12:58:21+05:45', title: 'HSK 1 · H11226', audioUrl: '/hsk1/h11226/listening.m4a', listeningSeconds: 910, transferSeconds: 180, readingSeconds: 1020, groups };

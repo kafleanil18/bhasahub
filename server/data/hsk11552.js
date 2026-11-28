@@ -90,7 +90,7 @@ const groups = [
     ] },
 ];
 
-module.exports = { id: 'h11552', code: 'H11552', title: 'HSK 1 · H11552', audioUrl: '/hsk1/h11552/listening.mp3', listeningSeconds: 864, transferSeconds: 180, readingSeconds: 1020,
+module.exports = { id: 'h11552', addedAt: '2026-11-28T23:44:00+05:45', code: 'H11552', title: 'HSK 1 · H11552', audioUrl: '/hsk1/h11552/listening.mp3', listeningSeconds: 864, transferSeconds: 180, readingSeconds: 1020,
   // Hidden from students until the cut-out pictures are replaced with new illustrations; staff can
   // preview and publish it under Manage tests.
   publishedByDefault: false, groups };

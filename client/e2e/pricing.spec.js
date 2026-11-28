@@ -202,7 +202,7 @@ test('below the plans, every platform feature is described and live classes can 
   }
   const freeTest = features.getByRole('article', { name: 'HSK mock tests' }).getByRole('listitem').filter({ hasText: 'One mock test' });
   await expect(freeTest.locator('.pricing-feature-tag')).toHaveText('Free');
-  await expect(freeTest).toContainText('H11226');
+  await expect(freeTest).toContainText('One full HSK 1 paper');
   await expect(features).toContainText('A free account includes one full HSK 1 mock test');
   await expect(features).toContainText('Spaced-repetition review');
   await expect(features).toContainText('Daily practice reminder');

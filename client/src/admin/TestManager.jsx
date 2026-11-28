@@ -17,6 +17,8 @@ export default function TestManager({ onBack, onPreviewTest, user }) {
   const [working, setWorking] = useState('');
   const [notice, setNotice] = useState('');
   const canEdit = user?.role === 'superadmin';
+  // Paper order: by when each was added (oldest first by default), or by HSK paper number.
+  const [sort, setSort] = useState('oldest');
   const edit = async id => {
     setOpening(true); setEditError(''); setNotice('');
     try {
@@ -41,12 +43,17 @@ export default function TestManager({ onBack, onPreviewTest, user }) {
   };
   const remove = paper => act(paper, { method: 'DELETE', confirm: `Delete “${paper.title}”? Students will no longer see it or their past results for it. You can restore it later from Deleted papers.`, done: `${paper.title} deleted. Restore it from Deleted papers below if needed.` });
   const restore = paper => act(paper, { method: 'POST', path: '/restore', confirm: `Restore “${paper.title}”? It comes back hidden so you can check it before making it live.`, done: `${paper.title} restored as hidden. Preview it, then choose Make live.` });
+  const makeFree = paper => act(paper, { method: 'PUT', path: '/free', confirm: `Make “${paper.title}” the free mock test? Every signed-in student can take it without a free week or plan, and the current free paper needs access again.`, done: `${paper.title} is now the free mock test for all signed-in users.` });
   const restoreOriginal = paper => act(paper, { method: 'DELETE', path: '/content', confirm: `Discard all edits to “${paper.title}” and go back to the original built-in version?`, done: `${paper.title} restored to its original version.` });
   const saved = data => {
     setEditor(null); reload();
     setNotice(data?.notice || (data?.published ? 'Changes saved. The paper is still live for students.' : 'Paper saved as a hidden draft. Preview it, then choose Make live when ready.'));
   };
-  const active = papers.filter(paper => !paper.deleted);
+  const paperNumber = paper => { const digits = String(paper.code || paper.id).replace(/\D/g, ''); return digits ? Number(digits) : Infinity; };
+  const added = paper => (paper.addedAt ? new Date(paper.addedAt).getTime() : 0);
+  const order = { number: (a, b) => paperNumber(a) - paperNumber(b), latest: (a, b) => added(b) - added(a), oldest: (a, b) => added(a) - added(b) }[sort];
+  const active = papers.filter(paper => !paper.deleted).sort(order);
+  const freePaper = active.find(paper => paper.free);
   const deleted = papers.filter(paper => paper.deleted);
   const busy = Boolean(opening || working);
   return (
@@ -62,7 +69,18 @@ export default function TestManager({ onBack, onPreviewTest, user }) {
         {(error || editError) && <div className="paper-error" role="alert"><p>{error || editError}</p>{error && <RefreshButton onClick={reload}>Retry loading papers</RefreshButton>}</div>}
         {loading && <p role="status">Loading practice papers…</p>}
         {opening && <p role="status">Opening paper editor…</p>}
-        {active.map(paper => <FeaturedPaper key={`${paper.id}-${paper.published}-${paper.edited}`} paperId={paper.id} title={paper.title} code={paper.code} edited={paper.edited} manage onOpen={() => onPreviewTest(paper.id)} onEdit={canEdit && !busy ? () => edit(paper.id) : undefined}>
+        {!loading && active.length > 0 && <div className="paper-toolbar">
+          <label className="paper-sort">Sort papers
+            <select value={sort} onChange={event => setSort(event.target.value)}>
+              <option value="oldest">Oldest uploaded</option>
+              <option value="latest">Latest uploaded</option>
+              <option value="number">HSK paper number</option>
+            </select>
+          </label>
+          {freePaper && <p className="paper-free-summary"><span className="mock-test-free-tag">Free</span> {freePaper.code} is free for all signed-in users.{canEdit && ' Choose “Make this the free paper” on another live paper to change it.'}</p>}
+        </div>}
+        {active.map(paper => <FeaturedPaper key={`${paper.id}-${paper.published}-${paper.edited}`} paperId={paper.id} title={paper.title} code={paper.code} edited={paper.edited} free={paper.free} manage onPublishedChange={reload} onOpen={() => onPreviewTest(paper.id)} onEdit={canEdit && !busy ? () => edit(paper.id) : undefined}>
+          {canEdit && !paper.free && paper.published && <button className="paper-free-button" onClick={() => makeFree(paper)} disabled={busy}>{working === paper.id ? 'Saving…' : 'Make this the free paper'}</button>}
           {canEdit && paper.edited && <button onClick={() => restoreOriginal(paper)} disabled={busy}>Restore original</button>}
           {canEdit && <button className="paper-delete-button" onClick={() => remove(paper)} disabled={busy}>{working === paper.id ? 'Deleting…' : 'Delete paper'}</button>}
         </FeaturedPaper>)}

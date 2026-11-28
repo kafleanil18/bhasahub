@@ -16,7 +16,7 @@ export const FEATURE_GROUPS = [
   {
     id: 'tests', mark: '测', title: 'HSK mock tests', summary: 'Exam practice that feels like the real thing.',
     items: [
-      ['One mock test', 'The full H11226 HSK 1 paper, with just a free account.', 'Free'],
+      ['One mock test', 'One full HSK 1 paper, with just a free account.', 'Free'],
       ['Full HSK 1 papers', '40 questions: 20 listening and 20 reading.'],
       ['Timed like the exam', 'Practise under real exam timing.'],
       ['Instant results', 'Your score with a listening and reading breakdown, saved to your account.'],

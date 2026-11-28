@@ -1,8 +1,8 @@
 // Shared facts about the HSK mock tests.
 
-// The one paper every signed-in student can take for free (FREE_PAPER_ID in server/routes/hsk1.js).
+// The default free paper (FREE_PAPER_ID in server/utils/testAccess.js). A super admin can choose another
+// in Manage tests; use useFreePaper() for the current one.
 export const FREE_PAPER_ID = 'h11226';
-export const FREE_PAPER_PATH = `/tests/${FREE_PAPER_ID}`;
 
 // The HSK level number in a label such as "HSK 1 · Beginner" or "HSK 2", or null.
 export function hskLevelNumber(text) {

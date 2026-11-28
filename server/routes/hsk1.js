@@ -6,24 +6,38 @@ const PracticePaper = require('../models/PracticePaper');
 const { logActivity } = require('../utils/auditLog');
 const { createPaperTools } = require('../utils/hsk11226');
 const { cleanContent, validateReady } = require('../utils/practicePaperContent');
-const { FREE_PAPER_ID, hasTestAccess } = require('../utils/testAccess');
+const { hasTestAccess } = require('../utils/testAccess');
+const { freePaperId, setFreePaperId } = require('../utils/freePaper');
 const builtIns = require('../data/hskPapers');
 const router = express.Router();
 const staff = req => ['admin', 'superadmin'].includes(req.user.role);
 const isBuiltIn = id => Object.hasOwn(builtIns, id);
 // `edited`: a built-in paper whose content a superadmin has replaced. `deleted`: soft-deleted, restorable.
-const metadata = (id, content, published, extra = {}) => ({ id, title: content.title, code: content.code || id.toUpperCase(), published, custom: !isBuiltIn(id), edited: false, deleted: false, free: id === FREE_PAPER_ID, ...extra });
+// `free`: the paper every signed-in student can take (see utils/freePaper.js). `addedAt`: when it was
+// added, for sorting in Manage tests (a bundled paper's own date, or a custom paper's creation time).
+const metadata = (id, content, published, extra = {}) => ({ id, title: content.title, code: content.code || id.toUpperCase(), published, custom: !isBuiltIn(id), edited: false, deleted: false, free: false, addedAt: null, ...extra });
+
+// GET /api/hsk1/free — public: which paper is free, so the home page can link straight to it.
+router.get('/free', async (req, res) => {
+  try {
+    const id = await freePaperId();
+    const record = await PracticePaper.findById(id);
+    res.set('Cache-Control', 'no-store');
+    res.json({ id, code: record?.content?.code || builtIns[id]?.code || id.toUpperCase() });
+  } catch { res.status(500).json({ error: 'Could not load the free paper.' }); }
+});
+
 router.use(requireAuth);
 router.use((req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
 router.get('/', async (req, res) => {
   try {
-    const records = await PracticePaper.find();
+    const [records, freeId] = await Promise.all([PracticePaper.find(), freePaperId()]);
     const byId = new Map(records.map(row => [row._id, row]));
     const references = Object.entries(builtIns).map(([id, paper]) => {
       const record = byId.get(id);
-      return metadata(id, record?.content || paper, !record?.deleted && (record?.published ?? paper.publishedByDefault !== false), { edited: Boolean(record?.content), deleted: Boolean(record?.deleted) });
+      return metadata(id, record?.content || paper, !record?.deleted && (record?.published ?? paper.publishedByDefault !== false), { edited: Boolean(record?.content), deleted: Boolean(record?.deleted), free: id === freeId, addedAt: paper.addedAt || null });
     });
-    const custom = records.filter(row => row.content && /^paper-[a-f0-9]{24}$/.test(row._id)).map(row => metadata(row._id, row.content, !row.deleted && row.published, { deleted: Boolean(row.deleted) }));
+    const custom = records.filter(row => row.content && /^paper-[a-f0-9]{24}$/.test(row._id)).map(row => metadata(row._id, row.content, !row.deleted && row.published, { deleted: Boolean(row.deleted), free: row._id === freeId, addedAt: row.createdAt || null }));
     const list = [...references, ...custom];
     res.json(staff(req) ? list : list.filter(row => row.published && !row.deleted));
   } catch { res.status(500).json({ error: 'Could not load practice papers.' }); }
@@ -86,6 +100,7 @@ router.delete('/:paperId/content', requireSuperAdmin, async (req, res) => {
 });
 router.delete('/:paperId', requireSuperAdmin, async (req, res) => {
   try {
+    if (req.paperId === await freePaperId()) return res.status(409).json({ error: 'This is the free mock test. Make another paper free before deleting it.' });
     await PracticePaper.findByIdAndUpdate(req.paperId, { $set: { deleted: true, published: false } }, { upsert: true, runValidators: true });
     logActivity(req, { action: 'delete', resourceType: 'test', resourceId: req.paperId, label: req.paper.title });
     res.json({ deleted: true, published: false });
@@ -100,9 +115,22 @@ router.post('/:paperId/restore', requireSuperAdmin, async (req, res) => {
   } catch { res.status(500).json({ error: 'Could not restore the paper.' }); }
 });
 router.get('/:paperId/publication', (req, res) => res.json({ published: req.published }));
+// PUT /api/hsk1/:paperId/free — super admin: make this the paper every signed-in student can take for
+// free. It has to be live, so students can actually open it.
+router.put('/:paperId/free', requireSuperAdmin, async (req, res) => {
+  if (req.deleted || !req.published) return res.status(409).json({ error: 'Make this paper live before making it the free one.' });
+  try {
+    await setFreePaperId(req.paperId);
+    logActivity(req, { action: 'update', resourceType: 'test', resourceId: req.paperId, label: `${req.paper.title} is now the free mock test` });
+    res.json({ free: req.paperId });
+  } catch { res.status(500).json({ error: 'Could not change the free paper.' }); }
+});
 router.put('/:paperId/publication', requireAdmin, async (req, res) => {
   if (typeof req.body.published !== 'boolean') return res.status(400).json({ error: 'Published must be true or false.' });
   if (req.body.published && req.deleted) return res.status(400).json({ error: 'Restore this paper before making it live.' });
+  // The free paper must stay live; choose another free paper first.
+  try { if (!req.body.published && req.paperId === await freePaperId()) return res.status(409).json({ error: 'This is the free mock test. Make another paper free before hiding it.' }); }
+  catch { return res.status(500).json({ error: 'Could not update paper visibility.' }); }
   if (req.body.published && (!isBuiltIn(req.paperId) || req.record?.content)) {
     try { validateReady(req.paper); }
     catch (err) { return res.status(400).json({ error: err.message }); }
@@ -118,8 +146,8 @@ function requirePublishedPaper(req, res, next) {
   next();
 }
 async function requireTestAccess(req, res, next) {
-  if (req.paperId === FREE_PAPER_ID) return next();
   try {
+    if (req.paperId === await freePaperId()) return next();
     if (!await hasTestAccess(req.user)) return res.status(403).json({ error: 'This mock test is locked. Request access to unlock all tests.', code: 'TESTS_LOCKED' });
     next();
   } catch { res.status(500).json({ error: 'Could not check your test access.' }); }

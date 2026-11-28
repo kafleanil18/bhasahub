@@ -88,6 +88,6 @@ const groups = [
     ] },
 ];
 
-module.exports = { id: 'h11112', code: 'H11112', title: 'HSK 1 · H11112', audioUrl: '/hsk1/h11112/listening.mp3', listeningSeconds: 922, transferSeconds: 180, readingSeconds: 1020,
+module.exports = { id: 'h11112', addedAt: '2026-11-22T15:07:20+05:45', code: 'H11112', title: 'HSK 1 · H11112', audioUrl: '/hsk1/h11112/listening.mp3', listeningSeconds: 922, transferSeconds: 180, readingSeconds: 1020,
   // Hidden from students until all new illustrations are in place; staff can preview and publish it.
   publishedByDefault: false, groups };

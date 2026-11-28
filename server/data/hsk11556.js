@@ -88,4 +88,4 @@ const groups = [
     ] },
 ];
 
-module.exports = { id: 'h11556', code: 'H11556', title: 'HSK 1 · H11556', audioUrl: '/hsk1/h11556/listening.mp3', listeningSeconds: 875, transferSeconds: 180, readingSeconds: 1020, groups };
+module.exports = { id: 'h11556', addedAt: '2026-11-06T15:13:49+05:45', code: 'H11556', title: 'HSK 1 · H11556', audioUrl: '/hsk1/h11556/listening.mp3', listeningSeconds: 875, transferSeconds: 180, readingSeconds: 1020, groups };
