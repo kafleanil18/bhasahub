@@ -128,3 +128,27 @@ test('calendar supports month navigation, keyboard movement, and several recordi
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.locator('iframe')).toHaveCount(0);
 });
+
+test('students open their recorded lessons from the home page card', async ({ page }) => {
+  await prepare(page);
+  await page.goto('/');
+  await page.locator('#practice-studio .hero-practice-recordings').click();
+  await expect(page).toHaveURL(/\/recorded-sessions/);
+  await expect(page.getByRole('heading', { name: 'Recorded sessions', exact: true })).toBeVisible();
+});
+
+test('guests are asked to sign in from the recorded lessons card, and teachers do not see it', async ({ page }) => {
+  await page.route('https://**/*', route => route.abort());
+  await page.route('**/api/**', route => route.fulfill({ json: [] }));
+  await page.goto('/');
+  await page.getByRole('button', { name: /Show all \d+ practice tools/ }).click();
+  await page.getByRole('button', { name: 'Recorded lessons, sign in required' }).click();
+  await expect(page).toHaveURL(/\/sign-in\?next=%2Frecorded-sessions$/);
+  await page.evaluate(() => {
+    localStorage.setItem('token', 'fixture');
+    localStorage.setItem('user', JSON.stringify({ id: 'teacher-1', name: 'Mei', role: 'admin' }));
+  });
+  await page.goto('/');
+  await expect(page.locator('#practice-studio .hero-practice-conversation')).toBeVisible();
+  await expect(page.locator('#practice-studio .hero-practice-recordings')).toHaveCount(0);
+});

@@ -15,6 +15,7 @@ const tips = {
   numbers: 'Practise the numbers you meet every day: prices, times and dates. Say each answer aloud before you type it.',
   dictation: 'Listen to a recording and write what you hear. Short daily sessions train your ear faster than one long one.',
   conversation: 'Work through guided conversations line by line. Speak each line aloud and repeat it until it feels natural.',
+  recordings: 'Missed a class, or want to go over it again? Your teacher shares the videos of your previous lessons here. Pick a day on the calendar to watch.',
 };
 
 // The free mock test stop appears only when the studio shows it (see useShowsFreeMockTest);

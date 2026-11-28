@@ -8,4 +8,5 @@ export const practiceTools = [
   ['numbers', 'Everyday numbers', 'Use numbers for prices, times, and dates.'],
   ['dictation', 'Listening dictation', 'Listen to recordings and write what you hear.'],
   ['conversation', 'Conversation', 'Build confidence with guided Chinese conversations.'],
+  ['recordings', 'Recorded lessons', 'Watch videos from your previous lessons.'],
 ];

@@ -293,7 +293,11 @@ function AppContent() {
     navigate(signInPath(safeReturnPath(next)));
   };
   const startStudioTour = () => { if (location.pathname !== '/') navigate('/'); setShowStudioTour(true); };
-  const openPractice = id => { if (practicePaths[id]) navigate(practicePaths[id]); };
+  const openPractice = id => {
+    if (!practicePaths[id]) return;
+    // The recordings page shows "not found" to signed-out visitors, so guests sign in first.
+    navigate(id === 'recordings' && !user ? signInPath(practicePaths[id]) : practicePaths[id]);
+  };
   const openCourse = course => navigate(coursePath(course._id));
   const getHskLevel = course => {
     const level = (course.level || '').toLowerCase();

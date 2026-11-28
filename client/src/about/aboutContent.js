@@ -15,7 +15,7 @@ export const ABOUT_PAGES = {
       ['Introduction', [
         ['eyebrow', 'Eyebrow', 'About us'],
         ['title', 'Page title', 'About Xiao Ao'],
-        ['lead', 'Introduction', 'Xiao Ao makes Chinese simple to start and steady to keep up: guided HSK courses, a practice studio for sounds, characters and listening, timed mock tests, and live classes with a teacher, all in one place.', true],
+        ['lead', 'Introduction', 'Xiao Ao makes Chinese simple to start and steady to keep up: guided HSK courses, a practice studio for sounds, characters and listening, timed mock tests, and live classes with a teacher you can rewatch, all in one place.', true],
         ['motto', 'Motto', 'Small steps. Real conversations.'],
       ]],
       ['How we teach', [
@@ -36,7 +36,7 @@ export const ABOUT_PAGES = {
         ['offerCourses', 'HSK courses', 'Lessons that follow the HSK levels, each word with characters, pinyin, meaning and audio.', true],
         ['offerStudio', 'Practice studio', 'Nine practice tools for pinyin, tones, characters, listening, sentences, numbers and conversation.', true],
         ['offerTests', 'HSK mock tests', 'Timed papers with a listening and reading breakdown. One HSK 1 paper is free with an account.', true],
-        ['offerLive', 'Live classes', 'Learn with a teacher alongside your courses. Message us and we’ll tell you about upcoming classes.', true],
+        ['offerLive', 'Live classes', 'Learn with a teacher alongside your courses, and rewatch recordings of your previous classes. Message us and we’ll tell you about upcoming classes.', true],
       ]],
       ['Team', [
         ['teamTitle', 'Section title', 'Meet the team'],

@@ -13,7 +13,7 @@ function LockIcon() {
 // Guests see the mock tests and these tools first, so the home page stays short.
 const GUEST_PREVIEW = new Set(['tests', 'pinyin', 'trace', 'listening', 'conversation']);
 
-const practiceCharacters = { pinyin: '拼', tones: '声', trace: '字', listening: '听', sentences: '句', measures: '本', numbers: '数', dictation: '写', conversation: '聊', tests: '测' };
+const practiceCharacters = { pinyin: '拼', tones: '声', trace: '字', listening: '听', sentences: '句', measures: '本', numbers: '数', dictation: '写', conversation: '聊', recordings: '录', tests: '测' };
 
 // The red bar is the HSK 1 free mock test, shown only to people who can't open every mock test
 // (see useShowsFreeMockTest).
@@ -22,7 +22,8 @@ export default function PracticeStudio({ user, onOpenPractice }) {
   const showFreeTest = useShowsFreeMockTest(user);
   // Signed-in students see every tool (the studio tour visits each one).
   const [showAll, setShowAll] = useState(!!user);
-  const available = practiceTools.filter(([id]) => id !== 'tests' || showFreeTest);
+  // Recorded lessons are shared with students only, so teachers don't see that card.
+  const available = practiceTools.filter(([id]) => (id !== 'tests' || showFreeTest) && (id !== 'recordings' || !user || user.role === 'student'));
   const tools = showAll || user ? available : available.filter(([id]) => GUEST_PREVIEW.has(id));
   // Guests are asked to sign in on the way and land on the free paper afterwards.
   const open = id => id === 'tests' ? navigate(FREE_PAPER_PATH) : onOpenPractice(id);

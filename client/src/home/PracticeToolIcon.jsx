@@ -8,6 +8,7 @@ const shapes = {
   numbers: <><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M8 6h8M8 10h1M12 10h1M16 10h0M8 14h1M12 14h1M16 14h0M8 18h1M12 18h1M16 18h0"/></>,
   dictation: <><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M7 8h4M7 12h3M7 16h8M16 3v6M19 1v10M22 4v4"/></>,
   conversation: <><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5 8 8 0 0 1-3.5-.8L4 20l1.8-4.2A7.4 7.4 0 0 1 5 12.5 7.5 7.5 0 0 1 12.5 5H13a7.5 7.5 0 0 1 7 6.5Z"/><path d="M9 11h.01M13 11h.01M17 11h.01"/></>,
+  recordings: <><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></>,
   tests: <><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M9 10l2 2 4-4M9 16h6"/></>,
 };
 
