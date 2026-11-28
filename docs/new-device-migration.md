@@ -43,7 +43,7 @@ Transfer these securely (AirDrop, `scp`, an encrypted USB drive, or a password m
 |---|---|---|
 | C1 | Starter course, lessons, vocabulary | `node server/seed.js` (deletes and re-creates that course's lessons) |
 | C2 | Cloud learning content on localhost | After B4: `node server/scripts/importCloudContent.js` to preview, then add `--apply`. It only inserts, backs up local content first, and skips accounts and progress. See `docs/local-content-import.md`. |
-| C3 | HSK 1 grammar course | `node server/scripts/installHsk1Grammar.js` |
+| C3 | HSK 1 grammar course; HSK 2 course (vocabulary + grammar) | `node server/scripts/installHsk1Grammar.js`; `node server/scripts/installHsk2Course.js` (add `--target local --apply`) |
 | C4 | Built-in HSK papers, sentence lists, tone pairs | Already in Git (`server/data/`). Nothing to do. |
 | C5 | New local secrets, if you don't bring A1 | `openssl rand -hex 32` for `JWT_SECRET`, `ADMIN_CODE`, `PUSH_CRON_SECRET`. `npx web-push generate-vapid-keys` for VAPID keys. |
 | C6 | `client/dist`, `test-results/`, cached TTS audio | Rebuilt by building, testing, or using the app |
