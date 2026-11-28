@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const RecordedSession = require('../models/RecordedSession');
 const AuditLog = require('../models/AuditLog');
+const PlanRequest = require('../models/PlanRequest');
 const ids = { boss: '111111111111111111111111', helper: '222222222222222222222222', learner: '333333333333333333333333', other: '444444444444444444444444', session: '555555555555555555555555' };
 
 async function withServer(run) {
@@ -14,7 +15,11 @@ async function withServer(run) {
   process.env.JWT_SECRET = 'recording-test';
   let rows = [];
   const roles = { [ids.boss]: 'superadmin', [ids.helper]: 'admin', [ids.learner]: 'student', [ids.other]: 'student' };
-  stub(User, 'findById', id => ({ select: async () => ({ _id: id, role: roles[id] }) }));
+  // Students are in live classes unless a test says otherwise (see utils/liveClassAccess.js).
+  const joined = new Set([ids.learner, ids.other]);
+  const paid = [];
+  stub(User, 'findById', id => ({ select: () => { const user = { _id: id, role: roles[id], liveClassAccess: joined.has(id) }; const found = Promise.resolve(user); found.lean = async () => user; return found; } }));
+  stub(PlanRequest, 'find', filter => ({ select() { return this; }, lean: async () => paid.filter(row => row.user === filter.user) }));
   stub(User, 'countDocuments', async filter => filter._id.$in.filter(id => roles[id] === 'student').length);
   stub(User, 'find', () => ({ select() { return this; }, sort() { return this; }, lean: async () => [{ _id: ids.learner, name: 'Sita' }, { _id: ids.other, name: 'Ram' }] }));
   const query = (filter = {}, one = false) => {
@@ -37,7 +42,7 @@ async function withServer(run) {
   const request = (path = '', who = 'boss', method = 'GET', body) => fetch(`http://127.0.0.1:${server.address().port}/api/recorded-sessions${path}`, {
     method, headers: { 'Content-Type': 'application/json', ...(who ? { Authorization: `Bearer ${jwt.sign({ id: ids[who] }, process.env.JWT_SECRET)}` } : {}) }, ...(body ? { body: JSON.stringify(body) } : {}),
   });
-  try { await run(request); }
+  try { await run(request, { joined, paid }); }
   finally { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); saved.reverse().forEach(restore => restore()); if (secret === undefined) delete process.env.JWT_SECRET; else process.env.JWT_SECRET = secret; }
 }
 const input = { title: 'Greetings & People', description: 'Review the class', sessionDate: '2026-11-28', videoUrl: 'https://example.com/lesson.mp4', allowedStudents: [ids.learner] };
@@ -77,4 +82,26 @@ test('invalid dates, unsafe URLs and nonstudent recipients are rejected', () => 
   }
   assert.equal((await request('/mine?date=bad', 'learner')).status, 400);
   assert.equal((await request('/bad/watch', 'learner')).status, 404);
+}));
+
+test('recordings are only for students in live classes: paid at checkout or marked joined', () => withServer(async (request, { joined, paid }) => {
+  assert.equal((await request('', 'boss', 'POST', input)).status, 201);
+  joined.delete(ids.learner);
+  const access = await (await request('/access', 'learner')).json();
+  assert.equal(access.allowed, false);
+  const mine = await request('/mine', 'learner');
+  assert.equal(mine.status, 403);
+  assert.equal((await mine.json()).code, 'RECORDED_LOCKED');
+  assert.equal((await request(`/${ids.session}/watch`, 'learner')).status, 403);
+
+  // Live classes paid at checkout open it while the plan length runs.
+  paid.push({ user: ids.learner, liveClass: true, status: 'approved', reviewedAt: new Date(Date.now() - 5 * 86400000), days: 30 });
+  assert.equal((await (await request('/access', 'learner')).json()).allowed, true);
+  assert.equal((await request('/mine', 'learner')).status, 200);
+  paid[0].reviewedAt = new Date(Date.now() - 40 * 86400000);
+  assert.equal((await (await request('/access', 'learner')).json()).allowed, false, 'it closes when the paid period ends');
+
+  joined.add(ids.learner);
+  assert.deepEqual(await (await request('/access', 'learner')).json(), { allowed: true, granted: true, paidUntil: null });
+  assert.equal((await request('/access', 'helper')).status, 403);
 }));

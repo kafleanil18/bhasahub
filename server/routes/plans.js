@@ -1,4 +1,6 @@
 const express = require('express');
+const multer = require('multer');
+const path = require('node:path');
 const { Types } = require('mongoose');
 const PlanRequest = require('../models/PlanRequest');
 const PlatformPass = require('../models/PlatformPass');
@@ -6,21 +8,38 @@ const User = require('../models/User');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { isAdmin } = require('../middleware/courseAccess');
 const { logActivity } = require('../utils/auditLog');
-const { PLANS, findPlan } = require('../utils/plans');
+const { findPlan } = require('../utils/plans');
+const { currentPlans, findCurrentPlan } = require('../utils/planPrices');
 const { notifyAndRecord } = require('../utils/planRequestEmail');
+const { uploadBufferToCloudinary } = require('../utils/cloudinary');
 
 const router = express.Router();
 const DAY_MS = 86400000;
+const PROOF_TYPES = ['.jpg', '.jpeg', '.png', '.webp'];
+const PROOF_MAX_BYTES = 8 * 1024 * 1024;
+// A payment screenshot is an image the student uploaded through /payment-proof (Cloudinary).
+const PROOF_URL = /^https:\/\/res\.cloudinary\.com\/[^\s]{1,1900}$/;
+const proofUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: PROOF_MAX_BYTES, files: 1, fields: 0, parts: 1 },
+  fileFilter: (req, file, done) => {
+    const ok = PROOF_TYPES.includes(path.extname(file.originalname || '').toLowerCase()) && /^image\//.test(file.mimetype || '');
+    done(ok ? null : new Error('PROOF_TYPE'), ok);
+  },
+}).single('file');
+const formatDay = date => new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
 // GET /api/plans — public: the plans on offer
-router.get('/', (req, res) => res.json(PLANS));
+router.get('/', async (req, res) => {
+  try { res.json(await currentPlans()); } catch { res.status(500).json({ error: 'Could not load the plans' }); }
+});
 
 // GET /api/plans/my — student: their active plan and any request under review
 router.get('/my', requireAuth, async (req, res) => {
   try {
     const [pass, request] = await Promise.all([
       PlatformPass.findOne({ user: req.user.id }).select('expiresAt plan').lean(),
-      PlanRequest.findOne({ user: req.user.id }).sort({ createdAt: -1 }).select('plan price days status createdAt reviewedAt').lean(),
+      PlanRequest.findOne({ user: req.user.id }).sort({ createdAt: -1 }).select('plan price days liveClass liveClassPrice status createdAt reviewedAt payment.method payment.submittedAt').lean(),
     ]);
     const active = pass && new Date(pass.expiresAt) > new Date();
     res.json({ pass: active ? { expiresAt: pass.expiresAt, plan: pass.plan } : null, request: request || null });
@@ -29,30 +48,68 @@ router.get('/my', requireAuth, async (req, res) => {
   }
 });
 
-// POST /api/plans/requests — student: ask for a plan (changing plan updates the pending request)
+// POST /api/plans/payment-proof — student: upload the screenshot of their payment (an image up to
+// 8 MB). Returns its link, which the payment submission below must include.
+router.post('/payment-proof', requireAuth, async (req, res) => {
+  if (isAdmin(req.user)) return res.status(403).json({ error: 'Admins already have full access' });
+  try {
+    await new Promise((resolve, reject) => proofUpload(req, res, error => error ? reject(error) : resolve()));
+    if (!req.file) return res.status(400).json({ error: 'Choose a screenshot of your payment to upload.' });
+    const result = await uploadBufferToCloudinary(req.file.buffer, 'payment-proofs');
+    res.status(201).json({ url: result.secure_url });
+  } catch (error) {
+    if (error.message === 'PROOF_TYPE') return res.status(400).json({ error: 'Upload the screenshot as a JPG, PNG or WebP image.' });
+    if (error instanceof multer.MulterError) return res.status(error.code === 'LIMIT_FILE_SIZE' ? 413 : 400).json({ error: error.code === 'LIMIT_FILE_SIZE' ? 'The screenshot must be 8 MB or smaller.' : 'Upload one screenshot.' });
+    console.error('Payment proof upload failed:', error.message);
+    res.status(502).json({ error: 'Could not upload the screenshot. Please try again.' });
+  }
+});
+
+// POST /api/plans/requests — student: send a payment for a plan from checkout. It needs the plan,
+// how they paid (bank or QR) and the payment screenshot, which is required; the transaction
+// reference and a note are optional. An admin checks it and starts the plan.
 router.post('/requests', requireAuth, async (req, res) => {
   try {
     if (isAdmin(req.user)) return res.status(403).json({ error: 'Admins already have full access' });
-    const plan = findPlan(req.body && req.body.planId);
+    const body = req.body || {};
+    const plan = await findCurrentPlan(body.planId);
     if (!plan) return res.status(400).json({ error: 'Choose one of the available plans' });
+    if (body.liveClass !== undefined && typeof body.liveClass !== 'boolean') return res.status(400).json({ error: 'Choose whether to add live classes.' });
+    if (!['bank', 'qr'].includes(body.method)) return res.status(400).json({ error: 'Choose how you paid: bank transfer or merchant QR.' });
+    const screenshot = typeof body.screenshot === 'string' ? body.screenshot.trim() : '';
+    if (!PROOF_URL.test(screenshot)) return res.status(400).json({ error: 'Upload a screenshot of your payment. It’s required to check your payment.' });
+    const reference = typeof body.reference === 'string' ? body.reference.trim() : '';
+    const note = typeof body.note === 'string' ? body.note.trim() : '';
+    if (reference.length > 120) return res.status(400).json({ error: 'The transaction ID can be up to 120 characters.' });
+    if (note.length > 500) return res.status(400).json({ error: 'The note can be up to 500 characters.' });
+
     const activePass = await PlatformPass.findOne({ user: req.user.id, expiresAt: { $gt: new Date() } }).select('expiresAt').lean();
-    if (activePass) return res.status(409).json({ error: `Your plan is already active until ${new Date(activePass.expiresAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}. You can choose a new plan when it ends.` });
-    const fields = { plan: plan.id, price: plan.price, days: plan.days };
+    if (activePass) return res.status(409).json({ error: `Your plan is already active until ${formatDay(activePass.expiresAt)}. You can choose a new plan when it ends.` });
+    const waiting = await PlanRequest.findOne({ user: req.user.id, status: 'pending', 'payment.screenshot': { $nin: ['', null] } }).select('plan').lean();
+    if (waiting) return res.status(409).json({ error: `We’re checking your payment for the ${findPlan(waiting.plan)?.label || waiting.plan} plan. You can pay for another plan once it’s done.` });
+
+    const fields = {
+      plan: plan.id, price: plan.price, days: plan.days,
+      liveClass: body.liveClass === true, liveClassPrice: body.liveClass === true ? plan.liveClassPrice : 0,
+      payment: { method: body.method, screenshot, reference, note, submittedAt: new Date() },
+    };
+    // A request from before checkout existed (no payment yet) becomes this payment.
     const previous = await PlanRequest.findOneAndUpdate({ user: req.user.id, status: 'pending' }, { $set: fields }, { returnDocument: 'before' });
     const request = previous ? { ...(previous.toObject ? previous.toObject() : previous), ...fields } : await PlanRequest.create({ user: req.user.id, ...fields });
     res.status(previous ? 200 : 201).json(request);
     // Tell the super admins after responding; a failed email never blocks the student.
-    if (!previous || previous.plan !== plan.id) {
-      void notifyAndRecord(PlanRequest, { studentId: req.user.id, request, changedFrom: previous ? previous.plan : null });
-    }
+    void notifyAndRecord(PlanRequest, { studentId: req.user.id, request });
   } catch {
-    res.status(500).json({ error: 'Could not send your plan request' });
+    res.status(500).json({ error: 'Could not send your payment' });
   }
 });
 
-// DELETE /api/plans/requests/my — student: withdraw a pending request
+// DELETE /api/plans/requests/my — student: withdraw a request that has no payment yet. A sent
+// payment can't be withdrawn here, because the money has already been paid.
 router.delete('/requests/my', requireAuth, async (req, res) => {
   try {
+    const paid = await PlanRequest.exists({ user: req.user.id, status: 'pending', 'payment.screenshot': { $nin: ['', null] } });
+    if (paid) return res.status(409).json({ error: 'Your payment is being checked, so it can’t be cancelled here. Message us if something is wrong.' });
     const removed = await PlanRequest.findOneAndDelete({ user: req.user.id, status: 'pending' });
     if (!removed) return res.status(404).json({ error: 'No plan request is waiting for review' });
     res.json({ ok: true });

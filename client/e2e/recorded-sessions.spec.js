@@ -2,7 +2,8 @@ import { test, expect } from '@playwright/test';
 
 const session = { _id: '555555555555555555555555', title: 'Greetings & People', description: 'Revisit introductions and practise the phrases from class.', sessionDate: '2026-11-28', videoUrl: 'https://www.youtube.com/watch?v=abcdefghijk', allowedStudents: ['student-1'] };
 const students = [{ _id: 'student-1', name: 'Sita', email: 'sita@example.com' }, { _id: 'student-2', name: 'Ram', email: 'ram@example.com' }];
-async function prepare(page, role = 'student') {
+// `inLiveClasses`: the student paid for live classes or was marked joined, so recordings are open.
+async function prepare(page, role = 'student', { inLiveClasses = true } = {}) {
   const state = { sessions: [{ ...session }], failList: false, denied: false, calls: [] };
   await page.addInitScript(role => {
     if (window.top !== window.self) return;
@@ -12,6 +13,7 @@ async function prepare(page, role = 'student') {
   await page.route('https://**/*', route => route.abort());
   await page.route('**/api/**', route => {
     const url = new URL(route.request().url()); const path = url.pathname; const method = route.request().method();
+    if (path === '/api/recorded-sessions/access') return route.fulfill({ json: { allowed: inLiveClasses, granted: inLiveClasses, paidUntil: null } });
     if (path === '/api/recorded-sessions/students') return route.fulfill({ json: students });
     if (path === '/api/recorded-sessions/mine') {
       if (state.failList) return route.fulfill({ status: 500, json: { error: 'Could not load recordings' } });
@@ -127,4 +129,47 @@ test('calendar supports month navigation, keyboard movement, and several recordi
   await page.locator('[data-date="2026-11-29"]').click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.locator('iframe')).toHaveCount(0);
+});
+
+test('students not in live classes have no Recorded sessions link, and the page says how to join', async ({ page }) => {
+  await prepare(page, 'student', { inLiveClasses: false });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/pricing');
+  await expect(page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button', { name: 'About HSK', exact: true })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button', { name: 'Recorded sessions' })).toHaveCount(0);
+  await page.goto('/recorded-sessions');
+  await expect(page.getByRole('heading', { level: 1, name: 'Recorded sessions are for live class students' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Add live classes to a plan' })).toHaveAttribute('href', '/pricing');
+});
+
+test('students in live classes see Recorded sessions in the header', async ({ page }) => {
+  await prepare(page, 'student');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/pricing');
+  await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button', { name: 'Recorded sessions' }).click();
+  await expect(page).toHaveURL(/\/recorded-sessions$/);
+});
+
+test('a super admin marks a student as joined in live classes', async ({ page }) => {
+  const calls = [];
+  let joined = false;
+  const student = () => ({ _id: 'student-1', name: 'Sita', email: 'sita@example.com', trial: { status: 'none' }, plan: null, subscriptions: [], liveClass: { allowed: joined, granted: joined, paidUntil: null } });
+  await page.addInitScript(() => { localStorage.setItem('token', 'fixture'); localStorage.setItem('user', JSON.stringify({ id: 'boss', name: 'Boss', role: 'superadmin' })); });
+  await page.route('https://**/*', route => route.abort());
+  await page.route('**/api/**', route => {
+    const path = new URL(route.request().url()).pathname;
+    if (path === '/api/auth/me') return route.fulfill({ json: { id: 'boss', name: 'Boss', role: 'superadmin' } });
+    if (path === '/api/students') return route.fulfill({ json: [student()] });
+    if (path === '/api/students/student-1/live-class') { const body = route.request().postDataJSON(); calls.push(body); joined = body.joined; return route.fulfill({ json: student() }); }
+    return route.fulfill({ json: [] });
+  });
+  await page.goto('/admin/students');
+  await page.getByRole('button', { name: 'Manage access' }).click();
+  const toggle = page.getByRole('checkbox', { name: 'Joined live classes, so can watch recorded sessions' });
+  await expect(toggle).not.toBeChecked();
+  // The tick follows the saved value, so it shows once the server answers.
+  await toggle.click();
+  await expect(toggle).toBeChecked();
+  expect(calls).toEqual([{ joined: true }]);
+  await expect(page.locator('.student-chip').filter({ hasText: 'Can watch recorded sessions' })).toBeVisible();
 });

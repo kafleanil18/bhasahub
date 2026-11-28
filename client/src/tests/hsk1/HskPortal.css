@@ -150,3 +150,26 @@
 .hsk-featured-locked-note { margin: 0; color: #7a6f61; font-size: 14px; font-weight: 600; }
 .mock-test-card.is-locked { opacity: .6; cursor: default; }
 .mock-test-card.is-locked:hover { transform: none; box-shadow: none; }
+
+/* Paper card tags stay legible on every card: a general rule tints small text in the red card pale
+   yellow, so each tag sets its own colours. */
+.hsk-featured-test .mock-test-free-tag { border-color: #b8edce; background: #d8f3e2; color: #185a38; }
+.hsk-featured-test .mock-test-completion { border-color: rgba(255, 255, 255, .7); background: transparent; color: #fff; }
+.hsk-featured-test .mock-test-completion.is-done { border-color: #b8edce; background: #d8f3e2; color: #185a38; }
+.hsk-featured-test.is-locked .mock-test-lock-tag { border-color: #cfc4b1; background: #e9e1d2; color: #4f4538; }
+.hsk-featured-test.is-locked .mock-test-completion:not(.is-done) { border-color: #b9ad99; color: #5d5145; }
+
+/* Dark mode: locked papers and the access banner turn a deep ochre, and completed papers a deep
+   green, instead of light cards on a dark page. */
+.dark .hsk-featured-test.is-locked { background: #2d2717; border-color: #5a4b2c; color: #e9dcbc; }
+.dark .hsk-featured-test.is-locked h2 { color: #f3e7c8; }
+.dark .hsk-featured-test.is-locked :is(p, .hsk-featured-meta, .hsk-featured-meta span, small), .dark .hsk-featured-locked-note { color: #cdbf9e; }
+.dark .hsk-featured-test.is-locked .mock-test-lock-tag { border-color: #6b5a35; background: #3d3420; color: #f1dfb1; }
+.dark .hsk-featured-test.is-locked .mock-test-completion:not(.is-done) { border-color: #7a6a48; color: #e3d3ad; }
+.dark .hsk-featured-test.is-completed:not(.is-locked) { background: #18352a; color: #cfe9d6; }
+.dark .hsk-featured-test.is-completed:not(.is-locked) h2 { color: #e2f4e7; }
+.dark .hsk-featured-test.is-completed:not(.is-locked) :is(p, .hsk-featured-meta, .hsk-featured-meta span, small), .dark .hsk-featured-test.is-completed:not(.is-locked) > div > span:not(.mock-test-completion):not(.mock-test-lock-tag):not(.mock-test-free-tag) { color: #a9d4b6; }
+.dark .hsk-featured-test.is-completed:not(.is-locked) .hsk-featured-actions .hsk-retake-button { border-color: #5d9a6e; color: #cfe9d6; }
+.dark .test-access-banner { border-color: #665332; background: #2d2717; color: #f1dfb1; }
+.dark .test-access-banner p { color: #dccba3; }
+.dark .test-access-banner.is-pending { border-color: #34506b; background: #172433; color: #d4e4f4; }

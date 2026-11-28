@@ -4,6 +4,7 @@ const RecordedSession = require('../models/RecordedSession');
 const User = require('../models/User');
 const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
 const { logActivity } = require('../utils/auditLog');
+const { liveClassStatus } = require('../utils/liveClassAccess');
 
 const router = express.Router();
 router.use(requireAuth);
@@ -14,7 +15,20 @@ const validDate = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.te
 const studentFields = 'title description sessionDate';
 const studentOnly = (req, res, next) => req.user.role === 'student' ? next() : res.status(403).json({ error: 'Student access required' });
 
-router.get('/mine', studentOnly, async (req, res) => {
+// Recordings are for students in live classes (paid at checkout, or marked joined by a super admin).
+const LOCKED = { error: 'Recorded sessions are for students in live classes.', code: 'RECORDED_LOCKED' };
+const liveClassOnly = async (req, res, next) => {
+  try { return (await liveClassStatus(req.user.id)).allowed ? next() : res.status(403).json(LOCKED); }
+  catch { return res.status(500).json({ error: 'Could not check your access' }); }
+};
+
+// GET /api/recorded-sessions/access — student: whether Recorded sessions is open to them.
+router.get('/access', studentOnly, async (req, res) => {
+  try { res.json(await liveClassStatus(req.user.id)); }
+  catch { res.status(500).json({ error: 'Could not check your access' }); }
+});
+
+router.get('/mine', studentOnly, liveClassOnly, async (req, res) => {
   if (req.query.date !== undefined && !validDate(req.query.date)) return res.status(400).json({ error: 'Choose a valid session date' });
   const filter = { allowedStudents: req.user.id };
   if (req.query.date) filter.sessionDate = req.query.date;
@@ -23,7 +37,7 @@ router.get('/mine', studentOnly, async (req, res) => {
 });
 
 // Fetch the playback URL only when opening a recording; access is checked again after revocation.
-router.get('/:id/watch', studentOnly, async (req, res) => {
+router.get('/:id/watch', studentOnly, liveClassOnly, async (req, res) => {
   if (!validId(req.params.id)) return res.status(404).json({ error: 'Recording not found or no longer shared with you' });
   const session = await RecordedSession.findOne({ _id: req.params.id, allowedStudents: req.user.id })
     .select(`${studentFields} videoUrl`).lean();

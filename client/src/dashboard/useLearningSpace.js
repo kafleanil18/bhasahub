@@ -20,9 +20,12 @@ export default function useLearningSpace(token) {
     };
     const load = async () => {
       try {
-        const list = await request('/enrollments/my');
-        if (!Array.isArray(list)) throw new Error('Could not load your courses.');
-        const available = list.filter(course => course?._id);
+        // Every course on offer, in the library's order, plus any course the student saved earlier
+        // that isn't in that list (for example, one no longer published).
+        const [library, saved] = await Promise.all([request('/courses'), request('/enrollments/my').catch(() => [])]);
+        if (!Array.isArray(library)) throw new Error('Could not load your courses.');
+        const seen = new Set();
+        const available = [...library, ...(Array.isArray(saved) ? saved : [])].filter(course => course?._id && !seen.has(course._id) && seen.add(course._id));
         const entries = await Promise.all(available.map(async course => {
           try {
             const value = await request(`/progress/course/${course._id}`);

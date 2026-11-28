@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HeroPracticeTools.css';
 import PracticeToolIcon from './PracticeToolIcon';
@@ -10,8 +9,6 @@ function LockIcon() {
   return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>;
 }
 
-// Guests see the mock tests and these tools first, so the home page stays short.
-const GUEST_PREVIEW = new Set(['tests', 'pinyin', 'trace', 'listening', 'conversation']);
 
 const practiceCharacters = { pinyin: '拼', tones: '声', trace: '字', listening: '听', sentences: '句', measures: '本', numbers: '数', dictation: '写', conversation: '聊', tests: '测' };
 
@@ -20,10 +17,9 @@ const practiceCharacters = { pinyin: '拼', tones: '声', trace: '字', listenin
 export default function PracticeStudio({ user, onOpenPractice }) {
   const navigate = useNavigate();
   const showFreeTest = useShowsFreeMockTest(user);
-  // Signed-in students see every tool (the studio tour visits each one).
-  const [showAll, setShowAll] = useState(!!user);
+  // Everyone sees every tool on the home page.
   const available = practiceTools.filter(([id]) => id !== 'tests' || showFreeTest);
-  const tools = showAll || user ? available : available.filter(([id]) => GUEST_PREVIEW.has(id));
+  const tools = available;
   // Guests are asked to sign in on the way and land on the free paper afterwards.
   const open = id => id === 'tests' ? navigate(FREE_PAPER_PATH) : onOpenPractice(id);
   return (
@@ -46,7 +42,6 @@ export default function PracticeStudio({ user, onOpenPractice }) {
       );
     })}
   </div>
-  {tools.length < available.length && <button type="button" className="hero-practice-more" onClick={() => setShowAll(true)}>Show all {available.length} practice tools</button>}
 </section>
   );
 }

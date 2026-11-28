@@ -72,7 +72,7 @@ test('the FAQ has its own page, reached from the header and footer, and is not o
   await expect(faq.locator('details')).toHaveCount(10);
   await expect(faq.locator('details').first()).toHaveAttribute('open', '');
   await faq.getByText('How do I pay?').click();
-  await expect(faq.getByText('we’ll email you the payment details')).toBeVisible();
+  await expect(faq.getByText('pay by bank transfer or merchant QR from your own app')).toBeVisible();
   await page.goto('/about-hsk');
   await page.getByRole('navigation', { name: 'Footer navigation' }).getByRole('link', { name: 'FAQ' }).click();
   await expect(page).toHaveURL(/\/faq$/);

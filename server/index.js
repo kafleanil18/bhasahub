@@ -59,6 +59,7 @@ app.use('/api/about-pages', require('./routes/aboutPages'));
 app.use('/api/access-requests', accessRequestRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/plans', require('./routes/plans'));
+app.use('/api/payment-settings', require('./routes/paymentSettings'));
 app.use('/api/sentences', require('./routes/sentences'));
 app.use('/api/users', userRoutes);
 app.use('/api/students', require('./routes/students'));

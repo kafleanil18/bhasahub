@@ -156,6 +156,10 @@ export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen,
               </div>}
               {isSuperAdmin && <div className="admin-sidebar-group">
                 <p className="admin-sidebar-group-title">Email & settings</p>
+                <button className={activeView === 'payment-details' ? 'is-current' : undefined} aria-current={activeView === 'payment-details' ? 'page' : undefined} onClick={() => onNavigate('payment-details')}>
+                  <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
+                  Payment details
+                </button>
                 <button className={activeView === 'reminders' ? 'is-current' : undefined} aria-current={activeView === 'reminders' ? 'page' : undefined} onClick={() => onNavigate('reminders')}>
                   <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
                   Practice reminders

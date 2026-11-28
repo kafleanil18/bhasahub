@@ -51,7 +51,9 @@ const AboutHsk = lazy(() => import('../hsk/AboutHsk'));
 const FaqPage = lazy(() => import('../home/FaqPage'));
 const AboutXiaoAo = lazy(() => import('../about/AboutXiaoAo'));
 const AboutPagesManager = lazy(() => import('../admin/AboutPagesManager'));
+const PaymentSettings = lazy(() => import('../admin/PaymentSettings'));
 import NotFound from './NotFound';
+import AccessLocked from './AccessLocked';
 import { apiFetch } from '../lib/apiClient';
 const PrivacyPolicy = lazy(() => import('../privacy/PrivacyPages').then(module => ({ default: module.PrivacyPolicy })));
 const BrowserStoragePolicy = lazy(() => import('../privacy/PrivacyPages').then(module => ({ default: module.BrowserStoragePolicy })));
@@ -124,12 +126,15 @@ function TestRoute({ user, onHome }) {
   return paper ? <HskPortal key={testId} paperId={testId} user={user} onBack={onBack} /> : <TestTaker key={testId} testId={testId} onBack={onBack} />;
 }
 
-export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLogin }) {
+export default function AppRoutes({ user, studentAccess = { loaded: true, courses: true, practice: true, recorded: true }, home, sidebar, onHome, onLogin, openLogin }) {
   const navigate = useNavigate();
   const location = useLocation();
   const next = new URLSearchParams(location.search).get('next');
   const authPath = path => `${path}${next ? `?next=${encodeURIComponent(next)}` : ''}`;
   const staff = ['admin', 'superadmin'].includes(user?.role);
+  // Students need course access for My Courses and practice access for My Progress; staff always
+  // have both. Nothing shows until the check finishes, so a page never flashes before it locks.
+  const gate = (need, page) => user?.role !== 'student' ? page : !studentAccess.loaded ? null : studentAccess[need] ? page : <AccessLocked need={need} />;
   return <Routes>
     <Route element={<PublicLayout />}>
       <Route path="/privacy" element={<PrivacyPolicy user={user} />} />
@@ -152,10 +157,10 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
     </Route>
     <Route element={<RequireSession user={user} />}>
       <Route element={<StudentLayout />}>
-        <Route element={<RequireSession user={user} roles={['student']} hidden />}><Route path="/recorded-sessions" element={<RecordedSessions />} /></Route>
+        <Route element={<RequireSession user={user} roles={['student']} hidden />}><Route path="/recorded-sessions" element={gate('recorded', <RecordedSessions />)} /></Route>
         <Route path="/continue" element={<ContinueLearning />} />
-        <Route path="/my-courses" element={<Dashboard user={user} onOpenCourse={(course, resume) => navigate(resume ? `/continue?course=${encodeURIComponent(course._id)}` : `/courses/${encodeURIComponent(course._id)}`)} onBrowse={() => navigate('/#courses')} />} />
-        <Route path="/progress" element={<ProgressAnalytics user={user} onBack={onHome} />} />
+        <Route path="/my-courses" element={gate('courses', <Dashboard user={user} showRecordedSessions={studentAccess.recorded} onOpenCourse={(course, resume) => navigate(resume ? `/continue?course=${encodeURIComponent(course._id)}` : `/courses/${encodeURIComponent(course._id)}`)} onBrowse={() => navigate('/#courses')} />)} />
+        <Route path="/progress" element={gate('practice', <ProgressAnalytics user={user} onBack={onHome} />)} />
         <Route path="/courses/:courseId" element={<CourseRoute user={user} onHome={onHome} />} />
         <Route path="/courses/:courseId/lessons/:lessonId" element={<CourseRoute user={user} onHome={onHome} />} />
         <Route element={<PracticeGate user={user} onHome={onHome} />}>
@@ -187,6 +192,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
           <Route path="testimonials" element={<TestimonialManager onBack={onHome} />} />
           <Route path="teachers" element={<TeacherManager onBack={onHome} />} />
           <Route path="about-pages" element={<AboutPagesManager />} />
+          <Route path="payment-details" element={<PaymentSettings />} />
           <Route path="sentence-audio" element={<SentenceAudioManager onBack={onHome} />} />
           <Route path="tone-pair-audio" element={<TonePairAudioManager onBack={onHome} />} />
           <Route path="characters" element={<HanziTracePage user={user} onBack={onHome} />} />

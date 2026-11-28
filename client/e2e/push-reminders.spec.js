@@ -25,6 +25,8 @@ async function prepare(page, { configured = true, permission = 'granted', ios = 
     let data = [];
     if (path.startsWith('/push')) calls.push({ method, path, body: r.request().postDataJSON?.() ?? null });
     if (path === '/push/public-key') data = configured ? { configured: true, publicKey: 'BN0KQQfenjJUuwRVa7ORR4eZmkE3QdFPWPMcId5-YJ-JV0td5FzBgxMcHPfB5ERt0HLHgR41FaW3_Xdd5ZySQ8o' } : { configured: false, publicKey: '' };
+    // A free week: My Progress is open.
+    if (path === '/access-requests/my') data = [{ scope: 'tests', status: 'approved' }];
     if (path === '/push/me') data = { ...setting, devices: setting.enabled ? 1 : 0, thisDevice: false };
     if (path === '/push/subscriptions' && method === 'POST') { const body = r.request().postDataJSON(); data = { enabled: true, time: body.time, timezone: body.timezone, thisDevice: true }; }
     if (path === '/push/subscriptions' && method === 'DELETE') data = { enabled: false, devices: 0, thisDevice: false };

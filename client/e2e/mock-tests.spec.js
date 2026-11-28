@@ -91,6 +91,9 @@ test('the HSK 1 course page lists every HSK 1 mock test near the top, all open w
   await expect(cards.nth(1)).toContainText('Completed');
   await expect(cards.nth(1).getByRole('link', { name: 'View results' })).toHaveAttribute('href', '/tests/h10901');
   await expect(section.getByText('Locked')).toHaveCount(0);
+  // The "Add to My learning" box is switched off for now.
+  await expect(page.getByText(/Saved to your learning dashboard|Keep this course in your learning dashboard/)).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /My learning/ })).toHaveCount(0);
   // It comes before the lesson library.
   const order = await page.evaluate(() => !!(document.querySelector('.course-mock-tests').compareDocumentPosition(document.querySelector('#course-lesson-library')) & Node.DOCUMENT_POSITION_FOLLOWING));
   expect(order).toBe(true);

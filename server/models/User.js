@@ -16,6 +16,9 @@ const userSchema = new mongoose.Schema(
     googleId: { type: String, sparse: true, unique: true },
     avatar: { type: String },
     signInCount: { type: Number, default: 0 },
+    // Ticked by a super admin when a student has joined live classes: opens Recorded sessions
+    // (see utils/liveClassAccess.js, which also counts live classes paid for at checkout).
+    liveClassAccess: { type: Boolean, default: false },
     authProvider: { type: String, enum: ['local', 'google'], default: 'local' },
     // Missing on legacy accounts; only new local registrations are explicitly unverified.
     emailVerified: { type: Boolean },

@@ -861,3 +861,18 @@
 .dark .signin-page .login-welcome-panel { background-color: var(--signin-welcome-surface); color: var(--ink); }
 .dark .signin-page .login-welcome-panel::after { filter: invert(1) sepia(.25); opacity: .18; }
 .dark .signin-page .login-form-panel { background: var(--signin-form-surface); }
+
+/* Verify your email: "Resend code" and "Back to sign in" are a pair of outlined buttons under the
+   code field; "Verify and sign in" stays the main action. */
+.login-verify-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.login-secondary-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 46px; padding: 0 14px;
+  border: 1px solid var(--line); border-radius: 7px;
+  background: var(--card); color: var(--ink);
+  font: inherit; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: border-color .15s ease, color .15s ease, background .15s ease;
+}
+.login-secondary-btn:hover:not(:disabled) { border-color: var(--seal); color: var(--seal); background: color-mix(in srgb, var(--seal) 5%, var(--card)); }
+.login-secondary-btn:disabled { opacity: .55; cursor: not-allowed; }
+@media (max-width: 360px) { .login-verify-actions { grid-template-columns: 1fr; } }

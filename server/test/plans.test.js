@@ -7,6 +7,7 @@ const Course = require('../models/Course');
 const Subscription = require('../models/Subscription');
 const PlanRequest = require('../models/PlanRequest');
 const PlatformPass = require('../models/PlatformPass');
+const PaymentSettings = require('../models/PaymentSettings');
 const AuditLog = require('../models/AuditLog');
 const { PLANS, findPlan } = require('../utils/plans');
 const emailTransport = require('../utils/emailTransport');
@@ -15,6 +16,8 @@ const { planRequestMessage } = require('../utils/planRequestEmail');
 const ADMIN_ID = '64b000000000000000000001';
 const STUDENT_ID = '64b000000000000000000002';
 const REQUEST_ID = '64b000000000000000000003';
+const SCREENSHOT = 'https://res.cloudinary.com/demo/image/upload/payment-proofs/receipt.png';
+const PAYMENT = { method: 'qr', screenshot: SCREENSHOT };
 
 function stub(target, name, value, restore) {
   const original = target[name];
@@ -32,6 +35,10 @@ async function withApp(run) {
   stub(PlanRequest, 'updateOne', async (filter, update) => { saved.push({ filter, update }); return {}; }, restore);
   let activePass = null;
   stub(PlatformPass, 'findOne', () => ({ select: () => ({ lean: async () => activePass }) }), restore);
+  let waiting = null;
+  stub(PlanRequest, 'findOne', () => ({ select: () => ({ lean: async () => waiting }) }), restore);
+  let prices = {};
+  stub(PaymentSettings, 'findOne', () => ({ select: () => ({ lean: async () => ({ prices }) }) }), restore);
   const app = express();
   app.use(express.json());
   app.use('/api/plans', require('../routes/plans'));
@@ -40,7 +47,7 @@ async function withApp(run) {
   const base = `http://127.0.0.1:${server.address().port}/api/plans`;
   const as = id => ({ Authorization: `Bearer ${jwt.sign({ id }, process.env.JWT_SECRET)}`, 'Content-Type': 'application/json' });
   try {
-    await run({ base, as, saved, setActivePass: value => { activePass = value; }, stub: (target, name, value) => stub(target, name, value, restore) });
+    await run({ base, as, saved, setActivePass: value => { activePass = value; }, setWaiting: value => { waiting = value; }, setPrices: value => { prices = value; }, stub: (target, name, value) => stub(target, name, value, restore) });
   } finally {
     server.closeAllConnections();
     await new Promise(resolve => server.close(resolve));
@@ -49,8 +56,8 @@ async function withApp(run) {
   }
 }
 
-test('plans are 1, 3 and 6 months at Rs 1000, 2000 and 3000', () => {
-  assert.deepEqual(PLANS.map(plan => [plan.id, plan.days, plan.price]), [['1-month', 30, 1000], ['3-months', 90, 2000], ['6-months', 180, 3000]]);
+test('plans are 1, 3 and 6 months at Rs 1000, 2000 and 3000, with live classes at Rs 7000, 9000 and 12000', () => {
+  assert.deepEqual(PLANS.map(plan => [plan.id, plan.days, plan.price, plan.liveClassPrice]), [['1-month', 30, 1000, 7000], ['3-months', 90, 2000, 9000], ['6-months', 180, 3000, 12000]]);
   assert.equal(findPlan('12-months'), null);
 });
 
@@ -62,51 +69,98 @@ test('the plan list is public', async () => {
   });
 });
 
-test('students request a plan with the server price, super admins are emailed, and switching updates the request', async () => {
-  await withApp(async ({ base, as, stub }) => {
-    let pending = null;
+test('a student sends a payment with the required screenshot, the server sets the price, and super admins are emailed', async () => {
+  await withApp(async ({ base, as, stub, setWaiting }) => {
     const created = [];
     const sent = [];
     emailTransport.setEmailSettingsLoader(async () => ({ provider: 'test', send: async message => { sent.push(message); } }));
     stub(User, 'find', filter => { assert.deepEqual(filter, { role: 'superadmin' }); return { select: async () => [{ email: 'owner@example.com' }, { email: 'owner@example.com' }, { email: 'second@example.com' }] }; });
-    stub(PlanRequest, 'findOneAndUpdate', async (filter, update, options) => {
-      assert.equal(options.returnDocument, 'before');
-      const before = pending;
-      if (pending) pending = { ...pending, ...update.$set };
-      return before;
-    });
-    stub(PlanRequest, 'create', async fields => { created.push(fields); pending = { _id: REQUEST_ID, status: 'pending', ...fields }; return pending; });
-    const settle = () => new Promise(resolve => setTimeout(resolve, 20));
+    stub(PlanRequest, 'findOneAndUpdate', async () => null);
+    stub(PlanRequest, 'create', async fields => { created.push(fields); return { _id: REQUEST_ID, status: 'pending', ...fields }; });
+    const send = (body, who = STUDENT_ID) => fetch(`${base}/requests`, { method: 'POST', headers: as(who), body: JSON.stringify(body) });
     try {
-      assert.equal((await fetch(`${base}/requests`, { method: 'POST', body: JSON.stringify({ planId: '3-months' }) })).status, 401);
-      assert.equal((await fetch(`${base}/requests`, { method: 'POST', headers: as(STUDENT_ID), body: JSON.stringify({ planId: 'free', price: 1 }) })).status, 400);
+      assert.equal((await fetch(`${base}/requests`, { method: 'POST', body: JSON.stringify({ planId: '3-months', ...PAYMENT }) })).status, 401);
+      assert.equal((await send({ planId: 'free', ...PAYMENT })).status, 400);
+      assert.equal((await send({ planId: '3-months', method: 'cash', screenshot: SCREENSHOT })).status, 400);
+      const missing = await send({ planId: '3-months', method: 'bank' });
+      assert.equal(missing.status, 400);
+      assert.match((await missing.json()).error, /screenshot of your payment\. It’s required/);
+      assert.equal((await send({ planId: '3-months', method: 'bank', screenshot: 'https://example.com/tracker.png' })).status, 400, 'only uploaded screenshots are accepted');
+      assert.equal((await send({ planId: '3-months', ...PAYMENT, reference: 'x'.repeat(121) })).status, 400);
+      assert.equal((await send({ planId: '3-months', ...PAYMENT, note: 'x'.repeat(501) })).status, 400);
+      assert.equal(created.length, 0);
 
-      const first = await fetch(`${base}/requests`, { method: 'POST', headers: as(STUDENT_ID), body: JSON.stringify({ planId: '3-months', price: 1 }) });
+      const first = await send({ planId: '3-months', price: 1, method: 'bank', screenshot: SCREENSHOT, reference: ' TX-1001 ', note: 'Paid from my account' });
       assert.equal(first.status, 201);
-      assert.deepEqual(created[0], { user: STUDENT_ID, plan: '3-months', price: 2000, days: 90 });
-      await settle();
+      const { submittedAt, ...payment } = created[0].payment;
+      assert.ok(submittedAt instanceof Date);
+      assert.deepEqual({ ...created[0], payment }, { user: STUDENT_ID, plan: '3-months', price: 2000, days: 90, liveClass: false, liveClassPrice: 0, payment: { method: 'bank', screenshot: SCREENSHOT, reference: 'TX-1001', note: 'Paid from my account' } });
+      await new Promise(resolve => setTimeout(resolve, 20));
       assert.deepEqual(sent.map(message => message.to), ['owner@example.com', 'second@example.com']);
       assert.equal(sent[0].replyTo, 'sita@example.com');
-      assert.equal(sent[0].subject, 'New plan request: Sita · 3 months · Rs 2,000');
-      assert.match(sent[0].text, /Email: sita@example\.com/);
+      assert.equal(sent[0].subject, 'Plan payment: Sita · 3 months · Rs 2,000');
+      assert.match(sent[0].text, /Paid by: Bank transfer/);
+      assert.match(sent[0].text, /Transaction ID: TX-1001/);
+      assert.ok(sent[0].text.includes(`Payment screenshot: ${SCREENSHOT}`));
 
-      const second = await fetch(`${base}/requests`, { method: 'POST', headers: as(STUDENT_ID), body: JSON.stringify({ planId: '6-months' }) });
-      assert.equal(second.status, 200);
-      assert.equal((await second.json()).price, 3000);
+      // While that payment is being checked, another one is refused.
+      setWaiting({ plan: '3-months' });
+      const again = await send({ planId: '6-months', ...PAYMENT });
+      assert.equal(again.status, 409);
+      assert.match((await again.json()).error, /checking your payment for the 3 months plan/);
       assert.equal(created.length, 1);
-      await settle();
-      assert.equal(sent.length, 4);
-      assert.equal(sent[2].subject, 'Plan changed: Sita · 6 months · Rs 3,000');
-      assert.match(sent[2].text, /Changed from: 3 months/);
 
-      await fetch(`${base}/requests`, { method: 'POST', headers: as(STUDENT_ID), body: JSON.stringify({ planId: '6-months' }) });
-      await settle();
-      assert.equal(sent.length, 4, 'choosing the same plan again does not email twice');
-
-      assert.equal((await fetch(`${base}/requests`, { method: 'POST', headers: as(ADMIN_ID), body: JSON.stringify({ planId: '1-month' }) })).status, 403);
+      assert.equal((await send({ planId: '1-month', ...PAYMENT }, ADMIN_ID)).status, 403);
     } finally {
       emailTransport.setEmailSettingsLoader(async () => null);
     }
+  });
+});
+
+test('an older request without a payment becomes the payment', async () => {
+  await withApp(async ({ base, as, stub }) => {
+    let created = 0;
+    stub(PlanRequest, 'findOneAndUpdate', async (filter, update) => { assert.equal(update.$set.payment.method, 'qr'); return { _id: REQUEST_ID, status: 'pending', plan: '1-month', price: 1000, days: 30 }; });
+    stub(PlanRequest, 'create', async () => { created += 1; });
+    stub(User, 'find', () => ({ select: async () => [] }));
+    const response = await fetch(`${base}/requests`, { method: 'POST', headers: as(STUDENT_ID), body: JSON.stringify({ planId: '6-months', ...PAYMENT }) });
+    assert.equal(response.status, 200);
+    const body = await response.json();
+    assert.equal(body.plan, '6-months');
+    assert.equal(body.payment.screenshot, SCREENSHOT);
+    assert.equal(created, 0);
+  });
+});
+
+test('a sent payment can’t be cancelled; a request without one can', async () => {
+  await withApp(async ({ base, as, stub }) => {
+    let paid = true;
+    let deleted = 0;
+    stub(PlanRequest, 'exists', async () => (paid ? { _id: REQUEST_ID } : null));
+    stub(PlanRequest, 'findOneAndDelete', async () => { deleted += 1; return { _id: REQUEST_ID }; });
+    const blocked = await fetch(`${base}/requests/my`, { method: 'DELETE', headers: as(STUDENT_ID) });
+    assert.equal(blocked.status, 409);
+    assert.equal(deleted, 0);
+    paid = false;
+    assert.equal((await fetch(`${base}/requests/my`, { method: 'DELETE', headers: as(STUDENT_ID) })).status, 200);
+    assert.equal(deleted, 1);
+  });
+});
+
+test('payment screenshots upload for students only, as images', async () => {
+  await withApp(async ({ base, as }) => {
+    const upload = (who, name, type) => {
+      const form = new FormData();
+      form.append('file', new Blob([new Uint8Array([137, 80, 78, 71])], { type }), name);
+      const headers = as(who);
+      delete headers['Content-Type'];
+      return fetch(`${base}/payment-proof`, { method: 'POST', headers, body: form });
+    };
+    assert.equal((await upload(ADMIN_ID, 'receipt.png', 'image/png')).status, 403);
+    const wrongType = await upload(STUDENT_ID, 'receipt.pdf', 'application/pdf');
+    assert.equal(wrongType.status, 400);
+    assert.match((await wrongType.json()).error, /JPG, PNG or WebP/);
+    assert.equal((await fetch(`${base}/payment-proof`, { method: 'POST' })).status, 401);
   });
 });
 
@@ -119,7 +173,7 @@ test('a failed plan email still accepts the request and records why it failed', 
     stub(PlanRequest, 'findOneAndUpdate', async () => null);
     stub(PlanRequest, 'create', async fields => ({ _id: REQUEST_ID, status: 'pending', ...fields }));
     try {
-      const response = await fetch(`${base}/requests`, { method: 'POST', headers: as(STUDENT_ID), body: JSON.stringify({ planId: '1-month' }) });
+      const response = await fetch(`${base}/requests`, { method: 'POST', headers: as(STUDENT_ID), body: JSON.stringify({ planId: '1-month', ...PAYMENT }) });
       assert.equal(response.status, 201);
       await new Promise(resolve => setTimeout(resolve, 20));
       assert.ok(errors.some(line => line.includes('mailbox offline')));
@@ -179,7 +233,7 @@ test('students with an active plan cannot request another until it ends', async 
     stub(PlanRequest, 'findOneAndUpdate', async () => null);
     stub(PlanRequest, 'create', async fields => { created += 1; return { _id: REQUEST_ID, ...fields }; });
     setActivePass({ expiresAt: new Date('2027-03-12T00:00:00.000Z') });
-    const response = await fetch(`${base}/requests`, { method: 'POST', headers: as(STUDENT_ID), body: JSON.stringify({ planId: '1-month' }) });
+    const response = await fetch(`${base}/requests`, { method: 'POST', headers: as(STUDENT_ID), body: JSON.stringify({ planId: '1-month', ...PAYMENT }) });
     assert.equal(response.status, 409);
     assert.match((await response.json()).error, /already active until 12 Mar 2027/);
     assert.equal(created, 0);
@@ -234,4 +288,33 @@ test('an active plan unlocks every published course', async () => {
   } finally {
     restore.reverse().forEach(undo => undo());
   }
+});
+
+test('live classes can be added at checkout, and the prices a super admin set are used', async () => {
+  await withApp(async ({ base, as, stub, setPrices }) => {
+    const created = [];
+    stub(PlanRequest, 'findOneAndUpdate', async () => null);
+    stub(PlanRequest, 'create', async fields => { created.push(fields); return { _id: REQUEST_ID, status: 'pending', ...fields }; });
+    stub(User, 'find', () => ({ select: async () => [] }));
+    const send = body => fetch(`${base}/requests`, { method: 'POST', headers: as(STUDENT_ID), body: JSON.stringify(body) });
+    assert.equal((await send({ planId: '3-months', ...PAYMENT, liveClass: 'yes' })).status, 400);
+    assert.equal((await send({ planId: '3-months', ...PAYMENT, liveClass: true, price: 1, liveClassPrice: 1 })).status, 201);
+    assert.equal(created[0].price, 2000);
+    assert.equal(created[0].liveClass, true);
+    assert.equal(created[0].liveClassPrice, 9000);
+
+    setPrices({ '3-months': { plan: 2500, liveClass: 9500 }, '6-months': { plan: -4, liveClass: 'free' } });
+    const plans = await (await fetch(base)).json();
+    assert.deepEqual(plans.map(plan => [plan.id, plan.price, plan.liveClassPrice]), [['1-month', 1000, 7000], ['3-months', 2500, 9500], ['6-months', 3000, 12000]], 'invalid saved prices fall back to the defaults');
+    assert.equal((await send({ planId: '3-months', ...PAYMENT, liveClass: true })).status, 201);
+    assert.equal(created[1].price, 2500);
+    assert.equal(created[1].liveClassPrice, 9500);
+  });
+});
+
+test('the plan email shows live classes and the total', () => {
+  const message = planRequestMessage({ student: { name: 'Sita', email: 'sita@example.com' }, request: { plan: '6-months', price: 3000, days: 180, liveClass: true, liveClassPrice: 12000, payment: { method: 'bank', screenshot: SCREENSHOT } }, adminUrl: 'https://example.com/admin/subscriptions' });
+  assert.equal(message.subject, 'Plan payment: Sita · 6 months + live classes · Rs 15,000');
+  assert.match(message.text, /Amount paid: Rs 15,000/);
+  assert.match(message.text, /Breakdown: plan Rs 3,000 \+ live classes \(6 months\) Rs 12,000/);
 });

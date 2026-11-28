@@ -74,7 +74,7 @@ export function PrivacyPolicy({ user }) {
       <p>Deleting your account permanently removes it and the records tied to it:</p>
       <ul>
         <li>your account details and sign-in history;</li>
-        <li>course access, plans, saved courses, and plan and access requests;</li>
+        <li>course access, plans, saved courses, plan and access requests, and the payment details you sent with a plan (method, transaction ID and note);</li>
         <li>lesson progress, quiz results, and HSK test attempts and scores;</li>
         <li>practice studio activity and vocabulary review schedules;</li>
         <li>practice reminder settings, reminder records, and notification subscriptions.</li>
@@ -109,8 +109,9 @@ export function TermsOfService() {
     </ul></section>
     <section><h2>Free access, plans and payments</h2><ul>
       <li>Some features are free: the pinyin chart, and one full HSK 1 mock test with a free account. You can ask once for a free week of the practice studio and the other mock tests, which starts when the team approves it.</li>
-      <li>Plans last 1, 3 or 6 months at the prices shown on the <Link to="/pricing">pricing page</Link>. After you choose a plan, we email you how to pay. Your plan starts when the payment is confirmed, ends when its time is up, and never renews automatically.</li>
+      <li>Plans last 1, 3 or 6 months at the prices shown on the <Link to="/pricing">pricing page</Link>. You pay by bank transfer or merchant QR and upload a screenshot of the payment, which is required. Your plan starts when we’ve checked the payment, ends when its time is up, and never renews automatically.</li>
       <li>A plan unlocks every HSK course, the practice studio and every mock test for one person while it lasts.</li>
+      <li>When you pay for a plan, we keep the payment screenshot you upload (stored with Cloudinary), the method you chose and any transaction ID or note, so the team can check the payment and keep a record of it. The screenshot may show your name, account and the amount.</li>
       <li>If something goes wrong with a payment or your access, contact the team and we'll look into it.</li>
       <li>We may change prices or what's included for free. Changes don't affect a plan you've already paid for.</li>
     </ul></section>

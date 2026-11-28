@@ -17,6 +17,8 @@ async function prepare(page, user = null) {
     let data = [];
     if (path === '/health') data = { status: 'ok' };
     if (path === '/access-requests/my') data = [{ scope: 'tests', status: 'approved' }];
+    // A course subscription: My Courses and My Progress are open.
+    if (path === '/subscriptions/my') data = [{ _id: 's1', course: { _id: 'course1', title: 'Chinese basics' }, expiresAt: '2099-01-01T00:00:00.000Z' }];
     else if (path === '/courses' || path === '/courses/all') data = [course];
     else if (path === '/lessons/course/course1' || path === '/lessons/course/course1/all') data = [lesson];
     else if (path === '/subscriptions/check/course1') data = { hasAccess: true, expiresAt: '2099-01-01' };

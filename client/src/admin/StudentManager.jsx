@@ -22,6 +22,7 @@ function AccessChips({ student }) {
   const chips = [];
   if (student.plan) chips.push(<span key="plan" className="student-chip is-paid">{student.plan.label} plan, {daysUntil(student.plan.expiresAt)}d left</span>);
   if (courses.length) chips.push(<span key="courses" className="student-chip is-paid">{courses.length} {courses.length === 1 ? 'course' : 'courses'}</span>);
+  if (student.liveClass?.allowed) chips.push(<span key="live" className="student-chip is-paid">Live classes</span>);
   if (trial.status === 'active') chips.push(<span key="trial" className="student-chip is-trial">Free trial, {trial.expiresAt ? `${daysUntil(trial.expiresAt)}d left` : 'no end date'}</span>);
   if (trial.status === 'pending') chips.push(<span key="pending" className="student-chip is-pending">Free request waiting</span>);
   if (trial.status === 'expired' && !chips.length) chips.push(<span key="expired" className="student-chip is-muted">Free trial ended</span>);

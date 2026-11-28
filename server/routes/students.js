@@ -9,6 +9,8 @@ const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
 const { logActivity } = require('../utils/auditLog');
 const { FREE_ACCESS_DAYS } = require('../utils/testAccess');
 const { findPlan } = require('../utils/plans');
+const PlanRequest = require('../models/PlanRequest');
+const { liveClassSummary } = require('../utils/liveClassAccess');
 
 const router = express.Router();
 router.use(requireAuth, requireSuperAdmin);
@@ -50,14 +52,21 @@ function trialSummary(request, now = Date.now()) {
 
 async function studentSummaries(filter = {}) {
   const students = await User.find({ ...filter, role: 'student' })
-    .select('name email authProvider createdAt signInCount emailVerified')
+    .select('name email authProvider createdAt signInCount emailVerified liveClassAccess')
     .sort({ createdAt: -1 }).lean();
   const ids = students.map(student => student._id);
-  const [trials, passes, subs] = await Promise.all([
+  const [trials, passes, subs, liveClassPayments] = await Promise.all([
     AccessRequest.find({ user: { $in: ids }, scope: 'tests' }).sort({ updatedAt: -1 }).lean(),
     PlatformPass.find({ user: { $in: ids } }).select('user plan expiresAt').lean(),
     Subscription.find({ user: { $in: ids } }).populate('course', 'title level').select('user course expiresAt').sort({ expiresAt: -1 }).lean(),
+    PlanRequest.find({ user: { $in: ids }, status: 'approved', liveClass: true }).select('user liveClass status reviewedAt days').lean(),
   ]);
+  const liveClassBy = new Map();
+  for (const request of liveClassPayments) {
+    const key = String(request.user);
+    if (!liveClassBy.has(key)) liveClassBy.set(key, []);
+    liveClassBy.get(key).push(request);
+  }
   const latestTrial = new Map();
   for (const request of trials) if (!latestTrial.has(String(request.user))) latestTrial.set(String(request.user), request);
   const passBy = new Map(passes.map(pass => [String(pass.user), pass]));
@@ -76,6 +85,7 @@ async function studentSummaries(filter = {}) {
       trial: trialSummary(latestTrial.get(key), now),
       plan: pass && new Date(pass.expiresAt).getTime() > now ? { plan: pass.plan, label: findPlan(pass.plan)?.label || pass.plan || 'Plan', expiresAt: pass.expiresAt } : null,
       subscriptions: subsBy.get(key) || [],
+      liveClass: liveClassSummary(student.liveClassAccess, liveClassBy.get(key) || [], now),
     };
   });
 }
@@ -239,6 +249,21 @@ router.delete('/:id/plan', async (req, res) => {
     res.json(await publicStudent(student._id));
   } catch {
     res.status(500).json({ error: 'Could not revoke the plan' });
+  }
+});
+
+// PUT /api/students/:id/live-class — { joined } mark whether the student is in live classes, which
+// opens Recorded sessions for them (live classes paid for at checkout open it too).
+router.put('/:id/live-class', async (req, res) => {
+  try {
+    if (typeof req.body?.joined !== 'boolean') return res.status(400).json({ error: 'Choose whether the student is in live classes.' });
+    const student = await findStudent(req, res);
+    if (!student) return;
+    await User.updateOne({ _id: student._id }, { $set: { liveClassAccess: req.body.joined } });
+    logActivity(req, { action: req.body.joined ? 'grant' : 'revoke', resourceType: 'live-class', resourceId: student._id, label: `${student.name} → ${req.body.joined ? 'Joined live classes' : 'Left live classes'}` });
+    res.json(await publicStudent(student._id));
+  } catch {
+    res.status(500).json({ error: 'Could not update live classes' });
   }
 });
 

@@ -171,3 +171,10 @@ body { font-family: var(--font-body); font-size: var(--text-body); line-height: 
     --panel-padding: var(--space-4);
   }
 }
+
+/* A page a student can't open yet (navigation/AccessLocked.jsx). */
+.page-locked { max-width: 640px; padding-block: 64px; }
+.page-locked p { color: var(--mist); font-size: 16px; line-height: 1.7; }
+.page-locked-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 24px; }
+.page-locked-actions a { color: var(--accent-red-text); font-weight: 650; }
+.page-locked-actions .page-locked-primary { display: inline-flex; align-items: center; min-height: 46px; padding: 0 20px; border-radius: 8px; background: var(--accent-red); color: #fff; text-decoration: none; }

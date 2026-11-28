@@ -2,10 +2,22 @@ import { useEffect, useRef, useState } from 'react';
 import AdminNotifications from './AdminNotifications';
 import BrandLogo from './BrandLogo';
 import { liveClassInquiryHref } from './contactPhone';
+import { practiceTools } from '../home/practiceTools';
+import { practicePaths } from '../navigation/paths';
 
-// Desktop only: About HSK and the FAQ share one header item, which opens a short list of the two
-// pages. It closes on Escape (focus goes back to the button), on a click outside, or when focus leaves.
-function HskMenu({ onNavigate }) {
+// Desktop only: a header item that opens a short list of pages (About HSK and the FAQ; every practice
+// studio tool). It closes on Escape (focus goes back to the button), on a click outside, or when
+// focus leaves. The mobile menu lists these pages its own way.
+const HSK_ICON = <><path d="M22 10 12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c3 2.5 9 2.5 12 0v-5"></path></>;
+const STUDIO_ICON = <><path d="m9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08"></path><path d="M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z"></path></>;
+const HSK_PAGES = [['/about-hsk', 'About HSK', 'Levels, the exam and how to book'], ['/faq', 'FAQ', 'Questions about learning with Xiao Ao']];
+// The practice studio's tools, named and described as on the studio cards, then the whole studio.
+const STUDIO_PAGES = [
+  ...practiceTools.filter(([id]) => id !== 'tests' && practicePaths[id]).map(([id, title, text]) => [practicePaths[id], title, text]),
+  ['/#practice-studio', 'See the whole studio', 'Every practice tool on the home page'],
+];
+
+function NavMenu({ id, label, icon, pages, wide = false, onNavigate }) {
   const [open, setOpen] = useState(false);
   const wrapper = useRef(null);
   const trigger = useRef(null);
@@ -19,26 +31,29 @@ function HskMenu({ onNavigate }) {
   return <div className="nav-group nav-desktop-only" ref={wrapper}
     onKeyDown={event => { if (event.key === 'Escape' && open) { event.stopPropagation(); setOpen(false); trigger.current?.focus(); } }}
     onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false); }}>
-    <button ref={trigger} type="button" className="nav-link nav-group-trigger" aria-expanded={open} aria-controls="nav-hsk-menu" onClick={() => setOpen(value => !value)}>
-      <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M22 10 12 5 2 10l10 5 10-5z"></path>
-        <path d="M6 12v5c3 2.5 9 2.5 12 0v-5"></path>
-      </svg>
-      <span>About HSK</span>
+    <button ref={trigger} type="button" className="nav-link nav-group-trigger" aria-expanded={open} aria-controls={id} onClick={() => setOpen(value => !value)}>
+      <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{icon}</svg>
+      <span>{label}</span>
       <svg className="nav-group-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
     </button>
-    {open && <ul className="nav-group-menu" id="nav-hsk-menu">
-      <li><button type="button" className="nav-group-item" onClick={() => go('/about-hsk')}>
-        <strong>About HSK</strong><span>Levels, the exam and how to book</span>
-      </button></li>
-      <li><button type="button" className="nav-group-item" onClick={() => go('/faq')}>
-        <strong>FAQ</strong><span>Questions about learning with Xiao Ao</span>
-      </button></li>
+    {open && <ul className={`nav-group-menu${wide ? ' is-wide' : ''}`} id={id}>
+      {pages.map(([to, title, text]) => <li key={to}><button type="button" className="nav-group-item" onClick={() => go(to)}>
+        <strong>{title}</strong><span>{text}</span>
+      </button></li>)}
     </ul>}
   </div>;
 }
 
-export default function SiteHeader({ showAboutUs = false, hidePricing = false, adminSidebarOpen, attention, darkMode, goHome, handleLogout, hideForAuth = false, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, onNavigate, setShowChangePassword, setShowUserMenu, showUserMenu, unreadFeedbackCount, user }) {
+export default function SiteHeader({ showAboutUs = false, hidePricing = false, studentAccess = { loaded: false, courses: false, practice: false, recorded: false }, adminSidebarOpen, attention, darkMode, goHome, handleLogout, hideForAuth = false, isAdmin, isSuperAdmin, mobileMenuOpen, myAccessDays, openLogin, pendingAccessRequestsCount, pendingTestimonialsCount, setAdminSidebarOpen, setDarkMode, setMobileMenuOpen, onNavigate, setShowChangePassword, setShowUserMenu, showUserMenu, unreadFeedbackCount, user }) {
+  // Students see My Courses with course access (a plan or course subscription) and My Progress with
+  // practice access (that, or a free week). With course access, My Courses replaces HSK courses.
+  const student = user?.role === 'student';
+  const showMyCourses = !student || studentAccess.courses;
+  const showMyProgress = !student || studentAccess.practice;
+  const showHskCourses = !(student && studentAccess.courses);
+  // The practice studio menu is for people who can open every tool: students with practice access, and
+  // staff. Guests and students without access get one link to the studio on the home page.
+  const studioMenu = student ? studentAccess.practice : !!isAdmin;
   if (hideForAuth) return null;
   return (
     <header className={`site-header${isSuperAdmin || !user ? ' paper-header' : ''}`}>
@@ -60,14 +75,16 @@ export default function SiteHeader({ showAboutUs = false, hidePricing = false, a
               </button>
               {/* The home page holds both sections; a super admin's home is the admin dashboard instead. */}
               {!isSuperAdmin && <>
-                <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); onNavigate('/#courses'); }}>
+                {showHskCourses && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); onNavigate('/#courses'); }}>
                   <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"></path>
                     <path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"></path>
                   </svg>
                   <span>HSK courses</span>
-                </button>
-                <button className="nav-link" onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); onNavigate('/#practice-studio'); }}>
+                </button>}
+                {/* Desktop: a menu of every practice tool. The mobile menu keeps one link to the studio. */}
+                {studioMenu && <NavMenu id="nav-studio-menu" label="Practice studio" icon={STUDIO_ICON} pages={STUDIO_PAGES} wide onNavigate={path => { setMobileMenuOpen(false); setShowUserMenu(false); onNavigate(path); }} />}
+                <button className={`nav-link${studioMenu ? ' nav-mobile-only' : ''}`} onClick={() => { setMobileMenuOpen(false); setShowUserMenu(false); onNavigate('/#practice-studio'); }}>
                   <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="m9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08"></path>
                     <path d="M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z"></path>
@@ -86,7 +103,7 @@ export default function SiteHeader({ showAboutUs = false, hidePricing = false, a
                 <span>About HSK</span>
               </button>}
               {!isAdmin && <>
-                <HskMenu onNavigate={path => { setMobileMenuOpen(false); setShowUserMenu(false); onNavigate(path); }} />
+                <NavMenu id="nav-hsk-menu" label="About HSK" icon={HSK_ICON} pages={HSK_PAGES} onNavigate={path => { setMobileMenuOpen(false); setShowUserMenu(false); onNavigate(path); }} />
                 <button className="nav-link nav-mobile-only" onClick={() => { setMobileMenuOpen(false); onNavigate('/about-hsk'); }}>
                   <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M22 10 12 5 2 10l10 5 10-5z"></path>
@@ -124,25 +141,26 @@ export default function SiteHeader({ showAboutUs = false, hidePricing = false, a
               </button>}
               {isSuperAdmin ? null : user ? (
                 <>
-                  <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/my-courses'); }}>
+                  {showMyCourses && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/my-courses'); }}>
                     <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                       <polyline points="2 17 12 22 22 17"></polyline>
                       <polyline points="2 12 12 17 22 12"></polyline>
                     </svg>
                     <span>My Courses</span>
-                  </button>
+                  </button>}
 
-                  {user.role === 'student' && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/recorded-sessions'); }}>
+                  {/* Only students in live classes (paid at checkout, or marked joined) see recordings. */}
+                  {student && studentAccess.recorded && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/recorded-sessions'); }}>
                     <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg>
                     <span>Recorded sessions</span>
                   </button>}
-                  <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/progress'); }}>
+                  {showMyProgress && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/progress'); }}>
                     <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                     </svg>
                     <span>My Progress</span>
-                  </button>
+                  </button>}
 
 
                 </>
@@ -299,30 +317,6 @@ export default function SiteHeader({ showAboutUs = false, hidePricing = false, a
               </button>
             )}
 
-            <button
-              className="theme-toggle-compact nav-desktop-only"
-              onClick={() => setDarkMode(!darkMode)}
-              aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-              title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-            >
-              {darkMode ? (
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="5"></circle>
-                  <line x1="12" y1="1" x2="12" y2="3"></line>
-                  <line x1="12" y1="21" x2="12" y2="23"></line>
-                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                  <line x1="1" y1="12" x2="3" y2="12"></line>
-                  <line x1="21" y1="12" x2="23" y2="12"></line>
-                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                </svg>
-              ) : (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                </svg>
-              )}
-            </button>
 
             {user ? (
               <div className="user-menu">
@@ -362,6 +356,31 @@ export default function SiteHeader({ showAboutUs = false, hidePricing = false, a
               <button className="nav-btn-primary" onClick={openLogin}>Sign in</button>
             )}
 
+            {/* Desktop: the theme toggle sits at the far right edge, after the account menu. */}
+            <button
+              className="theme-toggle-compact nav-desktop-only"
+              onClick={() => setDarkMode(!darkMode)}
+              aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {darkMode ? (
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="5"></circle>
+                  <line x1="12" y1="1" x2="12" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="23"></line>
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                  <line x1="1" y1="12" x2="3" y2="12"></line>
+                  <line x1="21" y1="12" x2="23" y2="12"></line>
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+              )}
+            </button>
             <button
               className={`hamburger ${mobileMenuOpen ? 'is-open' : ''}`}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

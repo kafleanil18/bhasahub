@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signInPath } from '../navigation/paths';
-import { PLANS, formatRs, monthlyPrice, planLabel, savingPercent } from './plans';
+import { formatRs, monthlyPrice, planLabel, savingPercent, usePlans } from './plans';
 import { FEATURE_GROUPS } from './features';
+import Checkout from './Checkout';
 import './PricingPage.css';
 
 const API = `${window.API_BASE_URL}/api/plans`;
@@ -29,6 +30,7 @@ export default function PricingPage({ user }) {
   const navigate = useNavigate();
   const student = user?.role === 'student';
   const staff = !!user && !student;
+  const plans = usePlans();
   const [status, setStatus] = useState({ pass: null, request: null });
   const [loading, setLoading] = useState(student);
   const [busy, setBusy] = useState('');
@@ -46,16 +48,23 @@ export default function PricingPage({ user }) {
   useEffect(() => { if (notice) noticeRef.current?.focus(); }, [notice]);
 
   const pending = status.request?.status === 'pending' ? status.request : null;
-  const choose = async plan => {
+  // A payment sent from checkout, waiting for an admin to check it. A pending request without one
+  // dates from before checkout: the student still has to pay for it.
+  const checking = pending?.payment?.method ? pending : null;
+  const [checkoutPlan, setCheckoutPlan] = useState(null);
+  const choose = plan => {
     if (!user) { navigate(signInPath('/pricing')); return; }
-    if (!student || busy) return;
-    setBusy(plan.id); setError(''); setNotice('');
-    try {
-      const request = await call('/requests', { method: 'POST', body: JSON.stringify({ planId: plan.id }) });
-      setStatus(previous => ({ ...previous, request }));
-      setNotice(`Your ${plan.label} plan request is in. We’ll email you payment details for ${formatRs(plan.price)}.`);
-    } catch (err) { setError(err.message); }
-    finally { setBusy(''); }
+    if (!student || busy || checking) return;
+    setError(''); setNotice('');
+    setCheckoutPlan(plan);
+  };
+  const paymentSent = request => {
+    setStatus(previous => ({ ...previous, request: { ...request, payment: { method: request.payment?.method, submittedAt: request.payment?.submittedAt } } }));
+  };
+  const closeCheckout = () => {
+    const sent = status.request?.status === 'pending' && status.request?.payment?.method && checkoutPlan;
+    setCheckoutPlan(null);
+    if (sent) setNotice(`Thank you. We’re checking your payment for the ${checkoutPlan.label} plan and will start it as soon as it’s confirmed.`);
   };
   const cancel = async () => {
     if (busy) return;
@@ -76,21 +85,26 @@ export default function PricingPage({ user }) {
       {notice && <div className="pricing-banner is-success" role="status" tabIndex={-1} ref={noticeRef}>{notice}</div>}
       {error && <div className="pricing-banner is-error" role="alert">{error}</div>}
       {student && !loading && status.pass && <div className="pricing-banner is-active" role="status"><div><strong>Your {status.pass.plan ? `${planLabel(status.pass.plan)} ` : ''}plan is active until {formatDate(status.pass.expiresAt)}.</strong> Every course, practice tool and mock test is unlocked. You can choose a new plan when this one ends.</div></div>}
-      {student && !loading && pending && <div className="pricing-banner is-pending" role="status">
-        <div><strong>Your {planLabel(pending.plan)} plan request is waiting for payment.</strong> We’ll email you how to pay {formatRs(pending.price)}. Your courses, the practice studio and every mock test unlock as soon as the payment is confirmed.</div>
+      {student && !loading && checking && <div className="pricing-banner is-pending" role="status">
+        <div><strong>We’re checking your payment for the {planLabel(checking.plan)} plan{checking.liveClass ? ' with live classes' : ''}.</strong> You sent it{checking.payment.submittedAt ? ` on ${formatDate(checking.payment.submittedAt)}` : ''}. Your courses, the practice studio and every mock test unlock as soon as it’s confirmed, usually within a day.</div>
+      </div>}
+      {student && !loading && pending && !checking && <div className="pricing-banner is-pending" role="status">
+        <div><strong>Finish paying for your {planLabel(pending.plan)} plan.</strong> Pay {formatRs(pending.price)} by bank transfer or merchant QR, then upload a screenshot of the payment.</div>
+        <button type="button" className="pricing-link" onClick={() => choose(plans.find(plan => plan.id === pending.plan) || plans[0])} disabled={!!busy}>Pay now</button>
         <button type="button" className="pricing-link" onClick={cancel} disabled={!!busy}>{busy === 'cancel' ? 'Cancelling…' : 'Cancel request'}</button>
       </div>}
       {student && !loading && status.request?.status === 'denied' && !status.pass && <div className="pricing-banner" role="status">Your last plan request wasn’t approved. You can choose a plan again, or message us if you have a question.</div>}
 
       <section className="pricing-grid" aria-label="Plans">
-        {PLANS.map(plan => {
+        {plans.map(plan => {
           const activePass = student && !loading ? status.pass : null;
           const active = activePass?.plan === plan.id;
           const locked = !!activePass && !active;
-          const requested = !activePass && pending?.plan === plan.id;
-          const saving = savingPercent(plan);
+          const requested = !activePass && checking?.plan === plan.id;
+          const waiting = !activePass && !!checking && !requested;
+          const saving = savingPercent(plan, plans);
           const featured = plan.featured && !activePass;
-          return <article key={plan.id} className={`pricing-card${featured ? ' is-featured' : ''}${requested ? ' is-requested' : ''}${active ? ' is-active' : ''}${locked ? ' is-locked' : ''}`} aria-labelledby={`plan-${plan.id}`}>
+          return <article key={plan.id} className={`pricing-card${featured ? ' is-featured' : ''}${requested ? ' is-requested' : ''}${active ? ' is-active' : ''}${locked ? ' is-locked' : ''}`} aria-labelledby={`plan-${plan.id}`} data-plan={plan.id}>
             <div className="pricing-card-top">
               <h2 id={`plan-${plan.id}`}>{plan.label}</h2>
               {active ? <span className="pricing-badge is-active"><Check/> Active plan</span> : featured ? <span className="pricing-badge">Best value</span> : <span className="pricing-note">{plan.note}</span>}
@@ -98,8 +112,8 @@ export default function PricingPage({ user }) {
             <p className="pricing-price"><strong>{formatRs(plan.price)}</strong><span>{plan.months === 1 ? 'for 1 month' : `for ${plan.months} months`}</span></p>
             <p className="pricing-monthly">{plan.months === 1 ? 'Billed once. No auto-renewal.' : <>{formatRs(monthlyPrice(plan))} a month, <b>save {saving}%</b></>}</p>
             {active ? <p className="pricing-active-until" role="status"><Check/> Active until {formatDate(activePass.expiresAt)}</p>
-              : <button type="button" className="pricing-choose" disabled={staff || locked || requested || !!busy || loading} onClick={() => choose(plan)} aria-label={locked ? `${plan.label} plan, available when your current plan ends` : requested ? `${plan.label} plan requested` : `Choose the ${plan.label} plan, ${formatRs(plan.price)}`}>
-                {busy === plan.id ? 'Sending request…' : locked ? 'Available when your plan ends' : requested ? <>Requested <Check/></> : !user ? 'Sign in to choose' : pending ? `Switch to ${plan.label}` : `Choose ${plan.label}`}
+              : <button type="button" className="pricing-choose" disabled={staff || locked || requested || waiting || !!busy || loading} onClick={() => choose(plan)} aria-label={locked ? `${plan.label} plan, available when your current plan ends` : requested ? `${plan.label} plan, payment being checked` : waiting ? `${plan.label} plan, available after we’ve checked your payment` : `Pay for the ${plan.label} plan, ${formatRs(plan.price)}`}>
+                {locked ? 'Available when your plan ends' : requested ? 'Payment being checked' : waiting ? 'After we check your payment' : !user ? 'Sign in to choose' : `Choose ${plan.label}`}
               </button>}
           </article>;
         })}
@@ -126,11 +140,13 @@ export default function PricingPage({ user }) {
       <section className="pricing-steps" aria-labelledby="pricing-steps-title">
         <h2 id="pricing-steps-title">How it works</h2>
         <ol>
-          <li><span aria-hidden="true">1</span><div><strong>Choose a plan</strong><p>Pick 1, 3 or 6 months. You can switch until it’s confirmed.</p></div></li>
-          <li><span aria-hidden="true">2</span><div><strong>Pay</strong><p>We’ll email you payment details.</p></div></li>
-          <li><span aria-hidden="true">3</span><div><strong>Start learning</strong><p>Every course, practice tool and mock test unlocks as soon as your payment is confirmed.</p></div></li>
+          <li><span aria-hidden="true">1</span><div><strong>Choose a plan</strong><p>Pick 1, 3 or 6 months, then bank transfer or merchant QR.</p></div></li>
+          <li><span aria-hidden="true">2</span><div><strong>Pay</strong><p>Pay from your own bank or wallet app, using the account or QR we show you.</p></div></li>
+          <li><span aria-hidden="true">3</span><div><strong>Upload the screenshot</strong><p>A screenshot of your payment is required, so we can check it.</p></div></li>
+          <li><span aria-hidden="true">4</span><div><strong>Start learning</strong><p>Every course, practice tool and mock test unlocks once your payment is confirmed.</p></div></li>
         </ol>
       </section>
     </div>
+    {checkoutPlan && <Checkout key={checkoutPlan.id} plan={checkoutPlan} onSubmitted={paymentSent} onClose={closeCheckout} onChangePlan={() => setCheckoutPlan(null)} />}
   </main>;
 }

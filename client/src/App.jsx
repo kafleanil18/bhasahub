@@ -65,6 +65,10 @@ function AppContent() {
   const [myAccessDays, setMyAccessDays] = useState(null);
   // A student with an active plan already has everything Pricing offers, so the header leaves it out.
   const [hasActivePlan, setHasActivePlan] = useState(false);
+  // What a student can open: My Courses needs course access (an active plan or course subscription);
+  // My Progress needs practice access (that, or a free week). Unknown until the check finishes.
+  const NO_ACCESS = { loaded: false, courses: false, practice: false, recorded: false };
+  const [studentAccess, setStudentAccess] = useState(NO_ACCESS);
   const [adminSidebarOpen, setAdminSidebarOpen] = useState(false);
   const [desktopAdminNavigation, setDesktopAdminNavigation] = useState(() => window.matchMedia('(min-width: 1100px)').matches);
   const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
@@ -181,12 +185,17 @@ function AppContent() {
 
   const loadMyAccess = () => {
     const t = localStorage.getItem('token');
-    if (!t) { setMyAccessDays(null); setHasActivePlan(false); return; }
+    if (!t) { setMyAccessDays(null); setHasActivePlan(false); setStudentAccess(NO_ACCESS); return; }
+    // null when a list couldn't load, so a failed check never locks a student out.
     const load = path => apiFetch(window.API_BASE_URL + path)
-      .then(res => res.json()).then(data => Array.isArray(data) ? data : []).catch(() => []);
+      .then(res => (res.ok ? res.json() : null)).then(data => (Array.isArray(data) ? data : null)).catch(() => null);
     // Paid access plus a free week from an approved access request.
-    Promise.all([load('/api/subscriptions/my'), load('/api/access-requests/my')])
-      .then(([subs, requests]) => {
+    // Recorded sessions: only for students in live classes (paid at checkout, or marked joined).
+    const recordedAccess = user?.role === 'student' ? apiFetch(window.API_BASE_URL + '/api/recorded-sessions/access').then(res => (res.ok ? res.json() : null)).then(data => (data ? !!data.allowed : false)).catch(() => false) : Promise.resolve(false);
+    Promise.all([load('/api/subscriptions/my'), load('/api/access-requests/my'), recordedAccess])
+      .then(([subsOrNull, requestsOrNull, recorded]) => {
+        const subs = subsOrNull || [];
+        const requests = requestsOrNull || [];
         const now = new Date();
         const ends = [...subs.map(s => s.expiresAt), ...requests.filter(r => r.scope === 'tests' && r.status === 'approved' && r.expiresAt).map(r => r.expiresAt)];
         const daysList = ends
@@ -195,8 +204,11 @@ function AppContent() {
         setMyAccessDays(daysList.length ? Math.min(...daysList) : null);
         // Plan entries are marked `plan: true` (see GET /api/subscriptions/my).
         setHasActivePlan(subs.some(sub => sub.plan && new Date(sub.expiresAt) > now));
+        const courses = subsOrNull === null || subs.some(sub => new Date(sub.expiresAt) > now);
+        const freeWeek = requests.some(r => r.scope === 'tests' && r.status === 'approved' && (!r.expiresAt || new Date(r.expiresAt) > now));
+        setStudentAccess({ loaded: true, courses, practice: courses || freeWeek || requestsOrNull === null, recorded });
       })
-      .catch(() => { setMyAccessDays(null); setHasActivePlan(false); });
+      .catch(() => { setMyAccessDays(null); setHasActivePlan(false); setStudentAccess({ loaded: true, courses: true, practice: true, recorded: false }); });
   };
 
   const loadAdminNotificationCounts = useCallback(() => {
@@ -261,7 +273,7 @@ function AppContent() {
     // Commit the session change and destination together so route guards never
     // see a signed-out user on the previous protected page.
     startTransition(() => {
-      setUser(null); setMyAccessDays(null); setHasActivePlan(false); setAccess({});
+      setUser(null); setMyAccessDays(null); setHasActivePlan(false); setStudentAccess(NO_ACCESS); setAccess({});
       setShowTestAccessPrompt(false);
       setShowStudioTour(false);
       setShowChangePassword(false);
@@ -321,7 +333,7 @@ function AppContent() {
     {showTestAccessPrompt && user && <Suspense fallback={null}><TestAccessPrompt user={user} onClose={closeTestAccessPrompt} onStartTour={startStudioTour} /></Suspense>}
     {showStudioTour && <Suspense fallback={null}><StudioTour onClose={closeStudioTour} user={user} /></Suspense>}
     {showTestimonial && <TestimonialModal user={user} onClose={() => { setShowTestimonial(false); loadTestimonials(); }} />}
-    <SiteHeader showAboutUs={aboutUsVisible} hidePricing={user?.role === 'student' && hasActivePlan} adminSidebarOpen={adminSidebarOpen} attention={attention} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} hideForAuth={['/sign-in', '/register', '/reset-password'].includes(location.pathname)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={value => { if (!adminArea) navigate('/admin'); setAdminSidebarOpen(value); }} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} onNavigate={navigate} setShowChangePassword={setShowChangePassword} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
+    <SiteHeader showAboutUs={aboutUsVisible} hidePricing={user?.role === 'student' && hasActivePlan} studentAccess={studentAccess} adminSidebarOpen={adminSidebarOpen} attention={attention} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} hideForAuth={['/sign-in', '/register', '/reset-password'].includes(location.pathname)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={value => { if (!adminArea) navigate('/admin'); setAdminSidebarOpen(value); }} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} onNavigate={navigate} setShowChangePassword={setShowChangePassword} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
     <StudioSaveStatus />
     {expiredNotice && !user && <div className="idle-notice" role="status">
       <span>Your sign-in has ended, for example because the password was changed. Please sign in again.</span>
@@ -331,7 +343,7 @@ function AppContent() {
       <span>You were signed out after 2 hours without activity. Please sign in again.</span>
       <button type="button" aria-label="Dismiss" onClick={() => { setIdleNotice(false); clearIdleSignOutNotice(); }}>×</button>
     </div>}
-    <Suspense fallback={<InkLoader />}><AppRoutes user={user} home={home} sidebar={sidebar} onHome={goHome} onLogin={handleLogin} openLogin={openLogin} /></Suspense>
+    <Suspense fallback={<InkLoader />}><AppRoutes user={user} studentAccess={studentAccess} home={home} sidebar={sidebar} onHome={goHome} onLogin={handleLogin} openLogin={openLogin} /></Suspense>
     {location.pathname !== '/' && <div className="home-page app-footer"><HomeFooter showAboutUs={aboutUsVisible} goHome={goHome} isSuperAdmin={isSuperAdmin} serverOk={serverOk} onStartTour={user?.role === 'student' ? startStudioTour : undefined} /></div>}
     <LiveClassNotice user={user} blocked={showChangePassword || showTestAccessPrompt || showStudioTour || showTestimonial} />
   </div>;

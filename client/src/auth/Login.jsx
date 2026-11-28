@@ -211,11 +211,11 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
                   autoFocus required aria-describedby="verification-help" />
                 <p id="verification-help">The code expires in 10 minutes. Check your spam folder too.</p>
               </div>
-              <div className="login-actions">
-                <button type="button" disabled={loading || cooldown > 0} onClick={() => handleSubmit(null, true)}>
+              <div className="login-verify-actions">
+                <button type="button" className="login-secondary-btn" disabled={loading || cooldown > 0} onClick={() => handleSubmit(null, true)}>
                   {cooldown > 0 ? `Resend in ${cooldown}s` : 'Resend code'}
                 </button>
-                <button type="button" disabled={loading} onClick={() => { setVerificationRequired(false); setOtp(''); setError(''); setNotice(''); }}>Back to sign in</button>
+                <button type="button" className="login-secondary-btn" disabled={loading} onClick={() => { setVerificationRequired(false); setOtp(''); setError(''); setNotice(''); }}>Back to sign in</button>
               </div>
             </>}
             {notice && <div className="login-success-banner" role="status">{notice}</div>}

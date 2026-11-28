@@ -4,11 +4,14 @@ import { Link } from 'react-router-dom';
 import { mediaUrl } from '../utils/mediaUrl';
 import LessonCategoryIcon from './LessonCategoryIcon';
 import CourseMockTests from './CourseMockTests';
+import { formatRs, usePlans } from '../pricing/plans';
 import './CourseOverview.css';
 
 import RefreshButton from '../components/RefreshButton';
 import { apiFetch } from '../lib/apiClient';
 const API = window.API_BASE_URL + '/api';
+// The "Add to My learning" box is switched off for now. Set this to true to bring it back.
+const SHOW_SAVE_TO_MY_LEARNING = false;
 
 function CourseOverview({
   course,
@@ -30,6 +33,7 @@ function CourseOverview({
   onBack,
   onLessonClick,
 }) {
+  const plans = usePlans();
   const [catFilter, setCatFilter] = useState('all');
   const [lessonSearch, setLessonSearch] = useState('');
   const [enrolling, setEnrolling] = useState(false);
@@ -41,7 +45,7 @@ function CourseOverview({
   const [accessRequestError, setAccessRequestError] = useState(null);
 
   useEffect(() => {
-    if (!token) return;
+    if (!token || !SHOW_SAVE_TO_MY_LEARNING) return;
     apiFetch(`${API}/enrollments/status/${course._id}`)
       .then(res => res.json())
       .then(data => setEnrolled(data.enrolled))
@@ -113,8 +117,8 @@ function CourseOverview({
 
     {/* This level's mock tests sit just below the course introduction, where they're easy to find. */}
     {user && <CourseMockTests course={course} user={user} />}
-    {user && !isAdmin && <div className={`overview-access ${accessError ? 'is-error' : hasAccess ? 'is-active' : 'is-pending'}`} role={accessError ? 'alert' : 'status'}><div><strong>{!accessChecked ? 'Checking your course access…' : accessError ? 'We couldn’t check your access' : hasAccess ? 'Your course access is active' : requestStatus === 'pending' ? 'Your access request is under review' : requestStatus === 'denied' ? 'Your previous request was declined' : 'Unlock this course with a plan'}</strong><p>{!accessChecked ? 'Your lesson access will update shortly.' : accessError ? accessError : hasAccess ? readableExpiry ? `You can open lessons until ${readableExpiry}.` : 'Choose a lesson below to begin.' : requestStatus === 'pending' ? 'An admin will review your request. This page checks for updates automatically.' : requestStatus === 'denied' ? 'Choose a subscription plan to unlock every course, including this one.' : 'One plan unlocks every HSK course. Plans start at Rs 1,000 a month.'}</p></div>{accessChecked && !hasAccess && !accessError && requestStatus !== 'pending' && <Link className="overview-button is-primary" to="/pricing">See plans</Link>}{accessError && <RefreshButton onClick={() => window.location.reload()}>Refresh page</RefreshButton>}{accessRequestError && <p className="overview-feedback is-error" role="alert">{accessRequestError}</p>}</div>}
-    {user && canOpenLessons && <div className="overview-enrollment"><div><strong>{enrolled ? 'Saved to your learning dashboard' : 'Keep this course in your learning dashboard'}</strong><p>{enrolled ? 'Find this course in My learning whenever you return.' : 'Add it to My learning so it’s easy to find next time.'}</p></div><button className="overview-button" disabled={enrolling} onClick={toggleEnroll}>{enrolling ? 'Updating…' : enrolled ? 'Remove from My learning' : 'Add to My learning'}</button>{enrollError && <p className="overview-feedback is-error" role="alert">{enrollError}</p>}</div>}
+    {user && !isAdmin && <div className={`overview-access ${accessError ? 'is-error' : hasAccess ? 'is-active' : 'is-pending'}`} role={accessError ? 'alert' : 'status'}><div><strong>{!accessChecked ? 'Checking your course access…' : accessError ? 'We couldn’t check your access' : hasAccess ? 'Your course access is active' : requestStatus === 'pending' ? 'Your access request is under review' : requestStatus === 'denied' ? 'Your previous request was declined' : 'Unlock this course with a plan'}</strong><p>{!accessChecked ? 'Your lesson access will update shortly.' : accessError ? accessError : hasAccess ? readableExpiry ? `You can open lessons until ${readableExpiry}.` : 'Choose a lesson below to begin.' : requestStatus === 'pending' ? 'An admin will review your request. This page checks for updates automatically.' : requestStatus === 'denied' ? 'Choose a subscription plan to unlock every course, including this one.' : `One plan unlocks every HSK course. Plans start at ${formatRs(plans[0].price)} a month.`}</p></div>{accessChecked && !hasAccess && !accessError && requestStatus !== 'pending' && <Link className="overview-button is-primary" to="/pricing">See plans</Link>}{accessError && <RefreshButton onClick={() => window.location.reload()}>Refresh page</RefreshButton>}{accessRequestError && <p className="overview-feedback is-error" role="alert">{accessRequestError}</p>}</div>}
+    {SHOW_SAVE_TO_MY_LEARNING && user && canOpenLessons && <div className="overview-enrollment"><div><strong>{enrolled ? 'Saved to your learning dashboard' : 'Keep this course in your learning dashboard'}</strong><p>{enrolled ? 'Find this course in My learning whenever you return.' : 'Add it to My learning so it’s easy to find next time.'}</p></div><button className="overview-button" disabled={enrolling} onClick={toggleEnroll}>{enrolling ? 'Updating…' : enrolled ? 'Remove from My learning' : 'Add to My learning'}</button>{enrollError && <p className="overview-feedback is-error" role="alert">{enrollError}</p>}</div>}
     {showAccessMsg && !canOpenLessons && <div className="overview-feedback" role="alert"><p>This lesson needs active course access. Use <strong>Request course access</strong> above to ask an admin to unlock it.</p><button className="overview-button" onClick={onDismissAccessMsg}>Got it</button></div>}
 
     <section className="overview-lesson-library" id="course-lesson-library" aria-labelledby="course-lessons-title"><div className="overview-library-heading"><div><p className="overview-eyebrow">Your course syllabus</p><h2 id="course-lessons-title">What will you learn today?</h2><p>{isAdmin ? 'Explore each lesson just as your students will see it.' : 'Build your knowledge one lesson at a time.'}</p></div>{!loading && !lessonsError && <span className="overview-lesson-count">{visibleLessons.length} of {courseLessons.length} lessons</span>}</div><div className="overview-lesson-filters"><div className="overview-category-tabs" aria-label="Lesson categories">{categories.map(category => <button key={category.id} aria-pressed={catFilter === category.id} onClick={() => setCatFilter(category.id)}>{category.label}</button>)}</div><label><span className="overview-visually-hidden">Search lessons</span><input type="search" placeholder="Find a lesson…" value={lessonSearch} onChange={event => setLessonSearch(event.target.value)}/></label></div>

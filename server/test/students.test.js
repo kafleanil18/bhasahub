@@ -29,7 +29,7 @@ async function withServer(role, run) {
 test('student management is limited to super admins', async () => {
   for (const role of ['student', 'admin']) {
     await withServer(role, async (base, headers) => {
-      for (const [path, method] of [['', 'GET'], ['', 'POST'], ['/abc', 'PUT'], ['/abc', 'DELETE'], ['/abc/trial', 'PUT'], ['/abc/plan', 'DELETE']]) {
+      for (const [path, method] of [['', 'GET'], ['', 'POST'], ['/abc', 'PUT'], ['/abc', 'DELETE'], ['/abc/trial', 'PUT'], ['/abc/plan', 'DELETE'], ['/abc/live-class', 'PUT']]) {
         const response = await fetch(base + path, { method, headers, body: method === 'GET' ? undefined : '{}' });
         assert.equal(response.status, 403, `${role} ${method} ${path}`);
       }
@@ -47,4 +47,22 @@ test('creating a student validates name, email and password before touching the 
     }
     assert.equal((await fetch(`${base}/not-an-id/trial`, { method: 'PUT', headers, body: '{}' })).status, 404);
   });
+});
+
+test('marking a student as joined in live classes needs a yes or no', async () => {
+  await withServer('superadmin', async (base, headers) => {
+    for (const body of [{}, { joined: 'yes' }]) {
+      assert.equal((await fetch(`${base}/64b000000000000000000002/live-class`, { method: 'PUT', headers, body: JSON.stringify(body) })).status, 400, JSON.stringify(body));
+    }
+  });
+});
+
+test('live classes paid at checkout count while their plan length runs', () => {
+  const { liveClassSummary } = require('../utils/liveClassAccess');
+  const now = Date.parse('2026-11-28T00:00:00Z');
+  const paid = [{ liveClass: true, status: 'approved', reviewedAt: '2026-11-10T00:00:00Z', days: 30 }];
+  assert.equal(liveClassSummary(false, paid, now).allowed, true);
+  assert.equal(liveClassSummary(false, paid, Date.parse('2026-12-11T00:00:00Z')).allowed, false);
+  assert.equal(liveClassSummary(false, [{ ...paid[0], status: 'pending' }], now).allowed, false, 'a payment still being checked doesn’t count');
+  assert.equal(liveClassSummary(true, [], now).allowed, true);
 });

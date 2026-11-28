@@ -58,6 +58,16 @@ export default function StudentAccessDialog({ student, plans, courses, busy, err
         <button className="access-button is-primary" disabled={!!busy || !courseId || !validDays(courseDays)} onClick={() => onAction('course', { path: '/subscriptions', method: 'POST', body: { userId: student._id, courseId, days: Number(courseDays) } }, `Granted ${courseDays} days of ${courses.find(course => course._id === courseId)?.title || 'course'} access.`).then(ok => ok && setCourseId(''))}>{busy === 'course' ? 'Saving…' : 'Grant course'}</button>
       </div>
     </section>
+
+    <section className="student-access-block" aria-labelledby="student-live-title">
+      <div className="student-access-head"><h3 id="student-live-title">Live classes</h3>
+        <span className={`student-chip is-${student.liveClass?.allowed ? 'paid' : 'muted'}`}>{student.liveClass?.allowed ? 'Can watch recorded sessions' : 'No recorded sessions'}</span></div>
+      <p className="access-help">Students in live classes see Recorded sessions. Live classes paid for at checkout count automatically{student.liveClass?.paidUntil ? `, and ${student.name}'s run until ${formatDate(student.liveClass.paidUntil)}` : ''}.</p>
+      <label className="student-live-toggle">
+        <input type="checkbox" checked={!!student.liveClass?.granted} disabled={!!busy} onChange={event => onAction('live-class', { method: 'PUT', body: { joined: event.target.checked } }, event.target.checked ? 'Marked as joined in live classes. Recorded sessions are open.' : 'No longer marked as joined in live classes.')} />
+        <span>Joined live classes, so can watch recorded sessions</span>
+      </label>
+    </section>
     <div className="access-dialog-actions"><button className="access-button" disabled={!!busy} onClick={onClose}>Done</button></div>
   </AccessDialog>;
 }

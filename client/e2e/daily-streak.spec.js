@@ -28,6 +28,8 @@ async function prepare(page, state) {
     if (url.pathname.endsWith('/practice-time/goal')) { const body = route.request().postDataJSON(); calls.push({ method, path: 'goal', body }); state.goal = body.minutes; return route.fulfill({ json: { goalMinutes: body.minutes } }); }
     if (url.pathname.endsWith('/practice-time')) { const body = route.request().postDataJSON(); calls.push({ method, path: 'time', body }); state.minutes = (state.minutes || 0) + 1; return route.fulfill({ json: { date: body.date } }); }
     if (url.pathname.includes('/access-requests/my')) return route.fulfill({ json: [{ scope: 'tests', status: 'approved' }] });
+    // A course subscription: My Courses is open.
+    if (url.pathname.endsWith('/subscriptions/my')) return route.fulfill({ json: [{ _id: 's1', course: { _id: 'c1', title: 'HSK 1' }, expiresAt: '2099-01-01T00:00:00.000Z' }] });
     return route.fulfill({ json: [] });
   });
   return calls;

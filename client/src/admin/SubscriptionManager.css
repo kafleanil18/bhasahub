@@ -199,3 +199,16 @@
 .access-plan-email.is-sent { color: #1f7a45; }
 .access-plan-email.is-failed { background: color-mix(in srgb, var(--accent-red) 7%, transparent); color: var(--ink); }
 .access-free-tag { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: #1f7a4d; color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; vertical-align: 2px; }
+
+/* A plan payment from checkout: the screenshot beside how and when it was paid. */
+.access-plan-payment { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px 18px; padding: 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
+.access-plan-payment.is-missing { display: block; color: var(--mist); font-size: 14px; }
+.access-plan-proof { display: block; flex-shrink: 0; width: 120px; height: 120px; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--rice); }
+.access-plan-proof img { width: 100%; height: 100%; object-fit: cover; }
+.access-plan-proof:focus-visible { outline: 3px solid var(--seal); outline-offset: 2px; }
+.access-plan-payment dl { flex: 1; min-width: min(100%, 220px); display: grid; gap: 6px; margin: 0; }
+.access-plan-payment dl > div { display: grid; grid-template-columns: 8rem minmax(0, 1fr); gap: 8px; font-size: 14px; }
+.access-plan-payment dt { color: var(--mist); }
+.access-plan-payment dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+.access-plan-payment > .access-link { align-self: flex-end; }
+.access-request-course .access-plan-live { color: var(--accent-red-text); }

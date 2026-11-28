@@ -59,18 +59,38 @@ Where students find them:
 
 ## Paid plans
 
-- **The plans.** Defined in `server/utils/plans.js`, which is the source of truth for prices:
+- **The plans.** Defined in `server/utils/plans.js`, with these default prices. Live classes for the same length are an optional add-on at checkout:
 
-  | Plan | Days | Price |
-  |---|---|---|
-  | 1 month | 30 | Rs 1,000 |
-  | 3 months | 90 | Rs 2,000 |
-  | 6 months | 180 | Rs 3,000 |
+  | Plan | Days | Subscription | Live classes |
+  |---|---|---|---|
+  | 1 month | 30 | Rs 1,000 | Rs 7,000 |
+  | 3 months | 90 | Rs 2,000 | Rs 9,000 |
+  | 6 months | 180 | Rs 3,000 | Rs 12,000 |
 
-- **Requesting.** Students choose a plan on `/pricing`, which creates a `PlanRequest`. The superadmins get an email, and the request appears in the notifications bell and under **Subscriptions → Plan requests**.
-- **Starting the plan.** Once the payment arrives, a superadmin chooses **Start plan**. This creates or extends a `PlatformPass`, which unlocks every published course, the practice studio and every mock test until `expiresAt` (`server/utils/platformAccess.js`).
-- **Other actions.** A request can be declined, and its email can be re-sent if delivery failed. A student can cancel their own pending request.
-- **One plan at a time.** A student with an active plan can't request another until it ends.
+  A superadmin can change all six prices under **Admin → Payment details**. They're saved in `PaymentSettings.prices`, and `server/utils/planPrices.js` applies them. `GET /api/plans` returns today's prices, and the server sets the price when a payment is sent, so a payment keeps the price it was sent at.
+- **Checkout.** On `/pricing`, choosing a plan opens checkout (`client/src/pricing/Checkout.jsx`):
+  1. choose **bank transfer** or **merchant QR**;
+  2. confirm the plan, its price and the method, and optionally tick **Also pay for live classes** (the running total updates and stays visible to the end);
+  3. see the bank account (with copy buttons) or the QR, and pay from their own app;
+  4. upload a **screenshot of the payment, which is required**, with an optional transaction ID and note.
+
+  The screenshot goes to `POST /api/plans/payment-proof` (students only, JPG/PNG/WebP up to 8 MB, stored in Cloudinary's `payment-proofs` folder). The payment is then sent to `POST /api/plans/requests`, which refuses it without an uploaded screenshot, and saves it as a `PlanRequest` with `liveClass`, `liveClassPrice` and `payment: { method, screenshot, reference, note, submittedAt }`. Live classes are arranged by the team; starting the plan only unlocks the platform. The superadmins get an email with a link to the screenshot, and the payment appears in the notifications bell and under **Subscriptions → Plan requests**.
+- **Payment details.** The bank account and merchant QR come from **Admin → Payment details** (`/admin/payment-details`, API `/api/payment-settings`, superadmin only to change). Until a method is filled in, checkout shows sample details for it (`server/utils/paymentDetails.js`, QR image `client/public/payments/sample-qr.svg`) and tells students not to pay into them.
+- **Starting the plan.** A superadmin checks the screenshot against the account, then chooses **Payment checked, start plan**. This creates or extends a `PlatformPass`, which unlocks every published course, the practice studio and every mock test until `expiresAt` (`server/utils/platformAccess.js`).
+- **Other actions.** A payment can be declined, and its email can be re-sent if delivery failed. A sent payment can't be cancelled by the student; a request from before checkout (no payment) can be, or paid with **Pay now**.
+- **One at a time.** A student with an active plan, or a payment being checked, can't pay for another plan until it's done.
+
+## What students see
+
+| Page | Opens for students with | Otherwise |
+|---|---|---|
+| **My Courses** (`/my-courses`) | an active plan or course subscription | hidden from the header; the page explains how to get a plan |
+| **My Progress** (`/progress`) | a free week, a plan or a course subscription | hidden from the header; the page offers a free week |
+| **Recorded sessions** (`/recorded-sessions`) | live classes: paid at checkout (an approved payment, while its plan length runs) or ticked by a superadmin | hidden; the page explains how to join live classes, and the API answers `403` with `code: 'RECORDED_LOCKED'` |
+
+- Students with course access don't get **HSK courses** in the header: My Courses lists every course on offer, with their progress.
+- The client works these out in `App.jsx` (`studentAccess`), and the routes are guarded in `navigation/AppRoutes.jsx` (`navigation/AccessLocked.jsx`). Staff always have them.
+- Recorded sessions access is decided by `server/utils/liveClassAccess.js`, from `User.liveClassAccess` and approved checkout payments with `liveClass`. `GET /api/recorded-sessions/access` reports it. A superadmin ticks **Joined live classes** in a student's access dialog (`PUT /api/students/:id/live-class`). A recording still has to be shared with the student to appear.
 
 ## Managing students
 

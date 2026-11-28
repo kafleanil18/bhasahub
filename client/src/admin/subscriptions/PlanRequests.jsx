@@ -11,15 +11,34 @@ function EmailStatus({ request, busy, onResend }) {
   return <p className="access-plan-email is-failed" role="status"><span><strong>Email not sent.</strong> {notSetUp ? 'Email delivery isn’t set up on the server. Set it up under Email settings, then send again.' : status.error}</span>{resend}</p>;
 }
 
+const METHODS = { bank: 'Bank transfer', qr: 'Merchant QR / eSewa' };
+
+// The payment a student sent from checkout: how they paid, the screenshot (always there) and any
+// transaction details. Requests from before checkout have none and still wait for payment.
+function PaymentProof({ payment }) {
+  if (!payment?.screenshot) return <p className="access-plan-payment is-missing">No payment sent yet. This request dates from before checkout.</p>;
+  return <div className="access-plan-payment">
+    <a className="access-plan-proof" href={payment.screenshot} target="_blank" rel="noopener noreferrer" aria-label="Open the payment screenshot in a new tab"><img src={payment.screenshot} alt="Payment screenshot" loading="lazy" /></a>
+    <dl>
+      <div><dt>Paid by</dt><dd>{METHODS[payment.method] || payment.method}</dd></div>
+      {payment.submittedAt && <div><dt>Sent</dt><dd>{formatDate(payment.submittedAt)}</dd></div>}
+      <div><dt>Transaction ID</dt><dd>{payment.reference || 'Not given'}</dd></div>
+      {payment.note && <div><dt>Note</dt><dd>{payment.note}</dd></div>}
+    </dl>
+    <a className="access-link" href={payment.screenshot} target="_blank" rel="noopener noreferrer">Open screenshot</a>
+  </div>;
+}
+
 export default function PlanRequests({ requests, members, busy, onApprove, onDecline, onResend }) {
   const now = Date.now();
   const activeMembers = members.filter(pass => new Date(pass.expiresAt).getTime() > now);
   return <div className="access-plan-panel">
-    {!requests.length ? <div className="access-empty"><span aria-hidden="true">✓</span><h3>No plans waiting for payment</h3><p>When a student chooses a plan on the pricing page, it appears here. Approve it once you’ve received their payment.</p></div> :
+    {!requests.length ? <div className="access-empty"><span aria-hidden="true">✓</span><h3>No payments to check</h3><p>When a student pays for a plan, their payment and screenshot appear here. Start the plan once you’ve checked it.</p></div> :
       <div className="access-request-list">{requests.map(request => <article className="access-request" key={request._id} aria-label={`Plan request from ${request.user?.name || 'deleted student'}`}>
-        <div className="access-person"><span className="access-avatar" aria-hidden="true">{initials(request.user?.name)}</span><div><h3>{request.user?.name || 'Deleted student'}</h3><small>{request.user?.email || 'Account no longer available'}</small></div><span className="access-status is-pending">Awaiting payment</span></div>
-        <div className="access-request-course"><span className="access-help">Chosen plan</span><strong>{planLabel(request.plan)}, {formatRs(request.price)}</strong><small>{request.days} days of every course. Requested {formatDate(request.createdAt)}</small></div>
-        <div className="access-request-controls"><div><button className="access-button is-primary" disabled={!!busy || !request.user} onClick={() => onApprove(request)}>{busy === `plan-approve-${request._id}` ? 'Starting plan…' : 'Payment received, start plan'}</button><button className="access-link is-danger" disabled={!!busy} onClick={() => onDecline(request)}>Decline</button></div></div>
+        <div className="access-person"><span className="access-avatar" aria-hidden="true">{initials(request.user?.name)}</span><div><h3>{request.user?.name || 'Deleted student'}</h3><small>{request.user?.email || 'Account no longer available'}</small></div><span className="access-status is-pending">{request.payment?.screenshot ? 'Payment to check' : 'Awaiting payment'}</span></div>
+        <div className="access-request-course"><span className="access-help">Chosen plan</span><strong>{planLabel(request.plan)}, {formatRs(request.price)}</strong>{request.liveClass && <><strong className="access-plan-live">+ live classes, {formatRs(request.liveClassPrice)}</strong><strong>Total {formatRs(request.price + (request.liveClassPrice || 0))}</strong></>}<small>{request.days} days of every course. Chosen {formatDate(request.createdAt)}</small></div>
+        <PaymentProof payment={request.payment}/>
+        <div className="access-request-controls"><div><button className="access-button is-primary" disabled={!!busy || !request.user} onClick={() => onApprove(request)}>{busy === `plan-approve-${request._id}` ? 'Starting plan…' : request.payment?.screenshot ? 'Payment checked, start plan' : 'Payment received, start plan'}</button><button className="access-link is-danger" disabled={!!busy} onClick={() => onDecline(request)}>Decline</button></div></div>
         <EmailStatus request={request} busy={busy} onResend={onResend}/>
       </article>)}</div>}
     <div className="access-list-heading access-plan-members-heading"><div><h2>Active plans</h2><p>{activeMembers.length ? `${activeMembers.length} ${activeMembers.length === 1 ? 'student has' : 'students have'} every course unlocked.` : 'No student has an active plan yet.'}</p></div></div>

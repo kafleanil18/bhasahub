@@ -40,3 +40,5 @@
 @media (max-width: 520px) {
   .student-access-row > * { flex: 1 1 100%; width: 100%; }
 }
+.student-live-toggle { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.student-live-toggle input { width: 18px; height: 18px; accent-color: var(--seal); }

@@ -19,6 +19,8 @@ async function prepare(page, role, { access = 'course' } = {}) {
     if (path === '/courses') return route.fulfill({ json: [course] });
     if (path === '/subscriptions/my') return route.fulfill({ json: subscriptions });
     if (path === '/access-requests/my') return route.fulfill({ json: requests });
+    // Recorded sessions are open to students with a plan here (as if they paid for live classes).
+    if (path === '/recorded-sessions/access') return route.fulfill({ json: { allowed: access === 'plan' } });
     if (path === '/auth/me') return route.fulfill({ json: { id: 'person', name: 'Mingyu Student', role } });
     return route.fulfill({ json: [] });
   });
@@ -34,19 +36,21 @@ test('the desktop navigation opens the HSK courses and practice studio sections'
   await expect(page).toHaveURL(/\/#courses$/);
   await expect(page.locator('#courses')).toBeInViewport();
 
-  await mainNav(page).getByRole('button', { name: 'Practice studio' }).click();
+  // A guest gets one link to the studio (the menu is for people with practice access).
+  await mainNav(page).getByRole('button', { name: 'Practice studio', exact: true }).click();
   await expect(page).toHaveURL(/\/#practice-studio$/);
   await expect(page.locator('#practice-studio .hero-practice-heading')).toBeInViewport();
 
   // Following the same link again, after scrolling away, goes back to the section.
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await expect(page.locator('#practice-studio .hero-practice-heading')).not.toBeInViewport();
-  await mainNav(page).getByRole('button', { name: 'Practice studio' }).click();
+  await mainNav(page).getByRole('button', { name: 'Practice studio', exact: true }).click();
   await expect(page.locator('#practice-studio .hero-practice-heading')).toBeInViewport();
 });
 
 test('the mobile menu has both links and closes after one is chosen', async ({ page }) => {
-  await prepare(page, 'student');
+  // A free week: no course access yet, so HSK courses is still in the menu.
+  await prepare(page, 'student', { access: 'freeWeek' });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/pricing');
   const menu = page.getByRole('button', { name: 'Toggle navigation menu' });
@@ -58,7 +62,7 @@ test('the mobile menu has both links and closes after one is chosen', async ({ p
   await expect(page.locator('#courses')).toBeInViewport();
 
   await menu.click();
-  await mainNav(page).getByRole('button', { name: 'Practice studio' }).click();
+  await mainNav(page).getByRole('button', { name: 'Practice studio', exact: true }).click();
   await expect(page).toHaveURL(/\/#practice-studio$/);
   await expect(menu).toHaveAttribute('aria-expanded', 'false');
   await expect(page.locator('#practice-studio .hero-practice-heading')).toBeInViewport();
@@ -68,7 +72,7 @@ test('the mobile menu has both links and closes after one is chosen', async ({ p
 // one menu there. For students this is checked with a plan (no Pricing in the header); on a free
 // week or a course subscription the row is known to be about 45 to 60px too wide at 1361px.
 for (const [role, labels] of [
-  ['student', ['HSK courses', 'Practice studio', 'About HSK', 'My Courses', 'Recorded sessions', 'My Progress']],
+  ['student', ['Practice studio', 'About HSK', 'My Courses', 'Recorded sessions', 'My Progress']],
   ['admin', ['HSK courses', 'Practice studio', 'My Courses', 'My Progress']],
 ]) test(`a${role === 'admin' ? 'n' : ''} ${role}’s desktop header fits every link on one row`, async ({ page }) => {
   await prepare(page, role, { access: 'plan' });
@@ -179,7 +183,7 @@ test('the mobile menu lists About HSK and the FAQ on their own', async ({ page }
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/pricing');
   await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
-  await expect(mainNav(page).locator('.nav-group')).toBeHidden();
+  for (const group of await mainNav(page).locator('.nav-group').all()) await expect(group).toBeHidden();
   await mainNav(page).getByRole('button', { name: 'FAQ', exact: true }).click();
   await expect(page).toHaveURL(/\/faq$/);
   await expect(page.getByRole('heading', { level: 1, name: 'FAQ' })).toBeVisible();
@@ -196,4 +200,120 @@ for (const [access, shown] of [['plan', false], ['freeWeek', true], ['course', t
   await expect(mainNav(page).getByRole('button', { name: 'Pricing' })).toHaveCount(shown ? 1 : 0);
   // The footer always links to the plans.
   await expect(page.getByRole('navigation', { name: 'Footer navigation' }).getByRole('link', { name: /Pricing/ })).toBeVisible();
+});
+
+test('with course access, My Courses replaces HSK courses in the header and mobile menu', async ({ page }) => {
+  await prepare(page, 'student', { access: 'course' });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/pricing');
+  await expect(mainNav(page).getByRole('button', { name: 'My Courses' })).toBeVisible();
+  await expect(mainNav(page).getByRole('button', { name: 'My Progress' })).toBeVisible();
+  await expect(mainNav(page).getByRole('button', { name: 'HSK courses' })).toHaveCount(0);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
+  await expect(mainNav(page).getByRole('button', { name: 'My Courses' })).toBeVisible();
+  await expect(mainNav(page).getByRole('button', { name: 'HSK courses' })).toHaveCount(0);
+});
+
+test('without any access, My Courses and My Progress are hidden and their pages say how to open them', async ({ page }) => {
+  await prepare(page, 'student', { access: 'none' });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/pricing');
+  await expect(mainNav(page).getByRole('button', { name: 'HSK courses' })).toBeVisible();
+  await expect(mainNav(page).getByRole('button', { name: 'My Courses' })).toHaveCount(0);
+  await expect(mainNav(page).getByRole('button', { name: 'My Progress' })).toHaveCount(0);
+  await page.goto('/my-courses');
+  await expect(page.getByRole('heading', { level: 1, name: 'My Courses opens with a plan' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'See plans' })).toHaveAttribute('href', '/pricing');
+  await page.goto('/progress');
+  await expect(page.getByRole('heading', { level: 1, name: 'My Progress opens with practice access' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Get a free week' })).toHaveAttribute('href', '/tests');
+});
+
+test('a free week opens My Progress, but My Courses needs a plan or course subscription', async ({ page }) => {
+  await prepare(page, 'student', { access: 'freeWeek' });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/pricing');
+  await expect(mainNav(page).getByRole('button', { name: 'My Progress' })).toBeVisible();
+  await expect(mainNav(page).getByRole('button', { name: 'My Courses' })).toHaveCount(0);
+  await page.goto('/my-courses');
+  await expect(page.getByRole('heading', { level: 1, name: 'My Courses opens with a plan' })).toBeVisible();
+});
+
+test('the course library on My Courses lists every HSK course on offer', async ({ page }) => {
+  await prepare(page, 'student', { access: 'course' });
+  await page.route('**/api/courses', route => route.fulfill({ json: [
+    { _id: 'c1', title: 'HSK 1 Chinese', level: 'HSK 1', language: 'chinese' },
+    { _id: 'c2', title: 'HSK 2 Chinese', level: 'HSK 2', language: 'chinese' },
+    { _id: 'c3', title: 'HSK 3 Chinese', level: 'HSK 3', language: 'chinese' },
+  ] }));
+  await page.route('**/api/progress/course/*', route => route.fulfill({ json: { total: 10, completed: route.request().url().endsWith('/c1') ? 4 : 0 } }));
+  await page.goto('/my-courses');
+  const library = page.getByRole('region', { name: 'Make time for your next lesson.' });
+  await expect(library.getByRole('heading', { level: 3 })).toHaveText(['HSK 1 Chinese', 'HSK 2 Chinese', 'HSK 3 Chinese']);
+  await expect(library).toContainText('Showing 3 of 3 courses');
+});
+
+test('on desktop, Practice studio opens a menu of every practice tool', async ({ page }) => {
+  await prepare(page, 'student', { access: 'freeWeek' });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/pricing');
+  const trigger = mainNav(page).getByRole('button', { name: 'Practice studio', exact: true });
+  // The menu replaces the plain link once the access check finishes.
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await trigger.click();
+  const menu = page.locator('#nav-studio-menu');
+  await expect(menu.getByRole('button')).toHaveText([/Pinyin & tones/, /Trace characters/, /Listening practice/, /Sentence builder/, /Measure words/, /Everyday numbers/, /Listening dictation/, /Conversation/, /See the whole studio/]);
+  await page.keyboard.press('Escape');
+  await expect(menu).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+  await trigger.click();
+  await menu.getByRole('button', { name: /Trace characters/ }).click();
+  await expect(page).toHaveURL(/\/practice\/characters$/);
+  await expect(menu).toHaveCount(0);
+});
+
+test('the mobile menu keeps one Practice studio link', async ({ page }) => {
+  await prepare(page, 'student', { access: 'freeWeek' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/pricing');
+  await page.getByRole('button', { name: 'Toggle navigation menu' }).click();
+  await expect(mainNav(page).locator('.nav-group')).toHaveCount(2);
+  await expect(mainNav(page).locator('.nav-group').first()).toBeHidden();
+  await mainNav(page).getByRole('button', { name: 'Practice studio', exact: true }).click();
+  await expect(page).toHaveURL(/\/#practice-studio$/);
+});
+
+for (const role of ['student', null]) test(`on desktop the theme toggle is at the far right of the header (${role || 'guest'})`, async ({ page }) => {
+  await prepare(page, role, { access: 'plan' });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/pricing');
+  const toggle = page.locator('.header-right .theme-toggle-compact.nav-desktop-only');
+  await expect(toggle).toBeVisible();
+  const rightmost = await page.locator('.header-right').evaluate(row => {
+    const visible = [...row.children].filter(child => child.offsetParent && getComputedStyle(child).display !== 'none');
+    const last = visible.reduce((a, b) => (b.getBoundingClientRect().right > a.getBoundingClientRect().right ? b : a));
+    return last.classList.contains('theme-toggle-compact');
+  });
+  expect(rightmost).toBe(true);
+});
+
+for (const [who, role, access] of [['a guest', null, 'none'], ['a student without practice access', 'student', 'none']]) test(`${who} gets one Practice studio link, not the menu`, async ({ page }) => {
+  await prepare(page, role, { access });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/pricing');
+  const studio = mainNav(page).getByRole('button', { name: 'Practice studio', exact: true });
+  await expect(studio).not.toHaveAttribute('aria-expanded');
+  await studio.click();
+  await expect(page).toHaveURL(/\/#practice-studio$/);
+  await expect(page.locator('#nav-studio-menu')).toHaveCount(0);
+});
+
+test('the home page always shows every practice tool, for guests too', async ({ page }) => {
+  await prepare(page);
+  await page.goto('/');
+  for (const tool of ['pinyin', 'trace', 'listening', 'sentences', 'measures', 'numbers', 'dictation', 'conversation']) {
+    await expect(page.locator(`#practice-studio .hero-practice-${tool}`)).toBeVisible();
+  }
+  await expect(page.getByRole('button', { name: /Show all .* practice tools/ })).toHaveCount(0);
 });
