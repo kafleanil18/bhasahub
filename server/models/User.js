@@ -11,6 +11,8 @@ const userSchema = new mongoose.Schema(
       } 
     },
     role: { type: String, enum: ['student', 'admin', 'superadmin'], default: 'student' },
+    // Bumped when the password changes; sign-in tokens with an older version are rejected.
+    tokenVersion: { type: Number, default: 0 },
     googleId: { type: String, sparse: true, unique: true },
     avatar: { type: String },
     signInCount: { type: Number, default: 0 },

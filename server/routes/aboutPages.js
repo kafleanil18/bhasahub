@@ -1,5 +1,5 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
+const { verifySession, sessionIsCurrent } = require('../utils/sessionToken');
 const AboutPage = require('../models/AboutPage');
 const User = require('../models/User');
 const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
@@ -18,9 +18,9 @@ async function isSuperAdmin(req) {
   const header = req.headers.authorization || '';
   if (!header.startsWith('Bearer ')) return false;
   try {
-    const payload = jwt.verify(header.slice(7), process.env.JWT_SECRET);
-    const user = await User.findById(payload.id).select('role');
-    return user?.role === 'superadmin';
+    const payload = verifySession(header.slice(7));
+    const user = await User.findById(payload.id).select('role tokenVersion');
+    return Boolean(user) && sessionIsCurrent(payload, user) && user.role === 'superadmin';
   } catch {
     return false;
   }

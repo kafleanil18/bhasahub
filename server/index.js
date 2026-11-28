@@ -33,10 +33,13 @@ const userRoutes = require('./routes/users');
 const slideRoutes = require('./routes/slides');
 const conversationPracticeRoutes = require('./routes/conversationPractice');
 const helmet = require('helmet');
+const { trustProxySetting } = require('./utils/trustProxy');
 
 const aiToneRoutes = require('./routes/aiTone');
 
 const app = express();
+// Read each visitor's real address from the host's proxy, so rate limits apply per visitor.
+app.set('trust proxy', trustProxySetting());
 app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(cors());
 app.use(express.json());

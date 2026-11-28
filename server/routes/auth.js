@@ -1,6 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const { signSession, secretsMatch } = require('../utils/sessionToken');
 const crypto = require('crypto');
 const rateLimit = require('express-rate-limit');
 const User = require('../models/User');
@@ -47,7 +47,7 @@ router.post('/register', authLimiter, async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const role = adminCode && process.env.ADMIN_CODE && adminCode === process.env.ADMIN_CODE ? 'admin' : 'student';
+    const role = secretsMatch(adminCode, process.env.ADMIN_CODE) ? 'admin' : 'student';
 
     const user = await User.create({ name, email, password: hashedPassword, role, emailVerified: false });
 
@@ -113,11 +113,7 @@ router.post('/login', authLimiter, async (req, res) => {
       }
     }
 
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    const token = signSession(user);
 
     const isFirstLogin = await recordStudentSignIn(user, 'email');
     res.json({
@@ -194,11 +190,7 @@ router.post('/google', authLimiter, async (req, res) => {
       });
     }
 
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    const token = signSession(user);
 
     const isFirstLogin = await recordStudentSignIn(user, 'google');
     res.json({
@@ -249,9 +241,11 @@ router.post('/change-password', requireAuth, async (req, res) => {
     if (!match) return res.status(401).json({ error: 'Current password is incorrect' });
 
     user.password = await bcrypt.hash(newPassword, 10);
+    user.tokenVersion = (user.tokenVersion || 0) + 1;
     await user.save();
 
-    res.json({ message: 'Password changed successfully' });
+    // Other devices are signed out; this one gets a fresh token so it stays signed in.
+    res.json({ message: 'Password changed successfully', token: signSession(user) });
   } catch (err) {
     res.status(500).json({ error: 'Could not change password' });
   }
@@ -310,6 +304,7 @@ router.post('/reset-password', authLimiter, async (req, res) => {
     user.password = await bcrypt.hash(newPassword, 10);
     user.resetPasswordTokenHash = undefined;
     user.resetPasswordExpires = undefined;
+    user.tokenVersion = (user.tokenVersion || 0) + 1;
     await user.save();
 
     res.json({ message: 'Password reset successfully. You can now log in.' });
@@ -418,6 +413,7 @@ router.post('/reset-password-otp', authLimiter, async (req, res) => {
     user.resetPasswordOtpExpires = undefined;
     user.resetPasswordTokenHash = undefined;
     user.resetPasswordExpires = undefined;
+    user.tokenVersion = (user.tokenVersion || 0) + 1;
     await user.save();
 
     res.json({ message: 'Password reset successfully! You can now sign in with your new password.' });

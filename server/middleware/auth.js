@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+const { verifySession, sessionIsCurrent } = require('../utils/sessionToken');
 const User = require('../models/User');
 
 // Checks: is there a valid token?
@@ -12,10 +12,10 @@ async function requireAuth(req, res, next) {
   const token = header.split(' ')[1];
 
   try {
-    const secret = process.env.JWT_SECRET;
-    const payload = jwt.verify(token, secret);
-    const user = await User.findById(payload.id).select('role');
+    const payload = verifySession(token);
+    const user = await User.findById(payload.id).select('role tokenVersion');
     if (!user) return res.status(401).json({ error: 'Account no longer exists' });
+    if (!sessionIsCurrent(payload, user)) return res.status(401).json({ error: 'Your password was changed — please sign in again' });
     req.user = { id: String(user._id), role: user.role };
     next(); // all good — proceed to the route
   } catch {
