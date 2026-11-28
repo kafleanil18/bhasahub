@@ -50,6 +50,10 @@ export default function AdminSidebar({ activeView, onNavigate, adminSidebarOpen,
                 </svg>
                 Conversation lessons
               </button>}
+              {isSuperAdmin && <button className={activeView === 'recorded-sessions' ? 'is-current' : undefined} aria-current={activeView === 'recorded-sessions' ? 'page' : undefined} onClick={() => onNavigate('recorded-sessions')}>
+                <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg>
+                Recorded sessions
+              </button>}
               <button className={activeView === 'tests' ? 'is-current' : undefined} aria-current={activeView === 'tests' ? 'page' : undefined} onClick={() => onNavigate('tests')}>
                 <svg className="nav-svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>

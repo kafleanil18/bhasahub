@@ -83,6 +83,10 @@ export default function SiteHeader({ showAboutUs = false, adminSidebarOpen, atte
                     <span>My Courses</span>
                   </button>
 
+                  {user.role === 'student' && <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/recorded-sessions'); }}>
+                    <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg>
+                    <span>Recorded sessions</span>
+                  </button>}
                   <button className="nav-link" onClick={() => { setMobileMenuOpen(false); onNavigate('/progress'); }}>
                     <svg className="nav-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>

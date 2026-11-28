@@ -71,6 +71,7 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/settings/email', require('./routes/emailSettings'));
 app.use('/api/settings/email-api', require('./routes/emailApiSettings'));
 app.use('/api/practice-reminders', require('./routes/practiceReminders'));
+app.use('/api/recorded-sessions', require('./routes/recordedSessions'));
 app.use('/api/push', require('./routes/push'));
 app.use('/api/srs', srsRoutes);
 app.use('/api/attempts', attemptRoutes);

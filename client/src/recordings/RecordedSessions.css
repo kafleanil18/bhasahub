@@ -1,0 +1,71 @@
+.recorded-sessions { max-width: 1200px; }
+.recording-toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; padding: 20px 0; border-block: 1px solid var(--line); margin-bottom: 24px; }
+.recording-toolbar label, .recording-form label { display: flex; flex-direction: column; gap: 8px; font-size: 14px; font-weight: 650; }
+.recording-toolbar input, .recording-form :is(input:not([type=checkbox]),textarea) { box-sizing: border-box; min-width: 0; width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--card); color: var(--ink); font: inherit; }
+.recording-form textarea { resize: vertical; }
+.recording-form textarea:focus-visible, .recorded-sessions a:focus-visible { outline: 3px solid var(--jade); outline-offset: 3px; }
+.recording-layout { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(0, 2fr); gap: 24px; align-items: start; }
+.recording-list { display: grid; gap: 12px; }
+.recording-count, .recording-help, .recording-optional { color: var(--mist); font-size: 13px; line-height: 1.7; font-weight: 400; }
+.recording-choice { display: flex; flex-direction: column; align-items: start; gap: 8px; text-align: left; padding: 20px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); overflow-wrap: anywhere; }
+.recording-choice.is-selected { border-color: var(--jade); box-shadow: inset 3px 0 var(--jade); }
+.recording-choice strong { font-size: 17px; }
+.recording-choice span, .recording-choice time, .recording-admin-list time { font-size: 13px; color: var(--mist); }
+.recording-viewer { min-width: 0; border: 1px solid var(--line); background: var(--card); padding: 24px; border-radius: 8px; }
+.recording-viewer h2 { margin-bottom: 12px; overflow-wrap: anywhere; }
+.recording-description { white-space: pre-wrap; overflow-wrap: anywhere; margin-bottom: 20px; line-height: 1.7; }
+.recording-player { display: grid; gap: 16px; }
+.recording-player :is(video,iframe) { width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 8px; background: #111; }
+.recording-player a { justify-self: start; }
+.recording-empty { padding: 40px 16px; text-align: center; color: var(--mist); }
+.recording-empty h2 { color: var(--ink); font-size: 22px; margin-bottom: 12px; }
+.recording-admin-list { list-style: none; padding: 0; }
+.recording-admin-list > li { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+.recording-admin-list h2 { font-size: 20px; margin: 8px 0; overflow-wrap: anywhere; }
+.recording-admin-list p { color: var(--mist); font-size: 14px; }
+.recording-row-actions, .recording-selection-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.recording-form-fields { border: 0; padding: 0; margin: 0; display: grid; gap: 16px; min-width: 0; }
+.recording-students { border: 1px solid var(--line); border-radius: 8px; padding: 16px; min-width: 0; display: grid; gap: 12px; }
+.recording-students legend { font-weight: 700; padding: 0 8px; }
+.recording-student-list { max-height: 240px; overflow-y: auto; }
+.recording-student-list label { flex-direction: row; align-items: center; padding: 12px 0; gap: 12px; border-top: 1px solid var(--line); cursor: pointer; }
+.recording-student-list input { width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--jade); }
+.recording-student-list span { min-width: 0; overflow-wrap: anywhere; }
+.recording-student-list small { display: block; color: var(--mist); font-weight: 400; margin-top: 4px; }
+@media (max-width: 767px) {
+  .recording-layout { grid-template-columns: 1fr; }
+  .recording-admin-list > li { align-items: start; flex-direction: column; }
+  .recording-viewer { padding: 16px; }
+  .recorded-sessions .access-page-heading { flex-wrap: wrap; }
+}
+.recording-calendar { border: 1px solid var(--line); border-radius: 12px; padding: 24px; margin-bottom: 28px; background: var(--card); }
+.recording-calendar-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+.recording-calendar-heading h2 { margin: 0; font-size: 24px; }
+.recording-calendar-heading > div { display: flex; gap: 8px; }
+.recording-calendar-heading button { min-width: 44px; }
+.recording-calendar-table { width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 4px; }
+.recording-calendar-table th { padding: 8px 0; color: var(--mist); font-size: 13px; font-weight: 600; text-align: center; }
+.recording-calendar-table td { padding: 0; vertical-align: top; }
+.recording-calendar-day { display: flex; width: 100%; min-height: 80px; flex-direction: column; justify-content: space-between; align-items: start; gap: 8px; padding: 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); text-align: left; }
+.recording-calendar-day:hover:not(:disabled) { background: var(--rice); border-color: var(--jade); }
+.recording-calendar-day.is-today > span:first-child { font-weight: 800; text-decoration: underline; text-underline-offset: 4px; }
+.recording-calendar-day.is-selected { border-color: var(--jade); box-shadow: inset 0 0 0 1px var(--jade); background: color-mix(in srgb, var(--jade) 8%, var(--card)); }
+.recording-calendar-table .is-outside .recording-calendar-day { background: var(--rice); color: var(--mist); }
+.recording-calendar-count { font-size: 12px; color: var(--jade); line-height: 1.2; }
+.recording-calendar-caption { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-top: 16px; }
+.recording-calendar-caption p { color: var(--mist); font-size: 13px; }
+.recording-day-title { font-size: 22px; margin-bottom: 20px; }
+@media (max-width: 600px) {
+  .recording-calendar { padding: 12px 8px; }
+  .recording-calendar-heading { flex-wrap: wrap; padding-inline: 4px; gap: 12px; }
+  .recording-calendar-heading h2 { font-size: 20px; }
+  .recording-calendar-table { border-spacing: 2px; }
+  .recording-calendar-day { min-height: 58px; padding: 8px 4px; align-items: center; }
+  .recording-calendar-count-text { display: none; }
+  .recording-calendar-caption { padding-inline: 4px; }
+}
+
+.access-dialog:has(.recording-watch-content) { width: min(960px, calc(100vw - 32px)); max-width: calc(100vw - 32px); }
+.recording-watch-content { display: grid; gap: 20px; }
+.recording-watch-select { display: grid; gap: 8px; font-weight: 650; }
+.recording-watch-select select { min-height: 44px; width: 100%; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); font: inherit; }

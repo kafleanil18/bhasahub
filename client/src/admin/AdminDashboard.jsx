@@ -13,6 +13,7 @@ const API = window.API_BASE_URL + '/api';
 const shortcuts = [
   ['courses', 'courses', 'Courses'],
   ['tests', 'tests', 'Tests'],
+  ['recorded-sessions', 'recordings', 'Recorded sessions'],
   ['subscriptions', 'students', 'Students & access'],
   ['teachers', 'teachers', 'Teachers'],
 ];

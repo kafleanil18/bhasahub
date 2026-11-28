@@ -28,6 +28,8 @@ const TestimonialManager = lazy(() => import('../admin/TestimonialManager'));
 const SubscriptionManager = lazy(() => import('../admin/SubscriptionManager'));
 const UserManager = lazy(() => import('../admin/UserManager'));
 const StudentManager = lazy(() => import('../admin/StudentManager'));
+const RecordedSessions = lazy(() => import('../recordings/RecordedSessions.jsx'));
+const RecordedSessionManager = lazy(() => import('../recordings/RecordedSessionManager.jsx'));
 const AdminDashboard = lazy(() => import('../admin/AdminDashboard'));
 const AuditLog = lazy(() => import('../admin/AuditLog'));
 const HanziTracePage = lazy(() => import('../practice/HanziTracePage'));
@@ -150,6 +152,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
     </Route>
     <Route element={<RequireSession user={user} />}>
       <Route element={<StudentLayout />}>
+        <Route element={<RequireSession user={user} roles={['student']} hidden />}><Route path="/recorded-sessions" element={<RecordedSessions />} /></Route>
         <Route path="/continue" element={<ContinueLearning />} />
         <Route path="/my-courses" element={<Dashboard user={user} onOpenCourse={(course, resume) => navigate(resume ? `/continue?course=${encodeURIComponent(course._id)}` : `/courses/${encodeURIComponent(course._id)}`)} onBrowse={() => navigate('/#courses')} />} />
         <Route path="/progress" element={<ProgressAnalytics user={user} onBack={onHome} />} />
@@ -178,6 +181,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
           <Route path="courses" element={<AdminPanel onBack={onHome} onManageLessons={course => navigate(manageCoursePath(course._id))} />} />
           <Route path="courses/:courseId/lessons" element={<CourseRoute user={user} manage onHome={onHome} />} />
           <Route path="users" element={<UserManager onBack={onHome} />} />
+          <Route path="recorded-sessions" element={<RecordedSessionManager />} />
           <Route path="students" element={<StudentManager onBack={onHome} />} />
           <Route path="conversations" element={<ConversationManager onBack={onHome} />} />
           <Route path="testimonials" element={<TestimonialManager onBack={onHome} />} />

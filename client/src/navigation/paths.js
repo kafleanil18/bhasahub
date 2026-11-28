@@ -4,6 +4,7 @@ export const practicePaths = {
   dictation: '/practice/dictation', conversation: '/practice/conversations', tests: '/tests',
 };
 export const adminPaths = {
+  'recorded-sessions': '/admin/recorded-sessions',
   dashboard: '/admin', courses: '/admin/courses', conversations: '/admin/conversations', tests: '/admin/tests',
   subscriptions: '/admin/subscriptions', pinyin: '/admin/pinyin', trace: '/admin/characters',
   'sentence-audio': '/admin/sentence-audio', 'tone-pair-audio': '/admin/tone-pair-audio', testimonials: '/admin/testimonials', inbox: '/admin/inbox',
