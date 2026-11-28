@@ -11,6 +11,7 @@ import './SentenceAudioManager.css';
 import { useInitialLoad } from '../navigation/pageLoad';
 
 import RefreshButton from '../components/RefreshButton';
+import { apiFetch } from '../lib/apiClient';
 const PAGE_SIZE = 15;
 const numberLabel = sentence => `#${String(sentence.number).padStart(3, '0')}`;
 
@@ -40,9 +41,8 @@ export default function SentenceAudioManager({ onBack }) {
     try {
       const form = new FormData();
       if (recording) form.append('recording', recording, `${sentence.id}.${recordingExtension(recording.type)}`);
-      const response = await fetch(`${window.API_BASE_URL}/api/sentences/${sentence.id}/audio`, {
+      const response = await apiFetch(`${window.API_BASE_URL}/api/sentences/${sentence.id}/audio`, {
         method: recording ? 'POST' : 'DELETE',
-        headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` },
         ...(recording ? { body: form } : {}), signal: controllerRef.current.signal,
       });
       const data = await response.json();

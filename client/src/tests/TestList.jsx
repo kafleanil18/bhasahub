@@ -9,6 +9,7 @@ import Icon from '../components/Icon';
 import { useInitialLoad } from '../navigation/pageLoad';
 
 import RefreshButton from '../components/RefreshButton';
+import { apiFetch } from '../lib/apiClient';
 const API = window.API_BASE_URL + '/api';
 const LEVELS = ['HSK 1', 'HSK 2', 'HSK 3', 'HSK 4'];
 
@@ -27,7 +28,7 @@ function TestList({ onOpenTest, onBack, user }) {
   const [requestError, setRequestError] = useState('');
 
   useEffect(() => {
-    fetch(`${API}/tests`, { headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` } })
+    apiFetch(`${API}/tests`)
       .then(res => res.json())
       .then(data => { setTests(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(() => setLoading(false));
@@ -51,9 +52,9 @@ function TestList({ onOpenTest, onBack, user }) {
   const requestAccess = async () => {
     setRequesting(true); setRequestError('');
     try {
-      const response = await fetch(`${API}/access-requests`, {
+      const response = await apiFetch(`${API}/access-requests`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}`, 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ scope: 'tests' }),
       });
       const data = await response.json();
@@ -79,7 +80,7 @@ function TestList({ onOpenTest, onBack, user }) {
     const custom = tests.map(test => ({ id: test._id, url: `${API}/attempts/test/${test._id}` }));
     Promise.all([...papers, ...custom].map(async item => {
       try {
-        const response = await fetch(item.url, { headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` } });
+        const response = await apiFetch(item.url);
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || 'Could not load test progress.');
         return [item.id, Array.isArray(data) && data.length > 0];

@@ -1,12 +1,11 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
+import { apiFetch } from '../lib/apiClient';
 
 const API = window.API_BASE_URL + '/api';
 
 function SlideManager({ onBack }) {
-  const token = localStorage.getItem('token');
-  const authHeaders = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
-  const jsonHeaders = { 'Content-Type': 'application/json', ...authHeaders };
+  const jsonHeaders = { 'Content-Type': 'application/json' };
 
   const [slides, setSlides] = useState([]);
   const [error, setError] = useState('');
@@ -19,14 +18,14 @@ function SlideManager({ onBack }) {
 
   const load = useCallback(async () => {
     try {
-      const res = await fetch(`${API}/slides/all`, { headers: authHeaders });
+      const res = await apiFetch(`${API}/slides/all`);
       const data = await res.json();
       if (res.ok) setSlides(data);
       else setError(data.error || 'Could not load slides');
     } catch {
       setError('Could not reach the server');
     }
-  }, [authHeaders]);
+  }, []);
 
   useEffect(() => { load(); }, [load]);
 
@@ -53,7 +52,7 @@ function SlideManager({ onBack }) {
     try {
       const fd = new FormData();
       fd.append('file', file);
-      const res = await fetch(`${API}/upload`, { method: 'POST', headers: authHeaders, body: fd });
+      const res = await apiFetch(`${API}/upload`, { method: 'POST', body: fd });
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || 'PDF upload failed');
@@ -73,7 +72,7 @@ function SlideManager({ onBack }) {
       return setError('Title and PDF are required');
     }
     const body = { title, description, pdfUrl };
-    const res = await fetch(
+    const res = await apiFetch(
       editingId ? `${API}/slides/${editingId}` : `${API}/slides`,
       { method: editingId ? 'PUT' : 'POST', headers: jsonHeaders, body: JSON.stringify(body) }
     );
@@ -83,7 +82,7 @@ function SlideManager({ onBack }) {
 
   const remove = async (id) => {
     if (!confirm('Delete this slide?')) return;
-    await fetch(`${API}/slides/${id}`, { method: 'DELETE', headers: authHeaders });
+    await apiFetch(`${API}/slides/${id}`, { method: 'DELETE' });
     if (editingId === id) reset();
     load();
   };

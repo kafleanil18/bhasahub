@@ -1,16 +1,11 @@
 import { useEffect, useState } from 'react';
+import { apiJson } from '../lib/apiClient';
 
 export const reminderApi = `${window.API_BASE_URL}/api/practice-reminders`;
-export async function reminderRequest(path, options = {}) {
-  const response = await fetch(`${reminderApi}${path}`, {
-    ...options,
-    signal: options.signal || AbortSignal.timeout(20000),
-    headers: { Authorization: `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json' },
-  });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error || 'Could not complete the request. Please try again.');
-  return data;
-}
+export const reminderRequest = (path, options = {}) => apiJson(`${reminderApi}${path}`, {
+  ...options, timeout: 20000, headers: { 'Content-Type': 'application/json' },
+  fallbackError: 'Could not complete the request. Please try again.',
+});
 
 export default function usePracticeReminders() {
   const [audience, setAudience] = useState(null);

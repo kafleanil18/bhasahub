@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import HanziWriter from 'hanzi-writer';
 import Icon from '../components/Icon';
 import { useInitialLoad } from '../navigation/pageLoad';
+import { apiFetch } from '../lib/apiClient';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -91,7 +92,7 @@ function parseCsvRows(text) {
   return rows;
 }
 
-function HanziTracePage({ user, onBack, token }) {
+function HanziTracePage({ user, onBack }) {
   const practicedCharactersRef = useRef(new Set());
   const canManage = user && (user.role === 'admin' || user.role === 'superadmin');
 
@@ -229,7 +230,7 @@ function HanziTracePage({ user, onBack, token }) {
   const fetchCharacters = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API}/hanzi-trace`);
+      const res = await apiFetch(`${API}/hanzi-trace`);
       if (res.ok) setCharacters(await res.json());
     } catch (err) {
       console.error('Failed to load trace characters:', err);
@@ -377,9 +378,9 @@ function HanziTracePage({ user, onBack, token }) {
     try {
       const url = editingCharacter ? `${API}/hanzi-trace/${editingCharacter._id}` : `${API}/hanzi-trace`;
       const method = editingCharacter ? 'PUT' : 'POST';
-      const res = await fetch(url, {
+      const res = await apiFetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
@@ -402,9 +403,8 @@ function HanziTracePage({ user, onBack, token }) {
     if (!confirm(`Are you sure you want to delete "${character}"?`)) return;
 
     try {
-      const res = await fetch(`${API}/hanzi-trace/${id}`, {
+      const res = await apiFetch(`${API}/hanzi-trace/${id}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
         if (activeCharacterId === id) backToBrowse();
@@ -454,9 +454,9 @@ function HanziTracePage({ user, onBack, token }) {
 
     setCsvUploading(true);
     try {
-      const res = await fetch(`${API}/hanzi-trace/bulk`, {
+      const res = await apiFetch(`${API}/hanzi-trace/bulk`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ characters: parsedCharacters }),
       });
       const data = await res.json();

@@ -6,7 +6,7 @@ import './TestManager.css';
 import { useInitialLoad } from '../navigation/pageLoad';
 
 import RefreshButton from '../components/RefreshButton';
-const auth = () => ({ Authorization: `Bearer ${localStorage.getItem('token') || ''}` });
+import { apiFetch } from '../lib/apiClient';
 
 export default function TestManager({ onBack, onPreviewTest, user }) {
   const { papers, error, loading, reload } = usePracticePapers();
@@ -20,7 +20,7 @@ export default function TestManager({ onBack, onPreviewTest, user }) {
   const edit = async id => {
     setOpening(true); setEditError(''); setNotice('');
     try {
-      const res = await fetch(`${window.API_BASE_URL}/api/hsk1/${id}/editor`, { headers: auth() });
+      const res = await apiFetch(`${window.API_BASE_URL}/api/hsk1/${id}/editor`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not load the editor.');
       setEditor({ id, content: data });
@@ -32,7 +32,7 @@ export default function TestManager({ onBack, onPreviewTest, user }) {
     if (!window.confirm(confirm)) return;
     setWorking(paper.id); setEditError(''); setNotice('');
     try {
-      const res = await fetch(`${window.API_BASE_URL}/api/hsk1/${paper.id}${path}`, { method, headers: auth() });
+      const res = await apiFetch(`${window.API_BASE_URL}/api/hsk1/${paper.id}${path}`, { method });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not update the paper.');
       setNotice(done); reload();

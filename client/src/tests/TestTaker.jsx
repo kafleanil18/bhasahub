@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 import Icon from '../components/Icon';
 import { useInitialLoad } from '../navigation/pageLoad';
+import { apiFetch } from '../lib/apiClient';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -71,7 +72,7 @@ function TestTaker({ testId, onBack }) {
   };
 
   useEffect(() => {
-    fetch(`${API}/tests/${testId}`, { headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {} })
+    apiFetch(`${API}/tests/${testId}`)
       .then(async res => {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Test not found.');
@@ -84,7 +85,7 @@ function TestTaker({ testId, onBack }) {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) return;
-    fetch(`${API}/attempts/test/${testId}`, { headers: { Authorization: `Bearer ${token}` } })
+    apiFetch(`${API}/attempts/test/${testId}`)
       .then((res) => (res.ok ? res.json() : []))
       .then(setHistory)
       .catch(() => {});
@@ -167,9 +168,9 @@ function TestTaker({ testId, onBack }) {
     setSubmitError(null);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${API}/attempts/test`, {
+      const res = await apiFetch(`${API}/attempts/test`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ testId: test._id, answers: test.questions.map((_, i) => answers[i] ?? null) }),
       });
       const attempt = await res.json();

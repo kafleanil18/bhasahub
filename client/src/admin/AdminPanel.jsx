@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 import ControlIcon from './ControlIcon';
 import CourseEditor from './CourseEditor';
@@ -6,6 +6,7 @@ import './CourseStudio.css';
 import { useInitialLoad } from '../navigation/pageLoad';
 
 import RefreshButton from '../components/RefreshButton';
+import { apiFetch } from '../lib/apiClient';
 const API = window.API_BASE_URL + '/api/courses';
 const emptyDraft = () => ({ title: '', language: 'chinese', level: '', description: '', glyph: '', image: '', published: false });
 const courseDraft = course => Object.fromEntries(Object.entries(emptyDraft()).map(([key, fallback]) => [key, course[key] ?? fallback]));
@@ -30,16 +31,15 @@ export default function AdminPanel({ onBack, onManageLessons }) {
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState('all');
   const titleRef = useRef(null);
-  const headers = useMemo(() => ({ Authorization: `Bearer ${localStorage.getItem('token')}` }), []);
   const dirty = JSON.stringify(draft) !== JSON.stringify(baseline);
   const locked = busy !== null;
 
   const loadCourses = useCallback(async () => {
     setLoading(true); setLoadError('');
-    try { setCourses(await fetch(`${API}/all`, { headers }).then(readResponse)); }
+    try { setCourses(await apiFetch(`${API}/all`).then(readResponse)); }
     catch (err) { setLoadError(err.message || 'Could not reach the server.'); }
     finally { setLoading(false); }
-  }, [headers]);
+  }, []);
   useEffect(() => { loadCourses(); }, [loadCourses]);
   useEffect(() => {
     const warn = event => { if (dirty) { event.preventDefault(); event.returnValue = ''; } };
@@ -61,7 +61,7 @@ export default function AdminPanel({ onBack, onManageLessons }) {
     setUploading(true); setError(''); setNotice('');
     const body = new FormData(); body.append('file', file);
     try {
-      const data = await fetch(window.API_BASE_URL + '/api/upload', { method: 'POST', headers, body }).then(readResponse);
+      const data = await apiFetch(window.API_BASE_URL + '/api/upload', { method: 'POST', body }).then(readResponse);
       setDraft(current => ({ ...current, image: data.url }));
     } catch (err) { setError(err.message || 'Could not upload the image.'); }
     finally { setUploading(false); }
@@ -72,7 +72,7 @@ export default function AdminPanel({ onBack, onManageLessons }) {
     if (!draft.title.trim()) { setError('Enter a course title.'); titleRef.current?.focus(); return; }
     setBusy('save'); setError(''); setNotice('');
     try {
-      await fetch(editingId ? `${API}/${editingId}` : API, { method: editingId ? 'PUT' : 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ ...draft, title: draft.title.trim() }) }).then(readResponse);
+      await apiFetch(editingId ? `${API}/${editingId}` : API, { method: editingId ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...draft, title: draft.title.trim() }) }).then(readResponse);
       setNotice(`“${draft.title.trim()}” ${editingId ? 'updated' : 'created'} successfully.`);
       resetForm(); await loadCourses();
     } catch (err) { setError(err.message || 'Could not save the course.'); }
@@ -84,7 +84,7 @@ export default function AdminPanel({ onBack, onManageLessons }) {
     if (remove && !window.confirm(`Delete “${course.title}”? This cannot be undone.`)) return;
     setBusy(course._id); setError(''); setNotice('');
     try {
-      await fetch(`${API}/${course._id}`, { method: remove ? 'DELETE' : 'PUT', headers: { ...headers, 'Content-Type': 'application/json' }, ...(remove ? {} : { body: JSON.stringify({ published: !course.published }) }) }).then(readResponse);
+      await apiFetch(`${API}/${course._id}`, { method: remove ? 'DELETE' : 'PUT', headers: { 'Content-Type': 'application/json' }, ...(remove ? {} : { body: JSON.stringify({ published: !course.published }) }) }).then(readResponse);
       if (course._id === editingId) resetForm();
       setNotice(`“${course.title}” ${remove ? 'deleted' : course.published ? 'moved to drafts' : 'published'}.`);
       await loadCourses();

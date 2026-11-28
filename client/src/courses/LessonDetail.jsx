@@ -6,6 +6,7 @@ import SrsReview from './SrsReview';
 import { mediaUrl } from '../utils/mediaUrl';
 import Icon from '../components/Icon';
 import { playMandarin } from '../practice/naturalVoice';
+import { apiFetch } from '../lib/apiClient';
 
 const API = window.API_BASE_URL + '/api';
 const SERVER = window.API_BASE_URL;
@@ -22,7 +23,7 @@ function LessonDetail({ course, lesson, nextLesson, user, token, isCompleted, co
   useEffect(() => { window.scrollTo(0, 0); }, [lesson._id]);
 
   useEffect(() => {
-    fetch(`${API}/lessons/${lesson._id}/vocabulary`, { headers: { Authorization: `Bearer ${token}` } })
+    apiFetch(`${API}/lessons/${lesson._id}/vocabulary`)
       .then(res => { if (!res.ok) throw new Error(); return res.json(); })
       .then(data => setWords(data))
       .catch(() => {

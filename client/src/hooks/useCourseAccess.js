@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { apiFetch } from '../lib/apiClient';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -20,8 +21,8 @@ export function useCourseAccess(courseId, token) {
       if (checking || controller.signal.aborted) return;
       checking = true;
       try {
-        const res = await fetch(`${API}/subscriptions/check/${courseId}`, {
-          headers: { Authorization: `Bearer ${token}` }, signal: controller.signal,
+        const res = await apiFetch(`${API}/subscriptions/check/${courseId}`, {
+          signal: controller.signal,
         });
         if (!res.ok) throw new Error('Access check failed');
         const data = await res.json();

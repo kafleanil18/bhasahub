@@ -8,6 +8,7 @@ import Icon from '../components/Icon';
 import { playMandarin } from '../practice/naturalVoice';
 
 import RefreshButton from '../components/RefreshButton';
+import { apiFetch } from '../lib/apiClient';
 const API = window.API_BASE_URL + '/api';
 
 // Helper to determine if a word has Chinese characters
@@ -107,7 +108,7 @@ function ProgressAnalytics({ user, onBack }) {
     const controller = new AbortController();
     setLoading(true);
     setError('');
-    fetch(`${API}/analytics/me`, { headers: { Authorization: `Bearer ${token}` }, signal: controller.signal })
+    apiFetch(`${API}/analytics/me`, { signal: controller.signal })
       .then(async (res) => {
         const resData = await res.json();
         if (!res.ok) throw new Error(resData.error || 'Could not load your learning analytics.');

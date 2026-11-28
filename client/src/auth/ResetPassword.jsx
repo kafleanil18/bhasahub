@@ -1,6 +1,7 @@
 import BrandLogo from '../components/BrandLogo';
 import { useState, useMemo } from 'react';
 import './Login.css';
+import { apiFetch } from '../lib/apiClient';
 
 function ResetPassword({ token, onDone }) {
   const [newPassword, setNewPassword] = useState('');
@@ -32,7 +33,7 @@ function ResetPassword({ token, onDone }) {
 
     setLoading(true);
     try {
-      const res = await fetch(window.API_BASE_URL + '/api/auth/reset-password', {
+      const res = await apiFetch(window.API_BASE_URL + '/api/auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, newPassword }),

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
+import { apiFetch } from '../lib/apiClient';
 
-const authHeaders = () => ({ Authorization: `Bearer ${localStorage.getItem('token') || ''}`, 'Content-Type': 'application/json' });
+const authHeaders = () => ({ 'Content-Type': 'application/json' });
 export const isStaff = user => ['admin', 'superadmin'].includes(user?.role);
 
 export const FREE_ACCESS_DAYS = 7;
@@ -21,7 +22,7 @@ export function practiceStatus(requests, subscriptions = []) {
   return requests.some(row => row.scope === 'tests' && row.status === 'denied') ? 'denied' : 'none';
 }
 
-const getJson = path => fetch(`${window.API_BASE_URL}/api${path}`, { headers: authHeaders() })
+const getJson = path => apiFetch(`${window.API_BASE_URL}/api${path}`, { headers: authHeaders() })
   .then(res => { if (!res.ok) throw new Error(); return res.json(); });
 
 // Loads the student's access requests and subscriptions and works out their practice status.
@@ -49,7 +50,7 @@ export function usePracticeAccess(user) {
   }, [user, signedIn]);
 
   const request = useCallback(async () => {
-    const response = await fetch(`${window.API_BASE_URL}/api/access-requests`, { method: 'POST', headers: authHeaders(), body: JSON.stringify({ scope: 'tests' }) });
+    const response = await apiFetch(`${window.API_BASE_URL}/api/access-requests`, { method: 'POST', headers: authHeaders(), body: JSON.stringify({ scope: 'tests' }) });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.error || 'Could not send your request.');
     setStatus('pending');

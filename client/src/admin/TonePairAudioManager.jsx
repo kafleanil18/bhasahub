@@ -10,6 +10,7 @@ import './SentenceAudioManager.css';
 import { useInitialLoad } from '../navigation/pageLoad';
 
 import RefreshButton from '../components/RefreshButton';
+import { apiFetch } from '../lib/apiClient';
 const API = () => `${window.API_BASE_URL}/api/tone-practice/pairs`;
 const ruleLabels = { third: 'Two 3rd tones', bu: '不 tone change', yi: '一 tone change' };
 
@@ -37,7 +38,7 @@ export default function TonePairAudioManager({ onBack }) {
   const load = useCallback(async signal => {
     setLoadError('');
     try {
-      const response = await fetch(API(), { headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` }, signal });
+      const response = await apiFetch(API(), { signal });
       const data = await response.json();
       if (!response.ok || !Array.isArray(data.pairs)) throw new Error(data.error || 'Could not load tone pair words.');
       setPairs(data.pairs);
@@ -55,9 +56,8 @@ export default function TonePairAudioManager({ onBack }) {
       const form = new FormData();
       const fileExtension = recording?.name?.match(/\.(mp3|m4a|wav|ogg|webm)$/i)?.[1]?.toLowerCase();
       if (recording) form.append('recording', recording, `${pair.id}.${fileExtension || recordingExtension(recording.type)}`);
-      const response = await fetch(`${API()}/${encodeURIComponent(pair.id)}/audio`, {
+      const response = await apiFetch(`${API()}/${encodeURIComponent(pair.id)}/audio`, {
         method: recording ? 'POST' : 'DELETE',
-        headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` },
         ...(recording ? { body: form } : {}), signal: controllerRef.current.signal,
       });
       const data = await response.json();
@@ -66,7 +66,6 @@ export default function TonePairAudioManager({ onBack }) {
       setMessage(`${pair.hanzi}: ${recording ? 'recording saved and ready for tone pair practice' : 'recording removed. Students will hear their device voice instead'}.`);
     } finally { setBusyId(''); busyRef.current = false; }
   }
-  const authHeaders = { Authorization: `Bearer ${localStorage.getItem('token') || ''}` };
   async function addWord(word, file) {
     if (busyRef.current) return;
     setAddError(''); setMessage(''); setError('');
@@ -74,7 +73,7 @@ export default function TonePairAudioManager({ onBack }) {
     busyRef.current = true; setBusyId('new');
     let pair;
     try {
-      const response = await fetch(API(), { method: 'POST', headers: { ...authHeaders, 'Content-Type': 'application/json' }, body: JSON.stringify(word) });
+      const response = await apiFetch(API(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(word) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not add this word.');
       pair = data.pair;
@@ -91,7 +90,7 @@ export default function TonePairAudioManager({ onBack }) {
     const pair = deletingPair;
     busyRef.current = true; setBusyId(pair.id); setError('');
     try {
-      const response = await fetch(`${API()}/${encodeURIComponent(pair.id)}`, { method: 'DELETE', headers: authHeaders });
+      const response = await apiFetch(`${API()}/${encodeURIComponent(pair.id)}`, { method: 'DELETE' });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not delete this word.');
       setPairs(previous => previous.filter(item => item.id !== pair.id));

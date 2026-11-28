@@ -1,13 +1,8 @@
+import { apiJson } from '../../lib/apiClient';
 // Calls to the super admin student endpoints. Every call resolves to the parsed body or throws with the server's message.
-export async function studentRequest(path, options = {}) {
-  const response = await fetch(`${window.API_BASE_URL}/api${path}`, {
-    ...options,
-    headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}`, 'Content-Type': 'application/json', ...options.headers },
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
-  return data;
-}
+export const studentRequest = (path, options = {}) => apiJson(`/api${path}`, {
+  ...options, headers: { 'Content-Type': 'application/json', ...options.headers },
+});
 
 const DAY = 86400000;
 export const isLive = date => !!date && new Date(date).getTime() > Date.now();

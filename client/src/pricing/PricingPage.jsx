@@ -8,12 +8,13 @@ import './PricingPage.css';
 const API = `${window.API_BASE_URL}/api/plans`;
 import ContactLinks from '../components/ContactLinks';
 import { CONTACT_PHONE } from '../components/contactPhone';
+import { apiFetch } from '../lib/apiClient';
 const formatDate = value => new Date(value).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
 
 async function call(path = '', options = {}) {
-  const response = await fetch(`${API}${path}`, {
+  const response = await apiFetch(`${API}${path}`, {
     ...options,
-    headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}`, 'Content-Type': 'application/json', ...options.headers },
+    headers: { 'Content-Type': 'application/json', ...options.headers },
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.error || 'Something went wrong. Please try again.');

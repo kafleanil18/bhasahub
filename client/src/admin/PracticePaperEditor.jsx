@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { blankPaper } from './paperTemplate';
+import { apiFetch } from '../lib/apiClient';
 
-const auth = () => ({ Authorization: `Bearer ${localStorage.getItem('token') || ''}` });
 const API = `${window.API_BASE_URL}/api`;
 // Recommended upload sizes keep picture file sizes small: a full paper's pictures should total roughly 1 MB.
 const MEDIA_HINTS = {
@@ -24,7 +24,7 @@ function MediaUpload({ label, value, onChange, audio = false, onBusy, hint }) {
     setBusy(true); onBusy(1); setError('');
     try {
       const body = new FormData(); body.append('file', file);
-      const res = await fetch(`${API}/upload`, { method: 'POST', headers: auth(), body });
+      const res = await apiFetch(`${API}/upload`, { method: 'POST', body });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Upload failed.');
       onChange(data.url);
@@ -57,7 +57,7 @@ export default function PracticePaperEditor({ initial, paperId, onSaved, onCance
   const save = async event => {
     event.preventDefault(); setBusy(true); setError('');
     try {
-      const res = await fetch(`${API}/hsk1${paperId ? `/${paperId}/content` : ''}`, { method: paperId ? 'PUT' : 'POST', headers: { ...auth(), 'Content-Type': 'application/json' }, body: JSON.stringify(paper) });
+      const res = await apiFetch(`${API}/hsk1${paperId ? `/${paperId}/content` : ''}`, { method: paperId ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(paper) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not save the paper.');
       setDirty(false); onSaved(data);

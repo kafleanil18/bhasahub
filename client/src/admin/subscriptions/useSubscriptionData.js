@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { apiJson } from '../../lib/apiClient';
 
 const resources = {
   students: { path: '/subscriptions/students', label: 'students' },
@@ -8,16 +9,9 @@ const resources = {
   planRequests: { path: '/plans/requests', label: 'plan requests' },
   members: { path: '/plans/members', label: 'plan members' },
 };
-export async function accessRequest(path, options = {}) {
-  const response = await fetch(`${window.API_BASE_URL}/api${path}`, {
-    ...options,
-    headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}`, 'Content-Type': 'application/json', ...options.headers },
-    signal: AbortSignal.timeout(20000),
-  });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
-  return data;
-}
+export const accessRequest = (path, options = {}) => apiJson(`/api${path}`, {
+  ...options, timeout: 20000, headers: { 'Content-Type': 'application/json', ...options.headers },
+});
 
 export default function useSubscriptionData() {
   const [data, setData] = useState({ students: [], courses: [], subs: [], requests: [], planRequests: [], members: [] });

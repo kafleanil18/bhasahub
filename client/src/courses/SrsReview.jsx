@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Icon from '../components/Icon';
 import { playMandarin } from '../practice/naturalVoice';
+import { apiFetch } from '../lib/apiClient';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -24,9 +25,7 @@ function SrsReview({ lessonId, language, token, onExit }) {
     setIndex(0);
     setFlipped(false);
     setReviewedCount(0);
-    fetch(`${API}/srs/due?lessonId=${lessonId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    apiFetch(`${API}/srs/due?lessonId=${lessonId}`)
       .then((res) => res.json())
       .then((data) => setCards(data.cards || []))
       .catch(() => setCards([]));
@@ -58,9 +57,9 @@ function SrsReview({ lessonId, language, token, onExit }) {
     if (!card || submitting) return;
     setSubmitting(true);
     setSaveError(null);
-    fetch(`${API}/srs/review`, {
+    apiFetch(`${API}/srs/review`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ vocabularyId: card.vocabularyId, quality }),
     })
       .then(res => {

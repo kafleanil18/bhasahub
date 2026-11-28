@@ -8,6 +8,7 @@ import './AdminDashboard.css';
 import { useInitialLoad } from '../navigation/pageLoad';
 
 import RefreshButton from '../components/RefreshButton';
+import { apiFetch } from '../lib/apiClient';
 const API = window.API_BASE_URL + '/api';
 const shortcuts = [
   ['courses', 'courses', 'Courses'],
@@ -32,12 +33,11 @@ export default function AdminDashboard({ onNavigate, user }) {
     setLoading(true);
     setError('');
     setServerStatus('checking');
-    fetch(`${API}/health`, { signal: controller.signal })
+    apiFetch(`${API}/health`, { signal: controller.signal })
       .then(res => { if (!controller.signal.aborted) setServerStatus(res.ok ? 'online' : 'degraded'); })
       .catch(() => { if (!controller.signal.aborted) setServerStatus('offline'); });
-    fetch(`${API}/admin-stats`, {
+    apiFetch(`${API}/admin-stats`, {
       signal: controller.signal,
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     })
       .then(async res => {
         const data = await res.json();

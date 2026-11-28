@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import './Register.css';
 import './Login.css';
 import GoogleAuthButton from './GoogleAuthButton';
+import { apiFetch } from '../lib/apiClient';
 
 function Register({ onRegistered, onBack, onSwitch, onLogin }) {
   const [name, setName] = useState('');
@@ -64,7 +65,7 @@ function Register({ onRegistered, onBack, onSwitch, onLogin }) {
 
     setLoading(true);
     try {
-      const res = await fetch(window.API_BASE_URL + '/api/auth/register', {
+      const res = await apiFetch(window.API_BASE_URL + '/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

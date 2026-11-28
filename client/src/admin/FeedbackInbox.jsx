@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useInitialLoad } from '../navigation/pageLoad';
+import { apiFetch } from '../lib/apiClient';
 
 const API = window.API_BASE_URL + '/api/feedback';
 
@@ -10,7 +11,7 @@ function FeedbackInbox({ onBack }) {
   const token = localStorage.getItem('token');
 
   const load = useCallback(() => {
-    fetch(API, { headers: { Authorization: `Bearer ${token}` } })
+    apiFetch(API)
       .then(res => res.json())
       .then(data => { setItems(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(() => setLoading(false));
@@ -19,13 +20,13 @@ function FeedbackInbox({ onBack }) {
   useEffect(() => { load(); }, [load]);
 
   const markRead = async (id) => {
-    await fetch(`${API}/${id}/read`, { method: 'PUT', headers: { Authorization: `Bearer ${token}` } });
+    await apiFetch(`${API}/${id}/read`, { method: 'PUT' });
     load();
   };
 
   const remove = async (id) => {
     if (!confirm('Delete this message?')) return;
-    await fetch(`${API}/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    await apiFetch(`${API}/${id}`, { method: 'DELETE' });
     load();
   };
 

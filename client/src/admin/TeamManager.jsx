@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 import Icon from '../components/Icon';
+import { apiFetch } from '../lib/apiClient';
 
 const API = window.API_BASE_URL + '/api';
 
 function TeamManager({ onBack }) {
-  const token = localStorage.getItem('token');
-  const authHeaders = { Authorization: `Bearer ${token}` };
 
   const [teamList, setTeamList] = useState([]);
   const [uploading, setUploading] = useState({});
@@ -16,7 +15,7 @@ function TeamManager({ onBack }) {
   const [loading, setLoading] = useState(true);
 
   const load = () => {
-    fetch(`${API}/team`)
+    apiFetch(`${API}/team`)
       .then(res => res.json())
       .then(data => {
         setTeamList(Array.isArray(data) ? data : []);
@@ -34,9 +33,8 @@ function TeamManager({ onBack }) {
     try {
       const fd = new FormData();
       fd.append('file', file);
-      const uploadRes = await fetch(`${window.API_BASE_URL}/api/upload`, {
+      const uploadRes = await apiFetch(`${window.API_BASE_URL}/api/upload`, {
         method: 'POST',
-        headers: authHeaders,
         body: fd,
       });
       const uploadData = await uploadRes.json();
@@ -44,9 +42,9 @@ function TeamManager({ onBack }) {
         setError(uploadData.error || 'Image upload failed');
         return;
       }
-      const saveRes = await fetch(`${API}/team/${key}`, {
+      const saveRes = await apiFetch(`${API}/team/${key}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...authHeaders },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ photo: uploadData.url }),
       });
       const saved = await saveRes.json();
@@ -65,9 +63,9 @@ function TeamManager({ onBack }) {
   const removePhoto = async (key) => {
     setError('');
     try {
-      const res = await fetch(`${API}/team/${key}`, {
+      const res = await apiFetch(`${API}/team/${key}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...authHeaders },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ photo: '' }),
       });
       if (res.ok) {
@@ -95,9 +93,9 @@ function TeamManager({ onBack }) {
     const member = teamList.find(m => m.key === key);
     if (!member) return;
     try {
-      const res = await fetch(`${API}/team/${key}`, {
+      const res = await apiFetch(`${API}/team/${key}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...authHeaders },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           offsetX: member.offsetX !== undefined ? member.offsetX : 50, 
           offsetY: member.offsetY !== undefined ? member.offsetY : 50,
@@ -128,9 +126,9 @@ function TeamManager({ onBack }) {
     setError('');
     setSavingDetails(prev => ({ ...prev, [key]: true }));
     try {
-      const res = await fetch(`${API}/team/${key}`, {
+      const res = await apiFetch(`${API}/team/${key}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...authHeaders },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           name: member.name !== undefined ? member.name : '',
           role: member.role !== undefined ? member.role : '',
@@ -157,9 +155,8 @@ function TeamManager({ onBack }) {
   const createTeamMember = async () => {
     setError('');
     try {
-      const res = await fetch(`${API}/team`, {
+      const res = await apiFetch(`${API}/team`, {
         method: 'POST',
-        headers: authHeaders,
       });
       const newMember = await res.json();
       if (res.ok) {
@@ -176,9 +173,8 @@ function TeamManager({ onBack }) {
     if (!window.confirm('Are you sure you want to delete this team member?')) return;
     setError('');
     try {
-      const res = await fetch(`${API}/team/${key}`, {
+      const res = await apiFetch(`${API}/team/${key}`, {
         method: 'DELETE',
-        headers: authHeaders,
       });
       if (res.ok) {
         setTeamList(prev => prev.filter(m => m.key !== key));

@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { chartGroups } from './toneSyllables';
+import { apiFetch } from '../lib/apiClient';
 
 // Compact syllable chooser; `picked` is null when every recorded syllable is in play.
 export default function SyllablePicker({ questions, picked, onChange }) {
   const [table, setTable] = useState(null);
   useEffect(() => {
     const controller = new AbortController();
-    fetch(`${window.API_BASE_URL}/api/pinyin-table`, { signal: AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]) })
+    apiFetch(`${window.API_BASE_URL}/api/pinyin-table`, { signal: AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]) })
       .then(response => response.ok ? response.json() : null)
       .then(data => { if (!controller.signal.aborted && data) setTable(data); })
       .catch(() => {}); // Without the chart, syllables fall back to alphabetical order.

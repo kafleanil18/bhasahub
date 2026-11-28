@@ -2,12 +2,11 @@ import { useState, useEffect } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 import Icon from '../components/Icon';
 import { useInitialLoad } from '../navigation/pageLoad';
+import { apiFetch } from '../lib/apiClient';
 
 const API = window.API_BASE_URL + '/api';
 
 function TeacherManager({ onBack }) {
-  const token = localStorage.getItem('token');
-  const authHeaders = { Authorization: `Bearer ${token}` };
 
   const [teachers, setTeachers] = useState([]);
   const [uploading, setUploading] = useState({});
@@ -18,7 +17,7 @@ function TeacherManager({ onBack }) {
   useInitialLoad(loading, 'Loading teachers…');
 
   const load = () => {
-    fetch(`${API}/teachers`)
+    apiFetch(`${API}/teachers`)
       .then(res => res.json())
       .then(data => { setTeachers(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(() => setLoading(false));
@@ -36,9 +35,9 @@ function TeacherManager({ onBack }) {
     setError('');
     setSaving(prev => ({ ...prev, [id]: true }));
     try {
-      const res = await fetch(`${API}/teachers/${id}`, {
+      const res = await apiFetch(`${API}/teachers/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...authHeaders },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: teacher.name || '', title: teacher.title || '', bio: teacher.bio || '' }),
       });
       const saved = await res.json();
@@ -63,12 +62,12 @@ function TeacherManager({ onBack }) {
     try {
       const fd = new FormData();
       fd.append('file', file);
-      const uploadRes = await fetch(`${API}/upload`, { method: 'POST', headers: authHeaders, body: fd });
+      const uploadRes = await apiFetch(`${API}/upload`, { method: 'POST', body: fd });
       const uploadData = await uploadRes.json();
       if (!uploadRes.ok) { setError(uploadData.error || 'Image upload failed'); return; }
-      const saveRes = await fetch(`${API}/teachers/${id}`, {
+      const saveRes = await apiFetch(`${API}/teachers/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...authHeaders },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ photo: uploadData.url }),
       });
       const saved = await saveRes.json();
@@ -84,9 +83,9 @@ function TeacherManager({ onBack }) {
   const removePhoto = async (id) => {
     setError('');
     try {
-      const res = await fetch(`${API}/teachers/${id}`, {
+      const res = await apiFetch(`${API}/teachers/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', ...authHeaders },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ photo: '' }),
       });
       const saved = await res.json();
@@ -100,7 +99,7 @@ function TeacherManager({ onBack }) {
   const createTeacher = async () => {
     setError('');
     try {
-      const res = await fetch(`${API}/teachers`, { method: 'POST', headers: authHeaders });
+      const res = await apiFetch(`${API}/teachers`, { method: 'POST' });
       const newTeacher = await res.json();
       if (res.ok) setTeachers(prev => [...prev, newTeacher]);
       else setError(newTeacher.error || 'Could not create teacher');
@@ -113,7 +112,7 @@ function TeacherManager({ onBack }) {
     if (!window.confirm('Are you sure you want to delete this teacher?')) return;
     setError('');
     try {
-      const res = await fetch(`${API}/teachers/${id}`, { method: 'DELETE', headers: authHeaders });
+      const res = await apiFetch(`${API}/teachers/${id}`, { method: 'DELETE' });
       if (res.ok) setTeachers(prev => prev.filter(t => t._id !== id));
       else { const data = await res.json(); setError(data.error || 'Could not delete teacher'); }
     } catch {

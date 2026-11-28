@@ -7,6 +7,7 @@ import LessonDetail from './LessonDetail';
 import { useLessons } from '../hooks/useLessons';
 import { useCourseAccess } from '../hooks/useCourseAccess';
 import { useInitialLoad } from '../navigation/pageLoad';
+import { apiFetch } from '../lib/apiClient';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -31,9 +32,7 @@ function CoursePage({ course, onBack, user }) {
   const loadProgress = useCallback(() => {
     if (!token) return;
     setProgressError(null);
-    fetch(`${API}/progress/course/${course._id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    apiFetch(`${API}/progress/course/${course._id}`)
       .then(res => res.json())
       .then(data => setCompletedIds(data.completedLessonIds || []))
       .catch(() => setProgressError('Could not load your progress.'))
@@ -49,9 +48,8 @@ function CoursePage({ course, onBack, user }) {
     const isDone = completedIds.includes(lessonId);
     setCompleteError(null);
     try {
-      const res = await fetch(`${API}/progress/lesson/${lessonId}`, {
+      const res = await apiFetch(`${API}/progress/lesson/${lessonId}`, {
         method: isDone ? 'DELETE' : 'POST',
-        headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
         setCompletedIds((prev) =>

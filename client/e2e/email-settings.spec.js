@@ -73,11 +73,11 @@ test('failed saves preserve the draft and allow a retry', async ({ page }) => {
 test('ordinary admins and students cannot open email settings', async ({ page }) => {
   await prepare(page, 'admin');
   await page.goto('/admin/settings/email');
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Email settings', exact: true })).toHaveCount(0);
   await page.evaluate(() => localStorage.setItem('user', JSON.stringify({ id: 'student', name: 'Student', email: 'student@example.com', role: 'student' })));
   await page.goto('/admin/settings/email');
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
 });
 
 test('email settings fit phones and desktops and support keyboard input', async ({ page }, testInfo) => {
@@ -110,16 +110,22 @@ test('a stale session shows the actual access problem and offers a fresh sign-in
   expect(await page.evaluate(() => localStorage.getItem('token'))).toBeNull();
 });
 
-test('expired authentication and server failures remain distinguishable', async ({ page }) => {
+test('an expired sign-in ends the session and returns here after signing in again', async ({ page }) => {
   await prepare(page);
-  let status = 401;
-  await page.route('**/api/settings/email', route => route.fulfill({ status, contentType: 'text/html', body: 'Unavailable' }));
+  await page.route('**/api/settings/email', route => route.fulfill({ status: 401, json: { error: 'Session expired — please log in again' } }));
   await page.goto('/admin/settings/email');
-  await expect(page.getByRole('alert')).toContainText('Your session expired or is invalid');
-  status = 502;
-  await page.getByRole('button', { name: 'Try again', exact: true }).click();
+  await expect(page).toHaveURL(/\/sign-in\?next=%2Fadmin%2Fsettings%2Femail$/);
+  await expect(page.getByRole('status').filter({ hasText: 'Your sign-in has ended' })).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem('token'))).toBeNull();
+});
+
+test('server failures are reported without signing out', async ({ page }) => {
+  await prepare(page);
+  await page.route('**/api/settings/email', route => route.fulfill({ status: 502, contentType: 'text/html', body: 'Unavailable' }));
+  await page.goto('/admin/settings/email');
   await expect(page.getByRole('alert')).toContainText('HTTP 502');
   await expect(page.getByRole('button', { name: 'Sign in again', exact: true })).toHaveCount(0);
+  expect(await page.evaluate(() => localStorage.getItem('token'))).toBe('fixture-token');
 });
 
 test('a connection failure can save a new setup as an inactive draft across reloads', async ({ page }) => {

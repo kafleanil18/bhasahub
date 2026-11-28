@@ -4,7 +4,8 @@ import Icon from '../../components/Icon';
 import { useInitialLoad } from '../../navigation/pageLoad';
 
 import RefreshButton from '../../components/RefreshButton';
-const headers = () => ({ Authorization: `Bearer ${localStorage.getItem('token') || ''}`, 'Content-Type': 'application/json' });
+import { apiFetch } from '../../lib/apiClient';
+const headers = () => ({ 'Content-Type': 'application/json' });
 
 export default function FeaturedPaper({ onOpen, onRetake, manage = false, showHidden = false, paperId = 'h11226', title = 'HSK 1 Listening & Reading', code, onEdit, completed, edited = false, locked = false, free = false, children }) {
   const API = `${window.API_BASE_URL}/api/hsk1/${paperId}/publication`;
@@ -16,7 +17,7 @@ export default function FeaturedPaper({ onOpen, onRetake, manage = false, showHi
   useEffect(() => {
     const controller = new AbortController();
     setError('');
-    fetch(API, { headers: headers(), signal: controller.signal })
+    apiFetch(API, { headers: headers(), signal: controller.signal })
       .then(async response => {
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || 'Could not load paper visibility.');
@@ -29,7 +30,7 @@ export default function FeaturedPaper({ onOpen, onRetake, manage = false, showHi
   const toggle = async () => {
     setBusy(true); setError('');
     try {
-      const response = await fetch(API, { method: 'PUT', headers: headers(), body: JSON.stringify({ published: !published }) });
+      const response = await apiFetch(API, { method: 'PUT', headers: headers(), body: JSON.stringify({ published: !published }) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not update paper visibility.');
       setPublished(data.published);

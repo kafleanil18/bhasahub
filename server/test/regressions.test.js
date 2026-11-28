@@ -172,7 +172,7 @@ test('review UI keeps its card on HTTP and network failures, advancing only afte
       setSaveError: value => { error = value; },
       setReviewedCount: update => { count = update(count); },
       setFlipped: () => {}, setIndex: update => { index = update(index); },
-      fetch: () => {
+      apiFetch: () => {
         const promise = outcome === 'network-error' ? Promise.reject(new Error('offline')) : Promise.resolve({ ok: outcome === 'success' });
         pending.push(promise.catch(() => {}));
         return promise;

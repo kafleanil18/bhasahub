@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
+import { apiFetch } from '../lib/apiClient';
 
-const api = (path, options = {}, token = localStorage.getItem('token') || '') => fetch(`${window.API_BASE_URL}/api/push${path}`, {
+// An explicit token (signing this device out with the old one) is sent as given; otherwise apiFetch adds the stored one.
+const api = (path, options = {}, token) => apiFetch(`/api/push${path}`, {
   ...options, signal: options.signal || AbortSignal.timeout(15000),
-  headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+  headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), 'Content-Type': 'application/json' },
 }).then(async response => {
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw Object.assign(new Error(data.error || 'Could not reach the server. Please try again.'), { status: response.status });

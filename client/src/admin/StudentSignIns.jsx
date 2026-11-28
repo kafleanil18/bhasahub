@@ -3,6 +3,7 @@ import './StudentSignIns.css';
 import { useInitialLoad } from '../navigation/pageLoad';
 
 import RefreshButton from '../components/RefreshButton';
+import { apiFetch } from '../lib/apiClient';
 const today = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kathmandu', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 const time = value => new Date(value).toLocaleTimeString('en-US', { timeZone: 'Asia/Kathmandu', hour: 'numeric', minute: '2-digit', second: '2-digit' });
 
@@ -18,8 +19,8 @@ export default function StudentSignIns() {
   useEffect(() => {
     const controller = new AbortController();
     setLoading(true); setError(''); setData(null);
-    fetch(`${window.API_BASE_URL}/api/audit-log/student-sign-ins?date=${encodeURIComponent(date)}&page=${page}`, {
-      signal: controller.signal, headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    apiFetch(`${window.API_BASE_URL}/api/audit-log/student-sign-ins?date=${encodeURIComponent(date)}&page=${page}`, {
+      signal: controller.signal,
     }).then(async response => {
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'Could not load student sign-ins');

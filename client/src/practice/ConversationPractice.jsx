@@ -7,6 +7,7 @@ import { checkNaturalVoice, naturalVoiceUrl } from './naturalVoice';
 import './ConversationPractice.css';
 import Icon from '../components/Icon';
 import { mediaUrl } from '../utils/mediaUrl';
+import { apiFetch } from '../lib/apiClient';
 
 const lessons = [
   {
@@ -130,7 +131,7 @@ function ConversationPracticePage({ onBack }) {
   useEffect(() => { let live = true; checkNaturalVoice().then(ok => { if (live) setNatural(ok); }); return () => { live = false; }; }, []);
   useEffect(() => () => { runRef.current++; window.speechSynthesis?.cancel(); audioRef.current?.pause(); }, []);
   useEffect(() => {
-    fetch(`${window.API_BASE_URL}/api/settings`).then(response => response.json()).then(settings => {
+    apiFetch(`${window.API_BASE_URL}/api/settings`).then(response => response.json()).then(settings => {
       if (!Array.isArray(settings.conversationLessons)) return;
       setAvailableLessons(current => {
         const stored = settings.conversationLessons;

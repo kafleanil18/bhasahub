@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { apiFetch } from '../lib/apiClient';
 
 export function useSentenceCatalog() {
   const [catalog, setCatalog] = useState(null);
@@ -8,7 +9,7 @@ export function useSentenceCatalog() {
     const controller = new AbortController();
     setError('');
     setCatalog(null);
-    fetch(`${window.API_BASE_URL}/api/sentences`, { signal: controller.signal, headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` } })
+    apiFetch(`${window.API_BASE_URL}/api/sentences`, { signal: controller.signal })
       .then(async response => {
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || 'Could not load sentences.');

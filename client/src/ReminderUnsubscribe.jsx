@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import './admin/EmailSettings.css';
+import { apiFetch } from './lib/apiClient';
 
 export default function ReminderUnsubscribe() {
   const [params] = useSearchParams();
@@ -11,7 +12,7 @@ export default function ReminderUnsubscribe() {
   const unsubscribe = async () => {
     setBusy(true); setError('');
     try {
-      const response = await fetch(`${window.API_BASE_URL}/api/practice-reminders/unsubscribe`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token }), signal: AbortSignal.timeout(15000) });
+      const response = await apiFetch(`${window.API_BASE_URL}/api/practice-reminders/unsubscribe`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token }), signal: AbortSignal.timeout(15000) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not update your preference. Please try again.');
       setDone(true);

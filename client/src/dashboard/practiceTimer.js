@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { apiFetch } from '../lib/apiClient';
 
 // Counts active learning time for the daily goal and streak. Time counts while the student is on a
 // lesson, practice tool or test, the tab is visible, and they have clicked, typed or scrolled in the
@@ -22,9 +23,9 @@ function send(seconds, date) {
   let token;
   try { token = localStorage.getItem('token'); } catch { return; }
   if (!token || seconds < 1) return;
-  fetch(`${window.API_BASE_URL}/api/practice-time`, {
+  apiFetch(`${window.API_BASE_URL}/api/practice-time`, {
     method: 'POST', keepalive: true,
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ date, seconds: Math.min(120, Math.round(seconds)) }),
   }).then(response => { if (response.ok) window.dispatchEvent(new CustomEvent(PRACTICE_TIME_SAVED)); }).catch(() => {});
 }

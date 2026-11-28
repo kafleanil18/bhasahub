@@ -6,6 +6,7 @@ import useMandarinSpeaker from './useMandarinSpeaker';
 import VoiceSwitch from './VoiceSwitch';
 import { toneCharacter } from './pinyinToneChars';
 import Icon from '../components/Icon';
+import { apiFetch } from '../lib/apiClient';
 
 const API = (window.API_BASE_URL || '') + '/api';
 
@@ -155,7 +156,7 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = 'Back to home' }) {
   const streamRef = useRef(null);
 
   useEffect(() => {
-    fetch(`${API}/pinyin-recordings`)
+    apiFetch(`${API}/pinyin-recordings`)
       .then((res) => res.json())
       .then((data) => {
         if (!Array.isArray(data)) return;
@@ -165,7 +166,7 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = 'Back to home' }) {
       })
       .catch(() => {});
 
-    fetch(`${API}/pinyin-table`)
+    apiFetch(`${API}/pinyin-table`)
       .then((res) => res.json())
       .then((data) => {
         if (!data) return;
@@ -216,17 +217,16 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = 'Back to home' }) {
     const value = newInitial.trim().toLowerCase();
     if (!value || initials.includes(value)) return;
     setNewInitial('');
-    applyTableUpdate((token) => fetch(`${API}/pinyin-table/initials`, {
+    applyTableUpdate(() => apiFetch(`${API}/pinyin-table/initials`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ value }),
     }));
   };
 
   const removeInitial = (initial) => {
-    applyTableUpdate((token) => fetch(`${API}/pinyin-table/initials/${encodeURIComponent(initial)}`, {
+    applyTableUpdate(() => apiFetch(`${API}/pinyin-table/initials/${encodeURIComponent(initial)}`, {
       method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
     }));
   };
 
@@ -234,17 +234,16 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = 'Back to home' }) {
     const value = newFinal.trim().toLowerCase();
     if (!value || finals.includes(value)) return;
     setNewFinal('');
-    applyTableUpdate((token) => fetch(`${API}/pinyin-table/finals`, {
+    applyTableUpdate(() => apiFetch(`${API}/pinyin-table/finals`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ value }),
     }));
   };
 
   const removeFinal = (final) => {
-    applyTableUpdate((token) => fetch(`${API}/pinyin-table/finals/${encodeURIComponent(final)}`, {
+    applyTableUpdate(() => apiFetch(`${API}/pinyin-table/finals/${encodeURIComponent(final)}`, {
       method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
     }));
   };
 
@@ -252,18 +251,18 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = 'Back to home' }) {
     const value = text.trim();
     const current = syllableMap[`${initial}|${final}`] || '';
     if (value === current) return;
-    applyTableUpdate((token) => fetch(`${API}/pinyin-table/syllable`, {
+    applyTableUpdate(() => apiFetch(`${API}/pinyin-table/syllable`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ initial, final, syllable: value }),
     }));
   };
 
   const toggleHighlight = (initial, final) => {
     const highlighted = !highlightMap[`${initial}|${final}`];
-    applyTableUpdate((token) => fetch(`${API}/pinyin-table/syllable/highlight`, {
+    applyTableUpdate(() => apiFetch(`${API}/pinyin-table/syllable/highlight`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ initial, final, highlighted }),
     }));
   };
@@ -342,17 +341,16 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = 'Back to home' }) {
       if (!activeToken) {
         throw new Error('Please sign in with admin privileges to save recordings.');
       }
-      const headers = { Authorization: `Bearer ${activeToken}` };
       const ext = extForMimeType(mimeType);
       const fd = new FormData();
       fd.append('file', blob, `${selected}-${tone}-${Date.now()}.${ext}`);
-      const uploadRes = await fetch(`${API}/upload`, { method: 'POST', headers, body: fd });
+      const uploadRes = await apiFetch(`${API}/upload`, { method: 'POST', body: fd });
       const uploadData = await uploadRes.json();
       if (!uploadRes.ok) throw new Error(uploadData.error || uploadData.details || 'Upload failed');
 
-      const saveRes = await fetch(`${API}/pinyin-recordings`, {
+      const saveRes = await apiFetch(`${API}/pinyin-recordings`, {
         method: 'POST',
-        headers: { ...headers, 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ syllable: selected, tone, audioUrl: uploadData.url }),
       });
       const saveData = await saveRes.json();
@@ -373,9 +371,7 @@ function PinyinPage({ onBack, isSuperAdmin, backLabel = 'Back to home' }) {
       return;
     }
     try {
-      const activeToken = localStorage.getItem('token');
-      const headers = { Authorization: `Bearer ${activeToken}` };
-      await fetch(`${API}/pinyin-recordings/${id}`, { method: 'DELETE', headers });
+      await apiFetch(`${API}/pinyin-recordings/${id}`, { method: 'DELETE' });
       setRecordings((prev) => {
         const next = { ...prev };
         delete next[keyFor(selected, tone)];

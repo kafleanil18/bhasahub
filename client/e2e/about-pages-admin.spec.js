@@ -93,6 +93,6 @@ test('About HSK is always visible, and its text is edited the same way', async (
 test('ordinary admins can’t open About pages', async ({ page }) => {
   await prepare(page, { role: 'admin' });
   await page.goto('/admin/about-pages');
-  await expect(page).not.toHaveURL(/\/admin\/about-pages$/);
+  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
   await expect(page.getByRole('heading', { level: 1, name: 'About pages' })).toHaveCount(0);
 });

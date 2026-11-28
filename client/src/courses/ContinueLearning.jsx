@@ -5,6 +5,7 @@ import { supportsConversation } from '../utils/courseFeatures';
 import { useInitialLoad } from '../navigation/pageLoad';
 
 import RefreshButton from '../components/RefreshButton';
+import { apiFetch } from '../lib/apiClient';
 export default function ContinueLearning() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -17,8 +18,7 @@ export default function ContinueLearning() {
     const controller = new AbortController();
     setState({ loading: true });
     const request = async path => {
-      const response = await fetch(`${window.API_BASE_URL}/api${path}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` },
+      const response = await apiFetch(`${window.API_BASE_URL}/api${path}`, {
         signal: AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]),
       });
       if (!response.ok) throw new Error('Could not load your next lesson.');

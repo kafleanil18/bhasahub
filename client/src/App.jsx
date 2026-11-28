@@ -9,13 +9,14 @@ import StudioSaveStatus from './practice/StudioSaveStatus';
 import AppRoutes from './navigation/AppRoutes';
 import { adminPaths, coursePath, homePath, practicePaths, safeReturnPath, signInPath } from './navigation/paths';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useState, useEffect, useCallback, lazy, startTransition, Suspense } from 'react';
+import { useState, useEffect, useCallback, useRef, lazy, startTransition, Suspense } from 'react';
 import './home.css';
 import './flag-theme.css';
 import { forgetPushDevice } from './pwa/usePushReminders';
 import InkLoader from './components/InkLoader';
 import usePracticeTimer from './dashboard/practiceTimer';
 import { clearIdleSession, markActive, clearIdleSignOutNotice, hasIdleSignOutNotice, rememberIdleSignOut, useIdleSignOut } from './auth/idleSession';
+import { apiFetch, SESSION_EXPIRED_EVENT } from './lib/apiClient';
 
 const NO_ATTENTION = { feedback: [], testimonials: [], access: [], plans: [] };
 const ChangePassword = lazy(() => import('./auth/ChangePassword'));
@@ -38,6 +39,7 @@ function AppContent() {
   const [serverOk, setServerOk] = useState(null);
   const [user, setUser] = useState(readStoredUser);
   const [idleNotice, setIdleNotice] = useState(hasIdleSignOutNotice);
+  const [expiredNotice, setExpiredNotice] = useState(false);
   const [courses, setCourses] = useState([]);
   const [access, setAccess] = useState({});
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -94,7 +96,7 @@ function AppContent() {
     const refresh = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
-      fetch(`${window.API_BASE_URL}/api/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
+      apiFetch(`${window.API_BASE_URL}/api/auth/me`)
         .then(res => (res.ok ? res.json() : null))
         .then(fresh => {
           const stored = readStoredUser();
@@ -134,7 +136,7 @@ function AppContent() {
   }, [location.pathname, location.hash, location.key, courses]);
 
   const loadCourses = () => {
-    fetch(window.API_BASE_URL + '/api/courses')
+    apiFetch(window.API_BASE_URL + '/api/courses')
       .then(res => res.json())
       .then(data => setCourses(Array.isArray(data) ? data : []))
       .catch(() => setCourses([]))
@@ -144,9 +146,7 @@ function AppContent() {
   const loadAccess = () => {
     const t = localStorage.getItem('token');
     if (!t) return;
-    fetch(window.API_BASE_URL + '/api/enrollments/access', {
-      headers: { Authorization: `Bearer ${t}` },
-    })
+    apiFetch(window.API_BASE_URL + '/api/enrollments/access')
       .then(res => res.json())
       .then(data => {
         const map = {};
@@ -160,7 +160,7 @@ function AppContent() {
   const [aboutUsVisible, setAboutUsVisible] = useState(false);
   useEffect(() => {
     let active = true;
-    const load = () => fetch(window.API_BASE_URL + '/api/about-pages')
+    const load = () => apiFetch(window.API_BASE_URL + '/api/about-pages')
       .then(res => res.ok ? res.json() : [])
       .then(pages => { if (active) setAboutUsVisible(Array.isArray(pages) && pages.some(page => page.slug === 'xiao-ao' && page.visible)); })
       .catch(() => {});
@@ -169,7 +169,7 @@ function AppContent() {
     return () => { active = false; window.removeEventListener('about-pages-changed', load); };
   }, []);
   const loadTestimonials = () => {
-    fetch(window.API_BASE_URL + '/api/testimonials')
+    apiFetch(window.API_BASE_URL + '/api/testimonials')
       .then(res => res.json())
       .then(data => setTestimonials(Array.isArray(data) ? data : []))
       .catch(() => setTestimonials([]))
@@ -179,7 +179,7 @@ function AppContent() {
   const loadMyAccess = () => {
     const t = localStorage.getItem('token');
     if (!t) { setMyAccessDays(null); return; }
-    const load = path => fetch(window.API_BASE_URL + path, { headers: { Authorization: `Bearer ${t}` } })
+    const load = path => apiFetch(window.API_BASE_URL + path)
       .then(res => res.json()).then(data => Array.isArray(data) ? data : []).catch(() => []);
     // Paid access plus a free week from an approved access request.
     Promise.all([load('/api/subscriptions/my'), load('/api/access-requests/my')])
@@ -205,7 +205,7 @@ function AppContent() {
       plans: ['/api/plans/requests', item => item.status === 'pending'],
     };
     for (const [key, [path, needsAttention]] of Object.entries(sources)) {
-      fetch(window.API_BASE_URL + path, { headers: { Authorization: `Bearer ${token}` } })
+      apiFetch(window.API_BASE_URL + path)
         .then(res => res.json())
         .then(data => { if (Array.isArray(data)) setAttention(previous => ({ ...previous, [key]: data.filter(needsAttention) })); })
         .catch(() => {});
@@ -222,7 +222,7 @@ function AppContent() {
   }, [user, loadAdminNotificationCounts]);
 
   useEffect(() => {
-    fetch(window.API_BASE_URL + '/api/health')
+    apiFetch(window.API_BASE_URL + '/api/health')
       .then(res => {
         if (!res.ok) throw new Error('Server is unavailable');
         return res.json();
@@ -244,11 +244,15 @@ function AppContent() {
     navigate(homePath(user));
     loadCourses(); loadAccess(); loadTestimonials(); loadMyAccess(); loadAdminNotificationCounts();
   };
-  const handleLogout = ({ idle = false } = {}) => {
+  // idle: no activity for two hours. expired: the server no longer accepts the sign-in
+  // (the password changed on another device, or the account's session ended).
+  // Both return to the same page after signing in again.
+  const handleLogout = ({ idle = false, expired = false } = {}) => {
     void forgetPushDevice(localStorage.getItem('token'));
     localStorage.removeItem('token'); localStorage.removeItem('user'); localStorage.removeItem('lastActivityAt');
     if (idle) rememberIdleSignOut();
     setIdleNotice(idle);
+    setExpiredNotice(expired);
     // Commit the session change and destination together so route guards never
     // see a signed-out user on the previous protected page.
     startTransition(() => {
@@ -256,14 +260,20 @@ function AppContent() {
       setShowTestAccessPrompt(false);
       setShowStudioTour(false);
       setShowChangePassword(false);
-      // After an idle sign-out, signing in again returns to the same page.
-      navigate(idle ? signInPath(safeReturnPath(location.pathname + location.search)) : '/', { replace: true });
+      navigate(idle || expired ? signInPath(safeReturnPath(location.pathname + location.search)) : '/', { replace: true });
     });
   };
   useIdleSignOut(!!user, () => handleLogout({ idle: true }));
+  const logoutRef = useRef(handleLogout);
+  logoutRef.current = handleLogout;
+  useEffect(() => {
+    const onExpired = () => logoutRef.current({ expired: true });
+    window.addEventListener(SESSION_EXPIRED_EVENT, onExpired);
+    return () => window.removeEventListener(SESSION_EXPIRED_EVENT, onExpired);
+  }, []);
   usePracticeTimer(user?.role === 'student', location.pathname);
   const handleLogin = loggedInUser => {
-    markActive(); setIdleNotice(false); clearIdleSignOutNotice();
+    markActive(); setIdleNotice(false); setExpiredNotice(false); clearIdleSignOutNotice();
     const next = new URLSearchParams(location.search).get('next');
     startTransition(() => {
       setUser(loggedInUser);
@@ -306,6 +316,10 @@ function AppContent() {
     {showTestimonial && <TestimonialModal user={user} onClose={() => { setShowTestimonial(false); loadTestimonials(); }} />}
     <SiteHeader showAboutUs={aboutUsVisible} adminSidebarOpen={adminSidebarOpen} attention={attention} darkMode={darkMode} goHome={goHome} handleLogout={handleLogout} hideForAuth={['/sign-in', '/register', '/reset-password'].includes(location.pathname)} isAdmin={isAdmin} isSuperAdmin={isSuperAdmin} mobileMenuOpen={mobileMenuOpen} myAccessDays={myAccessDays} openLogin={openLogin} pendingAccessRequestsCount={pendingAccessRequestsCount} pendingTestimonialsCount={pendingTestimonialsCount} setAdminSidebarOpen={value => { if (!adminArea) navigate('/admin'); setAdminSidebarOpen(value); }} setDarkMode={setDarkMode} setMobileMenuOpen={setMobileMenuOpen} onNavigate={navigate} setShowChangePassword={setShowChangePassword} setShowUserMenu={setShowUserMenu} showUserMenu={showUserMenu} unreadFeedbackCount={unreadFeedbackCount} user={user} />
     <StudioSaveStatus />
+    {expiredNotice && !user && <div className="idle-notice" role="status">
+      <span>Your sign-in has ended, for example because the password was changed. Please sign in again.</span>
+      <button type="button" aria-label="Dismiss" onClick={() => setExpiredNotice(false)}>×</button>
+    </div>}
     {idleNotice && !user && <div className="idle-notice" role="status">
       <span>You were signed out after 2 hours without activity. Please sign in again.</span>
       <button type="button" aria-label="Dismiss" onClick={() => { setIdleNotice(false); clearIdleSignOutNotice(); }}>×</button>

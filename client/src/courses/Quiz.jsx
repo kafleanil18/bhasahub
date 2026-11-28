@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 import Icon from '../components/Icon';
+import { apiFetch } from '../lib/apiClient';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -103,9 +104,9 @@ function Quiz({ words, language, lessonId, token, onExit, muted, onToggleMute })
 
   useEffect(() => {
     if (!finished || !lessonId || !token) return;
-    fetch(`${API}/attempts/quiz`, {
+    apiFetch(`${API}/attempts/quiz`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ lessonId, answers: questions.map(q => ({ vocabularyId: q.word._id, answer: answers[q.word._id] ?? null })) }),
     }).then(res => { if (!res.ok) throw new Error(); }).catch(() => setSaveError('Could not save your quiz result.'));
     // eslint-disable-next-line react-hooks/exhaustive-deps

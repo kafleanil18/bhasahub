@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 import Icon from '../components/Icon';
+import { apiFetch } from '../lib/apiClient';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -12,7 +13,7 @@ function SlidesPage({ onBack }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${API}/slides`)
+    apiFetch(`${API}/slides`)
       .then(res => res.json())
       .then(data => { setSlides(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(() => setLoading(false));

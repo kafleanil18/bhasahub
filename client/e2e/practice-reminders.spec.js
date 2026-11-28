@@ -118,7 +118,7 @@ test('no active students or missing email configuration disables reminder sendin
 test('ordinary admins and students cannot open practice reminders', async ({ page }) => {
   await prepare(page, { role: 'admin' });
   await page.goto('/admin/reminders');
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Practice reminders', exact: true })).toHaveCount(0);
 });
 

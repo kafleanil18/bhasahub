@@ -6,6 +6,7 @@ import LessonCategoryIcon from './LessonCategoryIcon';
 import './CourseOverview.css';
 
 import RefreshButton from '../components/RefreshButton';
+import { apiFetch } from '../lib/apiClient';
 const API = window.API_BASE_URL + '/api';
 
 function CourseOverview({
@@ -40,9 +41,7 @@ function CourseOverview({
 
   useEffect(() => {
     if (!token) return;
-    fetch(`${API}/enrollments/status/${course._id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    apiFetch(`${API}/enrollments/status/${course._id}`)
       .then(res => res.json())
       .then(data => setEnrolled(data.enrolled))
       .catch(() => setEnrollError('Could not load your enrollment status.'));
@@ -50,9 +49,7 @@ function CourseOverview({
 
   const loadRequestStatus = useCallback(() => {
     if (!token) return;
-    fetch(`${API}/access-requests/my`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    apiFetch(`${API}/access-requests/my`)
       .then(res => { if (!res.ok) throw new Error(); return res.json(); })
       .then(data => {
         const mine = (Array.isArray(data) ? data : []).filter(r => r.course && r.course._id === course._id);
@@ -82,9 +79,8 @@ function CourseOverview({
     setEnrolling(true);
     setEnrollError(null);
     try {
-      const res = await fetch(`${API}/enrollments/${course._id}`, {
+      const res = await apiFetch(`${API}/enrollments/${course._id}`, {
         method: enrolled ? 'DELETE' : 'POST',
-        headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
         setEnrolled(!enrolled);

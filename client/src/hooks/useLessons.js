@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { apiFetch } from '../lib/apiClient';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -10,8 +11,7 @@ export function useLessons(courseId, token) {
   const loadLessons = useCallback(async (signal, showLoading = false) => {
     if (showLoading) setLoading(true);
     try {
-      const res = await fetch(`${API}/lessons/course/${courseId}`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      const res = await apiFetch(`${API}/lessons/course/${courseId}`, {
         cache: 'no-store',
         signal,
       });

@@ -50,6 +50,7 @@ const FaqPage = lazy(() => import('../home/FaqPage'));
 const AboutXiaoAo = lazy(() => import('../about/AboutXiaoAo'));
 const AboutPagesManager = lazy(() => import('../admin/AboutPagesManager'));
 import NotFound from './NotFound';
+import { apiFetch } from '../lib/apiClient';
 const PrivacyPolicy = lazy(() => import('../privacy/PrivacyPages').then(module => ({ default: module.PrivacyPolicy })));
 const BrowserStoragePolicy = lazy(() => import('../privacy/PrivacyPages').then(module => ({ default: module.BrowserStoragePolicy })));
 const TermsOfService = lazy(() => import('../privacy/PrivacyPages').then(module => ({ default: module.TermsOfService })));
@@ -86,8 +87,7 @@ function CourseRoute({ user, manage = false, onHome }) {
   useEffect(() => {
     const controller = new AbortController();
     setState({ loading: true });
-    fetch(`${window.API_BASE_URL}/api/courses${staff ? '/all' : ''}`, {
-      headers: staff ? { Authorization: `Bearer ${localStorage.getItem('token') || ''}` } : {},
+    apiFetch(`${window.API_BASE_URL}/api/courses${staff ? '/all' : ''}`, {
       signal: AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]),
     }).then(async res => {
       if (!res.ok) throw new Error('Could not load the course.');
@@ -157,7 +157,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
         <Route path="/courses/:courseId/lessons/:lessonId" element={<CourseRoute user={user} onHome={onHome} />} />
         <Route element={<PracticeGate user={user} onHome={onHome} />}>
           <Route path="/practice/tones" element={<TonePractice onBack={onHome} />} />
-          <Route path="/practice/characters" element={<HanziTracePage user={user} token={localStorage.getItem('token')} onBack={onHome} />} />
+          <Route path="/practice/characters" element={<HanziTracePage user={user} onBack={onHome} />} />
           <Route path="/practice/listening" element={<ListeningPractice user={user} onBack={onHome} onSignIn={openLogin} />} />
           <Route path="/practice/sentences" element={<SentencePractice user={user} onBack={onHome} />} />
           <Route path="/practice/measure-words" element={<MeasureWordPractice onBack={onHome} />} />
@@ -169,12 +169,12 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
         <Route path="/tests/:testId" element={<TestRoute user={user} onHome={onHome} />} />
       </Route>
     </Route>
-    <Route element={<RequireSession user={user} roles={['admin', 'superadmin']} />}>
+    <Route element={<RequireSession user={user} roles={['admin', 'superadmin']} hidden />}>
       <Route path="/admin" element={<AdminLayout sidebar={sidebar} />}>
         <Route index element={user?.role === 'superadmin' ? <AdminDashboard user={user} onNavigate={view => navigate(adminPaths[view] || '/admin')} /> : <Navigate to="/admin/tests" replace />} />
         <Route path="tests" element={<TestManager user={user} onBack={onHome} onPreviewTest={id => navigate(testPath(id, true))} />} />
         <Route path="subscriptions" element={<SubscriptionManager onBack={onHome} />} />
-        <Route element={<RequireSession user={user} roles={['superadmin']} />}>
+        <Route element={<RequireSession user={user} roles={['superadmin']} hidden />}>
           <Route path="courses" element={<AdminPanel onBack={onHome} onManageLessons={course => navigate(manageCoursePath(course._id))} />} />
           <Route path="courses/:courseId/lessons" element={<CourseRoute user={user} manage onHome={onHome} />} />
           <Route path="users" element={<UserManager onBack={onHome} />} />
@@ -185,7 +185,7 @@ export default function AppRoutes({ user, home, sidebar, onHome, onLogin, openLo
           <Route path="about-pages" element={<AboutPagesManager />} />
           <Route path="sentence-audio" element={<SentenceAudioManager onBack={onHome} />} />
           <Route path="tone-pair-audio" element={<TonePairAudioManager onBack={onHome} />} />
-          <Route path="characters" element={<HanziTracePage user={user} token={localStorage.getItem('token')} onBack={onHome} />} />
+          <Route path="characters" element={<HanziTracePage user={user} onBack={onHome} />} />
           <Route path="pinyin" element={<PinyinPage isSuperAdmin onBack={onHome} backLabel="Back to admin dashboard" />} />
           <Route path="inbox" element={<FeedbackInbox onBack={onHome} />} />
           <Route path="audit" element={<AuditLog onBack={onHome} />} />

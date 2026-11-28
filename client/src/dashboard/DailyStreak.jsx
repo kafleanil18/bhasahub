@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 import Icon from '../components/Icon';
 import { PRACTICE_TIME_SAVED, localToday } from './practiceTimer';
 import './DailyStreak.css';
+import { apiFetch } from '../lib/apiClient';
 
-const api = (path, options = {}) => fetch(`${window.API_BASE_URL}/api/practice-time${path}`, {
+const api = (path, options = {}) => apiFetch(`${window.API_BASE_URL}/api/practice-time${path}`, {
   ...options,
-  headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}`, 'Content-Type': 'application/json', ...options.headers },
+  headers: { 'Content-Type': 'application/json', ...options.headers },
 }).then(async response => {
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.error || 'Something went wrong.');

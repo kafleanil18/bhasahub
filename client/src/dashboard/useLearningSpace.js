@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { apiFetch } from '../lib/apiClient';
 
 export default function useLearningSpace(token) {
   const [courses, setCourses] = useState([]);
@@ -12,7 +13,7 @@ export default function useLearningSpace(token) {
     const controller = new AbortController();
     setLoading(true); setError(''); setCourses([]); setProgress({});
     const request = async path => {
-      const response = await fetch(`${window.API_BASE_URL}/api${path}`, { headers: { Authorization: `Bearer ${token || ''}` }, signal: AbortSignal.any([controller.signal, AbortSignal.timeout(20000)]) });
+      const response = await apiFetch(`${window.API_BASE_URL}/api${path}`, { signal: AbortSignal.any([controller.signal, AbortSignal.timeout(20000)]) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not load your learning space.');
       return data;

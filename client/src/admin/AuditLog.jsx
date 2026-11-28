@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import StudentSignIns from './StudentSignIns';
 import { useInitialLoad } from '../navigation/pageLoad';
+import { apiFetch } from '../lib/apiClient';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -50,8 +51,7 @@ function AuditLog({ onBack }) {
   const [resourceFilter, setResourceFilter] = useState('all');
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    fetch(`${API}/audit-log`, { headers: { Authorization: `Bearer ${token}` } })
+    apiFetch(`${API}/audit-log`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) setEntries(data);

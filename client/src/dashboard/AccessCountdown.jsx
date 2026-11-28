@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { apiFetch } from '../lib/apiClient';
 
 const DAY = 86400000;
 const formatDate = value => new Date(value).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
@@ -21,7 +22,7 @@ export default function AccessCountdown({ token, onSettled }) {
   useEffect(() => {
     if (!token) { setAccess({ loading: false, error: false, entries: [] }); return; }
     const controller = new AbortController();
-    const load = path => fetch(`${window.API_BASE_URL}/api${path}`, { headers: { Authorization: `Bearer ${token}` }, signal: controller.signal })
+    const load = path => apiFetch(`${window.API_BASE_URL}/api${path}`, { signal: controller.signal })
       .then(res => { if (!res.ok) throw new Error(); return res.json(); })
       .then(data => Array.isArray(data) ? data : []);
     // Paid access (plan or per course) plus a free week granted from an access request.

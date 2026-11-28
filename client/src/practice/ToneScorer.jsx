@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Icon from '../components/Icon';
 import { playMandarin } from './naturalVoice';
+import { apiFetch } from '../lib/apiClient';
 
 const TONE_PRACTICE_SET = [
   {
@@ -121,10 +122,8 @@ function ToneScorer({ onBack }) {
       formData.append('targetTone', String(currentWord.tone));
       formData.append('targetMeaning', currentWord.meaning);
 
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${window.API_BASE_URL || ''}/api/ai/evaluate-tone`, {
+      const res = await apiFetch(`${window.API_BASE_URL || ''}/api/ai/evaluate-tone`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
 

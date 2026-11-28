@@ -5,6 +5,7 @@ import { mediaUrl } from '../utils/mediaUrl';
 import { markSyllable, toneRuleNote } from './tonePairs';
 import { AdvanceBar, PlayButton, ProgressDots, ScoreRing, SlowButton, SoundToggle, ToneContour } from './ToneVisuals';
 import useToneKeys from './useToneKeys';
+import { apiFetch } from '../lib/apiClient';
 
 const spokenTones = tones => tones.join(' + ');
 
@@ -70,9 +71,9 @@ function usePairAudio(pair, speaker) {
 }
 
 async function submitPair(pairId, selectedTones) {
-  const response = await fetch(`${window.API_BASE_URL}/api/tone-practice/pairs/answer`, {
+  const response = await apiFetch(`${window.API_BASE_URL}/api/tone-practice/pairs/answer`, {
     method: 'POST', signal: AbortSignal.timeout(15000),
-    headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}`, 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ pairId, selectedTones }),
   });
   const data = await response.json();

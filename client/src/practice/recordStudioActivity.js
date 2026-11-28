@@ -1,3 +1,4 @@
+import { apiFetch } from '../lib/apiClient';
 // Account activity is independent of exercise state: a save failure never blocks practice.
 export function recordStudioActivity(studio, correct = null, itemKey) {
   let token, eventId;
@@ -12,9 +13,9 @@ export function recordStudioActivity(studio, correct = null, itemKey) {
   const save = async () => {
     for (let attempt = 0; attempt < 2; attempt++) {
       try {
-        const response = await fetch(`${window.API_BASE_URL}/api/studio-activity`, {
+        const response = await apiFetch(`${window.API_BASE_URL}/api/studio-activity`, {
           method: 'POST', keepalive: true,
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ eventId, studio, correct, itemKey }),
         });
         if (response.ok) { window.dispatchEvent(new CustomEvent('studio-activity-saved')); return; }

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 import Icon from './Icon';
+import { apiFetch } from '../lib/apiClient';
 
 const API = window.API_BASE_URL + '/api';
 
 function TestimonialModal({ user, onClose }) {
-  const token = localStorage.getItem('token');
   const [name, setName] = useState(user ? user.name : '');
   const [text, setText] = useState('');
   const [rating, setRating] = useState(5);
@@ -33,9 +33,8 @@ function TestimonialModal({ user, onClose }) {
     setPhoto('');
     setPhotoUploading(true);
     try {
-      const res = await fetch(`${API}/testimonials/photo`, {
+      const res = await apiFetch(`${API}/testimonials/photo`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
         body: fd,
       });
       const data = await res.json().catch(() => ({}));
@@ -55,9 +54,9 @@ function TestimonialModal({ user, onClose }) {
     if (!consent) return setError('Please agree to have your testimonial displayed');
     setSending(true);
     try {
-      const res = await fetch(`${API}/testimonials`, {
+      const res = await apiFetch(`${API}/testimonials`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, text, rating, photo }),
       });
       if (res.ok) setSent(true);

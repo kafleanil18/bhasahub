@@ -2,6 +2,7 @@ import BrandLogo from '../components/BrandLogo';
 import { useState, useEffect, useRef } from 'react';
 import './Login.css';
 import Icon from '../components/Icon';
+import { apiFetch } from '../lib/apiClient';
 
 function ForgotPassword({ onBack, onSwitch }) {
   // Step: 'request' | 'verify_reset' | 'success'
@@ -45,7 +46,7 @@ function ForgotPassword({ onBack, onSwitch }) {
 
     setLoading(true);
     try {
-      const res = await fetch(`${window.API_BASE_URL}/api/auth/send-otp`, {
+      const res = await apiFetch(`${window.API_BASE_URL}/api/auth/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: cleanEmail }),
@@ -77,7 +78,7 @@ function ForgotPassword({ onBack, onSwitch }) {
     setLoading(true);
 
     try {
-      const res = await fetch(`${window.API_BASE_URL}/api/auth/send-otp`, {
+      const res = await apiFetch(`${window.API_BASE_URL}/api/auth/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim() }),
@@ -126,7 +127,7 @@ function ForgotPassword({ onBack, onSwitch }) {
 
     setLoading(true);
     try {
-      const res = await fetch(`${window.API_BASE_URL}/api/auth/reset-password-otp`, {
+      const res = await apiFetch(`${window.API_BASE_URL}/api/auth/reset-password-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

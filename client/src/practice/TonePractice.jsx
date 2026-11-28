@@ -13,12 +13,13 @@ import useToneKeys from './useToneKeys';
 import './SentencePractice.css';
 import './TonePractice.css';
 import { useInitialLoad } from '../navigation/pageLoad';
+import { apiFetch } from '../lib/apiClient';
 
 const tones = [1, 2, 3, 4].map(value => ({ value }));
 async function request(path, options = {}) {
-  const response = await fetch(`${window.API_BASE_URL}/api/tone-practice${path}`, {
+  const response = await apiFetch(`${window.API_BASE_URL}/api/tone-practice${path}`, {
     ...options, signal: options.signal || AbortSignal.timeout(15000),
-    headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}`, 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json' },
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'Could not load tone practice.');

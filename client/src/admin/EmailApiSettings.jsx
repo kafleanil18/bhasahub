@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useInitialLoad } from '../navigation/pageLoad';
+import { apiFetch } from '../lib/apiClient';
 
 const API = `${window.API_BASE_URL}/api/settings/email-api`;
 async function request(path = '', body) {
-  const response = await fetch(API + path, {
+  const response = await apiFetch(API + path, {
     method: body ? path ? 'POST' : 'PUT' : 'GET',
-    headers: { Authorization: `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json' },
     ...(body ? { body: JSON.stringify(body) } : {}), signal: AbortSignal.timeout(45000),
   });
   const data = await response.json().catch(() => null);

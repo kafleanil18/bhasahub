@@ -4,6 +4,7 @@ import { parseCSV, downloadCSV } from '../utils/csv';
 import { mediaUrl } from '../utils/mediaUrl';
 import RichTextEditor from '../components/RichTextEditor';
 import Icon from '../components/Icon';
+import { apiFetch } from '../lib/apiClient';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -91,15 +92,12 @@ function LessonManager({ course, focusLessonId, onBack }) {
   const csvInputRef = useRef(null);
   const lineAudioRefs = useRef({});
 
-  const authHeaders = { Authorization: `Bearer ${token}` };
-  const jsonHeaders = { 'Content-Type': 'application/json', ...authHeaders };
+  const jsonHeaders = { 'Content-Type': 'application/json' };
 
   // ---------- lessons ----------
   const loadLessons = useCallback(async () => {
     try {
-      const res = await fetch(`${API}/lessons/course/${course._id}/all`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiFetch(`${API}/lessons/course/${course._id}/all`);
       const data = await res.json();
       if (res.ok) setLessons(data);
       else setError(data.error || 'Could not load lessons');
@@ -118,7 +116,7 @@ function LessonManager({ course, focusLessonId, onBack }) {
     if (!lesson) return;
     setActiveLesson(lesson);
     setWords([]);
-    fetch(`${API}/lessons/${lesson._id}/vocabulary`, { headers: { Authorization: `Bearer ${token}` } })
+    apiFetch(`${API}/lessons/${lesson._id}/vocabulary`)
       .then((res) => res.json())
       .then((data) => { if (Array.isArray(data)) setWords(data); })
       .catch(() => setError('Could not load vocabulary for this lesson'));
@@ -142,7 +140,7 @@ function LessonManager({ course, focusLessonId, onBack }) {
     if (!lessonTitle.trim()) return setError('Lesson title is required');
 
     const isEditing = editingLessonId !== null;
-    const res = await fetch(
+    const res = await apiFetch(
       isEditing ? `${API}/lessons/${editingLessonId}` : `${API}/lessons`,
       {
         method: isEditing ? 'PUT' : 'POST',
@@ -192,7 +190,7 @@ function LessonManager({ course, focusLessonId, onBack }) {
     const fd = new FormData();
     fd.append('file', fileToUpload);
     try {
-      const res = await fetch(`${API}/upload`, { method: 'POST', headers: authHeaders, body: fd });
+      const res = await apiFetch(`${API}/upload`, { method: 'POST', body: fd });
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || 'Upload failed');
@@ -251,7 +249,7 @@ function LessonManager({ course, focusLessonId, onBack }) {
     const fd = new FormData();
     fd.append('file', file);
     try {
-      const res = await fetch(`${API}/upload`, { method: 'POST', headers: authHeaders, body: fd });
+      const res = await apiFetch(`${API}/upload`, { method: 'POST', body: fd });
       const data = await res.json();
       if (!res.ok) return setError(data.error || 'Upload failed');
       setDialogueLines((prev) =>
@@ -297,7 +295,7 @@ function LessonManager({ course, focusLessonId, onBack }) {
     if (!confirm('Delete this lesson AND all its words?')) return;
     setError('');
     try {
-      const res = await fetch(`${API}/lessons/${id}`, { method: 'DELETE', headers: authHeaders });
+      const res = await apiFetch(`${API}/lessons/${id}`, { method: 'DELETE' });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'Could not delete lesson');
       if (activeLesson && activeLesson._id === id) setActiveLesson(null);
@@ -312,7 +310,7 @@ function LessonManager({ course, focusLessonId, onBack }) {
   const toggleLesson = async (lesson) => {
     setError('');
     try {
-      const res = await fetch(`${API}/lessons/${lesson._id}`, {
+      const res = await apiFetch(`${API}/lessons/${lesson._id}`, {
         method: 'PUT',
         headers: jsonHeaders,
         body: JSON.stringify({ published: !lesson.published }),
@@ -331,7 +329,7 @@ function LessonManager({ course, focusLessonId, onBack }) {
     setActiveLesson(lesson);
     setWords([]);
     resetWordForm();
-    const res = await fetch(`${API}/lessons/${lesson._id}/vocabulary`, { headers: authHeaders });
+    const res = await apiFetch(`${API}/lessons/${lesson._id}/vocabulary`);
     const data = await res.json();
     if (res.ok) setWords(data);
   };
@@ -365,7 +363,7 @@ function LessonManager({ course, focusLessonId, onBack }) {
         throw new Error(`Row ${missingIndex + 1} is missing a word, pronunciation, or meaning`);
       }
 
-      const res = await fetch(`${API}/lessons/${activeLesson._id}/vocabulary/bulk`, {
+      const res = await apiFetch(`${API}/lessons/${activeLesson._id}/vocabulary/bulk`, {
         method: 'POST',
         headers: jsonHeaders,
         body: JSON.stringify({ words: newWords }),
@@ -396,7 +394,7 @@ function LessonManager({ course, focusLessonId, onBack }) {
       return setError('Word, pronunciation and meaning are all required');
     }
     const isEditing = editingWordId !== null;
-    const res = await fetch(
+    const res = await apiFetch(
       isEditing ? `${API}/lessons/vocabulary/${editingWordId}` : `${API}/lessons/${activeLesson._id}/vocabulary`,
       {
         method: isEditing ? 'PUT' : 'POST',
@@ -427,7 +425,7 @@ function LessonManager({ course, focusLessonId, onBack }) {
 
   const deleteWord = async (vocabId) => {
     if (!confirm('Delete this word?')) return;
-    await fetch(`${API}/lessons/vocabulary/${vocabId}`, { method: 'DELETE', headers: authHeaders });
+    await apiFetch(`${API}/lessons/vocabulary/${vocabId}`, { method: 'DELETE' });
     if (editingWordId === vocabId) resetWordForm();
     openLesson(activeLesson);
   };
@@ -453,7 +451,7 @@ function LessonManager({ course, focusLessonId, onBack }) {
     setDragIndex(null);
     const orderedIds = words.map((w) => w._id);
     try {
-      await fetch(`${API}/lessons/${activeLesson._id}/vocabulary/reorder`, {
+      await apiFetch(`${API}/lessons/${activeLesson._id}/vocabulary/reorder`, {
         method: 'PUT',
         headers: jsonHeaders,
         body: JSON.stringify({ orderedIds }),
@@ -468,15 +466,14 @@ function LessonManager({ course, focusLessonId, onBack }) {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      const res = await fetch(`${API}/upload`, {
+      const res = await apiFetch(`${API}/upload`, {
         method: 'POST',
-        headers: authHeaders,
         body: formData,
       });
       const data = await res.json();
       if (!res.ok) return setError(data.error || 'Upload failed');
 
-      await fetch(`${API}/lessons/vocabulary/${vocabItem._id}/audio`, {
+      await apiFetch(`${API}/lessons/vocabulary/${vocabItem._id}/audio`, {
         method: 'PUT',
         headers: jsonHeaders,
         body: JSON.stringify({ audioUrl: data.url }),

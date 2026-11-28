@@ -7,6 +7,7 @@ import { bookLessons } from '../practice/conversationLessons';
 import './StudioAnalytics.css';
 
 import RefreshButton from '../components/RefreshButton';
+import { apiFetch } from '../lib/apiClient';
 const studios = {
   pinyin: 'Pinyin & tones', tones: 'Tone listening', trace: 'Trace characters', listening: 'Listening practice', sentences: 'Sentence builder',
   measures: 'Measure words', numbers: 'Everyday numbers', dictation: 'Listening dictation', conversation: 'Conversation',
@@ -57,8 +58,8 @@ export default function StudioAnalytics({ activity }) {
     if (!confirmed) return;
     setResetting(studio); setNotice(''); setResetError('');
     try {
-      const response = await fetch(`${window.API_BASE_URL}/api/studio-activity/${studio}`, {
-        method: 'DELETE', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token') || ''}` },
+      const response = await apiFetch(`${window.API_BASE_URL}/api/studio-activity/${studio}`, {
+        method: 'DELETE', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ confirmed: true }), signal: AbortSignal.timeout(15000),
       });
       if (!response.ok) throw new Error('Reset failed');

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Icon from './Icon';
+import { apiFetch } from '../lib/apiClient';
 
 function FeedbackModal({ user, onClose, privacyRequest = false }) {
   const [name, setName] = useState(user ? user.name : '');
@@ -33,7 +34,7 @@ function FeedbackModal({ user, onClose, privacyRequest = false }) {
     if (!message.trim()) return setError('Please write a message');
     setSending(true);
     try {
-      const res = await fetch(window.API_BASE_URL + '/api/feedback', {
+      const res = await apiFetch(window.API_BASE_URL + '/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, message: privacyRequest ? `Privacy request\n\n${message}` : message }),

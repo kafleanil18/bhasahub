@@ -5,9 +5,10 @@ import { recordingExtension, MAX_RECORDING_BYTES } from './sentenceRecording';
 import { mediaUrl } from '../utils/mediaUrl';
 import './ConversationManager.css';
 import { useInitialLoad } from '../navigation/pageLoad';
+import { apiFetch } from '../lib/apiClient';
 
 const API = `${window.API_BASE_URL}/api/settings`;
-const tokenHeaders = () => ({ Authorization: `Bearer ${localStorage.getItem('token') || ''}`, 'Content-Type': 'application/json' });
+const tokenHeaders = () => ({ 'Content-Type': 'application/json' });
 const clone = value => JSON.parse(JSON.stringify(value));
 
 export default function ConversationManager({ onBack }) {
@@ -27,7 +28,7 @@ export default function ConversationManager({ onBack }) {
   const [undoMessage, setUndoMessage] = useState('');
   const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || '');
   useEffect(() => {
-    fetch(API).then(async response => {
+    apiFetch(API).then(async response => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not load conversation lessons.');
       const stored = Array.isArray(data.conversationLessons) ? data.conversationLessons : [];
@@ -119,7 +120,7 @@ export default function ConversationManager({ onBack }) {
       const next = savedLessons.some(item => item.id === draft.id)
         ? savedLessons.map(item => item.id === draft.id ? draft : item)
         : [...savedLessons, draft].sort((a, b) => Number(a.number) - Number(b.number));
-      const response = await fetch(API, { method: 'PUT', headers: tokenHeaders(), body: JSON.stringify({ conversationLessons: next }) });
+      const response = await apiFetch(API, { method: 'PUT', headers: tokenHeaders(), body: JSON.stringify({ conversationLessons: next }) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not save the lesson.');
       setSavedLessons(next); setBaseline(clone(draft)); setIsNewLesson(false); setNotice(`Lesson ${draft.number} saved. Updates are now visible in Conversation Practice.`);
@@ -133,7 +134,7 @@ export default function ConversationManager({ onBack }) {
     if (!recording?.size || recording.size > MAX_RECORDING_BYTES) throw new Error('Voice recordings must be smaller than 15 MB.');
     const form = new FormData();
     form.append('file', recording, `conversation-${draft.number}-${exchangeIndex + 1}-${turnIndex + 1}.${recordingExtension(recording.type)}`);
-    const response = await fetch(`${window.API_BASE_URL}/api/upload`, { method: 'POST', headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` }, body: form });
+    const response = await apiFetch(`${window.API_BASE_URL}/api/upload`, { method: 'POST', body: form });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Could not save the voice recording.');
     updateTurn(exchangeIndex, turnIndex, { audioUrl: data.url });
@@ -146,7 +147,7 @@ export default function ConversationManager({ onBack }) {
     const key = `${exchangeIndex}-${turnIndex}`; setUploadingTurn(key); setError('');
     const form = new FormData(); form.append('file', file);
     try {
-      const response = await fetch(`${window.API_BASE_URL}/api/upload`, { method: 'POST', headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` }, body: form });
+      const response = await apiFetch(`${window.API_BASE_URL}/api/upload`, { method: 'POST', body: form });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Could not upload this voice recording.');
       updateTurn(exchangeIndex, turnIndex, { audioUrl: data.url });

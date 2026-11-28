@@ -9,9 +9,10 @@ import './ListeningPractice.css';
 import { useInitialLoad } from '../navigation/pageLoad';
 
 import RefreshButton from '../components/RefreshButton';
+import { apiFetch } from '../lib/apiClient';
 async function readApi(path, signal) {
-  const response = await fetch(`${window.API_BASE_URL}/api${path}`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` }, signal,
+  const response = await apiFetch(`${window.API_BASE_URL}/api${path}`, {
+    signal,
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'Could not load listening practice. Please try again.');

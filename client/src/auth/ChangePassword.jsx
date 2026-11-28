@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import Icon from '../components/Icon';
+import { apiFetch } from '../lib/apiClient';
 
 function ChangePassword({ onClose }) {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -14,7 +15,6 @@ function ChangePassword({ onClose }) {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const token = localStorage.getItem('token');
 
   // Password Validation
   const hasMinLength = useMemo(() => newPassword.length >= 6, [newPassword]);
@@ -35,19 +35,20 @@ function ChangePassword({ onClose }) {
     
     setSaving(true);
     try {
-      const res = await fetch(window.API_BASE_URL + '/api/auth/change-password', {
+      const res = await apiFetch(window.API_BASE_URL + '/api/auth/change-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+          },
         body: JSON.stringify({ currentPassword, newPassword }),
       });
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || 'Could not change password');
       } else {
-        setMessage('Password changed successfully!');
+        // The server signs out every other device and hands this one a fresh token.
+        if (data.token) localStorage.setItem('token', data.token);
+        setMessage('Password changed successfully! Other devices have been signed out.');
         setCurrentPassword('');
         setNewPassword('');
         setConfirm('');

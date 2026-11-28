@@ -5,6 +5,7 @@ import { useTeam } from '../about/useTeam';
 import { AboutHskView } from '../hsk/AboutHsk';
 import { useInitialLoad } from '../navigation/pageLoad';
 import './AboutPagesManager.css';
+import { apiFetch } from '../lib/apiClient';
 
 // Admin > About pages (super admin): edit the text of About Xiao Ao and About HSK with a live
 // preview, and choose whether visitors can see About Xiao Ao. The server stores only the fields that
@@ -12,9 +13,9 @@ import './AboutPagesManager.css';
 const slugs = Object.keys(ABOUT_PAGES);
 
 async function savePage(slug, body) {
-  const response = await fetch(`${window.API_BASE_URL}/api/about-pages/${slug}`, {
+  const response = await apiFetch(`${window.API_BASE_URL}/api/about-pages/${slug}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token') || ''}` },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
   const data = await response.json().catch(() => ({}));

@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-const auth = () => ({ Authorization: `Bearer ${localStorage.getItem('token') || ''}`, 'Content-Type': 'application/json' });
+import { apiFetch } from '../../lib/apiClient';
+const auth = () => ({ 'Content-Type': 'application/json' });
 async function requestPaper(paperId, path = '', options = {}) {
   const API = `${window.API_BASE_URL}/api/hsk1/${paperId}`;
-  const response = await fetch(API + path, { ...options, headers: auth(), signal: AbortSignal.timeout(20000) });
+  const response = await apiFetch(API + path, { ...options, headers: auth(), signal: AbortSignal.timeout(20000) });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || 'The request failed. Please try again.');
   return data;

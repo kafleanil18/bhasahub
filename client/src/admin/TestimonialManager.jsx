@@ -2,34 +2,33 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { mediaUrl } from '../utils/mediaUrl';
 import Icon from '../components/Icon';
 import { useInitialLoad } from '../navigation/pageLoad';
+import { apiFetch } from '../lib/apiClient';
 
 const API = window.API_BASE_URL + '/api';
 
 function TestimonialManager({ onBack }) {
-  const token = localStorage.getItem('token');
-  const authHeaders = useMemo(() => ({ Authorization: `Bearer ${token}` }), [token]);
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   useInitialLoad(loading, 'Loading testimonials…');
 
   const load = useCallback(() => {
-    fetch(`${API}/testimonials/all`, { headers: authHeaders })
+    apiFetch(`${API}/testimonials/all`)
       .then(res => res.json())
       .then(data => { setItems(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(() => setLoading(false));
-  }, [authHeaders]);
+  }, []);
 
   useEffect(() => { load(); }, [load]);
 
   const approve = async (id) => {
-    await fetch(`${API}/testimonials/${id}/approve`, { method: 'PUT', headers: authHeaders });
+    await apiFetch(`${API}/testimonials/${id}/approve`, { method: 'PUT' });
     load();
   };
 
   const remove = async (id) => {
     if (!confirm('Delete this testimonial?')) return;
-    await fetch(`${API}/testimonials/${id}`, { method: 'DELETE', headers: authHeaders });
+    await apiFetch(`${API}/testimonials/${id}`, { method: 'DELETE' });
     load();
   };
 

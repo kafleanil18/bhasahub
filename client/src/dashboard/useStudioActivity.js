@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { apiFetch } from '../lib/apiClient';
 
 // Loads the student's practice studio activity and HSK test completions.
 // `settled` turns true once the first request has finished (with data or an error), so
@@ -10,8 +11,7 @@ export default function useStudioActivity(refreshKey) {
   useEffect(() => {
     const controller = new AbortController();
     setState({ loading: true });
-    fetch(`${window.API_BASE_URL}/api/studio-activity/me`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` },
+    apiFetch(`${window.API_BASE_URL}/api/studio-activity/me`, {
       signal: AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]),
     }).then(async response => {
       if (!response.ok) throw new Error('Analytics unavailable');

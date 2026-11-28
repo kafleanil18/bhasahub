@@ -73,14 +73,21 @@ test('course and lesson URLs hydrate on direct visits and survive refresh', asyn
   await expect(page.getByRole('heading', { name: course.title, exact: true })).toBeVisible();
 });
 
+test('admin pages look like missing pages to visitors without access', async ({ page }) => {
+  await prepare(page);
+  await page.goto('/admin');
+  await expect(page).toHaveURL(/\/admin$/);
+  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+});
+
 test('students cannot enter admin pages and ordinary admins cannot enter superadmin pages', async ({ page }) => {
   await prepare(page, student);
   await page.goto('/admin/users');
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Admin Directory' })).toHaveCount(0);
   await page.evaluate(() => localStorage.setItem('user', JSON.stringify({ id: 'admin1', name: 'Teacher', role: 'admin' })));
   await page.goto('/admin/courses');
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
   await page.goto('/admin/tests');
   await expect(page.getByRole('heading', { name: 'Test Studio' })).toBeVisible();
 });

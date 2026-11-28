@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { loadGoogleIdentity } from './googleIdentity';
 import './GoogleAuthButton.css';
+import { apiFetch } from '../lib/apiClient';
 
 function GoogleAuthButton({ mode = 'signin', onSuccess, onError, setLoading }) {
   const containerRef = useRef(null);
@@ -18,7 +19,7 @@ function GoogleAuthButton({ mode = 'signin', onSuccess, onError, setLoading }) {
 
     if (setLoading) setLoading(true);
     try {
-      const res = await fetch(`${window.API_BASE_URL}/api/auth/google`, {
+      const res = await apiFetch(`${window.API_BASE_URL}/api/auth/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ credential: response.credential }),

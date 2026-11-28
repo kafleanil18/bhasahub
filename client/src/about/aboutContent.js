@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useInitialLoad } from '../navigation/pageLoad';
+import { apiFetch } from '../lib/apiClient';
 
 // The editable text of the About pages. A super admin edits these in Admin > About pages; the server
 // stores only the fields that differ from these defaults (see server/routes/aboutPages.js), so new
@@ -89,10 +90,9 @@ export function aboutText(slug, overrides = {}) {
   return Object.fromEntries(aboutFields(slug).map(([key, , fallback]) => [key, typeof overrides[key] === 'string' && overrides[key].trim() ? overrides[key] : fallback]));
 }
 
-const authHeaders = () => { const token = localStorage.getItem('token'); return token ? { Authorization: `Bearer ${token}` } : {}; };
 
 export async function fetchAboutPage(slug) {
-  const response = await fetch(`${window.API_BASE_URL}/api/about-pages/${slug}`, { headers: authHeaders() });
+  const response = await apiFetch(`${window.API_BASE_URL}/api/about-pages/${slug}`);
   if (response.status === 404) return { slug, visible: false, hidden: true, content: {} };
   if (!response.ok) throw new Error('Could not load this page.');
   return response.json();

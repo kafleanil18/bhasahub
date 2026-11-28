@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import './Login.css';
 import GoogleAuthButton from './GoogleAuthButton';
 import { loadRememberedEmail, saveRememberedEmail } from './rememberedEmail';
+import { apiFetch } from '../lib/apiClient';
 
 function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
   const [email, setEmail] = useState('');
@@ -36,7 +37,7 @@ function Login({ onLogin, onBack, onSwitch, onForgotPassword }) {
 
     setLoading(true);
     try {
-      const res = await fetch(window.API_BASE_URL + '/api/auth/login', {
+      const res = await apiFetch(window.API_BASE_URL + '/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, ...(verificationRequired && !resend ? { otp } : {}) }),

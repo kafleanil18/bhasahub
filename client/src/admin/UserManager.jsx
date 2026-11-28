@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Icon from '../components/Icon';
 import { useInitialLoad } from '../navigation/pageLoad';
+import { apiFetch } from '../lib/apiClient';
 
 const API = window.API_BASE_URL + '/api';
 
@@ -16,10 +17,8 @@ function UserManager({ initialSearch = '', onBack }) {
   const load = useCallback(async () => {
     setLoading(true);
     setError('');
-    const token = localStorage.getItem('token');
-    const authHeaders = { Authorization: `Bearer ${token}` };
     try {
-      const res = await fetch(`${API}/users`, { headers: authHeaders });
+      const res = await apiFetch(`${API}/users`);
       const data = await res.json();
       if (res.ok) setUsers(data);
       else setError(data.error || 'Could not load users');
@@ -36,11 +35,9 @@ function UserManager({ initialSearch = '', onBack }) {
   const setRole = async (id, role) => {
     setError('');
     setMessage('');
-    const token = localStorage.getItem('token');
-    const authHeaders = { Authorization: `Bearer ${token}` };
-    const jsonHeaders = { 'Content-Type': 'application/json', ...authHeaders };
+    const jsonHeaders = { 'Content-Type': 'application/json' };
     try {
-      const res = await fetch(`${API}/users/${id}/role`, {
+      const res = await apiFetch(`${API}/users/${id}/role`, {
         method: 'PUT',
         headers: jsonHeaders,
         body: JSON.stringify({ role }),

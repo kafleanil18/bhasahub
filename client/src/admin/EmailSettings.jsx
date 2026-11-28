@@ -5,8 +5,9 @@ import './EmailSettings.css';
 import { useInitialLoad } from '../navigation/pageLoad';
 
 import RefreshButton from '../components/RefreshButton';
+import { apiFetch } from '../lib/apiClient';
 const API = `${window.API_BASE_URL}/api/settings/email`;
-const headers = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json' });
+const headers = () => ({ 'Content-Type': 'application/json' });
 async function readResponse(response) {
   const data = await response.json().catch(() => null);
   if (!response.ok) {
@@ -34,7 +35,7 @@ export default function EmailSettings({ onBack }) {
   useEffect(() => {
     const controller = new AbortController();
     setLoading(true); setError(''); setAuthError(false);
-    fetch(API, { headers: headers(), signal: AbortSignal.any([controller.signal, AbortSignal.timeout(45000)]) })
+    apiFetch(API, { headers: headers(), signal: AbortSignal.any([controller.signal, AbortSignal.timeout(45000)]) })
       .then(readResponse)
       .then(data => { if (!controller.signal.aborted) { setSaved(data); setDraft(data); setError(data.connectionError || ''); } })
       .catch(err => {
@@ -52,7 +53,7 @@ export default function EmailSettings({ onBack }) {
     if (busy) return;
     setBusy(action); setError(''); setNotice('');
     try {
-      const data = await fetch(action === 'save' ? API : `${API}/test-connection`, {
+      const data = await apiFetch(action === 'save' ? API : `${API}/test-connection`, {
         method: action === 'save' ? 'PUT' : 'POST', headers: headers(),
         body: JSON.stringify({ enabled: draft.enabled, email: draft.email, senderName: draft.senderName, port: draft.port, appPassword }),
         signal: AbortSignal.timeout(45000),
