@@ -171,6 +171,43 @@ test('H11112 preserves the printed key and original audio', () => {
   for (const privateField of ['correctIndex', 'explanation', 'listeningText']) assert.ok(!json.includes(privateField));
 });
 
+// The four papers added from the user's 2026 source files (docs/h11009-test-portal.md and siblings).
+// Keys are typed from the printed answer sheets (H11552 has none yet: its key was worked out and
+// still needs checking). Pictures are cut out of the booklets for now.
+const newPapers = [
+  { id: 'h11009', key: [1,1,0,1,0, 0,1,0,2,1, 0,1,4,3,5, 2,2,0,1,2, 0,1,0,1,0, 1,5,2,0,3, 2,4,1,3,0, 5,2,1,0,4], audio: '7009027df216ad5b27c66c43ed4e4c476088f99f53edecaf8979a741c26e1008', seconds: 935 },
+  { id: 'h11332', key: [0,0,1,1,0, 2,0,1,2,1, 0,5,3,4,1, 0,0,1,2,2, 0,0,1,1,1, 3,1,5,0,2, 2,1,4,3,0, 2,0,5,1,4], audio: null, seconds: 900 },
+  { id: 'h11440', key: [1,1,1,0,0, 1,0,2,1,2, 3,4,5,1,0, 0,0,2,2,1, 0,0,1,1,0, 3,2,5,1,0, 4,1,0,2,3, 2,5,0,4,1], audio: null, seconds: 900 },
+  { id: 'h11552', key: [0,0,1,1,1, 0,0,2,0,2, 0,3,4,1,5, 1,1,1,2,2, 0,0,1,0,1, 0,2,5,3,1, 1,4,0,3,2, 4,5,0,2,1], audio: 'b997ec40db06236fe3ae418d669f189668a568fedb93558453c42e8cc1437a75', seconds: 864 },
+];
+for (const { id, key, audio, seconds } of newPapers) test(`${id.toUpperCase()} keeps its answer key, pictures and audio, and starts hidden`, () => {
+  const paper = require('../data/hskPapers')[id];
+  const questions = paper.groups.flatMap(group => group.questions);
+  assert.equal(paper.groups.length, 8);
+  assert.ok(paper.groups.every(group => group.questions.length === 5 && group.example));
+  assert.deepEqual(questions.map(q => q.number), Array.from({ length: 40 }, (_, i) => i + 1));
+  assert.deepEqual(questions.map(q => q.correctIndex), key);
+  assert.ok(questions.slice(0, 20).every(q => q.listeningText));
+  assert.ok(questions.slice(20).every(q => q.text && q.pinyin));
+  assert.ok(questions.every(q => q.explanation));
+  const images = [...paper.groups, ...questions].flatMap(row => [row.image, row.exampleImage]).filter(Boolean);
+  assert.equal(new Set(images).size, 20);
+  for (const image of images) {
+    assert.ok(image.startsWith(`/hsk1/${id}/`), image);
+    const bytes = fs.readFileSync(path.join(__dirname, '../../client/public', image));
+    assert.deepEqual([...bytes.subarray(0, 3)], [0xff, 0xd8, 0xff], `${image} is a JPEG`);
+  }
+  if (audio) {
+    const crypto = require('node:crypto');
+    const bytes = fs.readFileSync(path.join(__dirname, '../../client/public', paper.audioUrl));
+    assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'), audio);
+  }
+  assert.equal(paper.listeningSeconds, seconds);
+  assert.deepEqual([paper.transferSeconds, paper.readingSeconds, paper.publishedByDefault], [180, 1020, false]);
+  const tools = require('../utils/hsk11226').createPaperTools(paper);
+  assert.deepEqual(tools.grade(key), { listening: 20, reading: 20, score: 40 });
+});
+
 test('without approved access only the free paper opens; staff bypass the lock', async () => {
   const { base, headers, admin } = await setup({ testsUnlocked: false });
   const free = await (await fetch(base, { headers })).json();
